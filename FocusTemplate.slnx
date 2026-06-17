@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="stylecop.json" />
+  </Folder>
+  <Project Path="src/FocusTemplate.HelloWorld/FocusTemplate.HelloWorld.csproj" Id="829a5d20-79da-4b95-a290-f6f2bf6567d9" />
+</Solution>

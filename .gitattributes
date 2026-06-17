@@ -1,0 +1,16 @@
+# Set default behavior to automatically normalize line endings.
+* text=auto
+
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+
+*.in text eol=lf
+*.sh text eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+*.cs diff=csharp
+
+*.sln text eol=crlf

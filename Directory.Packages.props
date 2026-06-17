@@ -1,0 +1,10 @@
+<Project>
+	<PropertyGroup>
+		<!-- Enable central package management, https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management -->
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+	<ItemGroup>
+		<!-- https://github.com/DotNetAnalyzers/StyleCopAnalyzers -->
+		<GlobalPackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
+	</ItemGroup>
+</Project>
