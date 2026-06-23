@@ -8,6 +8,8 @@
     <File Path="Directory.Build.targets" />
     <File Path="Directory.Packages.props" />
     <File Path="FocusTemplate.sln.DotSettings" />
+    <File Path="global.json" />
+    <File Path="nuget.config" />
     <File Path="stylecop.json" />
   </Folder>
   <Project Path="src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj" Id="3dbf55d3-63b4-4f1b-a28b-c7313289b89f" />
