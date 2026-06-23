@@ -260,3 +260,30 @@ dotnet_naming_style.begins_with_i.capitalization = pascal_case
 
 # SA1633: File must have header
 dotnet_diagnostic.sa1633.severity = none
+
+# SA1636: The file header copyright text should match the copyright text from the settings.
+dotnet_diagnostic.sa1636.severity = none
+
+# ReSharper properties
+resharper_align_multiline_binary_expressions_chain = false
+resharper_align_multiline_statement_conditions = false
+resharper_blank_lines_before_single_line_comment = 1
+resharper_csharp_alignment_tab_fill_style = use_tabs_only
+resharper_csharp_keep_blank_lines_in_code = 1
+resharper_csharp_keep_blank_lines_in_declarations = 1
+resharper_csharp_max_line_length = 140
+resharper_empty_string = string_empty
+resharper_indent_raw_literal_string = indent
+resharper_keep_existing_arrangement = false
+resharper_keep_existing_declaration_block_arrangement = false
+resharper_keep_existing_embedded_block_arrangement = false
+resharper_keep_existing_enum_arrangement = false
+resharper_keep_existing_linebreaks = false
+resharper_new_line_before_while = true
+resharper_place_accessorholder_attribute_on_same_line = false
+resharper_place_field_attribute_on_same_line = false
+resharper_place_type_constraints_on_same_line = false
+resharper_space_within_single_line_array_initializer_braces = true
+resharper_trailing_comma_in_multiline_lists = true
+resharper_trailing_comma_in_singleline_lists = true
+resharper_wrap_multiple_type_parameter_constraints_style = chop_always
