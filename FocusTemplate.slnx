@@ -14,4 +14,6 @@
   </Folder>
   <Project Path="src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj" Id="3dbf55d3-63b4-4f1b-a28b-c7313289b89f" />
   <Project Path="src/FocusTemplate.ServiceDefaults/FocusTemplate.ServiceDefaults.csproj" Id="b487fad3-efd6-44f0-ad27-6e19ecab0715" />
+  <Project Path="src/FocusTemplate.Web/FocusTemplate.Web.csproj" />
+  <Project Path="tests/FocusTemplate.Web.E2E/FocusTemplate.Web.E2E.csproj" />
 </Solution>

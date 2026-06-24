@@ -1,0 +1,15 @@
+@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<div data-testid="counter-value">@counter</div>
+<button data-testid="counter-increment" @onclick="() => counter++">Test</button>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+@code
+{
+	private int counter;
+}

@@ -427,3 +427,8 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+!**/*.E2E/
+
+.claude/settings.local.json
+/.playwright-cli

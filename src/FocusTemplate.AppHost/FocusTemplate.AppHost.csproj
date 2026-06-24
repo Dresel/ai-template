@@ -5,4 +5,8 @@
 		<UserSecretsId>f17904a0-2527-4a67-8814-34dd2ac5efe2</UserSecretsId>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\FocusTemplate.Web\FocusTemplate.Web.csproj" />
+	</ItemGroup>
+
 </Project>
