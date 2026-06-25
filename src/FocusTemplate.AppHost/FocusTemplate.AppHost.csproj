@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.4.5">
+﻿<Project Sdk="Aspire.AppHost.Sdk/13.4.5">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -6,6 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\FocusTemplate.Api\FocusTemplate.Api.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Web\FocusTemplate.Web.csproj" />
 	</ItemGroup>
 
