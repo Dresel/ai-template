@@ -351,11 +351,6 @@
         "resolved": "11.0.0-preview.5.26302.115",
         "contentHash": "bzPTPR6HTGjfEq0YHcXHdqm6xhqbwGMn/3v51MAE8Hc2bkcl7VNzCV8WfSSZf8N6rQBKUFmc+civaQvNoPANIg=="
       },
-      "Microsoft.OpenApi": {
-        "type": "Transitive",
-        "resolved": "3.3.1",
-        "contentHash": "8Xo42prPRLeQpcSv9sjajQQ0o+gL7rZ4HMUsNNI47iqK+bxDrIwLOGlN9fLAlTpJk0iyXRNR51zupMt5IdhU/w=="
-      },
       "Microsoft.Testing.Extensions.Telemetry": {
         "type": "Transitive",
         "resolved": "2.2.3",
@@ -546,6 +541,7 @@
         "type": "Project",
         "dependencies": {
           "FocusTemplate.ServiceDefaults": "[1.0.0, )",
+          "FocusTemplate.Shared": "[1.0.0, )",
           "Microsoft.AspNetCore.OpenApi": "[11.0.0-preview.5.26302.115, )"
         }
       },
@@ -560,6 +556,9 @@
           "OpenTelemetry.Instrumentation.Http": "[1.16.0, )",
           "OpenTelemetry.Instrumentation.Runtime": "[1.15.1, )"
         }
+      },
+      "focustemplate.shared": {
+        "type": "Project"
       },
       "Microsoft.AspNetCore.OpenApi": {
         "type": "CentralTransitive",
@@ -592,6 +591,12 @@
           "Microsoft.Extensions.Http": "10.0.9",
           "Microsoft.Extensions.ServiceDiscovery.Abstractions": "10.7.0"
         }
+      },
+      "Microsoft.OpenApi": {
+        "type": "CentralTransitive",
+        "requested": "[3.5.4, )",
+        "resolved": "3.5.4",
+        "contentHash": "Dhiio8mc5aLT8ujQfSP6iBdy4UDdkf3iGl1S7W2XtiAfsPZghkHydnAqivtdPvMB3JcgKVzwkLrq2BW5Lb5uxg=="
       },
       "OpenTelemetry.Exporter.OpenTelemetryProtocol": {
         "type": "CentralTransitive",

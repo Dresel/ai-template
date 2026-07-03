@@ -1,9 +1,9 @@
 using Microsoft.Playwright;
-using Microsoft.Playwright.Xunit.v3;
 
 namespace FocusTemplate.Web.E2E;
 
-public sealed class CounterTests(BlazorAppFixture app) : PageTest, IClassFixture<BlazorAppFixture>
+[Collection(AspireCollection.Name)]
+public sealed class CounterTests(BlazorAppFixture app) : BffPageTest
 {
 	[Fact]
 	public async Task ClickingTheButtonIncrementsTheCounter()

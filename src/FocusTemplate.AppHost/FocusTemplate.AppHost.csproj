@@ -1,4 +1,4 @@
-﻿<Project Sdk="Aspire.AppHost.Sdk/13.4.5">
+<Project Sdk="Aspire.AppHost.Sdk/13.4.6">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -6,8 +6,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.Blazor" />
+		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Umami" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\FocusTemplate.Api\FocusTemplate.Api.csproj" />
-		<ProjectReference Include="..\FocusTemplate.Web\FocusTemplate.Web.csproj" />
+		<ProjectReference Include="..\FocusTemplate.Web.Bff\FocusTemplate.Web.Bff.csproj" />
 	</ItemGroup>
 
 </Project>

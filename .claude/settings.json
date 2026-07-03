@@ -5,7 +5,9 @@
 			"PowerShell(Get-ChildItem *)",
 
 			"WebFetch(domain:learn.microsoft.com)",
+			"WebFetch(domain:aspire.dev)",
 			"WebFetch(domain:github.com)",
+			"WebFetch(domain:api.github.com)",
 			"WebFetch(domain:raw.githubusercontent.com)",
 			"WebFetch(domain:devblogs.microsoft.com)",
 
@@ -30,23 +32,31 @@
 			"PowerShell(git status *)",
 			"PowerShell(git diff *)",
 			"PowerShell(git log *)",
+			"PowerShell(git show *)",
 
 			"Bash(git status *)",
 			"Bash(git diff *)",
 			"Bash(git log *)",
+			"Bash(git show *)",
 
+			"PowerShell(aspire --help)",
+			"PowerShell(aspire --version)",
 			"PowerShell(aspire start *)",
 			"PowerShell(aspire ps *)",
 			"PowerShell(aspire logs *)",
 			"PowerShell(aspire describe *)",
 			"PowerShell(aspire wait *)",
+			"PowerShell(aspire otel *)",
 			"PowerShell(aspire stop)",
 
+			"Bash(aspire --help)",
+			"Bash(aspire --version)",
 			"Bash(aspire start *)",
 			"Bash(aspire ps *)",
 			"Bash(aspire logs *)",
 			"Bash(aspire describe *)",
 			"Bash(aspire wait *)",
+			"Bash(aspire otel *)",
 			"Bash(aspire stop)",
 
 			"Skill(playwright-cli)",

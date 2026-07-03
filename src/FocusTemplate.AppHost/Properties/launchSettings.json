@@ -1,31 +1,33 @@
 {
-  "$schema": "https://json.schemastore.org/launchsettings.json",
-  "profiles": {
-    "https": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "applicationUrl": "https://focustemplate-apphost.dev.localhost:17049;http://focustemplate-apphost.dev.localhost:15044",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DOTNET_ENVIRONMENT": "Development",
-        "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "https://localhost:21186",
-        "ASPIRE_DASHBOARD_MCP_ENDPOINT_URL": "https://localhost:23084",
-        "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "https://localhost:22029"
-      }
-    },
-    "http": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "applicationUrl": "http://focustemplate-apphost.dev.localhost:15044",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DOTNET_ENVIRONMENT": "Development",
-        "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "http://localhost:19035",
-        "ASPIRE_DASHBOARD_MCP_ENDPOINT_URL": "http://localhost:18240",
-        "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "http://localhost:20283"
-      }
-    }
-  }
+	"$schema": "https://json.schemastore.org/launchsettings.json",
+	"profiles": {
+		"https": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"launchBrowser": true,
+			"applicationUrl": "https://focustemplate-apphost.dev.localhost:17049;http://focustemplate-apphost.dev.localhost:15044",
+			"environmentVariables": {
+				"ASPNETCORE_ENVIRONMENT": "Development",
+				"DOTNET_ENVIRONMENT": "Development",
+				"ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "https://localhost:21186",
+				"ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL": "https://localhost:16175",
+				"ASPIRE_DASHBOARD_MCP_ENDPOINT_URL": "https://localhost:23084",
+				"ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "https://localhost:22029"
+			}
+		},
+		"http": {
+			"commandName": "Project",
+			"dotnetRunMessages": true,
+			"launchBrowser": true,
+			"applicationUrl": "http://focustemplate-apphost.dev.localhost:15044",
+			"environmentVariables": {
+				"ASPNETCORE_ENVIRONMENT": "Development",
+				"DOTNET_ENVIRONMENT": "Development",
+				"ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "http://localhost:19035",
+				"ASPIRE_DASHBOARD_OTLP_HTTP_ENDPOINT_URL": "http://localhost:16175",
+				"ASPIRE_DASHBOARD_MCP_ENDPOINT_URL": "http://localhost:18240",
+				"ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "http://localhost:20283"
+			}
+		}
+	}
 }

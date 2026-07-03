@@ -2,6 +2,7 @@
 	<PropertyGroup>
 		<!-- Enable central package management, https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management -->
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+		<CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 	</PropertyGroup>
 	<ItemGroup>
 		<!-- https://github.com/DotNetAnalyzers/StyleCopAnalyzers -->
@@ -9,18 +10,25 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="11.0.0-preview.5.26302.115" />
-		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="11.0.0-preview.5.26302.115" />
+		<PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="11.0.0-preview.5.26302.115" />
 		<PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0-preview.5.26302.115" />
 		<PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="10.7.0" />
 		<PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="10.7.0" />
+		<PackageVersion Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="10.7.0" />
+
+		<!-- Pinned above the transitive 3.3.1 (from Microsoft.AspNetCore.OpenApi) #CVE-2026-49451 -->
+		<PackageVersion Include="Microsoft.OpenApi" Version="3.5.4" />
 		<PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.16.0" />
 		<PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.16.0" />
 		<PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.16.0" />
 		<PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.16.0" />
 		<PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
+		<PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageVersion Include="Aspire.Hosting.Blazor" Version="13.4.6-preview.1.26319.6" />
 		<PackageVersion Include="Aspire.Hosting.Testing" Version="13.4.6" />
+		<PackageVersion Include="CommunityToolkit.Aspire.Hosting.Umami" Version="13.4.0" />
 		<PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="11.0.0-preview.5.26302.115" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
 		<PackageVersion Include="Microsoft.Playwright.Xunit.v3" Version="1.61.0" />

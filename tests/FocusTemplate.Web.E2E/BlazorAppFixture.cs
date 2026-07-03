@@ -18,15 +18,17 @@ public sealed class BlazorAppFixture : IAsyncLifetime
 
 	public async ValueTask InitializeAsync()
 	{
-		using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromSeconds(120));
+		using CancellationTokenSource cancellationTokenSource = new(TimeSpan.FromSeconds(180));
 
-		IDistributedApplicationTestingBuilder appHost =
-			await DistributedApplicationTestingBuilder.CreateAsync<FocusTemplate_AppHost>(cancellationTokenSource.Token);
+		IDistributedApplicationTestingBuilder builder =
+			await DistributedApplicationTestingBuilder.CreateAsync<FocusTemplate_AppHost>(
+				["Features:TlsOffloadingIngress=false", "Features:Analytics=false",],
+				cancellationTokenSource.Token);
 
-		this.app = await appHost.BuildAsync(cancellationTokenSource.Token);
+		this.app = await builder.BuildAsync(cancellationTokenSource.Token);
 		await this.app.StartAsync(cancellationTokenSource.Token);
-		await this.app.ResourceNotifications.WaitForResourceHealthyAsync("web", cancellationTokenSource.Token);
+		await this.app.ResourceNotifications.WaitForResourceHealthyAsync("bff", cancellationTokenSource.Token);
 
-		BaseUrl = this.app.GetEndpoint("web", "http").ToString();
+		BaseUrl = this.app.GetEndpoint("bff", "http").ToString();
 	}
 }

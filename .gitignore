@@ -432,3 +432,5 @@ FodyWeavers.xsd
 
 .claude/settings.local.json
 /.playwright-cli
+
+appsettings.local.json

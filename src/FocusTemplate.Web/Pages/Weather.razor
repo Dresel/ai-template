@@ -1,0 +1,43 @@
+@page "/weather"
+@using FocusTemplate.Shared
+@inject ApiClient Api
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Weather</h1>
+
+@if (Forecasts is null)
+{
+	<p data-testid="weather-loading">Loading...</p>
+}
+else
+{
+	<table data-testid="weather-table">
+		<thead>
+		<tr>
+			<th>Date</th>
+			<th>Temp. (C)</th>
+			<th>Temp. (F)</th>
+			<th>Summary</th>
+		</tr>
+		</thead>
+		<tbody>
+		@foreach (var forecast in Forecasts)
+		{
+			<tr data-testid="weather-row">
+				<td>@forecast.Date.ToShortDateString()</td>
+				<td>@forecast.TemperatureC</td>
+				<td>@forecast.TemperatureF</td>
+				<td>@forecast.Summary</td>
+			</tr>
+		}
+		</tbody>
+	</table>
+}
+
+@code
+{
+	private Shared.WeatherForecast[]? Forecasts { get; set; }
+
+	protected override async Task OnInitializedAsync() => Forecasts = await Api.GetWeatherAsync();
+}

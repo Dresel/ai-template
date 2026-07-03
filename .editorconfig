@@ -264,8 +264,11 @@ dotnet_diagnostic.sa1101.severity = none
 # SA1633: File must have header
 dotnet_diagnostic.sa1633.severity = none
 
-# SA1636: The file header copyright text should match the copyright text from the settings.
+# SA1636: File header copyright text must match
 dotnet_diagnostic.sa1636.severity = none
+
+# CA1716: Identifiers should not match keywords
+dotnet_diagnostic.ca1716.severity = none
 
 # ReSharper properties
 resharper_align_multiline_binary_expressions_chain = false
@@ -289,4 +292,5 @@ resharper_place_type_constraints_on_same_line = false
 resharper_space_within_single_line_array_initializer_braces = true
 resharper_trailing_comma_in_multiline_lists = true
 resharper_trailing_comma_in_singleline_lists = true
+resharper_wrap_chained_method_calls = chop_if_long
 resharper_wrap_multiple_type_parameter_constraints_style = chop_always
