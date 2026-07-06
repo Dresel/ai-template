@@ -19,7 +19,9 @@
 			"PowerShell(dotnet test *)",
 			"PowerShell(dotnet run *)",
 			"PowerShell(dotnet publish *)",
-			"PowerShell(dotnet format --verify-no-changes *)",
+			"PowerShell(dotnet format *)",
+			"PowerShell(dotnet jb *)",
+			"PowerShell(dotnet tool restore)",
 
 			"Bash(dotnet --info)",
 			"Bash(dotnet --version)",
@@ -28,7 +30,9 @@
 			"Bash(dotnet test *)",
 			"Bash(dotnet run *)",
 			"Bash(dotnet publish *)",
-			"Bash(dotnet format --verify-no-changes *)",
+			"Bash(dotnet format *)",
+			"Bash(dotnet jb *)",
+			"Bash(dotnet tool restore)",
 
 			"PowerShell(git status *)",
 			"PowerShell(git diff *)",
@@ -77,12 +81,12 @@
 			"mcp__aspire__search_*",
 			"mcp__aspire__doctor",
 			"mcp__aspire__select_apphost",
-			"mcp__aspire__refresh_tools"
+			"mcp__aspire__refresh_tools",
+			"mcp__aspire__execute_resource_command"
 		],
 		"ask": [
 			"WebFetch(domain:aka.ms)",
 
-			"PowerShell(dotnet format *)",
 			"PowerShell(dotnet tool install *)",
 			"PowerShell(dotnet tool update *)",
 			"PowerShell(dotnet workload install *)",
@@ -90,7 +94,6 @@
 			"PowerShell(dotnet ef database update *)",
 			"PowerShell(dotnet ef migrations remove *)",
 
-			"Bash(dotnet format *)",
 			"Bash(dotnet tool install *)",
 			"Bash(dotnet tool update *)",
 			"Bash(dotnet workload install *)",
@@ -143,9 +146,7 @@
 			"mcp__atlassian__create*",
 			"mcp__atlassian__edit*",
 			"mcp__atlassian__update*",
-			"mcp__atlassian__transition*",
-
-			"mcp__aspire__execute_resource_command"
+			"mcp__atlassian__transition*"
 		],
 		"deny": [
 			"PowerShell(dotnet user-secrets *)",
