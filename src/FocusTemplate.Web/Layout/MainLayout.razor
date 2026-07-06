@@ -1,3 +1,75 @@
 @inherits LayoutComponentBase
+@inject IJSRuntime JsRuntime
 
-@Body
+<Layout Sider Style="min-height: 100vh;">
+	<LayoutSider>
+		<LayoutSiderContent>
+			<Bar data-testid="nav-bar"
+				Mode="BarMode.VerticalInline"
+				CollapseMode="BarCollapseMode.Small"
+				Breakpoint="Breakpoint.Desktop"
+				NavigationBreakpoint="Breakpoint.Tablet"
+				ThemeContrast="ThemeContrast.Dark">
+				<BarBrand>
+					<BarItem>
+						<BarLink To="" data-testid="nav-brand">
+							<BarIcon IconName="@("rocket_launch")"/>
+							FocusTemplate
+						</BarLink>
+					</BarItem>
+				</BarBrand>
+				<BarMenu>
+					<BarStart>
+						<BarItem>
+							<BarLink To="" data-testid="nav-home">
+								<BarIcon IconName="@("home")"/>
+								Home
+							</BarLink>
+						</BarItem>
+						<BarItem>
+							<BarLink To="weather" data-testid="nav-weather">
+								<BarIcon IconName="@("cloud")"/>
+								Weather
+							</BarLink>
+						</BarItem>
+						<BarItem>
+							<BarLink To="diagnostics" data-testid="nav-diagnostics">
+								<BarIcon IconName="@("troubleshoot")"/>
+								Diagnostics
+							</BarLink>
+						</BarItem>
+					</BarStart>
+				</BarMenu>
+			</Bar>
+		</LayoutSiderContent>
+	</LayoutSider>
+	<Layout>
+		<LayoutHeader>
+			<Bar data-testid="top-bar" Breakpoint="Breakpoint.Desktop" ThemeContrast="ThemeContrast.Light">
+				<BarBrand>
+					<Heading Size="HeadingSize.Is5" Margin="Margin.Is0">Viva la Focus</Heading>
+				</BarBrand>
+
+				<BarItem Margin="Margin.IsAuto.FromStart">
+					<Button Color="Color.Secondary" Outline Clicked="@ToggleDarkModeAsync" data-testid="theme-toggle">
+						<Icon Name="@(darkMode ? "light_mode" : "dark_mode")"/>
+					</Button>
+				</BarItem>
+			</Bar>
+		</LayoutHeader>
+		<LayoutContent Padding="Padding.Is3">
+			@Body
+		</LayoutContent>
+	</Layout>
+</Layout>
+
+@code
+{
+	private bool darkMode;
+
+	private async Task ToggleDarkModeAsync()
+	{
+		darkMode = !darkMode;
+		await JsRuntime.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", darkMode ? "dark" : "light");
+	}
+}

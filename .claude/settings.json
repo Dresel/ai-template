@@ -10,6 +10,7 @@
 			"WebFetch(domain:api.github.com)",
 			"WebFetch(domain:raw.githubusercontent.com)",
 			"WebFetch(domain:devblogs.microsoft.com)",
+			"WebFetch(domain:blazorise.com)",
 
 			"PowerShell(dotnet --info)",
 			"PowerShell(dotnet --version)",

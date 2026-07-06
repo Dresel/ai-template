@@ -1,3 +1,6 @@
+using Blazorise;
+using Blazorise.Icons.Material;
+using Blazorise.Material;
 using FocusTemplate.Web;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -21,6 +24,11 @@ builder.AddBlazorClientServiceDefaults(serviceName: "web");
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress), });
 builder.Services.AddProxiedHttpClient<ApiClient>(builder.HostEnvironment, "api");
+
+builder.Services
+	.AddBlazorise(options => options.Immediate = true)
+	.AddMaterialProviders()
+	.AddMaterialIcons();
 
 WebAssemblyHost host = builder.Build();
 

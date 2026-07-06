@@ -41,39 +41,96 @@
 		content: "An error has occurred."
 	}
 
-.loading-progress {
-	position: absolute;
-	display: block;
-	width: 8rem;
-	height: 8rem;
-	inset: 20vh 0 auto 0;
-	margin: 0 auto 0 auto;
+.app-startup {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: clamp(1rem, 4vw, 2rem);
+	background: #fff;
 }
 
-	.loading-progress circle {
-		fill: none;
-		stroke: #e0e0e0;
-		stroke-width: 0.6rem;
-		transform-origin: 50% 50%;
-		transform: rotate(-90deg);
+.app-startup-shell {
+	width: min(100%, 24rem);
+	display: flex;
+	flex-direction: column;
+	gap: 0.625rem;
+}
+
+.app-startup-logo {
+	width: clamp(10rem, 40vw, 14rem);
+	height: auto;
+	align-self: center;
+	margin-bottom: 0.125rem;
+}
+
+.app-startup-label {
+	margin: 0;
+	color: #0f172a;
+	font-size: 0.9375rem;
+	font-weight: 600;
+	text-align: center;
+}
+
+.loading-progress {
+	position: relative;
+	display: block;
+	width: 100%;
+	height: 0.25rem;
+	overflow: hidden;
+	border-radius: 999px;
+	background: rgba(15, 23, 42, 0.1);
+}
+
+	.loading-progress::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		width: var(--blazor-load-percentage, 0%);
+		border-radius: inherit;
+		background: rgb(35 100 136);
+		transition: width 0.18s ease-out;
 	}
 
-		.loading-progress circle:last-child {
-			stroke: #1b6ec2;
-			stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
-			transition: stroke-dasharray 0.05s ease-in-out;
-		}
+.app-startup-meta {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.5rem;
+}
 
 .loading-progress-text {
-	position: absolute;
-	text-align: center;
-	font-weight: bold;
-	inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
+	min-width: 3ch;
+	color: #64748b;
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1.2;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
 }
 
-	.loading-progress-text:after {
-		content: var(--blazor-load-percentage-text, "Loading");
+	.loading-progress-text::after {
+		content: var(--blazor-load-percentage-text, "0%");
 	}
+
+@media (max-width: 480px) {
+	.app-startup-shell {
+		gap: 0.5rem;
+	}
+
+	.app-startup-logo {
+		margin-bottom: 0;
+	}
+
+	.app-startup-label {
+		font-size: 0.875rem;
+	}
+
+	.loading-progress-text {
+		font-size: 0.6875rem;
+	}
+}
 
 code {
 	color: #c02d76;
@@ -87,3 +144,109 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
 	text-align: start;
 }
+
+/* https://material-foundation.github.io/material-theme-builder/ */
+:root {
+	--mui-font-family: Roboto, Inter, "Helvetica Neue", "Arial Nova", "Nimbus Sans", "Noto Sans", Arial, sans-serif;
+	--mui-primary: rgb(35 100 136);
+	--mui-surface-tint: rgb(35 100 136);
+	--mui-on-primary: rgb(255 255 255);
+	--mui-primary-container: rgb(200 230 255);
+	--mui-on-primary-container: rgb(0 76 109);
+	--mui-secondary: rgb(79 97 110);
+	--mui-on-secondary: rgb(255 255 255);
+	--mui-secondary-container: rgb(210 229 245);
+	--mui-on-secondary-container: rgb(56 73 86);
+	--mui-tertiary: rgb(99 89 124);
+	--mui-on-tertiary: rgb(255 255 255);
+	--mui-tertiary-container: rgb(233 221 255);
+	--mui-on-tertiary-container: rgb(75 66 99);
+	--mui-error: rgb(186 26 26);
+	--mui-on-error: rgb(255 255 255);
+	--mui-error-container: rgb(255 218 214);
+	--mui-on-error-container: rgb(147 0 10);
+	--mui-background: rgb(246 250 254);
+	--mui-on-background: rgb(24 28 32);
+	--mui-surface: rgb(246 250 254);
+	--mui-on-surface: rgb(24 28 32);
+	--mui-surface-variant: rgb(221 227 234);
+	--mui-on-surface-variant: rgb(65 72 77);
+	--mui-outline: rgb(113 120 126);
+	--mui-outline-variant: rgb(193 199 206);
+	--mui-shadow: rgb(0 0 0);
+	--mui-scrim: rgb(0 0 0);
+	--mui-inverse-surface: rgb(45 49 53);
+	--mui-inverse-on-surface: rgb(238 241 246);
+	--mui-inverse-primary: rgb(147 205 246);
+	--mui-primary-fixed: rgb(200 230 255);
+	--mui-on-primary-fixed: rgb(0 30 46);
+	--mui-primary-fixed-dim: rgb(147 205 246);
+	--mui-on-primary-fixed-variant: rgb(0 76 109);
+	--mui-secondary-fixed: rgb(210 229 245);
+	--mui-on-secondary-fixed: rgb(11 29 41);
+	--mui-secondary-fixed-dim: rgb(182 201 216);
+	--mui-on-secondary-fixed-variant: rgb(56 73 86);
+	--mui-tertiary-fixed: rgb(233 221 255);
+	--mui-on-tertiary-fixed: rgb(31 22 53);
+	--mui-tertiary-fixed-dim: rgb(205 192 233);
+	--mui-on-tertiary-fixed-variant: rgb(75 66 99);
+	--mui-surface-dim: rgb(215 218 223);
+	--mui-surface-bright: rgb(246 250 254);
+	--mui-surface-container-lowest: rgb(255 255 255);
+	--mui-surface-container-low: rgb(241 244 249);
+	--mui-surface-container: rgb(235 238 243);
+	--mui-surface-container-high: rgb(229 232 237);
+	--mui-surface-container-highest: rgb(223 227 231);
+}
+
+	:root[data-theme="dark"] {
+		--mui-primary: rgb(147 205 246);
+		--mui-surface-tint: rgb(147 205 246);
+		--mui-on-primary: rgb(0 52 76);
+		--mui-primary-container: rgb(0 76 109);
+		--mui-on-primary-container: rgb(200 230 255);
+		--mui-secondary: rgb(182 201 216);
+		--mui-on-secondary: rgb(33 50 62);
+		--mui-secondary-container: rgb(56 73 86);
+		--mui-on-secondary-container: rgb(210 229 245);
+		--mui-tertiary: rgb(205 192 233);
+		--mui-on-tertiary: rgb(52 43 75);
+		--mui-tertiary-container: rgb(75 66 99);
+		--mui-on-tertiary-container: rgb(233 221 255);
+		--mui-error: rgb(255 180 171);
+		--mui-on-error: rgb(105 0 5);
+		--mui-error-container: rgb(147 0 10);
+		--mui-on-error-container: rgb(255 218 214);
+		--mui-background: rgb(16 20 23);
+		--mui-on-background: rgb(223 227 231);
+		--mui-surface: rgb(16 20 23);
+		--mui-on-surface: rgb(223 227 231);
+		--mui-surface-variant: rgb(65 72 77);
+		--mui-on-surface-variant: rgb(193 199 206);
+		--mui-outline: rgb(139 145 152);
+		--mui-outline-variant: rgb(65 72 77);
+		--mui-shadow: rgb(0 0 0);
+		--mui-scrim: rgb(0 0 0);
+		--mui-inverse-surface: rgb(223 227 231);
+		--mui-inverse-on-surface: rgb(45 49 53);
+		--mui-inverse-primary: rgb(35 100 136);
+		--mui-primary-fixed: rgb(200 230 255);
+		--mui-on-primary-fixed: rgb(0 30 46);
+		--mui-primary-fixed-dim: rgb(147 205 246);
+		--mui-on-primary-fixed-variant: rgb(0 76 109);
+		--mui-secondary-fixed: rgb(210 229 245);
+		--mui-on-secondary-fixed: rgb(11 29 41);
+		--mui-secondary-fixed-dim: rgb(182 201 216);
+		--mui-on-secondary-fixed-variant: rgb(56 73 86);
+		--mui-tertiary-fixed: rgb(233 221 255);
+		--mui-on-tertiary-fixed: rgb(31 22 53);
+		--mui-tertiary-fixed-dim: rgb(205 192 233);
+		--mui-on-tertiary-fixed-variant: rgb(75 66 99);
+		--mui-surface-dim: rgb(16 20 23);
+		--mui-surface-bright: rgb(53 58 61);
+		--mui-surface-container-lowest: rgb(10 15 18);
+		--mui-surface-container-low: rgb(24 28 32);
+		--mui-surface-container: rgb(28 32 36);
+		--mui-surface-container-high: rgb(38 42 46);
+		--mui-surface-container-highest: rgb(49 53 57);
+	}

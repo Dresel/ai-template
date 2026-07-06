@@ -1,5 +1,5 @@
-# Remove the line below if you want to inherit .editorconfig settings from higher directories
 root = true
+# Remove the line below if you want to inherit .editorconfig settings from higher directories
 
 # All files
 [*]
@@ -279,6 +279,10 @@ resharper_csharp_keep_blank_lines_in_code = 1
 resharper_csharp_keep_blank_lines_in_declarations = 1
 resharper_csharp_max_line_length = 140
 resharper_empty_string = string_empty
+resharper_html_allow_far_alignment = false
+resharper_html_alignment_tab_fill_style = use_tabs_only
+resharper_html_attribute_indent = single_indent
+resharper_html_space_before_self_closing = true
 resharper_indent_raw_literal_string = indent
 resharper_keep_existing_arrangement = false
 resharper_keep_existing_declaration_block_arrangement = false

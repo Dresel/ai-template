@@ -40,6 +40,19 @@
           "System.IO.Hashing": "8.0.0"
         }
       },
+      "Blazorise": {
+        "type": "Transitive",
+        "resolved": "2.2.1",
+        "contentHash": "RrLwMJRb2AdFASluXI9waxdfYumXed3eirjuIsxtgSarjKMpcUrO0Kj72iy5p430uzd6/lkUIf0UOiDlGLVKSw==",
+        "dependencies": {
+          "Blazorise.Licensing": "1.3.0"
+        }
+      },
+      "Blazorise.Licensing": {
+        "type": "Transitive",
+        "resolved": "1.3.0",
+        "contentHash": "NvQlbUgd6jY/ZfkJPlhHLaMVyvfp24OMehFV8Y6mrqLHqC0CfcoE+6+YP9FZMZKNAWmcNZ85WXmYFWVl0UXGfw=="
+      },
       "Microsoft.Extensions.AmbientMetadata.Application": {
         "type": "Transitive",
         "resolved": "10.7.0",
@@ -177,6 +190,8 @@
       "focustemplate.web": {
         "type": "Project",
         "dependencies": {
+          "Blazorise.Icons.Material": "[2.2.1, )",
+          "Blazorise.Material": "[2.2.1, )",
           "FocusTemplate.Shared": "[1.0.0, )",
           "FocusTemplate.Web.ClientServiceDefaults": "[1.0.0, )",
           "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-preview.5.26302.115, )",
@@ -194,6 +209,24 @@
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.16.0, )",
           "OpenTelemetry.Extensions.Hosting": "[1.16.0, )",
           "OpenTelemetry.Instrumentation.Http": "[1.16.0, )"
+        }
+      },
+      "Blazorise.Icons.Material": {
+        "type": "CentralTransitive",
+        "requested": "[2.2.1, )",
+        "resolved": "2.2.1",
+        "contentHash": "m4jk7XO/F7CtMtaOuB9uBiXpCmwvZp7vluvkI2QZIgZOJ8aeKmGdG+9LoLfHXxQ4SbiWLQUDKo3b7ctu2XuCFQ==",
+        "dependencies": {
+          "Blazorise": "2.2.1"
+        }
+      },
+      "Blazorise.Material": {
+        "type": "CentralTransitive",
+        "requested": "[2.2.1, )",
+        "resolved": "2.2.1",
+        "contentHash": "JBoi2WnRx60SZjN/2KlZ80BUWmh0GUypmreF6FoGaWDLjxzjXleebrEErGtBrpG7WnnFiDiWNgaKiEsLI2Jc9A==",
+        "dependencies": {
+          "Blazorise": "2.2.1"
         }
       },
       "Microsoft.AspNetCore.Components.WebAssembly": {
