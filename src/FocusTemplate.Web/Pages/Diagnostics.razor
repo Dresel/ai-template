@@ -47,9 +47,9 @@ else
 		{
 			Request = await Http.GetFromJsonAsync<RequestDiagnostics>("debug/request");
 		}
-		catch (HttpRequestException ex)
+		catch (HttpRequestException e)
 		{
-			DiagnosticsError = ex.Message;
+			DiagnosticsError = e.Message;
 		}
 	}
 }

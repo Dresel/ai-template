@@ -7,7 +7,10 @@ a backend API, end-to-end OpenTelemetry, Umami analytics, and Playwright E2E tes
 
 - **FocusTemplate.AppHost** - Aspire orchestrator. Wires the API, BFF, an optional nginx TLS
   ingress, and optional Umami analytics.
-- **FocusTemplate.Api** - internal minimal API; never exposed to the browser directly.
+- **FocusTemplate.Api** - internal minimal API; never exposed to the browser directly. Reads/writes
+  through EF Core (`AppDbContext`), backed by PostgreSQL.
+- **FocusTemplate.Data** - EF Core data layer: `AppDbContext`, entities, the `Migrations/` folder,
+  a design-time factory, and the dev seed. Referenced by the API and the AppHost migration resource.
 - **FocusTemplate.Web** - the Blazor WASM client (Blazorise Material UI).
 - **FocusTemplate.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
   `/_otlp/*` → dashboard, `/_analytics/*` → Umami. The browser only ever talks to the BFF.
@@ -27,6 +30,13 @@ a backend API, end-to-end OpenTelemetry, Umami analytics, and Playwright E2E tes
 - **Blazor WASM client** - `Microsoft.AspNetCore.Components.WebAssembly`; `Blazorise.Material` +
   `Blazorise.Icons.Material` (Material 3 UI).
 - **API** - `Microsoft.AspNetCore.OpenApi`; `Microsoft.OpenApi` pinned above a vulnerable transitive.
+- **Data / EF Core** - `Aspire.Npgsql.EntityFrameworkCore.PostgreSQL` (client integration:
+  `AddNpgsqlDbContext`, health checks, OTel); `Npgsql.EntityFrameworkCore.PostgreSQL` provider;
+  `Microsoft.EntityFrameworkCore.Design` (design-time, tooling); the whole EF stack is pinned to one
+  version in `Directory.Packages.props`. The `dotnet-ef` CLI is a repo-local tool
+  (`.config/dotnet-tools.json`). AppHost wiring uses `Aspire.Hosting.PostgreSQL` +
+  `Aspire.Hosting.EntityFrameworkCore` (`AddEFMigrations`).
+- **Testing (data)** - `Testcontainers.PostgreSql` - real Postgres per integration-test assembly.
 - **Shared infra (ServiceDefaults)** - `Microsoft.Extensions.ServiceDiscovery`;
   `Microsoft.Extensions.Http.Resilience` (Polly-based).
 - **Observability** - `OpenTelemetry.Exporter.OpenTelemetryProtocol`, `OpenTelemetry.Extensions.Hosting`,
@@ -60,6 +70,11 @@ on the affected resource (Aspire dashboard or MCP).
 
 ## Agent toolbox
 
+**Aspire moves fast - always check the current Aspire docs before designing, recommending, or
+changing anything Aspire-related** (AppHost wiring, integrations, migrations, publish/deploy):
+`aspire docs search` or MCP `search_docs`. Built-in model knowledge is stale - e.g. the hand-rolled
+EF migration-worker pattern was superseded by `AddEFMigrations`.
+
 Skills live in `.claude/skills/`. Pick by task - these are all permission-allowlisted:
 
 | Need | Use |
@@ -83,8 +98,10 @@ feature, specify the new behavior with one.
 2. **Read first** - Grep/Glob/Read the affected code and its existing tests. Don't guess APIs:
    Aspire questions → `aspire docs`; any other package (Blazorise, YARP, OTel, …) → `dotnet-inspect`.
 3. **Add the failing test at the smallest level that fits:**
-   - **Integration** (one service: DI, middleware, serialization, auth, framework) →
-     `FocusTemplate.Api.IntegrationTests`.
+   - **Integration** (one service: DI, middleware, serialization, auth, framework, **EF Core / SQL**) →
+     `FocusTemplate.Api.IntegrationTests`. A real Postgres runs via Testcontainers (assembly fixture,
+     migrations applied once); tests arrange rows against an empty schema. See **Integration test
+     database** below for the reset/isolation contract.
    - **Aspire system** (cross-resource: BFF↔API, ingress, service discovery, startup order,
      scale-out, telemetry) → `FocusTemplate.Web.E2E` (boots the AppHost via
      `DistributedApplicationTestingBuilder`).
@@ -111,13 +128,65 @@ key events → assert value *and* caret.
 system test through the nginx ingress only if real infra is required, using logs/traces to find the
 failing resource.
 
-Prefer already-permitted MCP tools / skills and **bare single commands** (no `&&`/pipes/`cd`) so the
-loop runs without permission prompts.
+**Avoid permission prompts - prefer allowlisted MCP tools and bare single commands.** The
+`.claude/settings.json` allowlist matches a compound command **segment by segment**: a pipeline
+(`a | b | c`) auto-runs when **every** segment matches an allow rule **and none matches a deny rule**
+(deny always beats allow). So `dotnet build * | Select-String * | Select-Object *` auto-runs once each
+segment is allowed - the `Select-String`/`Select-Object`/`ConvertFrom-Json` allow entries exist for
+exactly this. Traps, learned the hard way:
+- **Workspace trust gates the project allowlist.** In an untrusted workspace every `allow` rule in
+  `.claude/settings.json` is silently ignored, while read-only commands still auto-run via built-in
+  heuristics - which masks the problem. Symptom: allowlisted *mutating* commands (build/format/test)
+  prompt although read-only ones don't. Trust is per-user state in `~/.claude.json`; on Windows the
+  same folder can be registered twice (`C:\…` vs `C:/…` spelling, e.g. CLI vs desktop app) with
+  separate trust flags - check `hasTrustDialogAccepted` on **both** entries.
+- Settings changes load at **session start** - restart the session after editing any settings file.
 
 ## Conventions
 
 - **Feature flags**: `Features:Analytics` and `Features:TlsOffloadingIngress` in the AppHost's
   `appsettings.json`, overridable per-developer via the gitignored `appsettings.local.json`. The
   E2E fixture pins them via CLI args.
-- **Shared DTOs** go in `FocusTemplate.Shared`.
+- **Shared DTOs** go in `FocusTemplate.Shared`. Entities (`FocusTemplate.Data`) stay server-side;
+  map entity => DTO in the API endpoint, never expose entities to the client.
 - **Keep `data-testid` attributes** - the Playwright E2E suite selects on them.
+
+### Database & migrations
+
+- **Schema is applied by the `api-migrations` resource, never by the API.** The API only reads/writes;
+  it `WaitForCompletion`s the migration resource. This is safe under scale-out (no startup migration
+  race). Locally/E2E the resource runs `dotnet ef database update` on start; `aspire publish` emits it
+  as an idempotent migration-bundle container (a one-shot Job/`restart:no` per compute target).
+- **Add a migration** (stop the AppHost first - bin lock):
+  `dotnet dotnet-ef migrations add <Name> --project src/FocusTemplate.Data --startup-project src/FocusTemplate.Data`.
+  The design-time `AppDbContextFactory` needs no live DB for this. Migration files land in
+  `src/FocusTemplate.Data/Migrations/` and are exempt from StyleCop via an `.editorconfig`
+  `generated_code` carve-out. You can also use the migration resource's dashboard commands
+  (Add Migration, Update/Reset/Drop Database, Status).
+- **Dev seed data** lives in `WeatherSeed` and runs via EF `UseSeeding`/`UseAsyncSeeding` when the
+  migration tool applies migrations in **run mode only** (the AppHost sets `Database__SeedTestData` on
+  the tool resource via `configureToolResource`; the published bundle never seeds). The seed is
+  idempotent (insert-if-empty). Implement **both** the sync and async seed delegates - the EF CLI uses
+  the synchronous one. Integration tests deliberately run against an unseeded schema.
+- **No data volume** on the dev Postgres: each `aspire start` / E2E run gets a fresh, re-seeded
+  database, keeping runs deterministic and hermetic.
+
+### Integration test database
+
+Isolation model: **one container, one database per test class, fresh state per test.**
+
+- `PostgresFixture` (assembly fixture) starts **one** Postgres container and hands out databases on
+  demand (`CreateDatabaseAsync`). Only `CREATE DATABASE` is serialized (concurrent creations contend
+  on the template database); migrations run in parallel.
+- `ApiFixture` (class fixture - xunit creates one instance **per test class**) provisions its own
+  GUID-named database, migrates it, and points the API at it. Test classes therefore share nothing
+  and run **in parallel** - no xUnit collection needed.
+- **Test classes derive from `ApiTestBase`**: before every test it resets the class database via
+  `ApiFixture.ResetAsync()` ([Respawn](https://github.com/jbogard/Respawn), FK-safe,
+  `__EFMigrationsHistory` preserved so migrations never re-run). Every test starts on an empty,
+  migrated schema and **arranges exactly the rows it asserts** (`Factory.CreateDbContext()`).
+
+Tests never rely on the dev seed - `WeatherSeed` is dev/E2E-only, and the E2E suite verifies it
+through the production seeding path. If a read-heavy suite over an expensive shared dataset emerges
+later, add a **seeded, immutable, shared** database + fixture for those tests (seed once, read in
+parallel, never mutate).

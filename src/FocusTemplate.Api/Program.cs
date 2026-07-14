@@ -1,4 +1,6 @@
+using FocusTemplate.Data;
 using FocusTemplate.Shared;
+using Microsoft.EntityFrameworkCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,8 @@ builder.AddServiceDefaults();
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.AddNpgsqlDbContext<AppDbContext>("focusdb");
 
 WebApplication app = builder.Build();
 
@@ -18,20 +22,13 @@ if (app.Environment.IsDevelopment())
 	app.MapOpenApi();
 }
 
-string[] summaries = ["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching",];
-
 app.MapGet(
 		"/weatherforecast",
-		() =>
+		async (AppDbContext dbContext, CancellationToken cancellationToken) =>
 		{
-			WeatherForecast[] forecast =
-			[
-				..Enumerable.Range(1, 5)
-					.Select(index => new WeatherForecast(
-						DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-						Random.Shared.Next(-20, 55),
-						summaries[Random.Shared.Next(summaries.Length)])),
-			];
+			WeatherForecastResponse[] forecast = await dbContext.WeatherForecasts.OrderBy(entity => entity.Date)
+				.Select(entity => new WeatherForecastResponse(entity.Date, entity.TemperatureC, entity.Summary))
+				.ToArrayAsync(cancellationToken);
 
 			return forecast;
 		})

@@ -4,6 +4,6 @@ namespace FocusTemplate.Web;
 
 public sealed class ApiClient(HttpClient httpClient)
 {
-	public async Task<WeatherForecast[]> GetWeatherAsync(CancellationToken cancellationToken = default) =>
-		await httpClient.GetFromJsonAsync<WeatherForecast[]>("weatherforecast", cancellationToken) ?? [];
+	public async Task<WeatherForecastResponse[]> GetWeatherAsync(CancellationToken cancellationToken = default) =>
+		await httpClient.GetFromJsonAsync<WeatherForecastResponse[]>("weatherforecast", cancellationToken) ?? [];
 }

@@ -13,6 +13,7 @@
     <File Path="nuget.config" />
     <File Path="stylecop.json" />
   </Folder>
+  <Project Path="src/FocusTemplate.Data/FocusTemplate.Data.csproj" />
   <Project Path="src/FocusTemplate.Api/FocusTemplate.Api.csproj" />
   <Project Path="src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj" Id="3dbf55d3-63b4-4f1b-a28b-c7313289b89f" />
   <Project Path="src/FocusTemplate.ServiceDefaults/FocusTemplate.ServiceDefaults.csproj" Id="b487fad3-efd6-44f0-ad27-6e19ecab0715" />

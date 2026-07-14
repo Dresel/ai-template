@@ -3,6 +3,11 @@
 	"permissions": {
 		"allow": [
 			"PowerShell(Get-ChildItem *)",
+			"PowerShell(ConvertFrom-Json *)",
+			"PowerShell(Select-Object *)",
+			"PowerShell(Select-String *)",
+			"PowerShell(Where-Object *)",
+			"PowerShell(Measure-Object *)",
 
 			"WebFetch(domain:learn.microsoft.com)",
 			"WebFetch(domain:aspire.dev)",
@@ -22,6 +27,7 @@
 			"PowerShell(dotnet format *)",
 			"PowerShell(dotnet jb *)",
 			"PowerShell(dotnet tool restore)",
+			"PowerShell(dotnet package search *)",
 
 			"Bash(dotnet --info)",
 			"Bash(dotnet --version)",
@@ -33,6 +39,7 @@
 			"Bash(dotnet format *)",
 			"Bash(dotnet jb *)",
 			"Bash(dotnet tool restore)",
+			"Bash(dotnet package search  *)",
 
 			"PowerShell(git status *)",
 			"PowerShell(git diff *)",
@@ -44,6 +51,9 @@
 			"Bash(git log *)",
 			"Bash(git show *)",
 
+			"PowerShell(dnx dotnet-inspect *)",
+			"Bash(dnx dotnet-inspect *)",
+
 			"PowerShell(aspire --help)",
 			"PowerShell(aspire --version)",
 			"PowerShell(aspire start *)",
@@ -52,6 +62,12 @@
 			"PowerShell(aspire describe *)",
 			"PowerShell(aspire wait *)",
 			"PowerShell(aspire otel *)",
+			"PowerShell(aspire docs *)",
+			"PowerShell(aspire doctor *)",
+			"PowerShell(aspire export *)",
+			"PowerShell(aspire config get *)",
+			"PowerShell(aspire config list *)",
+			"PowerShell(aspire config info *)",
 			"PowerShell(aspire stop)",
 
 			"Bash(aspire --help)",
@@ -62,6 +78,12 @@
 			"Bash(aspire describe *)",
 			"Bash(aspire wait *)",
 			"Bash(aspire otel *)",
+			"Bash(aspire docs *)",
+			"Bash(aspire doctor *)",
+			"Bash(aspire export *)",
+			"Bash(aspire config get *)",
+			"Bash(aspire config list *)",
+			"Bash(aspire config info *)",
 			"Bash(aspire stop)",
 
 			"Skill(playwright-cli)",
