@@ -1,5 +1,5 @@
 <Solution>
-  <Folder Name="/Solution Items/">
+  <Folder Name="/_global/">
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
     <File Path=".gitignore" />
@@ -13,14 +13,18 @@
     <File Path="nuget.config" />
     <File Path="stylecop.json" />
   </Folder>
-  <Project Path="src/FocusTemplate.Data/FocusTemplate.Data.csproj" />
-  <Project Path="src/FocusTemplate.Api/FocusTemplate.Api.csproj" />
+  <Folder Name="/admin/">
+    <Project Path="src/admin/FocusTemplate.Admin.Api/FocusTemplate.Admin.Api.csproj" />
+    <Project Path="src/admin/FocusTemplate.Admin.Web.Bff/FocusTemplate.Admin.Web.Bff.csproj" />
+    <Project Path="src/admin/FocusTemplate.Admin.Shared/FocusTemplate.Admin.Shared.csproj" />
+    <Project Path="src/admin/FocusTemplate.Admin.Web.ClientServiceDefaults/FocusTemplate.Admin.Web.ClientServiceDefaults.csproj" />
+    <Project Path="src/admin/FocusTemplate.Admin.Web/FocusTemplate.Admin.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FocusTemplate.Admin.Api.IntegrationTests/FocusTemplate.Admin.Api.IntegrationTests.csproj" />
+    <Project Path="tests/FocusTemplate.Admin.Web.E2E/FocusTemplate.Admin.Web.E2E.csproj" />
+  </Folder>
   <Project Path="src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj" Id="3dbf55d3-63b4-4f1b-a28b-c7313289b89f" />
+  <Project Path="src/FocusTemplate.Data/FocusTemplate.Data.csproj" />
   <Project Path="src/FocusTemplate.ServiceDefaults/FocusTemplate.ServiceDefaults.csproj" Id="b487fad3-efd6-44f0-ad27-6e19ecab0715" />
-  <Project Path="src/FocusTemplate.Shared/FocusTemplate.Shared.csproj" />
-  <Project Path="src/FocusTemplate.Web/FocusTemplate.Web.csproj" />
-  <Project Path="src/FocusTemplate.Web.Bff/FocusTemplate.Web.Bff.csproj" />
-  <Project Path="src/FocusTemplate.Web.ClientServiceDefaults/FocusTemplate.Web.ClientServiceDefaults.csproj" />
-  <Project Path="tests/FocusTemplate.Api.IntegrationTests/FocusTemplate.Api.IntegrationTests.csproj" />
-  <Project Path="tests/FocusTemplate.Web.E2E/FocusTemplate.Web.E2E.csproj" />
 </Solution>

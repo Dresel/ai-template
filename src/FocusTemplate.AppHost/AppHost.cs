@@ -10,11 +10,11 @@ bool addAnalytics = builder.Configuration.GetValue("Features:Analytics", true);
 bool addTlsOffloadingIngress = builder.Configuration.GetValue("Features:TlsOffloadingIngress", true);
 
 IResourceBuilder<PostgresDatabaseResource> focusDb = builder.AddPostgres("postgres").AddDatabase("focusdb");
-IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Api>("api").WithReference(focusDb).WaitFor(focusDb);
+IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api").WithReference(focusDb).WaitFor(focusDb);
 
 // See https://aspire.dev/integrations/databases/efcore/migrations/
 IResourceBuilder<EFMigrationResource> migrations = api.AddEFMigrations(
-		"api-migrations",
+		"migrations",
 		"FocusTemplate.Data.AppDbContext",
 		tool =>
 		{
@@ -32,7 +32,7 @@ IResourceBuilder<EFMigrationResource> migrations = api.AddEFMigrations(
 
 api.WaitForCompletion(migrations);
 
-IResourceBuilder<ProjectResource> web = builder.AddProject<FocusTemplate_Web_Bff>("bff")
+IResourceBuilder<ProjectResource> web = builder.AddProject<FocusTemplate_Admin_Web_Bff>("admin-bff")
 	.ProxyBlazorService(api)
 	.ProxyBlazorTelemetry()
 	.WaitFor(api);

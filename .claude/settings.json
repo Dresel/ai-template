@@ -2,6 +2,9 @@
 	"enabledMcpjsonServers": [ "aspire" ],
 	"permissions": {
 		"allow": [
+			"ToolSearch",
+			"WebSearch",
+
 			"PowerShell(Get-ChildItem *)",
 			"PowerShell(ConvertFrom-Json *)",
 			"PowerShell(Select-Object *)",
@@ -123,6 +126,7 @@
 			"Bash(dotnet ef database update *)",
 			"Bash(dotnet ef migrations remove *)",
 
+			"PowerShell(git add *)",
 			"PowerShell(git push *)",
 			"PowerShell(git reset *)",
 			"PowerShell(git clean *)",
@@ -132,6 +136,7 @@
 			"PowerShell(del *)",
 			"PowerShell(rmdir *)",
 
+			"Bash(git add *)",
 			"Bash(git push *)",
 			"Bash(git reset *)",
 			"Bash(git clean *)",
