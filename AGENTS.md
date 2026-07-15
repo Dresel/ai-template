@@ -7,16 +7,16 @@ a backend API, end-to-end OpenTelemetry, Umami analytics, and Playwright E2E tes
 
 - **FocusTemplate.AppHost** - Aspire orchestrator. Wires the API, BFF, an optional nginx TLS
   ingress, and optional Umami analytics.
-- **FocusTemplate.Api** - internal minimal API; never exposed to the browser directly. Reads/writes
+- **FocusTemplate.Admin.Api** - internal minimal API; never exposed to the browser directly. Reads/writes
   through EF Core (`AppDbContext`), backed by PostgreSQL.
 - **FocusTemplate.Data** - EF Core data layer: `AppDbContext`, entities, the `Migrations/` folder,
   a design-time factory, and the dev seed. Referenced by the API and the AppHost migration resource.
-- **FocusTemplate.Web** - the Blazor WASM client (Blazorise Material UI).
-- **FocusTemplate.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
+- **FocusTemplate.Admin.Web** - the Blazor WASM client (Blazorise Material UI).
+- **FocusTemplate.Admin.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
   `/_otlp/*` → dashboard, `/_analytics/*` → Umami. The browser only ever talks to the BFF.
-- **FocusTemplate.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
+- **FocusTemplate.Admin.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
 - **FocusTemplate.ServiceDefaults** - server-side Aspire defaults (OTel, service discovery, health).
-- **FocusTemplate.Shared** - DTOs shared between the server and the WASM client.
+- **FocusTemplate.Admin.Shared** - DTOs shared between the server and the WASM client.
 
 ## Tech stack
 
@@ -84,7 +84,7 @@ Skills live in `.claude/skills/`. Pick by task - these are all permission-allowl
 | Apply a code change to a running resource | Aspire MCP `execute_resource_command` → `rebuild` (no full restart) |
 | Aspire API / workflow questions | `aspire docs search/get`, `aspire docs api search --language csharp` (or MCP `search_docs`/`get_doc`) |
 | Any .NET package API question (Blazorise, YARP, OTel, …) | `dotnet-inspect` skill: `dnx dotnet-inspect -y -- member/type/find/diff --package <id>` |
-| Browser reproduction, manual UI checks, screenshots | `playwright-cli` skill (persistent E2E tests go in `FocusTemplate.Web.E2E`) |
+| Browser reproduction, manual UI checks, screenshots | `playwright-cli` skill (persistent E2E tests go in `FocusTemplate.Admin.Web.E2E`) |
 | Formatting | `dotnet format`, `dotnet jb cleanupcode` (see above) |
 | Wire an existing app into Aspire (one-time) | `aspireify` skill - already completed for this repo |
 
@@ -99,14 +99,14 @@ feature, specify the new behavior with one.
    Aspire questions → `aspire docs`; any other package (Blazorise, YARP, OTel, …) → `dotnet-inspect`.
 3. **Add the failing test at the smallest level that fits:**
    - **Integration** (one service: DI, middleware, serialization, auth, framework, **EF Core / SQL**) →
-     `FocusTemplate.Api.IntegrationTests`. A real Postgres runs via Testcontainers (assembly fixture,
+     `FocusTemplate.Admin.Api.IntegrationTests`. A real Postgres runs via Testcontainers (assembly fixture,
      migrations applied once); tests arrange rows against an empty schema. See **Integration test
      database** below for the reset/isolation contract.
    - **Aspire system** (cross-resource: BFF↔API, ingress, service discovery, startup order,
-     scale-out, telemetry) → `FocusTemplate.Web.E2E` (boots the AppHost via
+     scale-out, telemetry) → `FocusTemplate.Admin.Web.E2E` (boots the AppHost via
      `DistributedApplicationTestingBuilder`).
    - **UI** (DOM, input, caret, focus, keyboard, routing, client validation, user flow) →
-     `FocusTemplate.Web.E2E` Playwright, through the BFF.
+     `FocusTemplate.Admin.Web.E2E` Playwright, through the BFF.
    - **Unit** (pure logic) → add a unit project when such logic first appears; none today.
 4. **Watch it fail** - stop the AppHost (bin lock), then `dotnet test FocusTemplate.slnx --filter <name>`.
    Confirm the failure matches the report, not a setup gap.
@@ -147,13 +147,13 @@ exactly this. Traps, learned the hard way:
 - **Feature flags**: `Features:Analytics` and `Features:TlsOffloadingIngress` in the AppHost's
   `appsettings.json`, overridable per-developer via the gitignored `appsettings.local.json`. The
   E2E fixture pins them via CLI args.
-- **Shared DTOs** go in `FocusTemplate.Shared`. Entities (`FocusTemplate.Data`) stay server-side;
+- **Shared DTOs** go in `FocusTemplate.Admin.Shared`. Entities (`FocusTemplate.Data`) stay server-side;
   map entity => DTO in the API endpoint, never expose entities to the client.
 - **Keep `data-testid` attributes** - the Playwright E2E suite selects on them.
 
 ### Database & migrations
 
-- **Schema is applied by the `api-migrations` resource, never by the API.** The API only reads/writes;
+- **Schema is applied by the `migrations` resource, never by the API.** The API only reads/writes;
   it `WaitForCompletion`s the migration resource. This is safe under scale-out (no startup migration
   race). Locally/E2E the resource runs `dotnet ef database update` on start; `aspire publish` emits it
   as an idempotent migration-bundle container (a one-shot Job/`restart:no` per compute target).
