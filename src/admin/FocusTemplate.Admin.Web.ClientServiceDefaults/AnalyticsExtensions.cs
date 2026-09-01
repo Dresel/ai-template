@@ -22,7 +22,16 @@ public static class AnalyticsExtensions
 		}
 
 		IJSInProcessRuntime jsRuntime = (IJSInProcessRuntime)host.Services.GetRequiredService<IJSRuntime>();
-		jsRuntime.InvokeVoid("blazorClientAnalytics.load", scriptUrl, websiteId);
+
+		try
+		{
+			jsRuntime.InvokeVoid("blazorClientAnalytics.load", scriptUrl, websiteId);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			throw;
+		}
 
 		return host;
 	}

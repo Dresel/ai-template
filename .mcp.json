@@ -4,6 +4,18 @@
 			"type": "stdio",
 			"command": "aspire",
 			"args": [ "agent", "mcp" ]
+		},
+		"appium": {
+			"type": "stdio",
+			"command": "npx",
+			"args": [ "appium-mcp@1.87.6" ],
+			"env": {
+				"SCREENSHOTS_DIR": ".artifacts/appium"
+			}
+		},
+		"spatial-focus-docs": {
+			"type": "http",
+			"url": "https://docs.spatial-focus.net/mcp"
 		}
 	}
 }

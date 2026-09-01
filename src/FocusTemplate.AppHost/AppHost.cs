@@ -1,4 +1,6 @@
+using Aspire.Hosting.DevTunnels;
 using Aspire.Hosting.EntityFrameworkCore;
+using Aspire.Hosting.Maui;
 using FocusTemplate.AppHost;
 using Microsoft.Extensions.Configuration;
 using Projects;
@@ -8,6 +10,7 @@ builder.AddLocalSettings();
 
 bool addAnalytics = builder.Configuration.GetValue("Features:Analytics", true);
 bool addTlsOffloadingIngress = builder.Configuration.GetValue("Features:TlsOffloadingIngress", true);
+bool addMobile = builder.Configuration.GetValue("Features:Mobile", false);
 
 IResourceBuilder<PostgresDatabaseResource> focusDb = builder.AddPostgres("postgres").AddDatabase("focusdb");
 IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api").WithReference(focusDb).WaitFor(focusDb);
@@ -31,6 +34,36 @@ IResourceBuilder<EFMigrationResource> migrations = api.AddEFMigrations(
 	.PublishAsMigrationBundle(publishContainer: true);
 
 api.WaitForCompletion(migrations);
+
+IResourceBuilder<ProjectResource> publicApi =
+	builder.AddProject<FocusTemplate_Public_Api>("public-api").WithReference(focusDb).WaitFor(focusDb);
+publicApi.WaitForCompletion(migrations);
+
+if (addMobile)
+{
+	// See https://aspire.dev/integrations/dotnet/maui/ - ProjectReferences not supported, must reference the csproj directly.
+	IResourceBuilder<MauiProjectResource> mobile = builder.AddMauiProject(
+		"mobile",
+		"../public/FocusTemplate.Public.Mobile/FocusTemplate.Public.Mobile.csproj");
+
+	// Use dev tunnel to forward from mobile emulators / simulators to localhost
+	IResourceBuilder<DevTunnelResource> devTunnel = builder.AddDevTunnel("devtunnel")
+		.WithAnonymousAccess()
+		.WithReference(publicApi.GetEndpoint("http"));
+
+	IResourceBuilder<MauiAndroidEmulatorResource> androidEmulator = mobile.AddAndroidEmulator()
+		.WithOtlpDevTunnel()
+		.WithReference(publicApi, devTunnel);
+
+	IResourceBuilder<MauiiOSSimulatorResource> iosSimulator = mobile.AddiOSSimulator()
+		.WithOtlpDevTunnel()
+		.WithReference(publicApi, devTunnel);
+
+	// Workaround for Aspire.Hosting.Maui 13.5.x.
+	// See https://github.com/microsoft/aspire/issues/18724 — remove once fixed upstream
+	androidEmulator.WithArgs(context => context.Args.Add("-p:NoBuild=false"));
+	iosSimulator.WithArgs(context => context.Args.Add("-p:NoBuild=false"));
+}
 
 IResourceBuilder<ProjectResource> web = builder.AddProject<FocusTemplate_Admin_Web_Bff>("admin-bff")
 	.ProxyBlazorService(api)

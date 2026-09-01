@@ -23,6 +23,13 @@
   <Folder Name="/tests/">
     <Project Path="tests/FocusTemplate.Admin.Api.IntegrationTests/FocusTemplate.Admin.Api.IntegrationTests.csproj" />
     <Project Path="tests/FocusTemplate.Admin.Web.E2E/FocusTemplate.Admin.Web.E2E.csproj" />
+    <Project Path="tests/FocusTemplate.Public.Mobile.E2E/FocusTemplate.Public.Mobile.E2E.csproj" />
+  </Folder>
+  <Folder Name="/public/">
+    <Project Path="src/public/FocusTemplate.Public.Api/FocusTemplate.Public.Api.csproj" />
+    <Project Path="src/public/FocusTemplate.Public.Mobile.ServiceDefaults/FocusTemplate.Public.Mobile.ServiceDefaults.csproj" />
+    <Project Path="src/public/FocusTemplate.Public.Mobile/FocusTemplate.Public.Mobile.csproj" />
+    <Project Path="src/public/FocusTemplate.Public.Shared/FocusTemplate.Public.Shared.csproj" />
   </Folder>
   <Project Path="src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj" Id="3dbf55d3-63b4-4f1b-a28b-c7313289b89f" />
   <Project Path="src/FocusTemplate.Data/FocusTemplate.Data.csproj" />

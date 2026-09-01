@@ -8,6 +8,13 @@ charset = utf-8
 end_of_line = crlf
 insert_final_newline = false
 
+# ReSharper properties
+resharper_allow_far_alignment = false
+resharper_alignment_tab_fill_style = use_tabs_only
+resharper_attribute_indent = single_indent
+resharper_space_before_self_closing = true
+resharper_max_line_length = 140
+
 [*.json]
 indent_size = 2
 tab_width = 2
@@ -261,6 +268,9 @@ dotnet_naming_style.begins_with_i.capitalization = pascal_case
 # SA1101: Prefix local calls with this
 dotnet_diagnostic.sa1101.severity = none
 
+# SA1118: Parameter must not span multiple lines
+dotnet_diagnostic.sa1118.severity = none
+
 # SA1633: File must have header
 dotnet_diagnostic.sa1633.severity = none
 
@@ -274,15 +284,9 @@ dotnet_diagnostic.ca1716.severity = none
 resharper_align_multiline_binary_expressions_chain = false
 resharper_align_multiline_statement_conditions = false
 resharper_blank_lines_before_single_line_comment = 1
-resharper_csharp_alignment_tab_fill_style = use_tabs_only
 resharper_csharp_keep_blank_lines_in_code = 1
 resharper_csharp_keep_blank_lines_in_declarations = 1
-resharper_csharp_max_line_length = 140
 resharper_empty_string = string_empty
-resharper_html_allow_far_alignment = false
-resharper_html_alignment_tab_fill_style = use_tabs_only
-resharper_html_attribute_indent = single_indent
-resharper_html_space_before_self_closing = true
 resharper_indent_raw_literal_string = indent
 resharper_keep_existing_arrangement = false
 resharper_keep_existing_declaration_block_arrangement = false
