@@ -7,6 +7,7 @@
 
 			"PowerShell(Get-ChildItem *)",
 			"PowerShell(ConvertFrom-Json *)",
+			"PowerShell(ConvertTo-Json *)",
 			"PowerShell(Select-Object *)",
 			"PowerShell(Select-String *)",
 			"PowerShell(Where-Object *)",
@@ -31,6 +32,7 @@
 			"PowerShell(dotnet jb *)",
 			"PowerShell(dotnet tool restore)",
 			"PowerShell(dotnet package search *)",
+			"PowerShell(dotnet maui doctor *)",
 
 			"Bash(dotnet --info)",
 			"Bash(dotnet --version)",
@@ -43,6 +45,7 @@
 			"Bash(dotnet jb *)",
 			"Bash(dotnet tool restore)",
 			"Bash(dotnet package search  *)",
+			"Bash(dotnet maui doctor *)",
 
 			"PowerShell(git status *)",
 			"PowerShell(git diff *)",
@@ -59,6 +62,7 @@
 
 			"PowerShell(aspire --help)",
 			"PowerShell(aspire --version)",
+			"PowerShell(aspire start)",
 			"PowerShell(aspire start *)",
 			"PowerShell(aspire ps *)",
 			"PowerShell(aspire logs *)",
@@ -72,9 +76,11 @@
 			"PowerShell(aspire config list *)",
 			"PowerShell(aspire config info *)",
 			"PowerShell(aspire stop)",
+			"PowerShell(aspire stop --apphost src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj)",
 
 			"Bash(aspire --help)",
 			"Bash(aspire --version)",
+			"Bash(aspire start)",
 			"Bash(aspire start *)",
 			"Bash(aspire ps *)",
 			"Bash(aspire logs *)",
@@ -88,12 +94,24 @@
 			"Bash(aspire config list *)",
 			"Bash(aspire config info *)",
 			"Bash(aspire stop)",
+			"Bash(aspire stop --apphost src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj)",
 
 			"Skill(playwright-cli)",
 			"Skill(playwright-cli:*)",
 
 			"PowerShell(playwright-cli *)",
 			"Bash(playwright-cli *)",
+
+			"PowerShell(adb *)",
+			"Bash(adb *)",
+
+			"PowerShell(emulator *)",
+			"Bash(emulator *)",
+
+			"PowerShell(npm ci)",
+			"Bash(npm ci)",
+
+			"PowerShell(docker version *)",
 
 			"mcp__atlassian__get*",
 			"mcp__atlassian__search*",
@@ -107,7 +125,9 @@
 			"mcp__aspire__doctor",
 			"mcp__aspire__select_apphost",
 			"mcp__aspire__refresh_tools",
-			"mcp__aspire__execute_resource_command"
+			"mcp__aspire__execute_resource_command",
+
+			"mcp__appium__*"
 		],
 		"ask": [
 			"WebFetch(domain:aka.ms)",

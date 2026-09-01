@@ -15,6 +15,13 @@
 				"jb"
 			],
 			"rollForward": false
+		},
+		"microsoft.maui.cli": {
+			"version": "0.1.0-preview.12.26368.2",
+			"commands": [
+				"maui"
+			],
+			"rollForward": false
 		}
 	}
 }

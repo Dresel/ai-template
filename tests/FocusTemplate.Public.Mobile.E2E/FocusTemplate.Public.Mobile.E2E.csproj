@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AndroidSdk" />
+		<PackageReference Include="Appium.WebDriver" />
+		<PackageReference Include="Aspire.Hosting.Testing" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" />
+		<PackageReference Include="xunit.v3" />
+		<PackageReference Include="xunit.runner.visualstudio">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- The MAUI app is a build/install artifact here, never a ProjectReference (net11.0 vs net11.0-android TFM clash - same trap as in the AppHost). -->
+		<ProjectReference Include="..\..\src\FocusTemplate.AppHost\FocusTemplate.AppHost.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="android-test-env.targets" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Lets the fixture locate the MAUI csproj without fragile bin-relative path walking -->
+		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+			<_Parameter1>RepoRoot</_Parameter1>
+			<_Parameter2>$(MSBuildThisFileDirectory)..\..\</_Parameter2>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+		<Using Include="Aspire.Hosting" />
+		<Using Include="Aspire.Hosting.ApplicationModel" />
+		<Using Include="Aspire.Hosting.Testing" />
+	</ItemGroup>
+
+</Project>
