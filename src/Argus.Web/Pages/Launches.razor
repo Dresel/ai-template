@@ -10,7 +10,19 @@
 
 <Card>
 	<CardHeader>
-		<CardTitle Size="HeadingSize.Is5" Margin="Margin.Is0">Latest deployments</CardTitle>
+		<Row>
+			<Column ColumnSize="ColumnSize.Is6.OnDesktop.Is12.OnMobile">
+				<CardTitle Size="HeadingSize.Is5" Margin="Margin.Is0">Latest deployments</CardTitle>
+			</Column>
+			<Column ColumnSize="ColumnSize.Is6.OnDesktop.Is12.OnMobile">
+				<TextInput Placeholder="Search symbol, name, contract, deployer or tx…"
+					Value="@SearchTerm"
+					ValueChanged="@OnSearchChangedAsync"
+					Debounce="true"
+					DebounceInterval="300"
+					data-testid="launches-search" />
+			</Column>
+		</Row>
 	</CardHeader>
 	<CardBody>
 		<Switch TValue="bool" Value="@TokensOnly" ValueChanged="@OnTokensOnlyChangedAsync" data-testid="launches-tokens-only">
@@ -23,7 +35,9 @@
 		}
 		else if (Deployments.Length == 0)
 		{
-			<Paragraph data-testid="launches-empty">No deployments detected yet.</Paragraph>
+			<Paragraph data-testid="launches-empty">
+				@(HasSearch ? "No deployments match this search." : "No deployments detected yet.")
+			</Paragraph>
 		}
 		else
 		{
@@ -31,30 +45,47 @@
 				<TableHeader>
 					<TableRow>
 						<TableHeaderCell>Age</TableHeaderCell>
-						<TableHeaderCell>Symbol</TableHeaderCell>
-						<TableHeaderCell>Name</TableHeaderCell>
-						<TableHeaderCell>Launchpad</TableHeaderCell>
+						<TableHeaderCell>Token</TableHeaderCell>
+						<TableHeaderCell>Verdict</TableHeaderCell>
+						<TableHeaderCell>Flags</TableHeaderCell>
 						<TableHeaderCell>Contract</TableHeaderCell>
 						<TableHeaderCell>Deployer</TableHeaderCell>
-						<TableHeaderCell>Block</TableHeaderCell>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
 					@foreach (var deployment in Deployments)
 					{
-						<TableRow data-testid="launches-row">
+						<TableRow @key="@deployment.ContractAddress" data-testid="launches-row" Class="@(deployment.Verdict == LaunchVerdict.Reject ? "launch-rejected" : null)">
 							<TableRowCell>@FormatAge(deployment.DetectedAt)</TableRowCell>
-							<TableRowCell>@deployment.TokenSymbol</TableRowCell>
-							<TableRowCell>@deployment.TokenName</TableRowCell>
 							<TableRowCell>
-								@if (deployment.LaunchpadName is not null)
+								<Text TextWeight="TextWeight.Bold">@deployment.TokenSymbol</Text>
+								<Small Margin="Margin.Is1.FromStart">@deployment.TokenName</Small>
+								@if (VenueUrl(deployment) is { } venueUrl)
 								{
-									<Badge Color="Color.Warning">@deployment.LaunchpadName</Badge>
+									<a href="@venueUrl" target="_blank" rel="noopener" title="Open on the launchpad" data-testid="launches-venue">
+										<Icon Name="@("storefront")" Margin="Margin.Is1.FromStart" />
+									</a>
 								}
 							</TableRowCell>
-							<TableRowCell>@AddressLink(deployment.ChainId, deployment.ContractAddress)</TableRowCell>
-							<TableRowCell>@AddressLink(deployment.ChainId, deployment.DeployerAddress)</TableRowCell>
-							<TableRowCell>@deployment.BlockNumber</TableRowCell>
+							<TableRowCell>
+								<Tooltip Text="@VerdictDetail(deployment.Verdict)" Multiline Inline>
+									<Badge Pill Color="@VerdictColor(deployment.Verdict)" data-testid="launches-verdict">@deployment.Verdict.ToString().ToLowerInvariant()</Badge>
+								</Tooltip>
+							</TableRowCell>
+							<TableRowCell>
+								@foreach (var flag in deployment.Flags)
+								{
+									<Tooltip Text="@flag.Detail" Multiline Inline>
+										<Badge Color="@SeverityColor(flag.Severity)" Margin="Margin.Is1.FromEnd" data-testid="launches-flag">@flag.Label</Badge>
+									</Tooltip>
+								}
+							</TableRowCell>
+							<TableRowCell>
+								<AddressChip ChainId="@deployment.ChainId" Address="@deployment.ContractAddress" />
+							</TableRowCell>
+							<TableRowCell>
+								<AddressChip ChainId="@deployment.ChainId" Address="@deployment.DeployerAddress" />
+							</TableRowCell>
 						</TableRow>
 					}
 				</TableBody>
@@ -70,6 +101,21 @@
 	private TokenDeploymentResponse[]? Deployments { get; set; }
 
 	private bool TokensOnly { get; set; } = true;
+
+	private string SearchTerm { get; set; } = string.Empty;
+
+	private bool HasSearch => !string.IsNullOrWhiteSpace(SearchTerm);
+
+	/// <summary>
+	/// Where a launchpad token actually trades before it graduates to a DEX pool: the launchpad's
+	/// own token page, keyed by the token address. Aggregators see no liquidity for these.
+	/// </summary>
+	private static string? VenueUrl(TokenDeploymentResponse deployment) => deployment.LaunchpadName switch
+	{
+		"pons" => $"https://www.ponsdotfamily.com/launchpad/{deployment.ContractAddress}",
+		"uniswap" => $"https://pools.trade/t/{deployment.ContractAddress}",
+		_ => null,
+	};
 
 	public void Dispose() => refreshTimer.Dispose();
 
@@ -89,36 +135,42 @@
 			: $"{(int)age.TotalDays}d";
 	}
 
-	private static string Shorten(string address) =>
-		address.Length > 12 ? $"{address[..6]}…{address[^4..]}" : address;
-
-	private static RenderFragment AddressLink(long chainId, string address) => builder =>
+	private static Color VerdictColor(LaunchVerdict verdict) => verdict switch
 	{
-		var explorerUrl = chainId == 4663 ? $"https://robinhoodchain.blockscout.com/address/{address}" : null;
+		LaunchVerdict.Reject => Color.Danger,
+		LaunchVerdict.Watch => Color.Warning,
+		_ => Color.Success,
+	};
 
-		if (explorerUrl is null)
-		{
-			builder.AddContent(0, Shorten(address));
-			return;
-		}
+	private static string VerdictDetail(LaunchVerdict verdict) => verdict switch
+	{
+		LaunchVerdict.Reject => "At least one rule that ended every traced launch in a dump fired at launch time.",
+		LaunchVerdict.Watch => "Suspicious priors but no hard rejection. Watch the first two minutes: any creator or insider sell is the kill signal.",
+		_ => "No T+0 rule fired. Not an endorsement - creator and insider selling can only be observed after launch.",
+	};
 
-		builder.OpenElement(0, "a");
-		builder.AddAttribute(1, "href", explorerUrl);
-		builder.AddAttribute(2, "target", "_blank");
-		builder.AddAttribute(3, "rel", "noopener");
-		builder.AddContent(4, Shorten(address));
-		builder.CloseElement();
+	private static Color SeverityColor(LaunchFlagSeverity severity) => severity switch
+	{
+		LaunchFlagSeverity.Danger => Color.Danger,
+		LaunchFlagSeverity.Warning => Color.Warning,
+		_ => Color.Secondary,
 	};
 
 	private async Task LoadAsync()
 	{
-		Deployments = await Api.GetTokenDeploymentsAsync(TokensOnly);
+		Deployments = await Api.GetTokenDeploymentsAsync(TokensOnly, SearchTerm);
 	}
 
 	private async Task OnTokensOnlyChangedAsync(bool value)
 	{
 		TokensOnly = value;
 		Deployments = null;
+		await LoadAsync();
+	}
+
+	private async Task OnSearchChangedAsync(string value)
+	{
+		SearchTerm = value;
 		await LoadAsync();
 	}
 

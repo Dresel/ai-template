@@ -312,6 +312,48 @@ ingest-time checks, the rest need the streaming/entity layers):
 - New deterministic tags this implies: `template_metadata`, `self_issued_quote`, plus the earlier
   `serial_sniper`, `insider_whitelisted`, `launchpad:<name>`, `fee_recipient_moved`.
 
+**Surfaced in the dashboard (2026-09-03)** as `LaunchAssessment` rules version `t0-v1`: a pure rule
+service turns stored facts into a **verdict** (`reject` / `watch` / `clear`) plus **flags** - one
+per detector, each with severity and a tooltip carrying mechanism and evidence. Decisions: a
+three-state verdict instead of a numeric score until several weighted dimensions exist (a number
+would fake calibration); the flag wire shape `{Code, Severity, Label, Detail}` is fixed now so the
+front-end stays unchanged when flags move from read-time computation to persisted `Tag` rows with
+evidence refs once the 120 s watcher writes lifecycle observations; `clear` explicitly means "no
+T+0 rule fired", not an endorsement. Rejected rows are muted rather than hidden so the rare clean
+launch stands out. First pure logic in the repo, so `Argus.UnitTests` was born with it.
+
+**Second launchpad adapter (2026-09-03): Uniswap Liquidity Launchpad (pools.trade).** Traced from
+live launches: the launch tx is `LiquidityLauncher.multicall` (two deployments registered,
+`0x0000FffF…19C0` v3.2.0 and the older `0x00004c4c…D4e9`) carrying `createToken` (UERC20Factory
+CREATE2, 1B supply, metadata blob with description, image, and an X-verification JWT),
+`distributeToken` (the strategy contract = launch format: Instant Launch, Crowd Auction with a 10k
+USD FDV floor, or LBP) and optionally `distributeWithNative` (the creator's first buy through the
+UniversalRouter - the Pons `quoteIn` analogue). Stored as `LaunchStrategyAddress` and classified at
+read time from a known-strategy map, so new strategies need no migration. The decoder is pure and
+unit-tested against the real calldata of two production launches (HOOKR with a 0.132 ETH creator
+buy, FRONG without). Venue severity is now per launchpad: Pons is a warning, pools.trade is
+informational - the field study's strongest T+0 prior encoded.
+
+**Where these tokens trade** (why aggregators show no liquidity): both launchpads run a bonding
+curve first and graduate into a locked Uniswap v4 pool later. Pre-graduation the curve contract
+holds ~99% of supply and the buys happen on the launchpad's own token page -
+`ponsdotfamily.com/launchpad/<token>` and `pools.trade/t/<token>` (now linked from the feed). The
+curve's native balance *is* the liquidity, and the curve draining into the pool is the graduation
+event - both are the 120 s watcher's data source, and the reason the curve row is kept.
+
+**Launchpad zoo (2026-09-03, six hours of live archive):** grouping unattributed launches by
+`receipt.To` showed the registry was missing most of the venue: `PonsV2LaunchFactory`
+(`0x7ed5…ec7e`, 120 launches - Pons' second entry point, `launchToken` without a creator buy, whose
+whitelist is now decoded too), `RWAERC20LaunchpadFactory` (57, launches paired with tokenized
+stocks), an unidentified `TransparentUpgradeableProxy` (51), an unverified contract (42),
+`LongLauncher` (36), `LunchV4PairLauncher` (30) and Multicall3 batches (28 - the real target is the
+inner call, which `receipt.To` attribution misses). Registered as `pons`, `rwa-launchpad`, `long`,
+`lunch` (attribution only, no outcome data, so the venue flag stays informational). Neither Uniswap
+launcher appeared in that window. Consequences: attribution wants a registry with per-venue
+decoders and priors rather than a config line, and a **backfill pass** over historical rows
+(re-fetching each launch tx) is needed before the archive carries venue for launches detected
+before their factory was registered.
+
 ## Scoring — deterministic, versioned, evidence-backed
 
 One pure service per dimension → `SubScore` with evidence refs → weighted aggregate:

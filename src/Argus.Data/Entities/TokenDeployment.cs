@@ -62,6 +62,13 @@ public sealed class TokenDeployment
 	/// </summary>
 	public BigInteger? CreatorBuyQuote { get; set; }
 
+	/// <summary>
+	/// Gets or sets the launch strategy contract that distributed the token (Uniswap Liquidity
+	/// Launchpad: instant launch, crowd auction, LBP), decoded from the launch calldata. The format
+	/// is classified at read time from a known-strategy map so new strategies need no migration.
+	/// </summary>
+	public string? LaunchStrategyAddress { get; set; }
+
 	public DateTimeOffset DetectedAt { get; set; }
 
 	public ICollection<TokenDeploymentInsider> Insiders { get; set; } = [];

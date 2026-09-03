@@ -4,6 +4,18 @@ namespace Argus.Web;
 
 public sealed class ApiClient(HttpClient httpClient)
 {
-	public async Task<TokenDeploymentResponse[]> GetTokenDeploymentsAsync(bool tokensOnly, CancellationToken cancellationToken = default) =>
-		await httpClient.GetFromJsonAsync<TokenDeploymentResponse[]>($"tokendeployments?tokensOnly={tokensOnly}", cancellationToken) ?? [];
+	public async Task<TokenDeploymentResponse[]> GetTokenDeploymentsAsync(
+		bool tokensOnly,
+		string? search = null,
+		CancellationToken cancellationToken = default)
+	{
+		string query = $"tokendeployments?tokensOnly={tokensOnly}";
+
+		if (!string.IsNullOrWhiteSpace(search))
+		{
+			query += $"&search={Uri.EscapeDataString(search.Trim())}";
+		}
+
+		return await httpClient.GetFromJsonAsync<TokenDeploymentResponse[]>(query, cancellationToken) ?? [];
+	}
 }

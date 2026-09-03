@@ -1,0 +1,39 @@
+@inject IJSRuntime JsRuntime
+@inject IToastService ToastService
+
+@if (ExplorerUrl is { } url)
+{
+	<a href="@url" target="_blank" rel="noopener" title="@Address">@Shortened</a>
+}
+else
+{
+	<span title="@Address">@Shortened</span>
+}
+<Button Size="Size.Small" Color="Color.Light" Padding="Padding.Is0.OnX.Is0.OnY" Margin="Margin.Is1.FromStart" Clicked="@CopyAsync" title="Copy address" data-testid="copy-address">
+	<Icon Name="@("content_copy")" />
+</Button>
+
+@code
+{
+	[Parameter, EditorRequired] public required string Address { get; set; }
+
+	[Parameter] public long ChainId { get; set; }
+
+	private string Shortened => Address.Length > 12 ? $"{Address[..6]}…{Address[^4..]}" : Address;
+
+	private string? ExplorerUrl => ChainId == 4663 ? $"https://robinhoodchain.blockscout.com/address/{Address}" : null;
+
+	private async Task CopyAsync()
+	{
+		try
+		{
+			await JsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", Address);
+			await ToastService.Info(Address, "Copied");
+		}
+		catch (JSException)
+		{
+			// Clipboard access is denied outside secure contexts or without a user gesture - the address stays selectable.
+			await ToastService.Warning("Clipboard unavailable - select the address to copy it.", "Copy failed");
+		}
+	}
+}

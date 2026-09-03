@@ -1,4 +1,5 @@
 using System.Net;
+using System.Numerics;
 using Argus.Data;
 using Argus.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,8 @@ public sealed partial class EvmDeploymentListener(
 
 	private const int KnownContractCacheLimit = 200_000;
 
+	private const string NativeQuoteAddress = "0x0000000000000000000000000000000000000000";
+
 	private readonly HashSet<string> knownContracts = [];
 
 	private Dictionary<string, string> launchpadsByAddress = [];
@@ -37,7 +40,9 @@ public sealed partial class EvmDeploymentListener(
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 	{
 		ChainIngestOptions ingest = options.Value;
-		string[] endpoints = ingest.RpcUrls.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+		string[] endpoints = ingest.RpcUrls.Split(
+			';',
+			StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
 		if (endpoints.Length == 0)
 		{
@@ -47,7 +52,9 @@ public sealed partial class EvmDeploymentListener(
 		Web3[] clients = [.. endpoints.Select(endpoint => new Web3(endpoint))];
 		int active = 0;
 
-		this.launchpadsByAddress = ingest.Launchpads.ToDictionary(pair => pair.Key.ToLowerInvariant(), pair => pair.Value);
+		this.launchpadsByAddress = ingest.Launchpads.ToDictionary(
+			pair => pair.Key.ToLowerInvariant(),
+			pair => pair.Value);
 
 		long? chainId = null;
 		while (chainId is null && !stoppingToken.IsCancellationRequested)
@@ -97,12 +104,15 @@ public sealed partial class EvmDeploymentListener(
 	[LoggerMessage(Level = LogLevel.Information, Message = "Listening for deployments on chain {ChainId} via {RpcUrl}")]
 	private static partial void LogListening(ILogger logger, long chainId, string rpcUrl);
 
-	[LoggerMessage(Level = LogLevel.Error, Message = "Polling chain {ChainId} failed; retrying after the poll interval")]
+	[LoggerMessage(
+		Level = LogLevel.Error,
+		Message = "Polling chain {ChainId} failed; retrying after the poll interval")]
 	private static partial void LogPollingFailed(ILogger logger, Exception exception, long chainId);
 
 	[LoggerMessage(
 		Level = LogLevel.Warning,
-		Message = "Catch-up gap on chain {ChainId} exceeds MaxCatchUpBlocks - skipping blocks {FromBlock} through {ToBlock}")]
+		Message =
+			"Catch-up gap on chain {ChainId} exceeds MaxCatchUpBlocks - skipping blocks {FromBlock} through {ToBlock}")]
 	private static partial void LogGapSkipped(ILogger logger, long chainId, long fromBlock, long toBlock);
 
 	[LoggerMessage(Level = LogLevel.Warning, Message = "Switching chain {ChainId} ingestion to RPC endpoint {RpcUrl}")]
@@ -110,7 +120,8 @@ public sealed partial class EvmDeploymentListener(
 
 	[LoggerMessage(
 		Level = LogLevel.Information,
-		Message = "Detected deployment {ContractAddress} (token: {TokenSymbol}, launchpad: {LaunchpadName}) by {DeployerAddress} on chain {ChainId} in block {BlockNumber}")]
+		Message =
+			"Detected deployment {ContractAddress} (token: {TokenSymbol}, launchpad: {LaunchpadName}) by {DeployerAddress} on chain {ChainId} in block {BlockNumber}")]
 	private static partial void LogDeploymentDetected(
 		ILogger logger,
 		string contractAddress,
@@ -129,7 +140,8 @@ public sealed partial class EvmDeploymentListener(
 		try
 		{
 			return await ExecuteWithRetryAsync(
-				() => web3.Eth.GetContractQueryHandler<TFunction>().QueryAsync<TResult>(contractAddress, new TFunction()),
+				() => web3.Eth.GetContractQueryHandler<TFunction>()
+					.QueryAsync<TResult>(contractAddress, new TFunction()),
 				cancellationToken);
 		}
 		catch (Exception exception) when (exception is not OperationCanceledException)
@@ -158,11 +170,15 @@ public sealed partial class EvmDeploymentListener(
 	}
 
 	/// <summary>
-	/// Decodes the Pons launchAndBuy calldata of the deployment transaction into the insider
-	/// whitelist (snipeTaxExemptions), the creator's own launch buy, and the quote asset.
-	/// Factory transactions with other calldata leave the launch fields empty.
+	/// Decodes the Pons launch calldata of the deployment transaction - launchAndBuy (creator buys at
+	/// launch) or launchToken (no buy) - into the insider whitelist (snipeTaxExemptions), the
+	/// creator's own launch buy, and the quote asset. Factory transactions with other calldata leave
+	/// the launch fields empty.
 	/// </summary>
-	private static async Task DecodePonsLaunchAsync(Web3 web3, TokenDeployment deployment, CancellationToken cancellationToken)
+	private static async Task DecodePonsLaunchAsync(
+		Web3 web3,
+		TokenDeployment deployment,
+		CancellationToken cancellationToken)
 	{
 		try
 		{
@@ -170,22 +186,29 @@ public sealed partial class EvmDeploymentListener(
 				() => web3.Eth.Transactions.GetTransactionByHash.SendRequestAsync(deployment.TransactionHash),
 				cancellationToken);
 
-			if (transaction is null || !transaction.IsTransactionForFunctionMessage<PonsLaunchAndBuyFunction>())
+			if (transaction is null)
 			{
 				return;
 			}
 
-			PonsLaunchAndBuyFunction launch = transaction.DecodeTransactionToFunctionMessage<PonsLaunchAndBuyFunction>();
-
-			deployment.PairTokenAddress = launch.PairToken.ToLowerInvariant();
-			deployment.CreatorBuyQuote = launch.QuoteIn;
-			deployment.Insiders =
-			[
-				.. launch.SnipeTaxExemptions
-					.Select(address => address.ToLowerInvariant())
-					.Distinct()
-					.Select(address => new TokenDeploymentInsider { Address = address, }),
-			];
+			if (transaction.IsTransactionForFunctionMessage<PonsLaunchAndBuyFunction>())
+			{
+				PonsLaunchAndBuyFunction launch =
+					transaction.DecodeTransactionToFunctionMessage<PonsLaunchAndBuyFunction>();
+				ApplyPonsLaunch(deployment, launch.PairToken, launch.QuoteIn, launch.SnipeTaxExemptions);
+			}
+			else if (transaction.IsTransactionForFunctionMessage<PonsLaunchTokenFunction>())
+			{
+				PonsLaunchTokenFunction launch =
+					transaction.DecodeTransactionToFunctionMessage<PonsLaunchTokenFunction>();
+				ApplyPonsLaunch(deployment, launch.PairToken, null, launch.SnipeTaxExemptions);
+			}
+			else if (transaction.IsTransactionForFunctionMessage<PonsLaunchTokenWithoutExemptionsFunction>())
+			{
+				PonsLaunchTokenWithoutExemptionsFunction launch =
+					transaction.DecodeTransactionToFunctionMessage<PonsLaunchTokenWithoutExemptionsFunction>();
+				ApplyPonsLaunch(deployment, launch.PairToken, null, []);
+			}
 		}
 		catch (Exception exception) when (exception is not OperationCanceledException)
 		{
@@ -193,11 +216,29 @@ public sealed partial class EvmDeploymentListener(
 		}
 	}
 
+	private static void ApplyPonsLaunch(
+		TokenDeployment deployment,
+		string pairToken,
+		BigInteger? creatorBuy,
+		IEnumerable<string> insiders)
+	{
+		deployment.PairTokenAddress = pairToken.ToLowerInvariant();
+		deployment.CreatorBuyQuote = creatorBuy;
+		deployment.Insiders =
+		[
+			.. insiders.Select(address => address.ToLowerInvariant())
+				.Distinct()
+				.Select(address => new TokenDeploymentInsider { Address = address, }),
+		];
+	}
+
 	/// <summary>
 	/// Retries an RPC call when the endpoint rate-limits (HTTP 429). The public Robinhood Chain
 	/// endpoint uses a 60-second window, so the last delay outlasts a full window.
 	/// </summary>
-	private static async Task<T> ExecuteWithRetryAsync<T>(Func<Task<T>> sendRequest, CancellationToken cancellationToken)
+	private static async Task<T> ExecuteWithRetryAsync<T>(
+		Func<Task<T>> sendRequest,
+		CancellationToken cancellationToken)
 	{
 		for (int attempt = 1; ; attempt++)
 		{
@@ -222,17 +263,49 @@ public sealed partial class EvmDeploymentListener(
 	private static bool IsRateLimited(RpcClientUnknownException exception) =>
 		exception.InnerException is HttpRequestException { StatusCode: HttpStatusCode.TooManyRequests };
 
-	private static TokenDeployment ToDeployment(long chainId, TransactionReceipt receipt, string contractAddress) => new()
+	/// <summary>
+	/// Decodes a Uniswap Liquidity Launchpad (pools.trade) launch: the distribution strategy and the
+	/// creator's optional native first buy. These launches are quoted in native currency, so the
+	/// quote asset is recorded as the zero address.
+	/// </summary>
+	private static async Task DecodeUniswapLaunchAsync(
+		Web3 web3,
+		TokenDeployment deployment,
+		CancellationToken cancellationToken)
 	{
-		ChainId = chainId,
-		BlockNumber = (long)receipt.BlockNumber.Value,
-		BlockHash = receipt.BlockHash.ToLowerInvariant(),
-		TransactionHash = receipt.TransactionHash.ToLowerInvariant(),
-		ContractAddress = contractAddress.ToLowerInvariant(),
-		DeployerAddress = receipt.From.ToLowerInvariant(),
-		FactoryAddress = receipt.To?.ToLowerInvariant(),
-		DetectedAt = DateTimeOffset.UtcNow,
-	};
+		try
+		{
+			Transaction transaction = await ExecuteWithRetryAsync(
+				() => web3.Eth.Transactions.GetTransactionByHash.SendRequestAsync(deployment.TransactionHash),
+				cancellationToken);
+
+			if (UniswapLaunchDecoder.TryDecode(transaction?.Input) is not { } launch)
+			{
+				return;
+			}
+
+			deployment.PairTokenAddress = NativeQuoteAddress;
+			deployment.CreatorBuyQuote = launch.CreatorBuyNative;
+			deployment.LaunchStrategyAddress = launch.StrategyAddress;
+		}
+		catch (Exception exception) when (exception is not OperationCanceledException)
+		{
+			// Malformed or unexpected calldata - detection still stands, only the launch details stay empty.
+		}
+	}
+
+	private static TokenDeployment ToDeployment(long chainId, TransactionReceipt receipt, string contractAddress) =>
+		new()
+		{
+			ChainId = chainId,
+			BlockNumber = (long)receipt.BlockNumber.Value,
+			BlockHash = receipt.BlockHash.ToLowerInvariant(),
+			TransactionHash = receipt.TransactionHash.ToLowerInvariant(),
+			ContractAddress = contractAddress.ToLowerInvariant(),
+			DeployerAddress = receipt.From.ToLowerInvariant(),
+			FactoryAddress = receipt.To?.ToLowerInvariant(),
+			DetectedAt = DateTimeOffset.UtcNow,
+		};
 
 	private static async Task<TransactionReceipt[]> FetchBlockReceiptsAsync(
 		Web3 web3,
@@ -266,7 +339,9 @@ public sealed partial class EvmDeploymentListener(
 		try
 		{
 			string code = await ExecuteWithRetryAsync(
-				() => web3.Eth.GetCode.SendRequestAsync(address, new BlockParameter(new HexBigInteger(blockNumber - 1))),
+				() => web3.Eth.GetCode.SendRequestAsync(
+					address,
+					new BlockParameter(new HexBigInteger(blockNumber - 1))),
 				cancellationToken);
 
 			return code is null or "" or "0x";
@@ -277,7 +352,11 @@ public sealed partial class EvmDeploymentListener(
 		}
 	}
 
-	private async Task ProcessNewBlocksAsync(Web3 web3, long chainId, ChainIngestOptions ingest, CancellationToken cancellationToken)
+	private async Task ProcessNewBlocksAsync(
+		Web3 web3,
+		long chainId,
+		ChainIngestOptions ingest,
+		CancellationToken cancellationToken)
 	{
 		long latest = (long)(await web3.Eth.Blocks.GetBlockNumber.SendRequestAsync()).Value;
 		long confirmedTip = latest - ingest.Confirmations;
@@ -323,7 +402,12 @@ public sealed partial class EvmDeploymentListener(
 	/// then per-new-address lookups only. Contracts that never emit a log in their creation
 	/// transaction are deliberately not detected in this mode.
 	/// </summary>
-	private async Task ProcessBlockRangeViaLogsAsync(Web3 web3, long chainId, long fromBlock, long toBlock, CancellationToken cancellationToken)
+	private async Task ProcessBlockRangeViaLogsAsync(
+		Web3 web3,
+		long chainId,
+		long fromBlock,
+		long toBlock,
+		CancellationToken cancellationToken)
 	{
 		NewFilterInput filter = new()
 		{
@@ -357,7 +441,12 @@ public sealed partial class EvmDeploymentListener(
 
 		using SemaphoreSlim throttle = new(MaxParallelRpcCalls);
 		bool[] isNew = await Task.WhenAll(
-			candidates.Select(log => IsNewContractAsync(web3, log.Address, (long)log.BlockNumber.Value, throttle, cancellationToken)));
+			candidates.Select(log => IsNewContractAsync(
+				web3,
+				log.Address,
+				(long)log.BlockNumber.Value,
+				throttle,
+				cancellationToken)));
 
 		for (int i = 0; i < candidates.Count; i++)
 		{
@@ -379,7 +468,12 @@ public sealed partial class EvmDeploymentListener(
 		}
 	}
 
-	private async Task ProcessBlockRangeAsync(Web3 web3, long chainId, long fromBlock, long toBlock, CancellationToken cancellationToken)
+	private async Task ProcessBlockRangeAsync(
+		Web3 web3,
+		long chainId,
+		long fromBlock,
+		long toBlock,
+		CancellationToken cancellationToken)
 	{
 		using SemaphoreSlim throttle = new(MaxParallelRpcCalls);
 
@@ -430,13 +524,12 @@ public sealed partial class EvmDeploymentListener(
 		}
 
 		bool[] isNew = await Task.WhenAll(
-			candidates.Select(
-				candidate => IsNewContractAsync(
-					web3,
-					candidate.Address,
-					(long)candidate.Receipt.BlockNumber.Value,
-					throttle,
-					cancellationToken)));
+			candidates.Select(candidate => IsNewContractAsync(
+				web3,
+				candidate.Address,
+				(long)candidate.Receipt.BlockNumber.Value,
+				throttle,
+				cancellationToken)));
 
 		for (int i = 0; i < candidates.Count; i++)
 		{
@@ -509,13 +602,19 @@ public sealed partial class EvmDeploymentListener(
 			return;
 		}
 
-		if (deployment.FactoryAddress is { } factory && this.launchpadsByAddress.TryGetValue(factory, out string? launchpadName))
+		if (deployment.FactoryAddress is { } factory &&
+			this.launchpadsByAddress.TryGetValue(factory, out string? launchpadName))
 		{
 			deployment.LaunchpadName = launchpadName;
 
-			if (launchpadName == "pons")
+			switch (launchpadName)
 			{
-				await DecodePonsLaunchAsync(web3, deployment, cancellationToken);
+				case "pons":
+					await DecodePonsLaunchAsync(web3, deployment, cancellationToken);
+					break;
+				case "uniswap":
+					await DecodeUniswapLaunchAsync(web3, deployment, cancellationToken);
+					break;
 			}
 		}
 

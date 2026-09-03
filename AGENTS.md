@@ -26,8 +26,10 @@ OpenTelemetry, Umami analytics, and Playwright E2E tests. Design doc + roadmap:
   per-chain cursors (`ChainCursor`), bounded catch-up, RPC endpoint failover + 429 backoff, two
   ingest modes (`BlockReceipts` = complete, for tests/friendly RPCs; `Logs` = budget mode for
   rate-limited public endpoints), ERC-20 metadata capture, and launchpad attribution via a
-  configured factory→name map. Keyed RPC URLs stay in the gitignored `appsettings.local.json`
-  (AppHost passes them through as `Intel__Ingest__RpcUrls`).
+  configured factory→name map, plus per-launchpad calldata decoders (Pons `launchAndBuy`, Uniswap
+  Liquidity Launchpad `multicall`) that extract insiders, creator buy, quote asset and launch
+  strategy. Keyed RPC URLs stay in the gitignored `appsettings.local.json` (AppHost passes them
+  through as `Intel__Ingest__RpcUrls`).
 
 ## Tech stack
 
@@ -76,12 +78,16 @@ on the affected resource (Aspire dashboard or MCP).
 
 - `dotnet build Argus.slnx`
 - `dotnet test Argus.slnx` - xUnit integration tests + Playwright E2E through the BFF
-- `dotnet format <project>` - analyzers are strict (StyleCop + IDE rules as errors). Files written
-  by tooling usually need this to fix line endings (CRLF, no final newline).
-- `dotnet jb cleanupcode Argus.slnx --profile="Built-in: Reformat Code" --include=<path>` -
-  ReSharper formatting (repo-local tool, `dotnet tool restore` after a fresh clone; honors
-  `.editorconfig` + `Argus.sln.DotSettings`). Prefer scoping with `--include` - a bare run
-  reformats the whole solution.
+- **`dotnet jb cleanupcode Argus.slnx --profile="Built-in: Reformat Code" --include=<path>` is the
+  default formatter.** ReSharper, repo-local tool (`dotnet tool restore` after a fresh clone;
+  honors `.editorconfig` + `Argus.sln.DotSettings`). Reformatting only - it never rewrites
+  semantics. Always scope with `--include`; a bare run reformats the whole solution.
+- `dotnet format <project>` also applies **analyzer code fixes**, not just formatting, so it can
+  make semantic edits you did not ask for - observed 2026-09-03: it "fixed" a call to an obsolete
+  Playwright API by adding `[Obsolete]` to the *calling test method*. Reach for it only to fix
+  line endings on tool-written files (CRLF, missing final newline), and re-read its diff.
+  Analyzers are strict (StyleCop + IDE rules as build errors), so let the build name the rule and
+  fix it deliberately instead of letting the tool guess.
 
 ## Agent toolbox
 

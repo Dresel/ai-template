@@ -25,6 +25,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Argus.Api.IntegrationTests/Argus.Api.IntegrationTests.csproj" />
+    <Project Path="tests/Argus.UnitTests/Argus.UnitTests.csproj" />
     <Project Path="tests/Argus.Web.E2E/Argus.Web.E2E.csproj" />
     <Project Path="tests/Argus.Worker.IntegrationTests/Argus.Worker.IntegrationTests.csproj" />
   </Folder>

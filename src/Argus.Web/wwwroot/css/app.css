@@ -254,3 +254,7 @@ code {
 		--mui-surface-container-high: rgb(46 41 32);
 		--mui-surface-container-highest: rgb(57 52 42);
 	}
+
+.launch-rejected {
+	opacity: 0.55;
+}
