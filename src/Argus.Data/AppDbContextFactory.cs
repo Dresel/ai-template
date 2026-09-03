@@ -11,11 +11,6 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
 
 		DbContextOptionsBuilder<AppDbContext> optionsBuilder = new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(connectionString);
 
-		if (bool.TryParse(Environment.GetEnvironmentVariable("Database__SeedTestData"), out bool seedTestData) && seedTestData)
-		{
-			optionsBuilder.UseWeatherSeeding();
-		}
-
 		return new AppDbContext(optionsBuilder.Options);
 	}
 }

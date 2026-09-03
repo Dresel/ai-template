@@ -10,9 +10,9 @@ OpenTelemetry, Umami analytics, and Playwright E2E tests. Design doc + roadmap:
 
 - **Argus.AppHost** - Aspire orchestrator. Wires Postgres + migrations, the API, the BFF, the
   ingest worker (behind `Features:Intel`), an optional nginx TLS ingress, and optional Umami analytics.
-- **Argus.Data** - EF Core data layer: `AppDbContext`, entities, the `Migrations/` folder,
-  a design-time factory, and the dev seed. One domain, referenced by the API, the worker, and the
-  AppHost migration resource.
+- **Argus.Data** - EF Core data layer: `AppDbContext`, entities, the `Migrations/` folder, and
+  a design-time factory. One domain, referenced by the API, the worker, and the AppHost migration
+  resource.
 - **Argus.ServiceDefaults** - server-side Aspire defaults (OTel, service discovery, health).
 - **Argus.Api** - internal minimal API; never exposed to the browser directly. Reads/writes
   through EF Core (`AppDbContext`), backed by PostgreSQL.
@@ -182,13 +182,12 @@ exactly this. Traps, learned the hard way:
   `src/Argus.Data/Migrations/` and are exempt from StyleCop via an `.editorconfig`
   `generated_code` carve-out. You can also use the migration resource's dashboard commands
   (Add Migration, Update/Reset/Drop Database, Status).
-- **Dev seed data** lives in `WeatherSeed` and runs via EF `UseSeeding`/`UseAsyncSeeding` when the
-  migration tool applies migrations in **run mode only** (the AppHost sets `Database__SeedTestData` on
-  the tool resource via `configureToolResource`; the published bundle never seeds). The seed is
-  idempotent (insert-if-empty). Implement **both** the sync and async seed delegates - the EF CLI uses
-  the synchronous one. Integration tests deliberately run against an unseeded schema.
-- **No data volume** on the dev Postgres: each `aspire start` / E2E run gets a fresh, re-seeded
-  database, keeping runs deterministic and hermetic. **Exception:** with `Features:Intel` enabled
+- **No dev seed** - the domain is live chain data; there is nothing meaningful to seed. If one is
+  ever needed again, the EF `UseSeeding`/`UseAsyncSeeding` pattern (both delegates, idempotent,
+  run-mode-only via an env var on the migration **tool** resource) is in git history (`WeatherSeed`,
+  pre-2026-09).
+- **No data volume** on the dev Postgres: each `aspire start` / E2E run gets a fresh database,
+  keeping runs deterministic and hermetic. **Exception:** with `Features:Intel` enabled
   the Postgres gets a data volume - the intel archive (deployments, cursors, entity graph) must
   survive restarts.
 
@@ -207,7 +206,5 @@ Isolation model: **one container, one database per test class, fresh state per t
   `__EFMigrationsHistory` preserved so migrations never re-run). Every test starts on an empty,
   migrated schema and **arranges exactly the rows it asserts** (`Factory.CreateDbContext()`).
 
-Tests never rely on the dev seed - `WeatherSeed` is dev/E2E-only, and the E2E suite verifies it
-through the production seeding path. If a read-heavy suite over an expensive shared dataset emerges
-later, add a **seeded, immutable, shared** database + fixture for those tests (seed once, read in
-parallel, never mutate).
+If a read-heavy suite over an expensive shared dataset emerges later, add a **seeded, immutable,
+shared** database + fixture for those tests (seed once, read in parallel, never mutate).

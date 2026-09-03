@@ -54,16 +54,4 @@ app.MapGet(
 		})
 	.WithName("GetTokenDeployments");
 
-app.MapGet(
-		"/weatherforecast",
-		async (AppDbContext dbContext, CancellationToken cancellationToken) =>
-		{
-			WeatherForecastResponse[] forecast = await dbContext.WeatherForecasts.OrderBy(entity => entity.Date)
-				.Select(entity => new WeatherForecastResponse(entity.Date, entity.TemperatureC, entity.Summary))
-				.ToArrayAsync(cancellationToken);
-
-			return forecast;
-		})
-	.WithName("GetWeatherForecast");
-
 app.Run();

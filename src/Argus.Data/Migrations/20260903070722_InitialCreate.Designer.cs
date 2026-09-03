@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Argus.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260902152744_AddFactoryDeployments")]
-    partial class AddFactoryDeployments
+    [Migration("20260903070722_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,22 @@ namespace Argus.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Argus.Data.Entities.ChainCursor", b =>
+                {
+                    b.Property<long>("ChainId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LastProcessedBlock")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("ChainId");
+
+                    b.ToTable("ChainCursors");
+                });
 
             modelBuilder.Entity("Argus.Data.Entities.TokenDeployment", b =>
                 {
@@ -57,6 +73,18 @@ namespace Argus.Data.Migrations
                     b.Property<string>("FactoryAddress")
                         .HasColumnType("text");
 
+                    b.Property<string>("LaunchpadName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("TokenDecimals")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TokenName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TokenSymbol")
+                        .HasColumnType("text");
+
                     b.Property<string>("TransactionHash")
                         .IsRequired()
                         .HasColumnType("text");
@@ -67,28 +95,6 @@ namespace Argus.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("TokenDeployments");
-                });
-
-            modelBuilder.Entity("Argus.Data.Entities.WeatherForecast", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Summary")
-                        .HasColumnType("text");
-
-                    b.Property<int>("TemperatureC")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WeatherForecasts");
                 });
 #pragma warning restore 612, 618
         }

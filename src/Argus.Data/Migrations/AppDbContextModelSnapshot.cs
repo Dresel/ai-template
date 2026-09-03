@@ -93,28 +93,6 @@ namespace Argus.Data.Migrations
 
                     b.ToTable("TokenDeployments");
                 });
-
-            modelBuilder.Entity("Argus.Data.Entities.WeatherForecast", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Summary")
-                        .HasColumnType("text");
-
-                    b.Property<int>("TemperatureC")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("WeatherForecasts");
-                });
 #pragma warning restore 612, 618
         }
     }

@@ -12,4 +12,13 @@ public sealed class LaunchesTests(BlazorAppFixture app) : BffPageTest
 		await Expect(Page.GetByTestId("launches-tokens-only")).ToBeVisibleAsync();
 		await Expect(Page.GetByTestId("launches-empty")).ToBeVisibleAsync();
 	}
+
+	[Fact]
+	public async Task HomePageShowsTheLaunchFeed()
+	{
+		await Page.GotoAsync(app.BaseUrl);
+
+		await Expect(Page.GetByTestId("launches-tokens-only")).ToBeVisibleAsync();
+		await Expect(Page.GetByTestId("launches-empty")).ToBeVisibleAsync();
+	}
 }

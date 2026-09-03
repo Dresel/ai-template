@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 84" role="img" aria-label="Argus">
+	<g transform="translate(10 10)">
+		<circle cx="32" cy="32" r="30" fill="#201a10" />
+		<circle cx="32" cy="32" r="30" fill="none" stroke="#f0b429" stroke-width="2.5" />
+		<path d="M9 32 Q 32 11 55 32 Q 32 53 9 32 Z" fill="#fff3dc" />
+		<circle cx="32" cy="32" r="10.5" fill="#f0b429" stroke="#c68a00" stroke-width="1.5" />
+		<circle cx="32" cy="32" r="4.6" fill="#201a10" />
+		<circle cx="35.2" cy="28.8" r="1.9" fill="#fffdf7" />
+	</g>
+	<text x="88" y="56" font-family="Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="7" fill="#201a10">ARGUS</text>
+</svg>

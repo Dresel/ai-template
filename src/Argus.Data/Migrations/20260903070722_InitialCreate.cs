@@ -7,11 +7,24 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Argus.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddTokenDeployments : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "ChainCursors",
+                columns: table => new
+                {
+                    ChainId = table.Column<long>(type: "bigint", nullable: false),
+                    LastProcessedBlock = table.Column<long>(type: "bigint", nullable: false),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChainCursors", x => x.ChainId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "TokenDeployments",
                 columns: table => new
@@ -24,6 +37,11 @@ namespace Argus.Data.Migrations
                     TransactionHash = table.Column<string>(type: "text", nullable: false),
                     ContractAddress = table.Column<string>(type: "text", nullable: false),
                     DeployerAddress = table.Column<string>(type: "text", nullable: false),
+                    FactoryAddress = table.Column<string>(type: "text", nullable: true),
+                    LaunchpadName = table.Column<string>(type: "text", nullable: true),
+                    TokenName = table.Column<string>(type: "text", nullable: true),
+                    TokenSymbol = table.Column<string>(type: "text", nullable: true),
+                    TokenDecimals = table.Column<int>(type: "integer", nullable: true),
                     DetectedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -32,15 +50,18 @@ namespace Argus.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_TokenDeployments_ChainId_TransactionHash",
+                name: "IX_TokenDeployments_ChainId_ContractAddress",
                 table: "TokenDeployments",
-                columns: new[] { "ChainId", "TransactionHash" },
+                columns: new[] { "ChainId", "ContractAddress" },
                 unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ChainCursors");
+
             migrationBuilder.DropTable(
                 name: "TokenDeployments");
         }

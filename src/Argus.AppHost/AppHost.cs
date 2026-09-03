@@ -25,15 +25,7 @@ IResourceBuilder<ProjectResource> api = builder.AddProject<Argus_Api>("api").Wit
 // See https://aspire.dev/integrations/databases/efcore/migrations/
 IResourceBuilder<EFMigrationResource> migrations = api.AddEFMigrations(
 		"migrations",
-		"Argus.Data.AppDbContext",
-		tool =>
-		{
-			// Add seeding when running in run mode (e.g. local development)
-			if (builder.ExecutionContext.IsRunMode)
-			{
-				tool.WithEnvironment("Database__SeedTestData", bool.TrueString);
-			}
-		})
+		"Argus.Data.AppDbContext")
 	.WithMigrationsProject("../Argus.Data/Argus.Data.csproj") // See https://github.com/microsoft/aspire/issues/16876
 	.WithReference(argusDb)
 	.WaitFor(argusDb)
