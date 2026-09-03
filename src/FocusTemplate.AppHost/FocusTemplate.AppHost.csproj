@@ -20,6 +20,7 @@
 		<ProjectReference Include="..\FocusTemplate.Data\FocusTemplate.Data.csproj" IsAspireProjectResource="false" />
 		<ProjectReference Include="..\admin\FocusTemplate.Admin.Web.Bff\FocusTemplate.Admin.Web.Bff.csproj" />
 		<ProjectReference Include="..\public\FocusTemplate.Public.Api\FocusTemplate.Public.Api.csproj" />
+		<ProjectReference Include="..\intel\FocusTemplate.Intel.Worker\FocusTemplate.Intel.Worker.csproj" />
 	</ItemGroup>
 
 </Project>

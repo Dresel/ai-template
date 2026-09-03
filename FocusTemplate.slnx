@@ -20,9 +20,13 @@
     <Project Path="src/admin/FocusTemplate.Admin.Web.ClientServiceDefaults/FocusTemplate.Admin.Web.ClientServiceDefaults.csproj" />
     <Project Path="src/admin/FocusTemplate.Admin.Web/FocusTemplate.Admin.Web.csproj" />
   </Folder>
+  <Folder Name="/intel/">
+    <Project Path="src/intel/FocusTemplate.Intel.Worker/FocusTemplate.Intel.Worker.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/FocusTemplate.Admin.Api.IntegrationTests/FocusTemplate.Admin.Api.IntegrationTests.csproj" />
     <Project Path="tests/FocusTemplate.Admin.Web.E2E/FocusTemplate.Admin.Web.E2E.csproj" />
+    <Project Path="tests/FocusTemplate.Intel.IntegrationTests/FocusTemplate.Intel.IntegrationTests.csproj" />
     <Project Path="tests/FocusTemplate.Public.Mobile.E2E/FocusTemplate.Public.Mobile.E2E.csproj" />
   </Folder>
   <Folder Name="/public/">

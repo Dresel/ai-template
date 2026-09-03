@@ -26,6 +26,16 @@ Admin vertical (`src/admin/`):
 - **FocusTemplate.Admin.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
 - **FocusTemplate.Admin.Shared** - DTOs shared between the server and the WASM client.
 
+Intel vertical (`src/intel/`, behind `Features:Intel`, default off):
+
+- **FocusTemplate.Intel.Worker** - headless chain-ingestion worker (Nethereum): polls EVM chains
+  for contract deployments (`TokenDeployment` rows), with persisted per-chain cursors
+  (`ChainCursor`), bounded catch-up, RPC endpoint failover + 429 backoff, two ingest modes
+  (`BlockReceipts` = complete, for tests/friendly RPCs; `Logs` = budget mode for rate-limited
+  public endpoints), ERC-20 metadata capture, and launchpad attribution via a configured
+  factory→name map. Design doc: `shitcoin-trader.md`. Keyed RPC URLs stay in the gitignored
+  `appsettings.local.json` (AppHost passes them through as `Intel__Ingest__RpcUrls`).
+
 Public vertical (`src/public/`):
 
 - **FocusTemplate.Public.Api** - the exposed API for external clients (mobile); same EF Core access
@@ -130,7 +140,10 @@ feature, specify the new behavior with one.
    - **Integration** (one service: DI, middleware, serialization, auth, framework, **EF Core / SQL**) →
      `FocusTemplate.Admin.Api.IntegrationTests`. A real Postgres runs via Testcontainers (assembly fixture,
      migrations applied once); tests arrange rows against an empty schema. See **Integration test
-     database** below for the reset/isolation contract.
+     database** below for the reset/isolation contract. Chain-ingest behavior →
+     `FocusTemplate.Intel.IntegrationTests`: same Postgres pattern plus an **Anvil (Foundry)
+     container** (a real local EVM chain) - tests deploy real contracts and assert the resulting
+     rows.
    - **Aspire system** (cross-resource: BFF↔API, ingress, service discovery, startup order,
      scale-out, telemetry) → `FocusTemplate.Admin.Web.E2E` (boots the AppHost via
      `DistributedApplicationTestingBuilder`).
@@ -192,8 +205,9 @@ exactly this. Traps, learned the hard way:
 
 ## Conventions
 
-- **Feature flags**: `Features:Analytics`, `Features:TlsOffloadingIngress`, and `Features:Mobile`
-  (default **off**: no devtunnel/emulator requirements on a plain `aspire start`) in the AppHost's
+- **Feature flags**: `Features:Analytics`, `Features:TlsOffloadingIngress`, `Features:Mobile`
+  (default **off**: no devtunnel/emulator requirements on a plain `aspire start`), and
+  `Features:Intel` (default **off**: no chain listener, no data volume) in the AppHost's
   `appsettings.json`, overridable per-developer via the gitignored `appsettings.local.json`. The
   E2E fixture pins them via CLI args.
 - **Shared DTOs** go in the vertical's `Shared` project (`FocusTemplate.Admin.Shared` /
@@ -224,7 +238,9 @@ exactly this. Traps, learned the hard way:
   idempotent (insert-if-empty). Implement **both** the sync and async seed delegates - the EF CLI uses
   the synchronous one. Integration tests deliberately run against an unseeded schema.
 - **No data volume** on the dev Postgres: each `aspire start` / E2E run gets a fresh, re-seeded
-  database, keeping runs deterministic and hermetic.
+  database, keeping runs deterministic and hermetic. **Exception:** with `Features:Intel` enabled
+  the Postgres gets a data volume - the intel archive (deployments, cursors, entity graph) must
+  survive restarts.
 
 ### Integration test database
 

@@ -11,8 +11,18 @@ builder.AddLocalSettings();
 bool addAnalytics = builder.Configuration.GetValue("Features:Analytics", true);
 bool addTlsOffloadingIngress = builder.Configuration.GetValue("Features:TlsOffloadingIngress", true);
 bool addMobile = builder.Configuration.GetValue("Features:Mobile", false);
+bool addIntel = builder.Configuration.GetValue("Features:Intel", false);
 
-IResourceBuilder<PostgresDatabaseResource> focusDb = builder.AddPostgres("postgres").AddDatabase("focusdb");
+IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres("postgres");
+
+if (addIntel)
+{
+	// The intel archive (deployments, cursors, later the entity graph) must survive restarts;
+	// without the flag the template keeps its hermetic fresh-database-per-start behavior.
+	postgres.WithDataVolume();
+}
+
+IResourceBuilder<PostgresDatabaseResource> focusDb = postgres.AddDatabase("focusdb");
 IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api").WithReference(focusDb).WaitFor(focusDb);
 
 // See https://aspire.dev/integrations/databases/efcore/migrations/
@@ -38,6 +48,20 @@ api.WaitForCompletion(migrations);
 IResourceBuilder<ProjectResource> publicApi =
 	builder.AddProject<FocusTemplate_Public_Api>("public-api").WithReference(focusDb).WaitFor(focusDb);
 publicApi.WaitForCompletion(migrations);
+
+if (addIntel)
+{
+	// Chain listener (Robinhood Chain by default - see the worker's appsettings.json for the RPC config)
+	IResourceBuilder<ProjectResource> intelWorker =
+		builder.AddProject<FocusTemplate_Intel_Worker>("intel-worker").WithReference(focusDb).WaitFor(focusDb);
+	intelWorker.WaitForCompletion(migrations);
+
+	// Keyed RPC endpoints stay out of committed config: appsettings.local.json / user secrets only
+	if (builder.Configuration["Intel:Ingest:RpcUrls"] is { Length: > 0 } rpcUrls)
+	{
+		intelWorker.WithEnvironment("Intel__Ingest__RpcUrls", rpcUrls);
+	}
+}
 
 if (addMobile)
 {

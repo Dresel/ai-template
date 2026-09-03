@@ -3,6 +3,7 @@ using System;
 using FocusTemplate.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FocusTemplate.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260902135101_AddTokenDeployments")]
+    partial class AddTokenDeployments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,22 +24,6 @@ namespace FocusTemplate.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("FocusTemplate.Data.Entities.ChainCursor", b =>
-                {
-                    b.Property<long>("ChainId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("LastProcessedBlock")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("ChainId");
-
-                    b.ToTable("ChainCursors");
-                });
 
             modelBuilder.Entity("FocusTemplate.Data.Entities.TokenDeployment", b =>
                 {
@@ -67,28 +54,13 @@ namespace FocusTemplate.Data.Migrations
                     b.Property<DateTimeOffset>("DetectedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("FactoryAddress")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LaunchpadName")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("TokenDecimals")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TokenName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TokenSymbol")
-                        .HasColumnType("text");
-
                     b.Property<string>("TransactionHash")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChainId", "ContractAddress")
+                    b.HasIndex("ChainId", "TransactionHash")
                         .IsUnique();
 
                     b.ToTable("TokenDeployments");

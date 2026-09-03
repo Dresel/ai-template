@@ -22,7 +22,7 @@ public sealed class BlazorAppFixture : IAsyncLifetime
 
 		IDistributedApplicationTestingBuilder builder =
 			await DistributedApplicationTestingBuilder.CreateAsync<FocusTemplate_AppHost>(
-				["Features:TlsOffloadingIngress=false", "Features:Analytics=false", "Features:Mobile=false",],
+				["Features:TlsOffloadingIngress=false", "Features:Analytics=false", "Features:Mobile=false", "Features:Intel=false",],
 				cancellationTokenSource.Token);
 
 		this.app = await builder.BuildAsync(cancellationTokenSource.Token);

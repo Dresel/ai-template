@@ -26,6 +26,11 @@
 		<PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.18.0" />
 		<PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.18.0" />
 		<PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.18.0" />
+		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="11.0.0-preview.7.26381.103" />
+		<!-- EVM chain access for the intel ingest worker -->
+		<PackageVersion Include="Nethereum.Web3" Version="6.1.0" />
+		<!-- Pinned above Nethereum's vulnerable transitive 11.0.2 (NU1903) -->
+		<PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
 		<PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.18.0" />
 		<PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
@@ -47,7 +52,11 @@
 		<PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="11.0.0-preview.7.26381.103" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
 		<PackageVersion Include="Microsoft.Playwright.Xunit.v3" Version="1.62.0" />
+		<!-- Reference ERC-20 deployment used by the intel integration tests against Anvil -->
+		<PackageVersion Include="Nethereum.StandardTokenEIP20" Version="6.1.0" />
 		<PackageVersion Include="Respawn" Version="7.0.0" />
+		<!-- Generic container support (Anvil/Foundry container in the intel integration tests) -->
+		<PackageVersion Include="Testcontainers" Version="4.14.0" />
 		<PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
 		<PackageVersion Include="xunit.v3" Version="4.0.0" />
 		<PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />

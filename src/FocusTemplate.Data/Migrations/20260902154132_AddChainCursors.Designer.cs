@@ -3,6 +3,7 @@ using System;
 using FocusTemplate.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FocusTemplate.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260902154132_AddChainCursors")]
+    partial class AddChainCursors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,18 +71,6 @@ namespace FocusTemplate.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FactoryAddress")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LaunchpadName")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("TokenDecimals")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TokenName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TokenSymbol")
                         .HasColumnType("text");
 
                     b.Property<string>("TransactionHash")

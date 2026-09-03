@@ -23,6 +23,38 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapGet(
+		"/tokendeployments",
+		async (AppDbContext dbContext, CancellationToken cancellationToken, bool tokensOnly = false) =>
+		{
+			IQueryable<FocusTemplate.Data.Entities.TokenDeployment> query = dbContext.TokenDeployments;
+
+			if (tokensOnly)
+			{
+				query = query.Where(entity => entity.TokenSymbol != null);
+			}
+
+			TokenDeploymentResponse[] deployments = await query
+				.OrderByDescending(entity => entity.DetectedAt)
+				.ThenByDescending(entity => entity.Id)
+				.Take(100)
+				.Select(entity => new TokenDeploymentResponse(
+					entity.ChainId,
+					entity.ContractAddress,
+					entity.DeployerAddress,
+					entity.FactoryAddress,
+					entity.LaunchpadName,
+					entity.TokenName,
+					entity.TokenSymbol,
+					entity.TokenDecimals,
+					entity.BlockNumber,
+					entity.DetectedAt))
+				.ToArrayAsync(cancellationToken);
+
+			return deployments;
+		})
+	.WithName("GetTokenDeployments");
+
+app.MapGet(
 		"/weatherforecast",
 		async (AppDbContext dbContext, CancellationToken cancellationToken) =>
 		{
