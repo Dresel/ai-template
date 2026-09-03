@@ -272,6 +272,46 @@ Design consequences (all deterministic, none need an LLM):
   *entire* history is trivial and removes the indexer dependency there completely (wallet
   age/history queries answered from our own Postgres).
 
+### Field study — ten launches traced (2026-09-03, manual)
+
+All four Pons `launchAndBuy` tokens traced (Karma, KITSU, GOLDINU, BIGLY) ended −46% to −100%;
+all six runners (STRATTON, ASS, GMERALD, DINO, BLOKKS, AIAIAI) were plain Uniswap v4 pools quoted
+in genuine Robinhood stock tokens. Findings, each mapping to a deterministic signal:
+
+1. **Venue predicts outcome.** Pons' guaranteed creator first-buy plus snipe-tax whitelist selects
+   for extractors — `launchpad:pons` is itself a strong negative prior.
+2. **Creator sells in the first minute ⇒ dump, every time.** Karma T+11s/20s, KITSU T+7–11s,
+   GOLDINU T+34s — 100% of the creator bag each time, before any human buyer arrives.
+3. **Whitelisted wallets are the creator's own cluster.** Every `snipeTaxExemptions` entry bought
+   in the first second and dumped; the wallets shared a funder (Relay solver, or a top-up seconds
+   before launch).
+4. **Bot-template metadata ⇒ no sponsor.** "Created with Beast" descriptions, empty social links,
+   same name launched twice in 11 s → zero organic trades.
+5. **A clean launch can still be a trap via its quote asset.** JINQIAN: no creator bag, LP burned,
+   10k holders — but priced in a self-issued "FAMI" controlled by the same team. The quote asset
+   (`pairToken`) must itself be classified (official Robinhood stock token / canonical / self-issued).
+6. **Post-launch churn signals.** Volume/liquidity > 20× per day = bot churn, not accumulation;
+   entries after a >10× six-hour move ended like RETA/FAP.
+
+**Derived detector rules** (v1 of the alert/score semantics; venue + calldata rules are pure
+ingest-time checks, the rest need the streaming/entity layers):
+
+- **Reject at T+0** on: Pons hook + non-empty insider whitelist, template description/empty
+  socials, serial launcher, or a quote asset that is not an official Robinhood stock token or
+  canonical quote. *(Storage semantics confirmed against live launches 2026-09-03:
+  `PairTokenAddress` = zero address means natively quoted and is canonical - only an
+  unrecognized **token** quote is a flag; null means no launch calldata was decoded. One launch
+  writes several `TokenDeployment` rows sharing a transaction hash - token plus curve - so an
+  alert must fire on the ERC-20 row, i.e. the one with a symbol, or it notifies twice. The curve
+  row is deliberately kept: its address is what the 120 s watcher and churn rules monitor.)*
+- **Watch 120 s, kill on**: any creator or whitelisted-wallet sell, or a shared-funding cluster
+  among the whitelist (first-funder walk). Waiting costs nothing — the runners moved over hours,
+  not seconds.
+- **Enter only if**: the creator still holds, ≥20 distinct EOA buyers with none above 2%, and the
+  pool is not Pons-hooked.
+- New deterministic tags this implies: `template_metadata`, `self_issued_quote`, plus the earlier
+  `serial_sniper`, `insider_whitelisted`, `launchpad:<name>`, `fee_recipient_moved`.
+
 ## Scoring — deterministic, versioned, evidence-backed
 
 One pure service per dimension → `SubScore` with evidence refs → weighted aggregate:
@@ -387,6 +427,11 @@ ping the phone before it can search; a full ordering of the remaining steps):
    `snipeTaxExemptions` insider whitelist (first `TokenDeploymentInsider`/edge rows) + creator
    launch-buy size. Red test: crafted calldata against Anvil. This is the first scoring-grade
    signal and what the first alert will lead with.
+   *(Done 2026-09-03: `PonsLaunchAndBuyFunction` mirrors the verified `PonsV2LaunchAndBuy` ABI
+   (full tuple incl. description/socials — rule-4 inputs decodable later without rework);
+   detection stores `TokenDeploymentInsider` rows, `CreatorBuyQuote` (uint256 → numeric), and
+   `PairTokenAddress` (rule-5 input). Red→green via crafted calldata against the Anvil test
+   factory, plus a wrong-selector guard test.)*
 2. **First alert end-to-end (Web Push)**: PWA-ify the dashboard (manifest + service worker),
    VAPID push from the BFF, rule v0 = "new token via known launchpad" (later: insider count ≥ N),
    deep link to `/launches`. Deliberately before scoring — usefulness beats completeness.

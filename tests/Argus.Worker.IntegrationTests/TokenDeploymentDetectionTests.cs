@@ -12,6 +12,7 @@ using Nethereum.Web3.Accounts;
 
 namespace Argus.Worker.IntegrationTests;
 
+[Collection(AnvilCollection.Name)]
 public sealed class TokenDeploymentDetectionTests(PostgresFixture postgres, AnvilFixture anvil)
 {
 	/// <summary>

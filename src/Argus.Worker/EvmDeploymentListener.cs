@@ -158,6 +158,42 @@ public sealed partial class EvmDeploymentListener(
 	}
 
 	/// <summary>
+	/// Decodes the Pons launchAndBuy calldata of the deployment transaction into the insider
+	/// whitelist (snipeTaxExemptions), the creator's own launch buy, and the quote asset.
+	/// Factory transactions with other calldata leave the launch fields empty.
+	/// </summary>
+	private static async Task DecodePonsLaunchAsync(Web3 web3, TokenDeployment deployment, CancellationToken cancellationToken)
+	{
+		try
+		{
+			Transaction transaction = await ExecuteWithRetryAsync(
+				() => web3.Eth.Transactions.GetTransactionByHash.SendRequestAsync(deployment.TransactionHash),
+				cancellationToken);
+
+			if (transaction is null || !transaction.IsTransactionForFunctionMessage<PonsLaunchAndBuyFunction>())
+			{
+				return;
+			}
+
+			PonsLaunchAndBuyFunction launch = transaction.DecodeTransactionToFunctionMessage<PonsLaunchAndBuyFunction>();
+
+			deployment.PairTokenAddress = launch.PairToken.ToLowerInvariant();
+			deployment.CreatorBuyQuote = launch.QuoteIn;
+			deployment.Insiders =
+			[
+				.. launch.SnipeTaxExemptions
+					.Select(address => address.ToLowerInvariant())
+					.Distinct()
+					.Select(address => new TokenDeploymentInsider { Address = address, }),
+			];
+		}
+		catch (Exception exception) when (exception is not OperationCanceledException)
+		{
+			// Malformed or unexpected calldata - detection still stands, only the launch details stay empty.
+		}
+	}
+
+	/// <summary>
 	/// Retries an RPC call when the endpoint rate-limits (HTTP 429). The public Robinhood Chain
 	/// endpoint uses a 60-second window, so the last delay outlasts a full window.
 	/// </summary>
@@ -476,6 +512,11 @@ public sealed partial class EvmDeploymentListener(
 		if (deployment.FactoryAddress is { } factory && this.launchpadsByAddress.TryGetValue(factory, out string? launchpadName))
 		{
 			deployment.LaunchpadName = launchpadName;
+
+			if (launchpadName == "pons")
+			{
+				await DecodePonsLaunchAsync(web3, deployment, cancellationToken);
+			}
 		}
 
 		(deployment.TokenName, deployment.TokenSymbol, deployment.TokenDecimals) =
