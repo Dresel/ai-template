@@ -2,6 +2,13 @@
 
 *First outline: 2026-09-01. Revised: 2026-09-02. Status: design sketch, nothing built.*
 
+*2026-09-03: the codebase was renamed — the product is **Argus** (`Argus.slnx`). The former Admin
+vertical is now `Argus.Api`/`Argus.Web`/`Argus.Web.Bff`/`Argus.Shared`, the intel worker is
+`Argus.Worker` (flat `src/`, no vertical folders), and the Public/MAUI vertical was removed
+entirely. `Intel.Worker`/`src/intel/` mentions below refer to today's `Argus.Worker`; planned
+modules (`Intel.Enrichment`, `Intel.Execution`, the Intel MCP server) will land as `Argus.*`
+projects. Config vocabulary is unchanged: `Features:Intel`, `Intel:Ingest:*`.*
+
 A **personal, single-user** crypto-intelligence system. Two primary use cases:
 
 1. **Entity Research** — search *anything*: wallet address, contract, token, person, fund
@@ -373,9 +380,22 @@ until that phase opens.
    code-appeared-this-block check, `FactoryAddress` recorded; unique key is now
    (chain, contract). Still open: per-launchpad calldata decoding — whitelists, fee flags —
    and trace-based detection for log-less internal creations.)*
-2. Universal search v1 (addresses/tx hashes only) + entity page with edges and evidence.
-3. Watchlists + alert rules + the push channel — the notification use case end-to-end.
-4. More chains: Base, Robinhood Chain — config + registry row only; proves the chain registry.
+**Resequenced 2026-09-03** (the notification use case is pulled forward — the system should
+ping the phone before it can search; a full ordering of the remaining steps):
+
+1. **Pons calldata decoder** (rest of 1b): decode `launchAndBuy` calldata —
+   `snipeTaxExemptions` insider whitelist (first `TokenDeploymentInsider`/edge rows) + creator
+   launch-buy size. Red test: crafted calldata against Anvil. This is the first scoring-grade
+   signal and what the first alert will lead with.
+2. **First alert end-to-end (Web Push)**: PWA-ify the dashboard (manifest + service worker),
+   VAPID push from the BFF, rule v0 = "new token via known launchpad" (later: insider count ≥ N),
+   deep link to `/launches`. Deliberately before scoring — usefulness beats completeness.
+3. **Deployer context** (first bite of the entity graph): wallet age, tx count, first-funder
+   walk per deployer — answered from our own archive where possible; stored as the first
+   `Entity`/`Edge` rows. Turns the alert into "fresh wallet, funded minutes ago from X".
+4. More chains: Base, Ethereum — config + registry row; Base is the volume stress test.
+5. Universal search v1 (addresses/tx hashes only) + entity page with edges and evidence.
+6. Watchlists + graph-aware alert rules (N funding-hops around watched entities).
    *(Robinhood Chain live 2026-09-02: `intel-worker` Aspire resource behind `Features:Intel`
    (default off), cursor persistence + bounded catch-up, RPC failover
    (Alchemy → publicnode → official; keyed URL in gitignored local config), Logs ingest mode
@@ -386,9 +406,15 @@ until that phase opens.
    (`Launchpads` config map factory→name; Pons = `0xe33E9E479dF8802cb0866d5d05258bEc4cF62948`,
    verified against the Karma launch tx) - live Pons launches now land labeled, e.g.
    "TICKER (launchpad: pons)".)*
-5. Collectors: DEX first (on-chain, no API-key zoo), then GitHub, then X.
-6. Scoring v1 + LLM enrichment (entity resolution for free-text search, narratives) with the
+7. Collectors: DEX first (on-chain, no API-key zoo), then GitHub, then X.
+8. Scoring v1 + LLM enrichment (entity resolution for free-text search, narratives) with the
    eval set.
+
+**Operational note (open ❓):** detection only runs while the dev machine runs the AppHost —
+every shutdown is an archive gap (bounded catch-up covers minutes, not nights). Eventually
+this wants an always-on home (mini-PC / VPS / `aspire publish` to a container host); the
+archive's value compounds with uptime. Also pending: the machine-wide Playwright E2E breakage
+(tracked as its own task).
 
 ## Decided (2026-09-02)
 

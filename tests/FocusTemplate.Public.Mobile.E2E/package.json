@@ -1,9 +1,0 @@
-{
-	"name": "focustemplate-public-mobile-e2e",
-	"private": true,
-	"description": "Project-local Appium server + drivers for the mobile E2E suite (run 'npm ci' here once per machine).",
-	"devDependencies": {
-		"appium": "3.5.2",
-		"appium-uiautomator2-driver": "8.1.0"
-	}
-}

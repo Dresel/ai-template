@@ -1,0 +1,55 @@
+@page "/diagnostics"
+@using Argus.Shared
+@inject HttpClient Http
+@inject NavigationManager Nav
+
+<PageTitle>Diagnostics</PageTitle>
+
+<h1>Request diagnostics</h1>
+
+<p>Browser scheme: <strong data-testid="browser-scheme">@BrowserScheme</strong></p>
+
+@if (Request is not null)
+{
+	<ul data-testid="request-diagnostics">
+		<li>BFF Request.Scheme: <strong>@Request.Scheme</strong> (IsHttps: @Request.IsHttps)</li>
+		<li>BFF Request.Host: @Request.Host</li>
+		<li>Client IP: @Request.RemoteIp</li>
+		<li>X-Forwarded-Proto: @Request.XForwardedProto</li>
+		<li>X-Forwarded-Host: @Request.XForwardedHost</li>
+		<li>X-Forwarded-For: @Request.XForwardedFor</li>
+		<li>X-Original-Proto (consumed): @Request.XOriginalProto</li>
+		<li>X-Original-For (consumed): @Request.XOriginalFor</li>
+	</ul>
+}
+else if (DiagnosticsError is not null)
+{
+	<p data-testid="diagnostics-error">Diagnostics unavailable: @DiagnosticsError</p>
+}
+else
+{
+	<p data-testid="diagnostics-loading">Loading...</p>
+}
+
+@code
+{
+	private string BrowserScheme { get; set; } = string.Empty;
+
+	private RequestDiagnostics? Request { get; set; }
+
+	private string? DiagnosticsError { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		BrowserScheme = new Uri(Nav.Uri).Scheme;
+
+		try
+		{
+			Request = await Http.GetFromJsonAsync<RequestDiagnostics>("debug/request");
+		}
+		catch (HttpRequestException e)
+		{
+			DiagnosticsError = e.Message;
+		}
+	}
+}

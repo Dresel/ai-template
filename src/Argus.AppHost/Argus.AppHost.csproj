@@ -1,0 +1,23 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.5.3">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<UserSecretsId>f17904a0-2527-4a67-8814-34dd2ac5efe2</UserSecretsId>
+		<AspireUseCliBundle>true</AspireUseCliBundle>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.Blazor" />
+		<PackageReference Include="Aspire.Hosting.EntityFrameworkCore" />
+		<PackageReference Include="Aspire.Hosting.PostgreSQL" />
+		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Umami" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Argus.Api\Argus.Api.csproj" />
+		<ProjectReference Include="..\Argus.Data\Argus.Data.csproj" IsAspireProjectResource="false" />
+		<ProjectReference Include="..\Argus.Web.Bff\Argus.Web.Bff.csproj" />
+		<ProjectReference Include="..\Argus.Worker\Argus.Worker.csproj" />
+	</ItemGroup>
+
+</Project>

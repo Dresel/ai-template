@@ -76,7 +76,7 @@
 			"PowerShell(aspire config list *)",
 			"PowerShell(aspire config info *)",
 			"PowerShell(aspire stop)",
-			"PowerShell(aspire stop --apphost src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj)",
+			"PowerShell(aspire stop --apphost src/Argus.AppHost/Argus.AppHost.csproj)",
 
 			"Bash(aspire --help)",
 			"Bash(aspire --version)",
@@ -94,7 +94,7 @@
 			"Bash(aspire config list *)",
 			"Bash(aspire config info *)",
 			"Bash(aspire stop)",
-			"Bash(aspire stop --apphost src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj)",
+			"Bash(aspire stop --apphost src/Argus.AppHost/Argus.AppHost.csproj)",
 
 			"Skill(playwright-cli)",
 			"Skill(playwright-cli:*)",

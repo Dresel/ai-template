@@ -1,0 +1,53 @@
+@page "/weather"
+@using Argus.Shared
+@inject ApiClient Api
+
+<PageTitle>Weather</PageTitle>
+
+<Heading Size="HeadingSize.Is1" Margin="Margin.Is3.FromBottom">Weather</Heading>
+
+<Card>
+	<CardHeader>
+		<CardTitle Size="HeadingSize.Is5" Margin="Margin.Is0">Five-day forecast</CardTitle>
+	</CardHeader>
+	<CardBody>
+		@if (Forecasts is null)
+		{
+			<Paragraph data-testid="weather-loading">Loading...</Paragraph>
+		}
+		else
+		{
+			<Table data-testid="weather-table" Striped Hoverable Responsive>
+				<TableHeader>
+					<TableRow>
+						<TableHeaderCell>Date</TableHeaderCell>
+						<TableHeaderCell>Temp. (C)</TableHeaderCell>
+						<TableHeaderCell>Temp. (F)</TableHeaderCell>
+						<TableHeaderCell>Summary</TableHeaderCell>
+					</TableRow>
+				</TableHeader>
+				<TableBody>
+					@foreach (var forecast in Forecasts)
+					{
+						<TableRow data-testid="weather-row">
+							<TableRowCell>@forecast.Date.ToShortDateString()</TableRowCell>
+							<TableRowCell>@forecast.TemperatureC</TableRowCell>
+							<TableRowCell>@forecast.TemperatureF</TableRowCell>
+							<TableRowCell>@forecast.Summary</TableRowCell>
+						</TableRow>
+					}
+				</TableBody>
+			</Table>
+		}
+	</CardBody>
+</Card>
+
+@code
+{
+	private WeatherForecastResponse[]? Forecasts { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		Forecasts = await Api.GetWeatherAsync();
+	}
+}

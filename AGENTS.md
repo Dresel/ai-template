@@ -1,51 +1,33 @@
-# FocusTemplate
+# Argus
 
-An AI-first .NET 11 template on Aspire, split into two audience verticals: **Admin** (a Blazor
-WebAssembly client served through a thin BFF over an internal API) and **Public** (a deliberately
-exposed API + a native .NET MAUI mobile client). End-to-end OpenTelemetry, Umami analytics, and
-Playwright E2E tests.
+A personal, single-user **crypto-intelligence system** on .NET 11 + Aspire (forked from the
+FocusTemplate template): a headless chain-ingestion worker feeding a shared Postgres domain, with a
+Blazor WebAssembly dashboard served through a thin BFF over an internal API. End-to-end
+OpenTelemetry, Umami analytics, and Playwright E2E tests. Design doc + roadmap:
+`shitcoin-trader.md`.
 
 ## Projects
 
-Shared spine:
-
-- **FocusTemplate.AppHost** - Aspire orchestrator. Wires both APIs, the BFF, an optional nginx TLS
-  ingress, optional Umami analytics, and (behind `Features:Mobile`) the MAUI device resources + Dev Tunnel.
-- **FocusTemplate.Data** - EF Core data layer: `AppDbContext`, entities, the `Migrations/` folder,
-  a design-time factory, and the dev seed. One domain, referenced by both APIs and the AppHost
-  migration resource.
-- **FocusTemplate.ServiceDefaults** - server-side Aspire defaults (OTel, service discovery, health).
-
-Admin vertical (`src/admin/`):
-
-- **FocusTemplate.Admin.Api** - internal minimal API; never exposed to the browser directly. Reads/writes
+- **Argus.AppHost** - Aspire orchestrator. Wires Postgres + migrations, the API, the BFF, the
+  ingest worker (behind `Features:Intel`), an optional nginx TLS ingress, and optional Umami analytics.
+- **Argus.Data** - EF Core data layer: `AppDbContext`, entities, the `Migrations/` folder,
+  a design-time factory, and the dev seed. One domain, referenced by the API, the worker, and the
+  AppHost migration resource.
+- **Argus.ServiceDefaults** - server-side Aspire defaults (OTel, service discovery, health).
+- **Argus.Api** - internal minimal API; never exposed to the browser directly. Reads/writes
   through EF Core (`AppDbContext`), backed by PostgreSQL.
-- **FocusTemplate.Admin.Web** - the Blazor WASM client (Blazorise Material UI).
-- **FocusTemplate.Admin.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
+- **Argus.Web** - the Blazor WASM dashboard (Blazorise Material UI).
+- **Argus.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
   `/_otlp/*` → dashboard, `/_analytics/*` → Umami. The browser only ever talks to the BFF.
-- **FocusTemplate.Admin.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
-- **FocusTemplate.Admin.Shared** - DTOs shared between the server and the WASM client.
-
-Intel vertical (`src/intel/`, behind `Features:Intel`, default off):
-
-- **FocusTemplate.Intel.Worker** - headless chain-ingestion worker (Nethereum): polls EVM chains
-  for contract deployments (`TokenDeployment` rows), with persisted per-chain cursors
-  (`ChainCursor`), bounded catch-up, RPC endpoint failover + 429 backoff, two ingest modes
-  (`BlockReceipts` = complete, for tests/friendly RPCs; `Logs` = budget mode for rate-limited
-  public endpoints), ERC-20 metadata capture, and launchpad attribution via a configured
-  factory→name map. Design doc: `shitcoin-trader.md`. Keyed RPC URLs stay in the gitignored
-  `appsettings.local.json` (AppHost passes them through as `Intel__Ingest__RpcUrls`).
-
-Public vertical (`src/public/`):
-
-- **FocusTemplate.Public.Api** - the exposed API for external clients (mobile); same EF Core access
-  to the shared domain, its own audience-shaped DTOs.
-- **FocusTemplate.Public.Mobile** - native .NET MAUI app (XAML), `net11.0-android;net11.0-ios` only
-  (no Windows/MacCatalyst targets by decision; iOS builds only on macOS/CI).
-- **FocusTemplate.Public.Mobile.ServiceDefaults** - MAUI counterpart of ServiceDefaults (service
-  discovery, resilience, OTel) from the `maui-aspire-servicedefaults` template; no ASP.NET Core dependency.
-- **FocusTemplate.Public.Shared** - the mobile wire contract. The two `Shared` projects must never
-  reference each other.
+- **Argus.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
+- **Argus.Shared** - DTOs shared between the server and the WASM client.
+- **Argus.Worker** (behind `Features:Intel`, default off) - headless chain-ingestion worker
+  (Nethereum): polls EVM chains for contract deployments (`TokenDeployment` rows), with persisted
+  per-chain cursors (`ChainCursor`), bounded catch-up, RPC endpoint failover + 429 backoff, two
+  ingest modes (`BlockReceipts` = complete, for tests/friendly RPCs; `Logs` = budget mode for
+  rate-limited public endpoints), ERC-20 metadata capture, and launchpad attribution via a
+  configured factory→name map. Keyed RPC URLs stay in the gitignored `appsettings.local.json`
+  (AppHost passes them through as `Intel__Ingest__RpcUrls`).
 
 ## Tech stack
 
@@ -65,19 +47,17 @@ Public vertical (`src/public/`):
   version in `Directory.Packages.props`. The `dotnet-ef` CLI is a repo-local tool
   (`.config/dotnet-tools.json`). AppHost wiring uses `Aspire.Hosting.PostgreSQL` +
   `Aspire.Hosting.EntityFrameworkCore` (`AddEFMigrations`).
-- **Testing (data)** - `Testcontainers.PostgreSql` - real Postgres per integration-test assembly.
+- **Chain ingest (worker)** - `Nethereum.Web3`; `Newtonsoft.Json` pinned above Nethereum's
+  vulnerable transitive.
+- **Testing (data)** - `Testcontainers.PostgreSql` - real Postgres per integration-test assembly;
+  plain `Testcontainers` for the Anvil (Foundry) EVM container; `Nethereum.StandardTokenEIP20` as
+  the reference ERC-20 the ingest tests deploy.
 - **Shared infra (ServiceDefaults)** - `Microsoft.Extensions.ServiceDiscovery`;
   `Microsoft.Extensions.Http.Resilience` (Polly-based).
 - **Observability** - `OpenTelemetry.Exporter.OpenTelemetryProtocol`, `OpenTelemetry.Extensions.Hosting`,
   and instrumentation for AspNetCore / Http / Runtime.
 - **Testing** - `Aspire.Hosting.Testing`; `Microsoft.AspNetCore.Mvc.Testing`; `xunit.v3`;
   `Microsoft.Playwright.Xunit.v3` (E2E); `Microsoft.NET.Test.Sdk`.
-- **Mobile (MAUI)** - `Aspire.Hosting.Maui` (**preview**, lockstep with the AppHost SDK) +
-  `Aspire.Hosting.DevTunnels` for AppHost wiring; `Microsoft.Maui.Controls` version comes from the
-  installed MAUI workload via `VersionOverride="$(MauiVersion)"`; `Microsoft.Maui.Core` is pinned in
-  `Directory.Packages.props` and **must match the workload band** (`dotnet workload list`). Building
-  the solution requires the `maui-android`/`maui-ios` workloads and the Android SDK platform matching
-  the band (`dotnet build -t:InstallAndroidDependencies` installs it).
 - **Analyzers** - `StyleCop.Analyzers` (global, enforced as build errors).
 
 ## Running
@@ -94,16 +74,13 @@ on the affected resource (Aspire dashboard or MCP).
 
 ## Build, test, format
 
-- `dotnet build FocusTemplate.slnx`
-- `dotnet test FocusTemplate.slnx` - xUnit integration tests + Playwright E2E through the BFF
+- `dotnet build Argus.slnx`
+- `dotnet test Argus.slnx` - xUnit integration tests + Playwright E2E through the BFF
 - `dotnet format <project>` - analyzers are strict (StyleCop + IDE rules as errors). Files written
   by tooling usually need this to fix line endings (CRLF, no final newline).
-  **Never run `dotnet format` on the multi-targeted MAUI project** (`FocusTemplate.Public.Mobile`) -
-  it processes each TFM as a separate project and writes conflict markers into shared source files.
-  Fix its files by hand or with `dotnet jb cleanupcode --include=`.
-- `dotnet jb cleanupcode FocusTemplate.slnx --profile="Built-in: Reformat Code" --include=<path>` -
+- `dotnet jb cleanupcode Argus.slnx --profile="Built-in: Reformat Code" --include=<path>` -
   ReSharper formatting (repo-local tool, `dotnet tool restore` after a fresh clone; honors
-  `.editorconfig` + `FocusTemplate.sln.DotSettings`). Prefer scoping with `--include` - a bare run
+  `.editorconfig` + `Argus.sln.DotSettings`). Prefer scoping with `--include` - a bare run
   reformats the whole solution.
 
 ## Agent toolbox
@@ -121,9 +98,8 @@ Skills live in `.claude/skills/`. Pick by task - these are all permission-allowl
 | Runtime evidence from a running app: logs, traces, resources | Aspire MCP (`list_resources`, `list_console_logs`, `list_structured_logs`, `list_traces`) |
 | Apply a code change to a running resource | Aspire MCP `execute_resource_command` → `rebuild` (no full restart) |
 | Aspire API / workflow questions | `aspire docs search/get`, `aspire docs api search --language csharp` (or MCP `search_docs`/`get_doc`) |
-| Any .NET package API question (Blazorise, YARP, OTel, …) | `dotnet-inspect` skill: `dnx dotnet-inspect -y -- member/type/find/diff --package <id>` |
-| Browser reproduction, manual UI checks, screenshots | `playwright-cli` skill (persistent E2E tests go in `FocusTemplate.Admin.Web.E2E`) |
-| Drive the app on the Android emulator: find/tap/type/screenshot/page source | `appium` MCP (element-based, same locator semantics as the tests; persistent E2E tests go in `FocusTemplate.Public.Mobile.E2E`). Raw `adb` is the fallback + logcat channel |
+| Any .NET package API question (Blazorise, YARP, OTel, Nethereum, …) | `dotnet-inspect` skill: `dnx dotnet-inspect -y -- member/type/find/diff --package <id>` |
+| Browser reproduction, manual UI checks, screenshots | `playwright-cli` skill (persistent E2E tests go in `Argus.Web.E2E`) |
 | Formatting | `dotnet format`, `dotnet jb cleanupcode` (see above) |
 | Wire an existing app into Aspire (one-time) | `aspireify` skill - already completed for this repo |
 
@@ -138,25 +114,19 @@ feature, specify the new behavior with one.
    Aspire questions → `aspire docs`; any other package (Blazorise, YARP, OTel, …) → `dotnet-inspect`.
 3. **Add the failing test at the smallest level that fits:**
    - **Integration** (one service: DI, middleware, serialization, auth, framework, **EF Core / SQL**) →
-     `FocusTemplate.Admin.Api.IntegrationTests`. A real Postgres runs via Testcontainers (assembly fixture,
+     `Argus.Api.IntegrationTests`. A real Postgres runs via Testcontainers (assembly fixture,
      migrations applied once); tests arrange rows against an empty schema. See **Integration test
      database** below for the reset/isolation contract. Chain-ingest behavior →
-     `FocusTemplate.Intel.IntegrationTests`: same Postgres pattern plus an **Anvil (Foundry)
+     `Argus.Worker.IntegrationTests`: same Postgres pattern plus an **Anvil (Foundry)
      container** (a real local EVM chain) - tests deploy real contracts and assert the resulting
      rows.
    - **Aspire system** (cross-resource: BFF↔API, ingress, service discovery, startup order,
-     scale-out, telemetry) → `FocusTemplate.Admin.Web.E2E` (boots the AppHost via
+     scale-out, telemetry) → `Argus.Web.E2E` (boots the AppHost via
      `DistributedApplicationTestingBuilder`).
    - **UI** (DOM, input, caret, focus, keyboard, routing, client validation, user flow) →
-     `FocusTemplate.Admin.Web.E2E` Playwright, through the BFF.
-   - **UI (mobile)** (native MAUI flows on the Android emulator) → `FocusTemplate.Public.Mobile.E2E`
-     Appium/UiAutomator2; boots the AppHost, installs the APK with a baked test env (`adb reverse`,
-     no Dev Tunnel). Appium + driver are **project-local npm devDependencies** — one-time `npm ci`
-     in the test project; auto-skips without that or an emulator. Locators: MAUI `AutomationId` =
-     Android `resource-id` → `MobileBy.Id("<AutomationId>")` (driver auto-prefixes the app package;
-     `AccessibilityId` does not match).
+     `Argus.Web.E2E` Playwright, through the BFF.
    - **Unit** (pure logic) → add a unit project when such logic first appears; none today.
-4. **Watch it fail** - stop the AppHost (bin lock), then `dotnet test FocusTemplate.slnx --filter <name>`.
+4. **Watch it fail** - stop the AppHost (bin lock), then `dotnet test Argus.slnx --filter <name>`.
    Confirm the failure matches the report, not a setup gap.
 5. **Smallest fix** - minimal production change to green the test; `dotnet format <project>` new files.
 6. **Re-run** the new test, then the affected area's existing tests.
@@ -170,19 +140,6 @@ without a full restart.
 **UI bugs → the `playwright-cli` skill:** real browser + keyboard, never value assignment. Input/caret
 bugs: navigate → locate by `data-testid` → set value → set `selectionStart`/`selectionEnd` → type via
 key events → assert value *and* caret.
-
-**Mobile bugs/features → red-first in `FocusTemplate.Public.Mobile.E2E`.** Interactive driving via
-the `appium` MCP (find element / tap / type / screenshot / page source) - same locator semantics as
-the tests (`MobileBy.Id("<AutomationId>")`), so an interactive repro translates 1:1 into the failing
-test, which is written **before** the fix. New UI: decide the `AutomationId`s up front - they are
-the spec the red test asserts against; implement, then re-run (the fixture rebuilds + reinstalls the
-APK every run, so there is no stale-APK risk in the test path). Pure visuals (layout, theming):
-verify by emulator screenshot, no persistent test. Raw `adb` is the fallback + evidence channel:
-`adb exec-out screencap -p`, `adb shell uiautomator dump`, `adb logcat` (tag `template.mobile`).
-Needs a running emulator; boot with `emulator -avd <name>` and wait with
-`adb wait-for-device shell 'while [ "$(getprop sys.boot_completed)" != "1" ]; do sleep 2; done'` -
-the loop runs device-side, so the host command stays a single allowlisted `adb` invocation (a
-host-side shell loop around `adb` triggers a permission prompt).
 
 **Scale-out bugs:** first a deterministic integration test with two BFF instances sharing one session
 (req 1 → instance A, req 2 → instance B; assert business behavior, not infra). Escalate to an Aspire
@@ -205,20 +162,13 @@ exactly this. Traps, learned the hard way:
 
 ## Conventions
 
-- **Feature flags**: `Features:Analytics`, `Features:TlsOffloadingIngress`, `Features:Mobile`
-  (default **off**: no devtunnel/emulator requirements on a plain `aspire start`), and
-  `Features:Intel` (default **off**: no chain listener, no data volume) in the AppHost's
-  `appsettings.json`, overridable per-developer via the gitignored `appsettings.local.json`. The
-  E2E fixture pins them via CLI args.
-- **Shared DTOs** go in the vertical's `Shared` project (`FocusTemplate.Admin.Shared` /
-  `FocusTemplate.Public.Shared` - never referencing each other). Entities (`FocusTemplate.Data`)
-  stay server-side; map entity => DTO in the API endpoint, never expose entities to the client.
-- **Keep `data-testid` attributes** - the Playwright E2E suite selects on them. The MAUI equivalent
-  is **`AutomationId` on every interactive control** (Appium selects on it).
-- **Mobile dev loop**: enable `Features:Mobile` in `appsettings.local.json`; first start prompts to
-  install/login the `devtunnel` CLI (the Dev Tunnel exposes `public-api` to the emulator; anonymous,
-  dev-only). Android needs a running emulator (`adb devices`); the iOS simulator resource shows
-  "unsupported" on Windows - it runs from a macOS host only.
+- **Feature flags**: `Features:Analytics`, `Features:TlsOffloadingIngress`, and `Features:Intel`
+  (default **off**: no chain listener, no data volume) in the AppHost's `appsettings.json`,
+  overridable per-developer via the gitignored `appsettings.local.json`. The E2E fixture pins them
+  via CLI args.
+- **Shared DTOs** go in `Argus.Shared`. Entities (`Argus.Data`) stay server-side; map
+  entity => DTO in the API endpoint, never expose entities to the client.
+- **Keep `data-testid` attributes** - the Playwright E2E suite selects on them.
 
 ### Database & migrations
 
@@ -227,9 +177,9 @@ exactly this. Traps, learned the hard way:
   race). Locally/E2E the resource runs `dotnet ef database update` on start; `aspire publish` emits it
   as an idempotent migration-bundle container (a one-shot Job/`restart:no` per compute target).
 - **Add a migration** (stop the AppHost first - bin lock):
-  `dotnet dotnet-ef migrations add <Name> --project src/FocusTemplate.Data --startup-project src/FocusTemplate.Data`.
+  `dotnet dotnet-ef migrations add <Name> --project src/Argus.Data --startup-project src/Argus.Data`.
   The design-time `AppDbContextFactory` needs no live DB for this. Migration files land in
-  `src/FocusTemplate.Data/Migrations/` and are exempt from StyleCop via an `.editorconfig`
+  `src/Argus.Data/Migrations/` and are exempt from StyleCop via an `.editorconfig`
   `generated_code` carve-out. You can also use the migration resource's dashboard commands
   (Add Migration, Update/Reset/Drop Database, Status).
 - **Dev seed data** lives in `WeatherSeed` and runs via EF `UseSeeding`/`UseAsyncSeeding` when the

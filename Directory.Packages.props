@@ -34,18 +34,10 @@
 		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
 		<PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.18.0" />
 		<PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
-		<!-- Keep in lockstep with the installed MAUI workload band (dotnet workload list) -->
-		<PackageVersion Include="Microsoft.Maui.Core" Version="11.0.0-preview.7.26406.9" />
 	</ItemGroup>
 	<ItemGroup>
-		<!-- Android SDK/adb wrapper (mobile E2E fixture plumbing; same library the MAUI team's `dotnet android` tool builds on) -->
-		<PackageVersion Include="AndroidSdk" Version="0.35.1" />
-		<!-- Appium .NET client (mobile E2E); requires an Appium 2/3 server with the uiautomator2 driver -->
-		<PackageVersion Include="Appium.WebDriver" Version="8.3.2" />
 		<PackageVersion Include="Aspire.Hosting.Blazor" Version="13.5.3-preview.1.26425.3" />
-		<PackageVersion Include="Aspire.Hosting.DevTunnels" Version="13.5.3" />
 		<PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="13.5.3-preview.1.26425.3" />
-		<PackageVersion Include="Aspire.Hosting.Maui" Version="13.5.3-preview.1.26425.3" />
 		<PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.5.3" />
 		<PackageVersion Include="Aspire.Hosting.Testing" Version="13.5.3" />
 		<PackageVersion Include="CommunityToolkit.Aspire.Hosting.Umami" Version="13.5.0" />

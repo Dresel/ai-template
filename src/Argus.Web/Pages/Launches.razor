@@ -1,0 +1,132 @@
+@page "/launches"
+@using Argus.Shared
+@implements IDisposable
+@inject ApiClient Api
+
+<PageTitle>Token launches</PageTitle>
+
+<Heading Size="HeadingSize.Is1" Margin="Margin.Is3.FromBottom">Token launches</Heading>
+
+<Card>
+	<CardHeader>
+		<CardTitle Size="HeadingSize.Is5" Margin="Margin.Is0">Latest deployments</CardTitle>
+	</CardHeader>
+	<CardBody>
+		<Switch TValue="bool" Value="@TokensOnly" ValueChanged="@OnTokensOnlyChangedAsync" data-testid="launches-tokens-only">
+			Tokens only
+		</Switch>
+
+		@if (Deployments is null)
+		{
+			<Paragraph data-testid="launches-loading">Loading...</Paragraph>
+		}
+		else if (Deployments.Length == 0)
+		{
+			<Paragraph data-testid="launches-empty">No deployments detected yet.</Paragraph>
+		}
+		else
+		{
+			<Table data-testid="launches-table" Striped Hoverable Responsive>
+				<TableHeader>
+					<TableRow>
+						<TableHeaderCell>Age</TableHeaderCell>
+						<TableHeaderCell>Symbol</TableHeaderCell>
+						<TableHeaderCell>Name</TableHeaderCell>
+						<TableHeaderCell>Launchpad</TableHeaderCell>
+						<TableHeaderCell>Contract</TableHeaderCell>
+						<TableHeaderCell>Deployer</TableHeaderCell>
+						<TableHeaderCell>Block</TableHeaderCell>
+					</TableRow>
+				</TableHeader>
+				<TableBody>
+					@foreach (var deployment in Deployments)
+					{
+						<TableRow data-testid="launches-row">
+							<TableRowCell>@FormatAge(deployment.DetectedAt)</TableRowCell>
+							<TableRowCell>@deployment.TokenSymbol</TableRowCell>
+							<TableRowCell>@deployment.TokenName</TableRowCell>
+							<TableRowCell>
+								@if (deployment.LaunchpadName is not null)
+								{
+									<Badge Color="Color.Warning">@deployment.LaunchpadName</Badge>
+								}
+							</TableRowCell>
+							<TableRowCell>@AddressLink(deployment.ChainId, deployment.ContractAddress)</TableRowCell>
+							<TableRowCell>@AddressLink(deployment.ChainId, deployment.DeployerAddress)</TableRowCell>
+							<TableRowCell>@deployment.BlockNumber</TableRowCell>
+						</TableRow>
+					}
+				</TableBody>
+			</Table>
+		}
+	</CardBody>
+</Card>
+
+@code
+{
+	private readonly PeriodicTimer refreshTimer = new(TimeSpan.FromSeconds(10));
+
+	private TokenDeploymentResponse[]? Deployments { get; set; }
+
+	private bool TokensOnly { get; set; } = true;
+
+	public void Dispose() => refreshTimer.Dispose();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadAsync();
+		_ = RefreshLoopAsync();
+	}
+
+	private static string FormatAge(DateTimeOffset detectedAt)
+	{
+		var age = DateTimeOffset.UtcNow - detectedAt;
+
+		return age.TotalSeconds < 60 ? $"{(int)age.TotalSeconds}s"
+			: age.TotalMinutes < 60 ? $"{(int)age.TotalMinutes}m"
+			: age.TotalHours < 24 ? $"{(int)age.TotalHours}h"
+			: $"{(int)age.TotalDays}d";
+	}
+
+	private static string Shorten(string address) =>
+		address.Length > 12 ? $"{address[..6]}…{address[^4..]}" : address;
+
+	private static RenderFragment AddressLink(long chainId, string address) => builder =>
+	{
+		var explorerUrl = chainId == 4663 ? $"https://robinhoodchain.blockscout.com/address/{address}" : null;
+
+		if (explorerUrl is null)
+		{
+			builder.AddContent(0, Shorten(address));
+			return;
+		}
+
+		builder.OpenElement(0, "a");
+		builder.AddAttribute(1, "href", explorerUrl);
+		builder.AddAttribute(2, "target", "_blank");
+		builder.AddAttribute(3, "rel", "noopener");
+		builder.AddContent(4, Shorten(address));
+		builder.CloseElement();
+	};
+
+	private async Task LoadAsync()
+	{
+		Deployments = await Api.GetTokenDeploymentsAsync(TokensOnly);
+	}
+
+	private async Task OnTokensOnlyChangedAsync(bool value)
+	{
+		TokensOnly = value;
+		Deployments = null;
+		await LoadAsync();
+	}
+
+	private async Task RefreshLoopAsync()
+	{
+		while (await refreshTimer.WaitForNextTickAsync())
+		{
+			await LoadAsync();
+			StateHasChanged();
+		}
+	}
+}
