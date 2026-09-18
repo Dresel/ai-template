@@ -2,13 +2,23 @@
 
 	<ItemGroup>
 		<PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+		<PackageReference Include="Mediator.Abstractions" />
+		<PackageReference Include="Mediator.SourceGenerator" PrivateAssets="all" ExcludeAssets="runtime">
+			<IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\FocusTemplate.Data\FocusTemplate.Data.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.ServiceDefaults\FocusTemplate.ServiceDefaults.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Public.Shared\FocusTemplate.Public.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="../spec/**/*.tsp" LinkBase="spec" />
+		<None Include="tspconfig.yaml" />
+
+		<Content Include="openapi.yaml" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
 </Project>

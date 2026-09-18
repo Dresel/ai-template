@@ -1,3 +1,4 @@
+using FocusTemplate.Public.Client.WeatherForecasts;
 using Microsoft.Extensions.Hosting;
 
 namespace FocusTemplate.Public.Mobile;
@@ -19,7 +20,7 @@ public static class MauiProgram
 
 		// "https+http://" prefers HTTPS and falls back to HTTP - "public-api" resolves via service discovery
 		// (the AppHost injects the endpoint, via Dev Tunnel on Android/iOS).
-		builder.Services.AddHttpClient<WeatherApiClient>(client => client.BaseAddress = new Uri("https+http://public-api"));
+		builder.Services.AddHttpClient<WeatherForecastsClient>(client => client.BaseAddress = new Uri("https+http://public-api"));
 
 		builder.Services.AddSingleton<MainPage>();
 

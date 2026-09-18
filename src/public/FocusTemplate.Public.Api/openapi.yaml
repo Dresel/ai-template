@@ -1,0 +1,44 @@
+openapi: 3.2.0
+info:
+  title: FocusTemplate Public API
+  version: 0.1.0
+  description: The deliberately exposed API of the Public vertical, consumed by the native mobile client.
+tags:
+  - name: WeatherForecasts
+paths:
+  /weather-forecasts:
+    get:
+      operationId: WeatherForecasts_list
+      description: Lists all forecasts, ordered by date.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WeatherForecastResponse'
+      tags:
+        - WeatherForecasts
+components:
+  schemas:
+    WeatherForecastResponse:
+      type: object
+      required:
+        - date
+        - temperatureC
+      properties:
+        date:
+          type: string
+          format: date
+          description: Day the forecast applies to.
+        temperatureC:
+          type: integer
+          format: int32
+          description: Temperature in degrees Celsius.
+        summary:
+          type: string
+          description: Free-text summary.
+      description: A weather forecast for one day.

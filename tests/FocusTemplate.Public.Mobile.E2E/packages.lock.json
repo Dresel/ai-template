@@ -97,11 +97,6 @@
         "resolved": "0.35.1",
         "contentHash": "qSErwjqE16+fb6KY+NcA7DR6hHyHotuUl91heuFgxjVoKaa9HdFCJgmlhDgj/r4E181duLSJ2JXxZI8cTNWAMg=="
       },
-      "Aspire.Dashboard.Sdk.win-x64": {
-        "type": "Transitive",
-        "resolved": "13.5.3",
-        "contentHash": "6AhmBiDsENiPegvxCtv5c1p42f+IIUZD6TReq7Ks1+kHHIXmqQuTtTgRY6C8kJFtjzyZ2crBKJy+elph6nHqfg=="
-      },
       "Aspire.Hosting": {
         "type": "Transitive",
         "resolved": "13.5.3",
@@ -195,11 +190,6 @@
           "System.IO.Hashing": "10.0.8",
           "YamlDotNet": "16.3.0"
         }
-      },
-      "Aspire.Hosting.Orchestration.win-x64": {
-        "type": "Transitive",
-        "resolved": "13.5.3",
-        "contentHash": "3fXcjcpWyyXYQg4nxYYHr06IqUxII3AAYbHouYTOytAQFz5ZwBlYkJBLepI5a3cHGC9XMP/xztHTV0OW35bYuQ=="
       },
       "AspNetCore.HealthChecks.NpgSql": {
         "type": "Transitive",
@@ -938,13 +928,11 @@
       "focustemplate.apphost": {
         "type": "Project",
         "dependencies": {
-          "Aspire.Dashboard.Sdk.win-x64": "[13.5.3, )",
           "Aspire.Hosting.AppHost": "[13.5.3, )",
           "Aspire.Hosting.Blazor": "[13.5.3-preview.1.26425.3, )",
           "Aspire.Hosting.DevTunnels": "[13.5.3, )",
           "Aspire.Hosting.EntityFrameworkCore": "[13.5.3-preview.1.26425.3, )",
           "Aspire.Hosting.Maui": "[13.5.3-preview.1.26425.3, )",
-          "Aspire.Hosting.Orchestration.win-x64": "[13.5.3, )",
           "Aspire.Hosting.PostgreSQL": "[13.5.3, )",
           "CommunityToolkit.Aspire.Hosting.Umami": "[13.5.0, )",
           "FocusTemplate.Data": "[1.0.0, )"

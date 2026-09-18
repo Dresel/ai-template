@@ -1,14 +1,15 @@
+using FocusTemplate.Public.Client.WeatherForecasts;
 using FocusTemplate.Public.Shared;
 
 namespace FocusTemplate.Public.Mobile;
 
 public partial class MainPage : ContentPage
 {
-	private readonly WeatherApiClient weatherApiClient;
+	private readonly WeatherForecastsClient weatherForecasts;
 
-	public MainPage(WeatherApiClient weatherApiClient)
+	public MainPage(WeatherForecastsClient weatherForecasts)
 	{
-		this.weatherApiClient = weatherApiClient;
+		this.weatherForecasts = weatherForecasts;
 		InitializeComponent();
 	}
 
@@ -16,7 +17,7 @@ public partial class MainPage : ContentPage
 	{
 		try
 		{
-			WeatherForecastResponse[] forecast = await this.weatherApiClient.GetWeatherAsync();
+			IReadOnlyList<WeatherForecastResponse> forecast = await this.weatherForecasts.ListAsync();
 			this.WeatherList.ItemsSource = forecast;
 		}
 		catch (Exception exception)

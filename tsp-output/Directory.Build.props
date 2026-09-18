@@ -1,0 +1,7 @@
+<Project>
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+		<EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+	</PropertyGroup>
+</Project>

@@ -1,2 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<None Include="tspconfig.yaml" />
+	</ItemGroup>
+
 </Project>

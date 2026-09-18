@@ -1,5 +1,5 @@
 {
-	"enabledMcpjsonServers": [ "aspire" ],
+	"enabledMcpjsonServers": [ "aspire", "spatial-focus-docs" ],
 	"permissions": {
 		"allow": [
 			"ToolSearch",
@@ -109,7 +109,11 @@
 			"Bash(emulator *)",
 
 			"PowerShell(npm ci)",
+			"PowerShell(npm run gen)",
+			"PowerShell(npm run gen:*)",
 			"Bash(npm ci)",
+			"Bash(npm run gen)",
+			"Bash(npm run gen:*)",
 
 			"PowerShell(docker version *)",
 
@@ -127,7 +131,10 @@
 			"mcp__aspire__refresh_tools",
 			"mcp__aspire__execute_resource_command",
 
-			"mcp__appium__*"
+			"mcp__appium__*",
+
+			"mcp__spatial-focus-docs__list_*",
+			"mcp__spatial-focus-docs__fetch"
 		],
 		"ask": [
 			"WebFetch(domain:aka.ms)",
@@ -193,7 +200,13 @@
 			"mcp__atlassian__create*",
 			"mcp__atlassian__edit*",
 			"mcp__atlassian__update*",
-			"mcp__atlassian__transition*"
+			"mcp__atlassian__transition*",
+
+			"mcp__spatial-focus-docs__create*",
+			"mcp__spatial-focus-docs__update*",
+			"mcp__spatial-focus-docs__delete*",
+			"mcp__spatial-focus-docs__move*",
+			"mcp__spatial-focus-docs__restore*"
 		],
 		"deny": [
 			"PowerShell(dotnet user-secrets *)",

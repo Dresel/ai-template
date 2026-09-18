@@ -1,7 +1,10 @@
+using FocusTemplate.Admin.Client;
+using FocusTemplate.Admin.Client.WeatherForecasts;
 using FocusTemplate.Admin.Shared;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Sdk;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 
@@ -10,39 +13,66 @@ public sealed class WeatherForecastTests(ApiFixture factory) : ApiTestBase(facto
 	[Fact]
 	public async Task GetWeatherForecastReturnsEmptyWhenNoData()
 	{
-		using HttpClient client = Factory.CreateClient();
+		WeatherForecastsClient client = new(Factory.CreateClient());
+		IReadOnlyList<WeatherForecastResponse> forecasts = await client.ListAsync(TestContext.Current.CancellationToken);
 
-		WeatherForecastResponse[]? forecasts = await client.GetFromJsonAsync<WeatherForecastResponse[]>(
-			new Uri("/weatherforecast", UriKind.Relative),
-			TestContext.Current.CancellationToken);
-
-		Assert.NotNull(forecasts);
 		Assert.Empty(forecasts);
 	}
 
+	/// <summary>The handler orders by date, so the rows come back sorted regardless of insertion order.</summary>
 	[Fact]
 	public async Task GetWeatherForecastReturnsExistingRowsInOrder()
 	{
-		WeatherForecast[] forecasts =
+		WeatherForecast[] entities =
 		[
 			new() { Date = new DateOnly(2026, 1, 2), TemperatureC = 5, Summary = "Chilly", },
 			new() { Date = new DateOnly(2026, 1, 1), TemperatureC = 12, Summary = "Mild", },
 		];
 
-		await AddAsync(forecasts);
+		await AddAsync(entities);
 
-		using HttpClient client = Factory.CreateClient();
+		WeatherForecastsClient client = new(Factory.CreateClient());
+		IReadOnlyList<WeatherForecastResponse> forecasts = await client.ListAsync(TestContext.Current.CancellationToken);
 
-		WeatherForecastResponse[]? response = await client.GetFromJsonAsync<WeatherForecastResponse[]>(
-			new Uri("/weatherforecast", UriKind.Relative),
-			TestContext.Current.CancellationToken);
+		IEnumerable<WeatherForecastResponse> expected = entities.OrderBy(entity => entity.Date)
+			.Select(entity => new WeatherForecastResponse(entity.Id, entity.Date, entity.TemperatureC, entity.Summary));
 
-		Assert.NotNull(response);
+		Assert.Equal(expected, forecasts);
+	}
 
-		IEnumerable<WeatherForecastResponse> expectedResponse = forecasts.OrderBy(x => x.Date)
-			.Select(x => new WeatherForecastResponse(x.Date, x.TemperatureC, x.Summary));
+	[Fact]
+	public async Task GetReturnsTheForecastAsTheSuccessCase()
+	{
+		WeatherForecast entity = new() { Date = new DateOnly(2026, 1, 1), TemperatureC = 12, Summary = "Mild", };
+		await AddAsync(entity);
 
-		Assert.Equal(expectedResponse, response);
+		WeatherForecastsClient client = new(Factory.CreateClient());
+		WeatherForecastsGetResult result = await client.GetAsync(entity.Id, TestContext.Current.CancellationToken);
+
+		WeatherForecastResponse forecast = result switch
+		{
+			WeatherForecastResponse value => value,
+			NotFoundProblem problem => throw new XunitException($"Expected the forecast, got 404: {problem.Problem.Detail}"),
+		};
+
+		Assert.Equal(new WeatherForecastResponse(entity.Id, new DateOnly(2026, 1, 1), 12, "Mild"), forecast);
+	}
+
+	[Fact]
+	public async Task GetOfAMissingIdIsTheNotFoundCaseCarryingTheProblemDetails()
+	{
+		WeatherForecastsClient client = new(Factory.CreateClient());
+		WeatherForecastsGetResult result = await client.GetAsync(4711, TestContext.Current.CancellationToken);
+
+		NotFoundProblem problem = result switch
+		{
+			NotFoundProblem value => value,
+			WeatherForecastResponse forecast => throw new XunitException($"Expected 404, got forecast {forecast.Id}."),
+		};
+
+		Assert.Equal(404, problem.Problem.Status);
+		Assert.Equal("Not found", problem.Problem.Title);
+		Assert.Contains("4711", problem.Problem.Detail, StringComparison.Ordinal);
 	}
 
 	[Fact]

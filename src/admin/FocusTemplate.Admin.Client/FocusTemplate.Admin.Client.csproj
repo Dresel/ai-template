@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\FocusTemplate.Admin.Shared\FocusTemplate.Admin.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="tspconfig.yaml" />
+	</ItemGroup>
+
+</Project>

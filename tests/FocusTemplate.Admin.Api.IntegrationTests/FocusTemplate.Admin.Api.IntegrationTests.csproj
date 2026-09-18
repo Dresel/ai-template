@@ -20,6 +20,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\admin\FocusTemplate.Admin.Api\FocusTemplate.Admin.Api.csproj" />
+		<ProjectReference Include="..\..\src\admin\FocusTemplate.Admin.Client\FocusTemplate.Admin.Client.csproj" />
 		<ProjectReference Include="..\..\src\FocusTemplate.Data\FocusTemplate.Data.csproj" />
 	</ItemGroup>
 
