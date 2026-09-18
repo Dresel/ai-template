@@ -1,0 +1,3 @@
+<Project>
+	<!-- Intentionally empty to prevent root package management from affecting the parent emitter's scaffolding project. -->
+</Project>

@@ -172,6 +172,12 @@
         "resolved": "8.0.0",
         "contentHash": "ne1843evDugl0md7Fjzy6QjJrzsjh46ZKbhf8GwBXb5f/gw97J4bxMs0NQKifDuThh/f0bZ0e62NPl1jzTuRqA=="
       },
+      "focustemplate.admin.client": {
+        "type": "Project",
+        "dependencies": {
+          "FocusTemplate.Admin.Shared": "[1.0.0, )"
+        }
+      },
       "focustemplate.admin.shared": {
         "type": "Project"
       },
@@ -180,6 +186,7 @@
         "dependencies": {
           "Blazorise.Icons.Material": "[2.3.1, )",
           "Blazorise.Material": "[2.3.1, )",
+          "FocusTemplate.Admin.Client": "[1.0.0, )",
           "FocusTemplate.Admin.Shared": "[1.0.0, )",
           "FocusTemplate.Admin.Web.ClientServiceDefaults": "[1.0.0, )",
           "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-preview.7.26381.103, )",

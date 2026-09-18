@@ -3,7 +3,9 @@
 An AI-first .NET 11 template on Aspire, split into two audience verticals: **Admin** (a Blazor
 WebAssembly client served through a thin BFF over an internal API) and **Public** (a deliberately
 exposed API + a native .NET MAUI mobile client). End-to-end OpenTelemetry, Umami analytics, and
-Playwright E2E tests.
+Playwright E2E tests. Both APIs are **spec-first**: one `api.tsp` per vertical (`src/<vertical>/spec/`) generates the endpoints,
+Mediator request records, wire models, typed clients and the OpenAPI document; every consuming project generates
+its own slice into its `generated/` folder.
 
 ## Projects
 
@@ -15,23 +17,40 @@ Shared spine:
   a design-time factory, and the dev seed. One domain, referenced by both APIs and the AppHost
   migration resource.
 - **FocusTemplate.ServiceDefaults** - server-side Aspire defaults (OTel, service discovery, health).
+- **`@spatialfocus/typespec-http-csharp-slim`** (npm, consumed as the packed tgz under `.npm/`; own repository
+  `typespec-http-csharp-slim`, where it is documented and tested) - the TypeSpec emitter both verticals are generated
+  with, and the TypeSpec library (`namespace SpatialFocus.Http`) every contract imports. The npm toolchain
+  (`package.json`, `scripts/gen.mjs`) sits at the repository root; `npm run gen` runs one `tsp compile` per project
+  `tspconfig.yaml`, and the parent emitter's scaffolding lands in the disposable `tsp-output/`. How this repository uses
+  it is under **Spec-first APIs**; this repository only checks that regeneration is clean.
 
 Admin vertical (`src/admin/`):
 
-- **FocusTemplate.Admin.Api** - internal minimal API; never exposed to the browser directly. Reads/writes
-  through EF Core (`AppDbContext`), backed by PostgreSQL.
-- **FocusTemplate.Admin.Web** - the Blazor WASM client (Blazorise Material UI).
+- **FocusTemplate.Admin.Api** - internal minimal API; never exposed to the browser directly. Endpoints, request
+  records and result unions are generated into its `generated/<Slice>/` folder from `../spec/api.tsp` (namespace
+  `FocusTemplate.Admin.Api.Features.<Slice>`, the one the slice's handlers use), the emitted `openapi.yaml` is
+  served as-is; `Features/<Slice>/` holds the slice's Mediator handlers (EF Core via `AppDbContext`, backed by PostgreSQL)
+  and endpoint hooks.
+- **FocusTemplate.Admin.Client** - the generated typed HTTP clients of the vertical (`tspconfig.yaml`,
+  `output-type: client`), referenced by every consumer so the client an app ships is the one the tests drive.
+- **FocusTemplate.Admin.Web** - the Blazor WASM client (Blazorise Material UI). Talks to the API through the typed
+  `WeatherForecastsClient` from `FocusTemplate.Admin.Client`.
 - **FocusTemplate.Admin.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
   `/_otlp/*` → dashboard, `/_analytics/*` → Umami. The browser only ever talks to the BFF.
 - **FocusTemplate.Admin.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
-- **FocusTemplate.Admin.Shared** - DTOs shared between the server and the WASM client.
+- **FocusTemplate.Admin.Shared** - the wire contract shared between the server and the WASM client:
+  records generated from the spec plus hand-written partials for computed members.
 
 Public vertical (`src/public/`):
 
-- **FocusTemplate.Public.Api** - the exposed API for external clients (mobile); same EF Core access
-  to the shared domain, its own audience-shaped DTOs.
+- **FocusTemplate.Public.Api** - the exposed API for external clients (mobile); generated from
+  `src/public/spec/api.tsp` the same way, same EF Core access to the shared domain, its own audience-shaped
+  contract.
+- **FocusTemplate.Public.Client** - the generated typed HTTP clients of the vertical (`tspconfig.yaml`,
+  `output-type: client`), referenced by every consumer.
 - **FocusTemplate.Public.Mobile** - native .NET MAUI app (XAML), `net11.0-android;net11.0-ios` only
-  (no Windows/MacCatalyst targets by decision; iOS builds only on macOS/CI).
+  (no Windows/MacCatalyst targets by decision; iOS builds only on macOS/CI). Calls the Public API through the
+  `WeatherForecastsClient` from `FocusTemplate.Public.Client`.
 - **FocusTemplate.Public.Mobile.ServiceDefaults** - MAUI counterpart of ServiceDefaults (service
   discovery, resilience, OTel) from the `maui-aspire-servicedefaults` template; no ASP.NET Core dependency.
 - **FocusTemplate.Public.Shared** - the mobile wire contract. The two `Shared` projects must never
@@ -48,7 +67,13 @@ Public vertical (`src/public/`):
   proxy destinations); `Microsoft.AspNetCore.Components.WebAssembly.Server` (serves the WASM client).
 - **Blazor WASM client** - `Microsoft.AspNetCore.Components.WebAssembly`; `Blazorise.Material` +
   `Blazorise.Icons.Material` (Material 3 UI).
-- **API** - `Microsoft.AspNetCore.OpenApi`; `Microsoft.OpenApi` pinned above a vulnerable transitive.
+- **API contracts (TypeSpec)** - root `package.json`, pinned: `@typespec/compiler`, `@typespec/http`,
+  `@typespec/openapi3` (emits OpenAPI 3.2) and our emitter `@spatialfocus/typespec-http-csharp-slim` as a
+  `file:` dependency on `.npm/<name>-<version>.tgz` (bump = replace the tgz, `npm install`, `npm run gen`). The
+  emitter wraps `@typespec/http-client-csharp` (**alpha**, daily builds) and ships its .NET plugin inside the package,
+  so nothing in this solution compiles against those assemblies. The OpenAPI document is emitted from the spec and served as a static file, not reflected at
+  runtime. **Mediator** - `Mediator.Abstractions` + `Mediator.SourceGenerator` (martinothamar, source-generated,
+  MIT): generated endpoints dispatch `IQuery<T>`/`ICommand<T>` records to hand-written handlers.
 - **Data / EF Core** - `Aspire.Npgsql.EntityFrameworkCore.PostgreSQL` (client integration:
   `AddNpgsqlDbContext`, health checks, OTel); `Npgsql.EntityFrameworkCore.PostgreSQL` provider;
   `Microsoft.EntityFrameworkCore.Design` (design-time, tooling); the whole EF stack is pinned to one
@@ -84,6 +109,11 @@ on the affected resource (Aspire dashboard or MCP).
 
 ## Build, test, format
 
+- `npm run gen` (repository root, after a one-time `npm ci`) - one `tsp compile` per `tspconfig.yaml` under
+  `src/<vertical>/<project>/` and `tests/<project>/`, against `src/<vertical>/spec/api.tsp` (the vertical is the second
+  segment of the project name, `FocusTemplate.Admin.Api` → `admin`). Run it after **any** change under `src/*/spec/` and
+  after bumping the emitter tgz; the `generated/` folders and `openapi.yaml` are checked in and belong in the same commit.
+  Never edit generated files by hand; `tsp-output/` is disposable.
 - `dotnet build FocusTemplate.slnx`
 - `dotnet test FocusTemplate.slnx` - xUnit integration tests + Playwright E2E through the BFF
 - `dotnet format <project>` - analyzers are strict (StyleCop + IDE rules as errors). Files written
@@ -114,6 +144,7 @@ Skills live in `.claude/skills/`. Pick by task - these are all permission-allowl
 | Any .NET package API question (Blazorise, YARP, OTel, …) | `dotnet-inspect` skill: `dnx dotnet-inspect -y -- member/type/find/diff --package <id>` |
 | Browser reproduction, manual UI checks, screenshots | `playwright-cli` skill (persistent E2E tests go in `FocusTemplate.Admin.Web.E2E`) |
 | Drive the app on the Android emulator: find/tap/type/screenshot/page source | `appium` MCP (element-based, same locator semantics as the tests; persistent E2E tests go in `FocusTemplate.Public.Mobile.E2E`). Raw `adb` is the fallback + logcat channel |
+| Change an API (route, wire model, status code, new operation) | edit `src/<vertical>/spec/<Slice>.tsp` (new slice: add the file + import it in `spec/api.tsp`) → `npm run gen` (repository root) → implement/adjust the Mediator handler in the Api project's `Features/<Slice>/` → fix the consumers, which compile against the regenerated `{Interface}Client` (never hand-write HTTP calls in Web/Mobile) → tests. This repository's rules: **Spec-first APIs** under Conventions; what the emitter produces is documented with the emitter |
 | Formatting | `dotnet format`, `dotnet jb cleanupcode` (see above) |
 | Wire an existing app into Aspire (one-time) | `aspireify` skill - already completed for this repo |
 
@@ -142,7 +173,8 @@ feature, specify the new behavior with one.
      in the test project; auto-skips without that or an emulator. Locators: MAUI `AutomationId` =
      Android `resource-id` → `MobileBy.Id("<AutomationId>")` (driver auto-prefixes the app package;
      `AccessibilityId` does not match).
-   - **Unit** (pure logic) → add a unit project when such logic first appears; none today.
+   - **Unit** (pure logic) → add a unit project when such logic first appears; none today (the emitter's tests live in
+     the `typespec-http-csharp-slim` repository).
 4. **Watch it fail** - stop the AppHost (bin lock), then `dotnet test FocusTemplate.slnx --filter <name>`.
    Confirm the failure matches the report, not a setup gap.
 5. **Smallest fix** - minimal production change to green the test; `dotnet format <project>` new files.
@@ -196,15 +228,59 @@ exactly this. Traps, learned the hard way:
   (default **off**: no devtunnel/emulator requirements on a plain `aspire start`) in the AppHost's
   `appsettings.json`, overridable per-developer via the gitignored `appsettings.local.json`. The
   E2E fixture pins them via CLI args.
-- **Shared DTOs** go in the vertical's `Shared` project (`FocusTemplate.Admin.Shared` /
-  `FocusTemplate.Public.Shared` - never referencing each other). Entities (`FocusTemplate.Data`)
-  stay server-side; map entity => DTO in the API endpoint, never expose entities to the client.
+- **Shared DTOs** live in the vertical's `Shared` project (`FocusTemplate.Admin.Shared` /
+  `FocusTemplate.Public.Shared` - never referencing each other); computed members go into hand-written
+  partials next to the project file. Entities (`FocusTemplate.Data`) stay server-side; map entity =>
+  DTO in the Mediator handler, never expose entities to the client.
 - **Keep `data-testid` attributes** - the Playwright E2E suite selects on them. The MAUI equivalent
   is **`AutomationId` on every interactive control** (Appium selects on it).
 - **Mobile dev loop**: enable `Features:Mobile` in `appsettings.local.json`; first start prompts to
   install/login the `devtunnel` CLI (the Dev Tunnel exposes `public-api` to the emulator; anonymous,
   dev-only). Android needs a running emulator (`adb devices`); the iOS simulator resource shows
   "unsupported" on Windows - it runs from a macOS host only.
+
+### Spec-first APIs
+
+Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-slim`.
+
+- **Layout**: one contract per vertical in `src/<vertical>/spec/`. `api.tsp` carries the service
+  metadata and imports one `<Slice>.tsp` per feature slice, all sharing the namespace. Three projects per
+  vertical generate, each with its own `tspconfig.yaml` and `generated/` folder: the Api project
+  (`output-type: api`), the Shared project (`contracts`) and the Client project (`client`). Everything
+  else consumes them by project reference, so a new consumer references `FocusTemplate.<V>.Client`
+  rather than generating a copy of it, and generated files are never linked across projects.
+- **Namespaces**: `api-namespace: FocusTemplate.<V>.Api.Features.{interface}` puts a slice's
+  generated code in the same namespace as its hand-written handlers, and `client-namespace:
+  FocusTemplate.<V>.Client.{interface}` does the same on the consumer side. What every slice shares
+  (`NotFound`, `ApiClientSupport`, the `{Status}Problem` cases) lands one namespace up.
+- **Hand-written code per slice** lives in `src/<vertical>/FocusTemplate.<V>.Api/Features/<Slice>/`:
+  the Mediator handlers, and `*Endpoints.Hooks.cs` implementing the `ConfigureGroup` /
+  `Configure{Op}` hooks for auth, rate limiting and caching. Consumers call the generated client and
+  never hand-write HTTP.
+- **Errors are values**: a handler returns the generated result union, answering a modeled status
+  with its case record (`new NotFound("…")`) and never with an exception. Anything genuinely
+  unhandled becomes a 500 problem response through `AddProblemDetails()`. Consumers match the
+  client-side union exhaustively, so a status added to the spec is a compile error everywhere it is
+  not handled yet.
+- **Client registration**: reference `FocusTemplate.<V>.Client` and register the generated client with the
+  existing typed-HttpClient helpers,
+  whose `BaseAddress` carries the BFF prefix or the service-discovery name. Extra members go into a
+  hand-written partial next to the consumer's project file.
+- **Spec style**: routes are kebab-case plural nouns (`/weather-forecasts`). DTOs carry a `Request`
+  or `Response` suffix, which also keeps them distinct from the like-named entities in
+  `FocusTemplate.Data` that the handlers map from. DELETE of a missing resource answers 204, so a
+  retrying client stays idempotent. JSON stays camelCase, which is TypeSpec's property style and
+  ASP.NET Core's web default rather than a setting anyone chose.
+- **Doc comments** (`/** */`) are published to OpenAPI and generated XML summaries, so write them for API
+  callers. Use `//` comments for spec rationale, including emitter workarounds; these stay in source.
+- **Emitter traps worth repeating here**, because they fail silently rather than at build time:
+  identifiers use the shared `uuid` scalar, never
+  `@format("uuid")` on a string; error responses are `Problem<Status>`, never `@error` models; and
+  TypeSpec defaults on optional parameters never reach the server, so the handler applies them.
+- **Workflow**: change a slice file, run `npm run gen` at the repository root, adjust the handler,
+  then fix the consumers, which stop compiling exactly where the contract moved. Never edit a file
+  under `generated/`. The `generated/` folders and `openapi.yaml` are checked in and belong in the
+  same commit as the spec change.
 
 ### Database & migrations
 

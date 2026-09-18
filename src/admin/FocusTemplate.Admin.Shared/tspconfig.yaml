@@ -1,0 +1,7 @@
+emit:
+  - "@spatialfocus/typespec-http-csharp-slim"
+options:
+  "@spatialfocus/typespec-http-csharp-slim":
+    emitter-output-dir: "{output-dir}"
+    output-type: contracts
+    generated-dir: "generated"

@@ -434,3 +434,8 @@ FodyWeavers.xsd
 /.playwright-cli
 
 appsettings.local.json
+
+# Exclude scaffolding artefacts
+tsp-output/*
+!tsp-output/Directory.Build.props
+!tsp-output/Directory.Packages.props

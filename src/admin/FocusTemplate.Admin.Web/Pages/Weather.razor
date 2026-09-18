@@ -1,6 +1,7 @@
 @page "/weather"
+@using FocusTemplate.Admin.Client.WeatherForecasts
 @using FocusTemplate.Admin.Shared
-@inject ApiClient Api
+@inject WeatherForecastsClient Api
 
 <PageTitle>Weather</PageTitle>
 
@@ -44,10 +45,10 @@
 
 @code
 {
-	private WeatherForecastResponse[]? Forecasts { get; set; }
+	private IReadOnlyList<WeatherForecastResponse>? Forecasts { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
-		Forecasts = await Api.GetWeatherAsync();
+		Forecasts = await Api.ListAsync();
 	}
 }

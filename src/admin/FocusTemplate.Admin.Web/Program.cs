@@ -1,6 +1,7 @@
 using Blazorise;
 using Blazorise.Icons.Material;
 using Blazorise.Material;
+using FocusTemplate.Admin.Client.WeatherForecasts;
 using FocusTemplate.Admin.Web;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -23,7 +24,7 @@ await builder.AddClientConfigurationAsync();
 builder.AddBlazorClientServiceDefaults(serviceName: "admin-web");
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress), });
-builder.Services.AddProxiedHttpClient<ApiClient>(builder.HostEnvironment, "admin-api");
+builder.Services.AddProxiedHttpClient<WeatherForecastsClient>(builder.HostEnvironment, "admin-api");
 
 builder.Services
 	.AddBlazorise(options => options.Immediate = true)

@@ -1,0 +1,14 @@
+emit:
+  - "@typespec/openapi3"
+  - "@spatialfocus/typespec-http-csharp-slim"
+options:
+  "@typespec/openapi3":
+    emitter-output-dir: "{project-root}"
+    openapi-versions:
+      - "3.2.0"
+    file-type: yaml
+  "@spatialfocus/typespec-http-csharp-slim":
+    emitter-output-dir: "{output-dir}"
+    output-type: api
+    generated-dir: "generated"
+    api-namespace: "FocusTemplate.Admin.Api.Features.{interface}"

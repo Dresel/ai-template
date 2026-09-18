@@ -12,10 +12,12 @@
     <File Path="global.json" />
     <File Path="nuget.config" />
     <File Path="stylecop.json" />
+    <File Path="package.json" />
   </Folder>
   <Folder Name="/admin/">
     <Project Path="src/admin/FocusTemplate.Admin.Api/FocusTemplate.Admin.Api.csproj" />
     <Project Path="src/admin/FocusTemplate.Admin.Web.Bff/FocusTemplate.Admin.Web.Bff.csproj" />
+    <Project Path="src/admin/FocusTemplate.Admin.Client/FocusTemplate.Admin.Client.csproj" />
     <Project Path="src/admin/FocusTemplate.Admin.Shared/FocusTemplate.Admin.Shared.csproj" />
     <Project Path="src/admin/FocusTemplate.Admin.Web.ClientServiceDefaults/FocusTemplate.Admin.Web.ClientServiceDefaults.csproj" />
     <Project Path="src/admin/FocusTemplate.Admin.Web/FocusTemplate.Admin.Web.csproj" />
@@ -27,6 +29,7 @@
   </Folder>
   <Folder Name="/public/">
     <Project Path="src/public/FocusTemplate.Public.Api/FocusTemplate.Public.Api.csproj" />
+    <Project Path="src/public/FocusTemplate.Public.Client/FocusTemplate.Public.Client.csproj" />
     <Project Path="src/public/FocusTemplate.Public.Mobile.ServiceDefaults/FocusTemplate.Public.Mobile.ServiceDefaults.csproj" />
     <Project Path="src/public/FocusTemplate.Public.Mobile/FocusTemplate.Public.Mobile.csproj" />
     <Project Path="src/public/FocusTemplate.Public.Shared/FocusTemplate.Public.Shared.csproj" />
