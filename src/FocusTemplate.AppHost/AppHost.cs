@@ -21,6 +21,10 @@ IResourceBuilder<EFMigrationResource> migrations = api.AddEFMigrations(
 		"FocusTemplate.Data.AppDbContext",
 		tool =>
 		{
+			// Workaround for https://github.com/dotnet/sdk/issues/54386: the .NET 11 CLI exports its own telemetry to the inherited OTEL_* endpoint and
+			// blocks each `dotnet` command's exit for ~1 min when nothing listens (e.g. E2E runs without the dashboard).
+			tool.WithEnvironment("DOTNET_CLI_TELEMETRY_OPTOUT", "true");
+
 			// Add seeding when running in run mode (e.g. local development)
 			if (builder.ExecutionContext.IsRunMode)
 			{
