@@ -9,14 +9,16 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using FocusTemplate.Public.Shared;
 
 namespace FocusTemplate.Public.Client;
 
 /// <summary>Request building and response checking shared by the generated clients of this API.</summary>
 internal static class ApiClientSupport
 {
-	/// <summary>The JSON options the clients use unless given others: ASP.NET Core's web defaults (camelCase, case-insensitive).</summary>
-	public static JsonSerializerOptions CreateDefaultJsonOptions() => new(JsonSerializerDefaults.Web);
+	/// <summary>The JSON options the clients use unless given others: ASP.NET Core's web defaults (camelCase, case-insensitive) over the generated PublicJsonContext, so the default path resolves every contract without reflection.</summary>
+	public static JsonSerializerOptions CreateDefaultJsonOptions() =>
+		new(JsonSerializerDefaults.Web) { TypeInfoResolver = PublicJsonContext.Default, };
 
 	/// <summary>Relative request URI: the path plus every query parameter that has a value.</summary>
 	public static string RelativeUri(string path, params (string Name, object? Value)[] query)

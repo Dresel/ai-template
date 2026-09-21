@@ -17,8 +17,9 @@ namespace FocusTemplate.Admin.Client;
 /// <summary>Request building and response checking shared by the generated clients of this API.</summary>
 internal static class ApiClientSupport
 {
-	/// <summary>The JSON options the clients use unless given others: ASP.NET Core's web defaults (camelCase, case-insensitive).</summary>
-	public static JsonSerializerOptions CreateDefaultJsonOptions() => new(JsonSerializerDefaults.Web);
+	/// <summary>The JSON options the clients use unless given others: ASP.NET Core's web defaults (camelCase, case-insensitive) over the generated AdminJsonContext, so the default path resolves every contract without reflection.</summary>
+	public static JsonSerializerOptions CreateDefaultJsonOptions() =>
+		new(JsonSerializerDefaults.Web) { TypeInfoResolver = AdminJsonContext.Default, };
 
 	/// <summary>Relative request URI: the path plus every query parameter that has a value.</summary>
 	public static string RelativeUri(string path, params (string Name, object? Value)[] query)
@@ -71,13 +72,13 @@ internal static class ApiClientSupport
 	}
 
 	/// <summary>The RFC 9457 problem details of a modeled error response; synthesized from the status line when the body is not problem JSON.</summary>
-	public static async ValueTask<ProblemDetails> ReadProblemAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+	public static async ValueTask<ProblemDetails> ReadProblemAsync(HttpResponseMessage response, JsonSerializerOptions jsonOptions, CancellationToken cancellationToken)
 	{
 		if (response.Content.Headers.ContentType?.MediaType is "application/problem+json" or "application/json")
 		{
 			try
 			{
-				if (await response.Content.ReadFromJsonAsync<ProblemDetails>(cancellationToken).ConfigureAwait(false) is { } problem)
+				if (await response.Content.ReadFromJsonAsync(jsonOptions.GetTypeInfo<ProblemDetails>(), cancellationToken).ConfigureAwait(false) is { } problem)
 				{
 					return problem;
 				}

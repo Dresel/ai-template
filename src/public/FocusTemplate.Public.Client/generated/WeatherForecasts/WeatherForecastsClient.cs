@@ -18,20 +18,13 @@ public sealed partial class WeatherForecastsClient
 	private readonly HttpClient httpClient;
 	private readonly JsonSerializerOptions jsonOptions;
 
-	/// <summary>Initializes a new instance of WeatherForecastsClient with the default (web) JSON options.</summary>
+	/// <summary>Initializes a new instance of WeatherForecastsClient.</summary>
 	/// <param name="httpClient">The HttpClient; its BaseAddress carries the API prefix.</param>
-	public WeatherForecastsClient(HttpClient httpClient)
-		: this(httpClient, ApiClientSupport.CreateDefaultJsonOptions())
-	{
-	}
-
-	/// <summary>Initializes a new instance of WeatherForecastsClient with custom JSON options (converters, a source-generated context); the options are copied.</summary>
-	/// <param name="httpClient">The HttpClient; its BaseAddress carries the API prefix.</param>
-	/// <param name="jsonOptions">Serializer options for request and response bodies.</param>
-	public WeatherForecastsClient(HttpClient httpClient, JsonSerializerOptions jsonOptions)
+	/// <param name="jsonOptions">Serializer options for request and response bodies (converters, another context); the options are copied. Null takes the default ones, over the generated JsonSerializerContext of this API.</param>
+	public WeatherForecastsClient(HttpClient httpClient, JsonSerializerOptions? jsonOptions = null)
 	{
 		this.httpClient = httpClient;
-		this.jsonOptions = new JsonSerializerOptions(jsonOptions);
+		this.jsonOptions = new JsonSerializerOptions(jsonOptions ?? ApiClientSupport.CreateDefaultJsonOptions());
 	}
 
 	/// <summary>Lists all forecasts, ordered by date.</summary>
@@ -45,6 +38,6 @@ public sealed partial class WeatherForecastsClient
 			throw await ApiClientSupport.UnexpectedResponseAsync(response, cancellationToken).ConfigureAwait(false);
 		}
 
-		return await response.Content.ReadFromJsonAsync<IReadOnlyList<WeatherForecastResponse>>(jsonOptions, cancellationToken).ConfigureAwait(false) ?? throw ApiClientSupport.EmptyBody(response);
+		return await response.Content.ReadFromJsonAsync(jsonOptions.GetTypeInfo<IReadOnlyList<WeatherForecastResponse>>(), cancellationToken).ConfigureAwait(false) ?? throw ApiClientSupport.EmptyBody(response);
 	}
 }
