@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,7 +8,8 @@ namespace Microsoft.Extensions.Hosting;
 
 public static class ServiceCollectionExtensions
 {
-	public static IHttpClientBuilder AddProxiedHttpClient<TClient>(
+	public static IHttpClientBuilder AddProxiedHttpClient<
+		[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TClient>(
 		this IServiceCollection services,
 		IWebAssemblyHostEnvironment hostEnvironment,
 		string serviceName,

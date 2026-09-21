@@ -1,6 +1,6 @@
 @page "/diagnostics"
 @using FocusTemplate.Admin.Shared
-@inject HttpClient Http
+@inject DiagnosticsClient DiagnosticsClient
 @inject NavigationManager Nav
 
 <PageTitle>Diagnostics</PageTitle>
@@ -45,7 +45,7 @@ else
 
 		try
 		{
-			Request = await Http.GetFromJsonAsync<RequestDiagnostics>("debug/request");
+            Request = await DiagnosticsClient.GetAsync();
 		}
 		catch (HttpRequestException e)
 		{

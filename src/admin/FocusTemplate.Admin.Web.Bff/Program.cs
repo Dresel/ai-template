@@ -9,6 +9,9 @@ builder.AddServiceDefaults();
 
 builder.Services.Configure<ClientConfiguration>(builder.Configuration.GetSection("Client"));
 
+builder.Services.ConfigureHttpJsonOptions(options =>
+	options.SerializerOptions.TypeInfoResolverChain.Insert(0, BffJsonContext.Default));
+
 // Filter out OTLP proxy traffic from tracing to prevent a feedback loop: YARP forwards /_otlp/*
 // requests to the dashboard, and without filtering, those forwarding requests would themselves be
 // traced and exported — creating recursive telemetry entries in the dashboard.
@@ -50,7 +53,7 @@ if (!string.IsNullOrEmpty(configEndpointPath) && !string.IsNullOrEmpty(configRes
 	app.MapGet(configEndpointPath, () => Results.Content(configResponse, "application/json"));
 }
 
-app.MapGet("/client-configuration", (IOptions<ClientConfiguration> config) => Results.Json(config.Value));
+app.MapGet("/client-configuration", (IOptions<ClientConfiguration> config) => config.Value);
 
 if (app.Environment.IsDevelopment())
 {

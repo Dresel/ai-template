@@ -21,15 +21,15 @@ builder.Configuration.AddEnvironmentVariables();
 await builder.AddClientConfigurationAsync();
 
 // Add Aspire service defaults (OpenTelemetry, service discovery, resilience)
-builder.AddBlazorClientServiceDefaults(serviceName: "admin-web");
+builder.AddBlazorClientServiceDefaults("admin-web");
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress), });
 builder.Services.AddProxiedHttpClient<WeatherForecastsClient>(builder.HostEnvironment, "admin-api");
 
-builder.Services
-	.AddBlazorise(options => options.Immediate = true)
-	.AddMaterialProviders()
-	.AddMaterialIcons();
+builder.Services.AddHttpClient<DiagnosticsClient>(client =>
+	client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+
+builder.Services.AddBlazorise(options => options.Immediate = true).AddMaterialProviders().AddMaterialIcons();
 
 WebAssemblyHost host = builder.Build();
 

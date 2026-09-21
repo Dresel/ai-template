@@ -1,4 +1,5 @@
 using FocusTemplate.Admin.Api.Features.WeatherForecasts;
+using FocusTemplate.Admin.Shared;
 using FocusTemplate.Data;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,9 @@ builder.AddServiceDefaults();
 builder.AddNpgsqlDbContext<AppDbContext>("focusdb");
 
 builder.Services.AddProblemDetails();
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+	options.SerializerOptions.TypeInfoResolverChain.Insert(0, AdminJsonContext.Default));
 
 builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
 
