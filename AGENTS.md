@@ -13,6 +13,10 @@ Shared spine:
 
 - **FocusTemplate.AppHost** - Aspire orchestrator. Wires both APIs, the BFF, an optional nginx TLS
   ingress, optional Umami analytics, and (behind `Features:Mobile`) the MAUI device resources + Dev Tunnel.
+- **FocusTemplate.Primitives** - the typed ids every vertical shares, generated from `src/spec/primitives.tsp`
+  (`output-type: primitives`) as Vogen value objects in namespace `FocusTemplate.Primitives`. The only project running
+  Vogen's generator; `Data` and both `Shared` projects reference it, so one `WeatherForecastId` serves the domain and
+  every contract.
 - **FocusTemplate.Data** - EF Core data layer: `AppDbContext`, entities, the `Migrations/` folder,
   a design-time factory, and the dev seed. One domain, referenced by both APIs and the AppHost
   migration resource.
@@ -74,6 +78,9 @@ Public vertical (`src/public/`):
   so nothing in this solution compiles against those assemblies. The OpenAPI document is emitted from the spec and served as a static file, not reflected at
   runtime. **Mediator** - `Mediator.Abstractions` + `Mediator.SourceGenerator` (martinothamar, source-generated,
   MIT): generated endpoints dispatch `IQuery<T>`/`ICommand<T>` records to hand-written handlers.
+- **Typed ids** - `Vogen` (source generator + `Vogen.SharedTypes` at run time). The emitter writes
+  `[ValueObject<T>] [Instance("Unspecified", …)] public readonly partial struct` per `@typedId` scalar into
+  `FocusTemplate.Primitives`; `Data` carries the `[EfCoreConverter<T>]` marker for the EF Core converters.
 - **Data / EF Core** - `Aspire.Npgsql.EntityFrameworkCore.PostgreSQL` (client integration:
   `AddNpgsqlDbContext`, health checks, OTel); `Npgsql.EntityFrameworkCore.PostgreSQL` provider;
   `Microsoft.EntityFrameworkCore.Design` (design-time, tooling); the whole EF stack is pinned to one
@@ -113,7 +120,8 @@ on the affected resource (Aspire dashboard or MCP).
   `src/<vertical>/<project>/` and `tests/<project>/`, against `src/<vertical>/spec/api.tsp` (the vertical is the second
   segment of the project name, `FocusTemplate.Admin.Api` → `admin`). Run it after **any** change under `src/*/spec/` and
   after bumping the emitter tgz; the `generated/` folders and `openapi.yaml` are checked in and belong in the same commit.
-  Never edit generated files by hand; `tsp-output/` is disposable.
+  The shared spine project `FocusTemplate.Primitives` compiles `src/spec/primitives.tsp` in the same run (a project directly
+  under `src/` compiles `src/spec/<name>.tsp`). Never edit generated files by hand; `tsp-output/` is disposable.
 - `dotnet build FocusTemplate.slnx`
 - `dotnet test FocusTemplate.slnx` - xUnit integration tests + Playwright E2E through the BFF
 - `dotnet format <project>` - analyzers are strict (StyleCop + IDE rules as errors). Files written
@@ -248,7 +256,9 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
   vertical generate, each with its own `tspconfig.yaml` and `generated/` folder: the Api project
   (`output-type: api`), the Shared project (`contracts`) and the Client project (`client`). Everything
   else consumes them by project reference, so a new consumer references `FocusTemplate.<V>.Client`
-  rather than generating a copy of it, and generated files are never linked across projects.
+  rather than generating a copy of it, and generated files are never linked across projects. The typed ids live in
+  `src/spec/primitives.tsp` (namespace `FocusTemplate.Primitives`, no service), imported by every `api.tsp`;
+  `FocusTemplate.Primitives` generates them with `output-type: primitives`, the verticals reference them by namespace.
 - **Namespaces**: `api-namespace: FocusTemplate.<V>.Api.Features.{interface}` puts a slice's
   generated code in the same namespace as its hand-written handlers, and `client-namespace:
   FocusTemplate.<V>.Client.{interface}` does the same on the consumer side. What every slice shares
@@ -276,7 +286,8 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
 - **Emitter traps worth repeating here**, because they fail silently rather than at build time:
   identifiers use the shared `uuid` scalar, never
   `@format("uuid")` on a string; error responses are `Problem<Status>`, never `@error` models; and
-  TypeSpec defaults on optional parameters never reach the server, so the handler applies them.
+  TypeSpec defaults on optional parameters never reach the server, so the handler applies them; and a `@typedId` scalar
+  declared inside a service namespace is an emitter error, typed ids belong in `primitives.tsp`.
 - **Workflow**: change a slice file, run `npm run gen` at the repository root, adjust the handler,
   then fix the consumers, which stop compiling exactly where the contract moved. Never edit a file
   under `generated/`. The `generated/` folders and `openapi.yaml` are checked in and belong in the
@@ -284,6 +295,11 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
 
 ### Database & migrations
 
+- **Typed ids as keys**: `VogenEfCoreConverters` in `Data` carries one `[EfCoreConverter<T>]` per id and
+  `ConfigureConventions` calls the generated `RegisterAllInVogenEfCoreConverters()`. A store-generated key needs the
+  sentinel: the entity initializes it with `Id.Unspecified`, the model declares `ValueGeneratedOnAdd().HasSentinel(…)`,
+  since the integer-key convention does not reach a key behind a converter and EF reads the key before generating one.
+  Without `HasSentinel` the zero is written into the identity column and the second insert collides.
 - **Schema is applied by the `migrations` resource, never by the API.** The API only reads/writes;
   it `WaitForCompletion`s the migration resource. This is safe under scale-out (no startup migration
   race). Locally/E2E the resource runs `dotnet ef database update` on start; `aspire publish` emits it

@@ -31,8 +31,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
-            format: int32
+            $ref: '#/components/schemas/WeatherForecastId'
       responses:
         '200':
           description: The request has succeeded.
@@ -74,6 +73,10 @@ components:
         Problem details for an HTTP API response, as defined by RFC 9457
         (https://www.rfc-editor.org/rfc/rfc9457). Extension members are allowed and carry information
         specific to the problem type, such as a trace id or the fields of a validation failure.
+    WeatherForecastId:
+      type: integer
+      format: int32
+      description: Identifier of a weather forecast.
     WeatherForecastResponse:
       type: object
       required:
@@ -82,8 +85,7 @@ components:
         - temperatureC
       properties:
         id:
-          type: integer
-          format: int32
+          $ref: '#/components/schemas/WeatherForecastId'
           description: Identifier.
         date:
           type: string

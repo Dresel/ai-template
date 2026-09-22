@@ -11,7 +11,10 @@ builder.AddNpgsqlDbContext<AppDbContext>("focusdb");
 builder.Services.AddProblemDetails();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
-	options.SerializerOptions.TypeInfoResolverChain.Insert(0, AdminJsonContext.Default));
+{
+	options.SerializerOptions.TypeInfoResolverChain.Insert(0, AdminJsonContext.Default);
+	options.SerializerOptions.RespectRequiredConstructorParameters = true;
+});
 
 builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
 
@@ -24,7 +27,9 @@ app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
-	app.MapGet("/openapi/v1.yaml", () => Results.File(Path.Combine(AppContext.BaseDirectory, "openapi.yaml"), "application/yaml"));
+	app.MapGet(
+		"/openapi/v1.yaml",
+		() => Results.File(Path.Combine(AppContext.BaseDirectory, "openapi.yaml"), "application/yaml"));
 }
 
 app.MapWeatherForecastsEndpoints();

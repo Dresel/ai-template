@@ -349,12 +349,23 @@
         }
       },
       "focustemplate.admin.shared": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "FocusTemplate.Primitives": "[1.0.0, )"
+        }
       },
       "focustemplate.data": {
         "type": "Project",
         "dependencies": {
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )"
+          "FocusTemplate.Primitives": "[1.0.0, )",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
+          "Vogen": "[8.0.7, )"
+        }
+      },
+      "focustemplate.primitives": {
+        "type": "Project",
+        "dependencies": {
+          "Vogen": "[8.0.7, )"
         }
       },
       "focustemplate.servicedefaults": {
@@ -462,6 +473,12 @@
         "dependencies": {
           "OpenTelemetry.Api": "[1.19.0, 2.0.0)"
         }
+      },
+      "Vogen": {
+        "type": "CentralTransitive",
+        "requested": "[8.0.7, )",
+        "resolved": "8.0.7",
+        "contentHash": "0DrJ2ZPEGoJlzwqhum2LaZJ2FzJzgy5HP0km+XYL2MC/hS4Sn5/C35oRyob146Yjlf5xit2tmPx5xhI2BXkhLw=="
       }
     }
   }

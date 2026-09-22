@@ -5,13 +5,14 @@ import "@spatialfocus/typespec-http-csharp-slim";
 using Http;
 using OpenAPI;
 using SpatialFocus.Http;
+using FocusTemplate.Primitives;
 
 namespace FocusTemplate.Admin;
 
 /** A weather forecast for one day. */
 model WeatherForecastResponse {
   /** Identifier. */
-  id: int32;
+  id: WeatherForecastId;
 
   /** Day the forecast applies to. */
   date: plainDate;
@@ -32,5 +33,5 @@ interface WeatherForecasts {
 
   /** Gets one forecast by id. */
   @get
-  get(@path id: int32): WeatherForecastResponse | Problem<404>;
+  get(@path id: WeatherForecastId): WeatherForecastResponse | Problem<404>;
 }
