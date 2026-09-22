@@ -41,6 +41,12 @@
           "StyleCop.Analyzers.Unstable": "1.2.0.556"
         }
       },
+      "Vogen": {
+        "type": "Direct",
+        "requested": "[8.0.7, )",
+        "resolved": "8.0.7",
+        "contentHash": "0DrJ2ZPEGoJlzwqhum2LaZJ2FzJzgy5HP0km+XYL2MC/hS4Sn5/C35oRyob146Yjlf5xit2tmPx5xhI2BXkhLw=="
+      },
       "Humanizer.Core": {
         "type": "Transitive",
         "resolved": "2.14.1",
@@ -225,6 +231,12 @@
           "System.Composition.AttributedModel": "9.0.0",
           "System.Composition.Hosting": "9.0.0",
           "System.Composition.Runtime": "9.0.0"
+        }
+      },
+      "focustemplate.primitives": {
+        "type": "Project",
+        "dependencies": {
+          "Vogen": "[8.0.7, )"
         }
       },
       "Microsoft.EntityFrameworkCore": {

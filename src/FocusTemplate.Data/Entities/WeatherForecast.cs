@@ -1,8 +1,10 @@
+using FocusTemplate.Primitives;
+
 namespace FocusTemplate.Data.Entities;
 
 public sealed class WeatherForecast
 {
-	public int Id { get; set; }
+	public WeatherForecastId Id { get; set; } = WeatherForecastId.Unspecified;
 
 	public DateOnly Date { get; set; }
 

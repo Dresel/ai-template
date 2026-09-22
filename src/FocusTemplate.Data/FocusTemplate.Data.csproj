@@ -3,6 +3,11 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+		<PackageReference Include="Vogen" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\FocusTemplate.Primitives\FocusTemplate.Primitives.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -2,6 +2,9 @@ import "@typespec/http";
 import "@typespec/openapi";
 import "@spatialfocus/typespec-http-csharp-slim";
 
+// The typed ids every vertical shares, generated once by FocusTemplate.Primitives; the slices reference them.
+import "../../spec/primitives.tsp";
+
 // One file per feature slice next to this entry file; each contributes to the FocusTemplate.Admin namespace.
 import "./WeatherForecasts.tsp";
 

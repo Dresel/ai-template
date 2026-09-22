@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using FocusTemplate.Admin.Shared;
+using FocusTemplate.Primitives;
 
 namespace FocusTemplate.Admin.Client.WeatherForecasts;
 
@@ -44,7 +45,7 @@ public sealed partial class WeatherForecastsClient
 	/// <summary>Gets one forecast by id.</summary>
 	/// <param name="id">id.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
-	public async Task<WeatherForecastsGetResult> GetAsync(int id, CancellationToken cancellationToken = default)
+	public async Task<WeatherForecastsGetResult> GetAsync(WeatherForecastId id, CancellationToken cancellationToken = default)
 	{
 		using HttpRequestMessage request = new(HttpMethod.Get, ApiClientSupport.RelativeUri($"weather-forecasts/{ApiClientSupport.Segment(id)}"));
 		using HttpResponseMessage response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);

@@ -2,10 +2,11 @@
 
 #nullable enable
 
+using FocusTemplate.Primitives;
 using Mediator;
 
 namespace FocusTemplate.Admin.Api.Features.WeatherForecasts;
 
 /// <summary>Gets one forecast by id.</summary>
 /// <param name="Id">id.</param>
-public sealed partial record WeatherForecastsGetQuery(int Id) : IQuery<WeatherForecastsGetResult>;
+public sealed partial record WeatherForecastsGetQuery(WeatherForecastId Id) : IQuery<WeatherForecastsGetResult>;

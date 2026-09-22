@@ -3,6 +3,7 @@
 #nullable enable
 
 using System;
+using FocusTemplate.Primitives;
 
 namespace FocusTemplate.Admin.Shared;
 
@@ -11,4 +12,4 @@ namespace FocusTemplate.Admin.Shared;
 /// <param name="Date">Day the forecast applies to.</param>
 /// <param name="TemperatureC">Temperature in degrees Celsius.</param>
 /// <param name="Summary">Free-text summary.</param>
-public sealed partial record WeatherForecastResponse(int Id, DateOnly Date, int TemperatureC, string? Summary = null);
+public sealed partial record WeatherForecastResponse(WeatherForecastId Id, DateOnly Date, int TemperatureC, string? Summary = null);

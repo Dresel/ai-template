@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FocusTemplate.Admin.Shared;
+using FocusTemplate.Primitives;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -42,7 +43,7 @@ public static partial class WeatherForecastsEndpoints
 	/// <param name="id">id.</param>
 	/// <param name="mediator">The Mediator instance.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
-	private static async Task<Results<Ok<WeatherForecastResponse>, ProblemHttpResult>> GetHandler(int id, IMediator mediator, CancellationToken cancellationToken)
+	private static async Task<Results<Ok<WeatherForecastResponse>, ProblemHttpResult>> GetHandler(WeatherForecastId id, IMediator mediator, CancellationToken cancellationToken)
 	{
 		WeatherForecastsGetResult result = await mediator.Send(new WeatherForecastsGetQuery(id), cancellationToken);
 		return result.ToHttpResult();
