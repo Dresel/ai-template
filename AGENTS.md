@@ -232,6 +232,13 @@ exactly this. Traps, learned the hard way:
 
 ## Conventions
 
+- **Comments** explain *why*, never *what*: @.agents/comments-aspire.md.
+  Two rules on top, specific to this repo. **No XML doc comments (`///`) on hand-written C#** - the
+  signature carries the *what*; the exceptions are TypeSpec `/** */` (see **Spec-first APIs**) and
+  hand-written partials on generated wire/client types, whose XML reaches consumers. **Nothing under
+  `generated/` or `Migrations/` is commented** - it is overwritten. A comment describes the code as it
+  stands, never the process that produced it ("as discussed", "per review", "was previously X"); links
+  to *upstream* issues beside a workaround are wanted.
 - **Feature flags**: `Features:Analytics`, `Features:TlsOffloadingIngress`, and `Features:Mobile`
   (default **off**: no devtunnel/emulator requirements on a plain `aspire start`) in the AppHost's
   `appsettings.json`, overridable per-developer via the gitignored `appsettings.local.json`. The

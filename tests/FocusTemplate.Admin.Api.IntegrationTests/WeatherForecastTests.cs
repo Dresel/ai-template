@@ -59,7 +59,7 @@ public sealed class WeatherForecastTests(ApiFixture factory) : ApiTestBase(facto
 		Assert.Empty(forecasts);
 	}
 
-	/// <summary>The handler orders by date, so the rows come back sorted regardless of insertion order.</summary>
+	// Arranged out of order on purpose: the handler orders by date, the insertion order must not show through.
 	[Fact]
 	public async Task GetWeatherForecastReturnsExistingRowsInOrder()
 	{
@@ -81,7 +81,7 @@ public sealed class WeatherForecastTests(ApiFixture factory) : ApiTestBase(facto
 		Assert.Equal(expected, forecasts);
 	}
 
-	/// <summary>The store generates the key: two inserts from the Unspecified sentinel end up with two distinct ids.</summary>
+	// Guards the HasSentinel mapping: without it both rows would insert the zero key and the second would collide.
 	[Fact]
 	public async Task InsertedRowsReceiveDistinctStoreGeneratedIds()
 	{

@@ -18,11 +18,7 @@ namespace Microsoft.Extensions.Hosting;
 
 public static class BlazorClientExtensions
 {
-	/// <param name="builder">The WebAssembly host builder.</param>
-	/// <param name="serviceName">
-	/// Telemetry service name for the WASM client. Defaults to the AppHost-injected
-	/// OTEL_SERVICE_NAME ("{host-resource} (client)" from ProxyBlazorTelemetry) when omitted.
-	/// </param>
+	// An omitted serviceName falls back to the AppHost-injected OTEL_SERVICE_NAME, which ProxyBlazorTelemetry sets to "{host-resource} (client)".
 	public static WebAssemblyHostBuilder AddBlazorClientServiceDefaults(this WebAssemblyHostBuilder builder, string? serviceName = null)
 	{
 		ComponentsMetricsServiceCollectionExtensions.AddComponentsMetrics(builder.Services);

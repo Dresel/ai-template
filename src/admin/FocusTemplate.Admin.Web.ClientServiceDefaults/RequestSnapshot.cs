@@ -4,12 +4,9 @@ using System.Net.Http.Headers;
 namespace Microsoft.Extensions.Hosting;
 #pragma warning restore IDE0130
 
-/// <summary>
-///     Captures the essential parts of an HttpRequestMessage so it can be
-///     cloned for each retry attempt after the original request is disposed
-///     by the SDK. The OTLP SDK always sends ByteArrayContent (protobuf),
-///     so ReadAsByteArrayAsync completes synchronously.
-/// </summary>
+// Captures the parts of an HttpRequestMessage that a retry needs, because the SDK disposes the original while the
+// background send is still running. The OTLP SDK always sends ByteArrayContent (protobuf), so ReadAsByteArrayAsync
+// completes synchronously.
 internal sealed class RequestSnapshot
 {
 	public byte[]? ContentBytes { get; init; }

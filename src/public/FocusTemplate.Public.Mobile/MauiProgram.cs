@@ -15,7 +15,6 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
-		// Aspire client defaults: service discovery, resilience, OpenTelemetry.
 		builder.AddServiceDefaults();
 
 		// "https+http://" prefers HTTPS and falls back to HTTP - "public-api" resolves via service discovery
