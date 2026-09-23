@@ -8,7 +8,7 @@ namespace FocusTemplate.Admin.Api.IntegrationTests;
 
 public sealed class PostgresFixture : IAsyncLifetime
 {
-	private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgres:17").Build();
+	private readonly PostgreSqlContainer container = new PostgreSqlBuilder("postgis/postgis:17-3.5").Build();
 	private readonly SemaphoreSlim createLock = new(1, 1);
 
 	public async Task<string> CreateDatabaseAsync(string name)
@@ -33,7 +33,8 @@ public sealed class PostgresFixture : IAsyncLifetime
 			this.createLock.Release();
 		}
 
-		return new NpgsqlConnectionStringBuilder(this.container.GetConnectionString()) { Database = name, }.ConnectionString;
+		return new NpgsqlConnectionStringBuilder(this.container.GetConnectionString()) { Database = name, }
+			.ConnectionString;
 	}
 
 	public async ValueTask DisposeAsync()

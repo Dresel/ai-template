@@ -1,8 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" />
+		<PackageReference Include="EFCore.CheckConstraints" />
+		<PackageReference Include="EFCore.NamingConventions" />
 		<PackageReference Include="Vogen" />
 	</ItemGroup>
 
@@ -10,4 +13,9 @@
 		<ProjectReference Include="..\FocusTemplate.Primitives\FocusTemplate.Primitives.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Compile Update="Entities\**\*Configuration.cs">
+			<DependentUpon>$([System.Text.RegularExpressions.Regex]::Replace('%(Filename)', 'Configuration$', '')).cs</DependentUpon>
+		</Compile>
+	</ItemGroup>
 </Project>

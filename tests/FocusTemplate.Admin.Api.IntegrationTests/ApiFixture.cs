@@ -1,7 +1,11 @@
 using FocusTemplate.Data;
+using FocusTemplate.Data.Auditing;
+using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using Npgsql;
 using Respawn;
 
@@ -13,7 +17,17 @@ public sealed class ApiFixture(PostgresFixture postgres) : WebApplicationFactory
 
 	private Respawner respawner = null!;
 
-	public AppDbContext CreateDbContext() => new(new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(this.connectionString).Options);
+	public static UserId TestUser { get; } = UserId.From(new Guid("00000000-0000-7000-8000-00000000c0de"));
+
+	public FakeTimeProvider Clock { get; } = new(new DateTimeOffset(2026, 1, 1, 8, 0, 0, TimeSpan.Zero));
+
+	public AppDbContext CreateDbContext(UserId? user = null) =>
+		new(
+			new DbContextOptionsBuilder<AppDbContext>()
+				.ConfigureAppDbContext(
+					this.connectionString,
+					new AuditingInterceptor(this.Clock, new FixedCurrentUser(user ?? TestUser)))
+				.Options);
 
 	public async ValueTask InitializeAsync()
 	{
@@ -43,6 +57,11 @@ public sealed class ApiFixture(PostgresFixture postgres) : WebApplicationFactory
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
 		builder.UseSetting("ConnectionStrings:focusdb", this.connectionString);
-		builder.UseSetting("Database:SeedTestData", bool.FalseString);
+
+		builder.ConfigureServices(services =>
+		{
+			services.AddSingleton<ICurrentUser>(new FixedCurrentUser(TestUser));
+			services.AddSingleton<TimeProvider>(this.Clock);
+		});
 	}
 }

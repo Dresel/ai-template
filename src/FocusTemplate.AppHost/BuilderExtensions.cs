@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration.Json;
 
 namespace FocusTemplate.AppHost;
 
-internal static class ConfigurationExtensions
+internal static class BuilderExtensions
 {
 	public static IDistributedApplicationBuilder AddLocalSettings(this IDistributedApplicationBuilder builder)
 	{
