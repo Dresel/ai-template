@@ -33,7 +33,6 @@ builder.Services.PostConfigure<HttpClientTraceInstrumentationOptions>(options =>
 		(request.RequestUri is null || !request.RequestUri.AbsolutePath.StartsWith("/v1/", StringComparison.Ordinal));
 });
 
-// YARP for proxying service calls from the WASM client
 builder.Services.AddReverseProxy()
 	.LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
 	.AddServiceDiscoveryDestinationResolver();
@@ -42,9 +41,7 @@ WebApplication app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-// Serve the Blazor WASM client configuration endpoint.
-// The Aspire host sets Client__ConfigEndpointPath and Client__ConfigResponse
-// as environment variables; the server reads them and serves the JSON response.
+// The AppHost sets Client__ConfigEndpointPath and Client__ConfigResponse; the BFF serves that JSON to the WASM client.
 string? configEndpointPath = app.Configuration["Client:ConfigEndpointPath"];
 string? configResponse = app.Configuration["Client:ConfigResponse"];
 

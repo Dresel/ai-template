@@ -7,7 +7,5 @@ namespace FocusTemplate.Public.Mobile;
 
 public class Program
 {
-	// This is the main entry point of the application. To use a different application delegate
-	// class from "AppDelegate", specify it here.
 	private static void Main(string[] args) => UIApplication.Main(args, null, typeof(AppDelegate));
 }

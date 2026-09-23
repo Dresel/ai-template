@@ -6,13 +6,9 @@ using Polly;
 namespace Microsoft.Extensions.Hosting;
 #pragma warning restore IDE0130
 
-/// <summary>
-///     A DelegatingHandler that works around the OTel SDK's sync-over-async
-///     deadlock on WASM. The SDK calls SendAsync().GetAwaiter().GetResult()
-///     in OtlpExportClient.SendHttpRequest(), which blocks the single WASM
-///     thread. This handler returns 200 immediately to unblock the SDK,
-///     then sends the real request with retries in the background.
-/// </summary>
+// Works around the OTel SDK's sync-over-async deadlock on WASM: the SDK calls SendAsync().GetAwaiter().GetResult()
+// in OtlpExportClient.SendHttpRequest(), which blocks the single WASM thread. This handler returns 200 immediately
+// to unblock the SDK, then sends the real request with retries in the background.
 internal sealed partial class BackgroundExportHandler(ResiliencePipeline<HttpResponseMessage> pipeline, ILogger logger)
 	: DelegatingHandler(new HttpClientHandler())
 {

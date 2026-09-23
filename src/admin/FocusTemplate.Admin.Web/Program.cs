@@ -15,12 +15,11 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // In WebAssembly, environment variables are injected via JS initializer into MonoConfig.environmentVariables.
 // They are available via Environment.GetEnvironmentVariable() but NOT automatically in IConfiguration.
-// Service Discovery reads from IConfiguration, so we add environment variables to configuration.builder.Configuration.AddEnvironmentVariables();
+// Service Discovery reads from IConfiguration, so we add environment variables to configuration.
 builder.Configuration.AddEnvironmentVariables();
 
 await builder.AddClientConfigurationAsync();
 
-// Add Aspire service defaults (OpenTelemetry, service discovery, resilience)
 builder.AddBlazorClientServiceDefaults("admin-web");
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress), });

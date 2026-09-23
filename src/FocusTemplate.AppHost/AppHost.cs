@@ -25,13 +25,17 @@ IResourceBuilder<EFMigrationResource> migrations = api.AddEFMigrations(
 			// blocks each `dotnet` command's exit for ~1 min when nothing listens (e.g. E2E runs without the dashboard).
 			tool.WithEnvironment("DOTNET_CLI_TELEMETRY_OPTOUT", "true");
 
-			// Add seeding when running in run mode (e.g. local development)
+			// Seed only in run mode: the published migration bundle runs against real databases.
 			if (builder.ExecutionContext.IsRunMode)
 			{
 				tool.WithEnvironment("Database__SeedTestData", bool.TrueString);
 			}
 		})
-	.WithMigrationsProject("../FocusTemplate.Data/FocusTemplate.Data.csproj") // See https://github.com/microsoft/aspire/issues/16876
+
+	// A path because the Data reference keeps ASPIRE004 quiet with IsAspireProjectResource="false", which also means no
+	// Projects type for the typed overload. Switch once ASPIRE004 can be disabled per reference:
+	// https://github.com/microsoft/aspire/issues/16876
+	.WithMigrationsProject("../FocusTemplate.Data/FocusTemplate.Data.csproj")
 	.WithReference(focusDb)
 	.WaitFor(focusDb)
 	.RunDatabaseUpdateOnStart()

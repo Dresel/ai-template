@@ -22,7 +22,6 @@ WebApplication app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-// Map exceptions to problem details
 app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())

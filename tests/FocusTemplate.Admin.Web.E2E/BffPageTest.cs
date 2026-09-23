@@ -5,6 +5,6 @@ namespace FocusTemplate.Admin.Web.E2E;
 
 public abstract class BffPageTest : PageTest
 {
-	// Ignore dev certificate errors
+	// The BFF serves the ASP.NET dev certificate, which the test browser does not trust.
 	public override BrowserNewContextOptions ContextOptions() => new() { IgnoreHTTPSErrors = true };
 }
