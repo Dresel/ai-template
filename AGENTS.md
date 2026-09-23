@@ -17,9 +17,21 @@ Shared spine:
   (`output-type: primitives`) as Vogen value objects in namespace `FocusTemplate.Primitives`. The only project running
   Vogen's generator; `Data` and both `Shared` projects reference it, so one `WeatherForecastId` serves the domain and
   every contract.
-- **FocusTemplate.Data** - EF Core data layer: `AppDbContext`, entities, the `Migrations/` folder,
-  a design-time factory, and the dev seed. One domain, referenced by both APIs and the AppHost
-  migration resource.
+- **FocusTemplate.Data** - the entities and their EF Core mapping: `Entities/` (each table's entity next to its
+  `IEntityTypeConfiguration`, the configurations listed by hand in `ApplyEntityConfigurations`), `Auditing/`
+  (`IAuditable`, `ICurrentUser`, the interceptor and the shadow columns), `AppDbContext`, the `Migrations/` folder, a
+  design-time factory, and the dev seed. Referenced by both APIs and the AppHost migration resource. **No DDD layer**:
+  entities are plain classes
+  (`required`/`init`, public setters, no base types, no domain events) referencing each other by id without
+  navigations. Business rules - lifecycle, ownership, thresholds - live in the Mediator handler that needs them, which
+  answers a refusal with a case of its result union (see **Errors are values**). Postgres is the `postgis/postgis`
+  image: the station location is a `geography` point via NetTopologySuite, created as
+  `new Point(longitude, latitude) { SRID = 4326 }` (longitude first: swapped arguments still compile);
+  `StationStatus` and `AlertKind` are native Postgres enums (`MapEnum` in
+  `ConfigureAppDbContext`, which also switches on the naming and check-constraint plugins; every context gets its
+  provider through it, never from a bare `UseNpgsql`). The APIs register the pooled context with
+  `builder.Services.AddAppDbContextPool("focusdb")`, then call Aspire's
+  `builder.EnrichNpgsqlDbContext<AppDbContext>()`; Data itself stays free of Aspire.
 - **FocusTemplate.ServiceDefaults** - server-side Aspire defaults (OTel, service discovery, health).
 - **`@spatialfocus/typespec-http-csharp-slim`** (npm, consumed as the packed tgz under `.npm/`; own repository
   `typespec-http-csharp-slim`, where it is documented and tested) - the TypeSpec emitter both verticals are generated
@@ -82,12 +94,16 @@ Public vertical (`src/public/`):
   `[ValueObject<T>] [Instance("Unspecified", …)] public readonly partial struct` per `@typedId` scalar into
   `FocusTemplate.Primitives`; `Data` carries the `[EfCoreConverter<T>]` marker for the EF Core converters.
 - **Data / EF Core** - `Aspire.Npgsql.EntityFrameworkCore.PostgreSQL` (client integration:
-  `AddNpgsqlDbContext`, health checks, OTel); `Npgsql.EntityFrameworkCore.PostgreSQL` provider;
+  `EnrichNpgsqlDbContext` adds retries, health checks and OTel to the pooled context `AddAppDbContextPool` registers);
+  `Npgsql.EntityFrameworkCore.PostgreSQL` provider; `EFCore.CheckConstraints`
+  (validation attributes such as `[Range]` become CHECK constraints); `EFCore.NamingConventions` (snake_case names in
+  the database);
   `Microsoft.EntityFrameworkCore.Design` (design-time, tooling); the whole EF stack is pinned to one
   version in `Directory.Packages.props`. The `dotnet-ef` CLI is a repo-local tool
   (`.config/dotnet-tools.json`). AppHost wiring uses `Aspire.Hosting.PostgreSQL` +
   `Aspire.Hosting.EntityFrameworkCore` (`AddEFMigrations`).
-- **Testing (data)** - `Testcontainers.PostgreSql` - real Postgres per integration-test assembly.
+- **Testing (data)** - `Testcontainers.PostgreSql` - real Postgres per integration-test assembly, the `postgis/postgis:17-3.5`
+  image like the AppHost.
 - **Shared infra (ServiceDefaults)** - `Microsoft.Extensions.ServiceDiscovery`;
   `Microsoft.Extensions.Http.Resilience` (Polly-based).
 - **Observability** - `OpenTelemetry.Exporter.OpenTelemetryProtocol`, `OpenTelemetry.Extensions.Hosting`,
@@ -239,6 +255,24 @@ exactly this. Traps, learned the hard way:
   `generated/` or `Migrations/` is commented** - it is overwritten. A comment describes the code as it
   stands, never the process that produced it ("as discussed", "per review", "was previously X"); links
   to *upstream* issues beside a workaround are wanted.
+- **AOT-ready**: nothing publishes NativeAOT yet - EF's support is
+  [experimental](https://learn.microsoft.com/en-us/ef/core/performance/nativeaot-and-precompiled-queries) - but moving
+  to it once EF ships compiled models and precompiled queries as stable must stay a publish setting, not a rewrite. So
+  no reflection-based discovery: register by hand (a new `IEntityTypeConfiguration<T>` goes into
+  `ApplyEntityConfigurations`, a new service into its feature's extension method), treat an API marked
+  `[RequiresUnreferencedCode]` or `[RequiresDynamicCode]` as a stop sign, and prefer source generators (Vogen, Mediator
+  and the System.Text.Json contexts already are). Write each EF query as one method-syntax chain from the `DbSet` to its
+  terminal operator - the precompiler cannot follow a query composed across statements or written in query syntax -
+  and keep value converters free of captured state.
+- **Extension classes** are named after the type they extend, without an interface's `I`: `ModelBuilderExtensions`,
+  `ServiceCollectionExtensions`, `ProjectResourceBuilderExtensions` for `IResourceBuilder<ProjectResource>`, and after
+  the constraint for a generic receiver (`TBuilder : IHostApplicationBuilder` → `HostApplicationBuilderExtensions`).
+  A shortened name is fine where it stays unambiguous (`BuilderExtensions` in the Blazor app), but not in a shared
+  namespace such as `Microsoft.Extensions.Hosting`. Classes that map endpoints (`app.MapGet(...)`) are named after their
+  endpoints instead (`DebugEndpoint`). One class per extended type and namespace: the namespace says what the methods
+  are about (`Data.Auditing`), the method name what they do (`AddAuditingShadowProperties`). Names that came with a
+  template stay, so the file still diffs against a newer template: `Extensions` in both ServiceDefaults projects,
+  `BlazorClientExtensions`.
 - **Feature flags**: `Features:Analytics`, `Features:TlsOffloadingIngress`, and `Features:Mobile`
   (default **off**: no devtunnel/emulator requirements on a plain `aspire start`) in the AppHost's
   `appsettings.json`, overridable per-developer via the gitignored `appsettings.local.json`. The
@@ -302,6 +336,26 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
 
 ### Database & migrations
 
+- **Mapping**: a property's value constraints are annotations on the entity - `[MaxLength]`, `[Precision]`, `[Range]` -
+  so the limit sits where the property is declared. Every string property has a `[MaxLength]`, so no column ends up
+  unbounded `text` by default. The entity's `IEntityTypeConfiguration` keeps what is not a constraint on a single
+  value: keys and sentinels, column types, relationships without navigations, and indexes.
+  Validation attributes EF ignores (`[Range]`, `[MinLength]`, `[RegularExpression]`, ...) become CHECK constraints
+  through `EFCore.CheckConstraints` - but it silently skips a `[Range]` whose bounds are not of the property's type,
+  and `RangeAttribute` has no decimal bounds, so a decimal range is a `HasCheckConstraint` in the configuration.
+- **Naming**: the database uses PostgreSQL's snake_case (`weather_forecasts.temperature_c`, `pk_`/`fk_`/`ix_` keys and
+  indexes) through `EFCore.NamingConventions`, while C# keeps its own names. Raw SQL and `HasCheckConstraint` bodies
+  use the database names; `__EFMigrationsHistory` keeps its name.
+- **Auditing**: `IAuditable` entities get four shadow columns (`CreatedAt/By`, `UpdatedAt/By` as `UserId`) from
+  `AddAuditingShadowProperties`, set by `AuditingInterceptor` (`TimeProvider` + `ICurrentUser`), which
+  `ConfigureAppDbContext` attaches to every context. `AddAppDbContextPool` resolves it from the container, so each host
+  registers both inputs, even one that never writes. `ExecuteUpdate` and raw SQL bypass it:
+  on `IAuditable` types set the audit columns explicitly or use `SaveChanges`. `ICurrentUser` is the fixed
+  `WellKnownUsers.Developer` until authentication lands, `WellKnownUsers.System` where no person acts (the dev seed,
+  jobs, the Public API while it writes nothing);
+  tests use `ApiFixture.TestUser` and `ApiFixture.Clock`, a `FakeTimeProvider` they advance instead of assuming a time.
+  Tests arrange rows through
+  `Factory.CreateDbContext()`, which carries the provider options and the interceptor like the API does.
 - **Typed ids as keys**: `VogenEfCoreConverters` in `Data` carries one `[EfCoreConverter<T>]` per id and
   `ConfigureConventions` calls the generated `RegisterAllInVogenEfCoreConverters()`. A store-generated key needs the
   sentinel: the entity initializes it with `Id.Unspecified`, the model declares `ValueGeneratedOnAdd().HasSentinel(…)`,

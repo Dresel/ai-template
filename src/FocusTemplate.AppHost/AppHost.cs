@@ -12,8 +12,13 @@ bool addAnalytics = builder.Configuration.GetValue("Features:Analytics", true);
 bool addTlsOffloadingIngress = builder.Configuration.GetValue("Features:TlsOffloadingIngress", true);
 bool addMobile = builder.Configuration.GetValue("Features:Mobile", false);
 
-IResourceBuilder<PostgresDatabaseResource> focusDb = builder.AddPostgres("postgres").AddDatabase("focusdb");
-IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api").WithReference(focusDb).WaitFor(focusDb);
+IResourceBuilder<PostgresDatabaseResource> focusDb = builder.AddPostgres("postgres")
+	.WithImage("postgis/postgis")
+	.WithImageTag("17-3.5")
+	.AddDatabase("focusdb");
+IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api")
+	.WithReference(focusDb)
+	.WaitFor(focusDb);
 
 // See https://aspire.dev/integrations/databases/efcore/migrations/
 IResourceBuilder<EFMigrationResource> migrations = api.AddEFMigrations(
@@ -86,7 +91,8 @@ if (addTlsOffloadingIngress)
 
 if (addAnalytics)
 {
-	IResourceBuilder<PostgresDatabaseResource> umamiDb = builder.AddPostgres("umami-postgres").WithDataVolume().AddDatabase("umami-db");
+	IResourceBuilder<PostgresDatabaseResource> umamiDb =
+		builder.AddPostgres("umami-postgres").WithDataVolume().AddDatabase("umami-db");
 	IResourceBuilder<UmamiResource> umami = builder.AddUmami("umami").WithPostgreSQL(umamiDb).WaitFor(umamiDb);
 
 	web.WithUmamiAnalytics(umami, "FocusTemplate Web", "localhost");

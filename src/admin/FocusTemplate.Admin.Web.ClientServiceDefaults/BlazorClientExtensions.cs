@@ -19,7 +19,9 @@ namespace Microsoft.Extensions.Hosting;
 public static class BlazorClientExtensions
 {
 	// An omitted serviceName falls back to the AppHost-injected OTEL_SERVICE_NAME, which ProxyBlazorTelemetry sets to "{host-resource} (client)".
-	public static WebAssemblyHostBuilder AddBlazorClientServiceDefaults(this WebAssemblyHostBuilder builder, string? serviceName = null)
+	public static WebAssemblyHostBuilder AddBlazorClientServiceDefaults(
+		this WebAssemblyHostBuilder builder,
+		string? serviceName = null)
 	{
 		ComponentsMetricsServiceCollectionExtensions.AddComponentsMetrics(builder.Services);
 		ComponentsMetricsServiceCollectionExtensions.AddComponentsTracing(builder.Services);
@@ -29,7 +31,9 @@ public static class BlazorClientExtensions
 		return builder;
 	}
 
-	private static WebAssemblyHostBuilder ConfigureBlazorClientOpenTelemetry(this WebAssemblyHostBuilder builder, string? serviceName)
+	private static WebAssemblyHostBuilder ConfigureBlazorClientOpenTelemetry(
+		this WebAssemblyHostBuilder builder,
+		string? serviceName)
 	{
 		// Without an OTLP path base, there's nowhere to export telemetry in WASM.
 		string? otlpPathBase = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
@@ -45,7 +49,8 @@ public static class BlazorClientExtensions
 		//   - Exponential backoff with jitter
 		//   - Honors Retry-After header from 429/503
 		//   - Retryable: 408, 429, 500+ (superset of OTLP's 429/502/503/504)
-		ResiliencePipeline<HttpResponseMessage> pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>().AddRetry(
+		ResiliencePipeline<HttpResponseMessage> pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
+			.AddRetry(
 				new HttpRetryStrategyOptions
 				{
 					Delay = TimeSpan.FromSeconds(1),
@@ -71,7 +76,11 @@ public static class BlazorClientExtensions
 			////ILogger logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger("Aspire.OtlpExport");
 			return new PostConfigureOptions<OtlpExporterOptions>(
 				null,
-				o => { o.HttpClientFactory = () => new HttpClient(new BackgroundExportHandler(pipeline, NullLogger.Instance)); });
+				o =>
+				{
+					o.HttpClientFactory = () =>
+						new HttpClient(new BackgroundExportHandler(pipeline, NullLogger.Instance));
+				});
 		});
 
 		builder.Logging.AddOpenTelemetry(logging =>
@@ -81,7 +90,8 @@ public static class BlazorClientExtensions
 
 			// Use a fixed instanceId so all browser tabs report as a single service instance
 			// in the dashboard rather than spawning separate entries per tab.
-			logging.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName, serviceInstanceId: serviceName));
+			logging.SetResourceBuilder(
+				ResourceBuilder.CreateDefault().AddService(serviceName, serviceInstanceId: serviceName));
 			logging.AddOtlpExporter(o => o.Endpoint = new Uri(otlpEndpoint, "v1/logs"));
 		});
 

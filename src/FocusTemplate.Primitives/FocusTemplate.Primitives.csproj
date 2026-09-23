@@ -1,5 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+	<!-- The one assembly every vertical shares: the typed ids of src/spec/primitives.tsp as Vogen structs. Vogen generates here
+	     and nowhere else; consumers get Vogen.SharedTypes at run time through the project reference, and the analyzers flow
+	     along with it, so default(Id) and new Id() fail to compile in every project that references the ids. -->
 	<ItemGroup>
 		<PackageReference Include="Vogen" />
 	</ItemGroup>
