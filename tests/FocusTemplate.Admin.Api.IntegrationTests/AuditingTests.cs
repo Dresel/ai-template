@@ -2,6 +2,7 @@ using FocusTemplate.Data;
 using FocusTemplate.Data.Auditing;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Primitives;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NetTopologySuite.Geometries;
@@ -46,7 +47,7 @@ public sealed class AuditingTests(ApiFixture factory) : ApiTestBase(factory)
 	}
 
 	[Fact]
-	public async Task PooledContextTakesUserAndClockFromTheHost()
+	public async Task PooledContextTakesTheUserFromTheRequestAndTheClockFromTheHost()
 	{
 		DateTimeOffset createdAt = Factory.Clock.GetUtcNow();
 		Station station = new()
@@ -60,6 +61,12 @@ public sealed class AuditingTests(ApiFixture factory) : ApiTestBase(factory)
 
 		await using (AsyncServiceScope scope = Factory.Services.CreateAsyncScope())
 		{
+			scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext = new DefaultHttpContext
+			{
+				User = TestAuthenticationHandler.CreatePrincipal(ApiFixture.TestUser),
+				RequestServices = scope.ServiceProvider,
+			};
+
 			AppDbContext dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 			dbContext.Stations.Add(station);
 			await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);

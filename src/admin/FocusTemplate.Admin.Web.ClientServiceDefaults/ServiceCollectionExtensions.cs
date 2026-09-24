@@ -19,7 +19,8 @@ public static class ServiceCollectionExtensions
 		ArgumentException.ThrowIfNullOrEmpty(serviceName);
 
 		return services.AddHttpClient<TClient>(client => client.BaseAddress = new Uri(
-			new Uri(hostEnvironment.BaseAddress),
-			$"{apiPrefix}/{serviceName}/"));
+				new Uri(hostEnvironment.BaseAddress),
+				$"{apiPrefix}/{serviceName}/"))
+			.AddHttpMessageHandler(() => new CsrfHeaderHandler());
 	}
 }

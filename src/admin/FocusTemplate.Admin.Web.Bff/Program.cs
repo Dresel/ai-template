@@ -9,6 +9,8 @@ builder.AddServiceDefaults();
 
 builder.Services.Configure<ClientConfiguration>(builder.Configuration.GetSection("Client"));
 
+builder.AddBffAuthentication();
+
 builder.Services.ConfigureHttpJsonOptions(options =>
 	options.SerializerOptions.TypeInfoResolverChain.Insert(0, BffJsonContext.Default));
 
@@ -35,11 +37,15 @@ builder.Services.PostConfigure<HttpClientTraceInstrumentationOptions>(options =>
 
 builder.Services.AddReverseProxy()
 	.LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
-	.AddServiceDiscoveryDestinationResolver();
+	.AddServiceDiscoveryDestinationResolver()
+	.AddAccessTokenTransform();
 
 WebApplication app = builder.Build();
 
 app.MapDefaultEndpoints();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 // The AppHost sets Client__ConfigEndpointPath and Client__ConfigResponse; the BFF serves that JSON to the WASM client.
 string? configEndpointPath = app.Configuration["Client:ConfigEndpointPath"];
@@ -51,6 +57,8 @@ if (!string.IsNullOrEmpty(configEndpointPath) && !string.IsNullOrEmpty(configRes
 }
 
 app.MapGet("/client-configuration", (IOptions<ClientConfiguration> config) => config.Value);
+
+app.MapAuthenticationEndpoints();
 
 if (app.Environment.IsDevelopment())
 {

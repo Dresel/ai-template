@@ -11,8 +11,9 @@ its own slice into its `generated/` folder.
 
 Shared spine:
 
-- **FocusTemplate.AppHost** - Aspire orchestrator. Wires both APIs, the BFF, an optional nginx TLS
-  ingress, optional Umami analytics, and (behind `Features:Mobile`) the MAUI device resources + Dev Tunnel.
+- **FocusTemplate.AppHost** - Aspire orchestrator. Wires both APIs, the BFF, Keycloak (see **Authentication**), an
+  optional nginx TLS ingress, optional Umami analytics, and (behind `Features:Mobile`) the MAUI device resources + Dev
+  Tunnel.
 - **FocusTemplate.Primitives** - the typed ids every vertical shares, generated from `src/spec/primitives.tsp`
   (`output-type: primitives`) as Vogen value objects in namespace `FocusTemplate.Primitives`. The only project running
   Vogen's generator; `Data` and both `Shared` projects reference it, so one `WeatherForecastId` serves the domain and
@@ -48,13 +49,16 @@ Admin vertical (`src/admin/`):
   records and result unions are generated into its `generated/<Slice>/` folder from `../spec/api.tsp` (namespace
   `FocusTemplate.Admin.Api.Features.<Slice>`, the one the slice's handlers use), the emitted `openapi.yaml` is
   served as-is; `Features/<Slice>/` holds the slice's Mediator handlers (EF Core, queries through `ReadOnlyAppDbContext`
-  and commands through `AppDbContext`, backed by PostgreSQL) and endpoint hooks.
+  and commands through `AppDbContext`, backed by PostgreSQL) and endpoint hooks. Callers present a Keycloak bearer
+  token, every endpoint group requires one through its hooks file (see **Authentication**).
 - **FocusTemplate.Admin.Client** - the generated typed HTTP clients of the vertical (`tspconfig.yaml`,
   `output-type: client`), referenced by every consumer so the client an app ships is the one the tests drive.
 - **FocusTemplate.Admin.Web** - the Blazor WASM client (Blazorise Material UI). Talks to the API through the typed
-  `WeatherForecastsClient` from `FocusTemplate.Admin.Client`.
+  `WeatherForecastsClient` from `FocusTemplate.Admin.Client`. Every page needs a signed-in user, which the client learns
+  about from the BFF (`BffAuthenticationStateProvider`).
 - **FocusTemplate.Admin.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
-  `/_otlp/*` → dashboard, `/_analytics/*` → Umami. The browser only ever talks to the BFF.
+  `/_otlp/*` → dashboard, `/_analytics/*` → Umami. The browser only ever talks to the BFF, which also holds the user's
+  session (cookie + OIDC code flow against Keycloak) and attaches the access token to `/_api/*` calls.
 - **FocusTemplate.Admin.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
 - **FocusTemplate.Admin.Shared** - the wire contract shared between the server and the WASM client:
   records generated from the spec plus hand-written partials for computed members.
@@ -79,12 +83,16 @@ Public vertical (`src/public/`):
 .NET 11 (preview) Packages use Central Package Management - see `Directory.Packages.props` for versions.
 
 - **Orchestration (Aspire)** - `Aspire.AppHost.Sdk`; `Aspire.Hosting.Blazor` (WASM hosted-model
-  service/telemetry proxying, experimental preview); `CommunityToolkit.Aspire.Hosting.Umami`
-  (Umami analytics container + its Postgres backend).
+  service/telemetry proxying, experimental preview); `Aspire.Hosting.Keycloak` (**preview**, the identity provider
+  container with realm import); `CommunityToolkit.Aspire.Hosting.Umami` (Umami analytics container + its Postgres
+  backend).
 - **BFF / gateway** - `Yarp.ReverseProxy`; `Microsoft.Extensions.ServiceDiscovery.Yarp` (resolves
-  proxy destinations); `Microsoft.AspNetCore.Components.WebAssembly.Server` (serves the WASM client).
-- **Blazor WASM client** - `Microsoft.AspNetCore.Components.WebAssembly`; `Blazorise.Material` +
-  `Blazorise.Icons.Material` (Material 3 UI).
+  proxy destinations); `Microsoft.AspNetCore.Components.WebAssembly.Server` (serves the WASM client);
+  `Microsoft.AspNetCore.Authentication.OpenIdConnect` (cookie + code flow) and `Duende.AccessTokenManagement.OpenIdConnect`
+  (Apache-2.0, unlike Duende's BFF and IdentityServer: refreshes the user's access token for the proxied calls).
+- **API authentication** - `Microsoft.AspNetCore.Authentication.JwtBearer` against Keycloak's realm.
+- **Blazor WASM client** - `Microsoft.AspNetCore.Components.WebAssembly`; `Microsoft.AspNetCore.Components.Authorization`
+  (`AuthorizeRouteView`, `AuthorizeView`); `Blazorise.Material` + `Blazorise.Icons.Material` (Material 3 UI).
 - **API contracts (TypeSpec)** - root `package.json`, pinned: `@typespec/compiler`, `@typespec/http`,
   `@typespec/openapi3` (emits OpenAPI 3.2) and our emitter `@spatialfocus/typespec-http-csharp-slim` as a
   `file:` dependency on `.npm/<name>-<version>.tgz` (bump = replace the tgz, `npm install`, `npm run gen`). The
@@ -128,6 +136,10 @@ Use the Aspire CLI, not `dotnet run`:
 - `aspire start` (detaches)
 - `aspire stop`
 - `aspire wait <resource>` - block until healthy
+
+Open the BFF (`http://localhost:5770` without the ingress, the `admin-bff-ingress` https endpoint with it) and log in
+as `developer` / `developer`, the login of the imported realm. Keycloak's admin console is the `keycloak` resource's
+endpoint, user `admin`, password in the AppHost's secret store under `Parameters:keycloak-password`.
 
 **Stop the AppHost before `dotnet build`/`dotnet test`** - a running BFF locks its output binary and
 the build fails (MSB3027). To apply code changes without a full restart, use the **rebuild** command
@@ -188,12 +200,14 @@ feature, specify the new behavior with one.
    - **Integration** (one service: DI, middleware, serialization, auth, framework, **EF Core / SQL**) →
      `FocusTemplate.Admin.Api.IntegrationTests`. A real Postgres runs via Testcontainers (assembly fixture,
      migrations applied once); tests arrange rows against an empty schema. See **Integration test
-     database** below for the reset/isolation contract.
+     database** below for the reset/isolation contract, and **Authentication** for the test scheme that stands in
+     for Keycloak.
    - **Aspire system** (cross-resource: BFF↔API, ingress, service discovery, startup order,
      scale-out, telemetry) → `FocusTemplate.Admin.Web.E2E` (boots the AppHost via
      `DistributedApplicationTestingBuilder`).
    - **UI** (DOM, input, caret, focus, keyboard, routing, client validation, user flow) →
-     `FocusTemplate.Admin.Web.E2E` Playwright, through the BFF.
+     `FocusTemplate.Admin.Web.E2E` Playwright, through the BFF, signed in: every browser context starts from the
+     session the fixture captured with one real Keycloak login (see **Authentication**).
    - **UI (mobile)** (native MAUI flows on the Android emulator) → `FocusTemplate.Public.Mobile.E2E`
      Appium/UiAutomator2; boots the AppHost, installs the APK with a baked test env (`adb reverse`,
      no Dev Tunnel). Appium + driver are **project-local npm devDependencies** — one-time `npm ci`
@@ -281,7 +295,7 @@ exactly this. Traps, learned the hard way:
 - **Feature flags**: `Features:Analytics`, `Features:TlsOffloadingIngress`, and `Features:Mobile`
   (default **off**: no devtunnel/emulator requirements on a plain `aspire start`) in the AppHost's
   `appsettings.json`, overridable per-developer via the gitignored `appsettings.local.json`. The
-  E2E fixture pins them via CLI args.
+  E2E fixture pins them via CLI args. Authentication has no flag, it is always on.
 - **Shared DTOs** live in the vertical's `Shared` project (`FocusTemplate.Admin.Shared` /
   `FocusTemplate.Public.Shared` - never referencing each other); computed members go into hand-written
   partials next to the project file. Entities (`FocusTemplate.Data`) stay server-side; map entity =>
@@ -348,6 +362,65 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
   under `generated/`. The `generated/` folders and `openapi.yaml` are checked in and belong in the
   same commit as the spec change.
 
+### Authentication
+
+Keycloak is the identity provider and the BFF holds the session: the Duende-BFF shape without Duende's BFF. Always on,
+no feature flag.
+
+- **AppHost**: `AddKeycloak("keycloak", 8080)` imports `keycloak/focus-realm.json` in run mode: realm `focus`, the
+  confidential client `admin-bff` with an audience mapper that stamps `admin-api` into the access token, and the login
+  `developer` / `developer`, whose user id is `WellKnownUsers.Developer`. Its primary endpoint is named `http` whatever
+  its scheme: the integration switches it to https at start when the dev certificate is available (there is no
+  separate `https` endpoint, adding one yields a `tcp://` authority). Both handlers keep the default https-metadata
+  requirement, so a Keycloak left on http fails at the first login with the handler's own message instead of being
+  accepted quietly. `WithKeycloakAudience` / `WithKeycloakClient` (`AuthenticationExtensions`) hand a project
+  `Oidc__Authority` plus its audience or its client id and the `oidc-admin-bff-secret` parameter, and wait for
+  Keycloak. `WithRealmImport` is development-only; a published Keycloak bakes the realm into its image
+  (`WithDockerfile`). The realm file and the AppHost values must stay in sync by hand.
+- **BFF**: cookie session (`focus.session`, HttpOnly, SameSite=Lax) + OIDC code flow with the authorization request
+  pushed (PAR: the handler's `UseIfAvailable` default meets Keycloak's advertised endpoint, and the E2E login test
+  asserts the `request_uri` on the authorize request), tokens saved in the cookie, refreshed by
+  `Duende.AccessTokenManagement`. Endpoints: `/bff/login?returnUrl=` (local paths only),
+  `/bff/logout?sid=&returnUrl=` (a GET so the browser can carry on to Keycloak's end-session page; the session id is
+  its CSRF token, the return url a local path again), `/bff/user` (401 when anonymous, otherwise `UserInfoResponse`:
+  the user's claims plus the BFF's own `bff:logout_url`, see `BffClaimTypes` in `Admin.Shared`). The proxied API route
+  carries the `ProxiedApi` authorization policy in the BFF's `appsettings.json`, where the route is declared in full
+  under its Aspire-generated name (`route-admin-api`, the way `appsettings.Development.json` already addresses
+  `cluster-otlp-dashboard`) so the file is valid on its own, while the AppHost's environment adds the destination and
+  the prefix transform; a further proxied API needs its own entry, and a forgotten one fails closed, since the
+  transform sends no token to a route without the policy and the API answers 401. The policy: a session and the
+  `X-CSRF: 1` header, else 401 or 403,
+  because the cookie handler's redirects are turned into status codes, the BFF having no login page. A request
+  transform registered for those routes only (`AddAccessTokenTransform`) fetches the user's access token and puts it
+  on the outgoing request; when the refresh fails the call goes out without one and the API's own 401 comes back, so
+  nothing in the BFF short-circuits. Lax plus header, not Strict: Strict withholds the cookie on the redirect back
+  from a cross-site identity provider, so the first page after login is anonymous and loops, and the header, which a
+  cross-site page cannot add without a CORS preflight the BFF never grants, is the defense anyway. TLS ends at the
+  ingress and the BFF itself is plain http, so its cookies cannot carry Secure and a browser would drop the OIDC
+  handler's default SameSite=None correlation and nonce cookies: they are Lax here, and the callback uses the query
+  response mode, a top-level GET on which Lax cookies travel even from Keycloak's origin, which a differing scheme
+  makes cross-site.
+- **Admin API**: JwtBearer with `Oidc:Authority` and `Oidc:Audience`, `MapInboundClaims = false` so the claims keep
+  Keycloak's names. Every endpoint group requires authorization through its `*Endpoints.Hooks.cs` (`ConfigureGroup` →
+  `RequireAuthorization()`), never a fallback policy, which would also lock the health probes Aspire relies on;
+  `AuthenticationTests.EveryApiEndpointRequiresAuthorization` catches a slice without its hook. `ICurrentUser` is
+  `HttpContextCurrentUser`: the `sub` claim is Keycloak's user UUID and therefore the `UserId`, no directory lookup;
+  a singleton over `IHttpContextAccessor` because its consumer, the auditing interceptor, is one.
+- **WASM**: `BffAuthenticationStateProvider` asks `/bff/user` once per load. `[Authorize]` in `_Imports.razor` and
+  `AuthorizeRouteView` in `App.razor` guard every page, `RedirectToLogin` does a full load to `bff/login`, the logout
+  button navigates to the `bff:logout_url` claim with `forceLoad`, since both live outside the client router. Proxied
+  clients add the `X-CSRF` header through `CsrfHeaderHandler` inside `AddProxiedHttpClient`. `data-testid`s:
+  `user-name`, `logout-button`, `authorizing`.
+- **Tests**: the integration fixture makes `TestAuthenticationHandler` the default scheme: `Authorization: Test <UserId>`
+  is that user, anything else is anonymous and gets 401, so `Factory.CreateAuthenticatedClient(user)` acts and
+  `Factory.CreateClient()` proves the refusal; the `Oidc:*` settings it sets only satisfy validation. E2E:
+  `BlazorAppFixture` logs the developer in once through Keycloak's form (`#username`, `#password`, `#kc-login`) and hands
+  the browser storage state to every context, `AuthenticationTests` start from a fresh context to test login, logout and
+  the `/_api` gate. Nothing in the tests ever handles a JWT; direct-grant tokens for scripts and PKCE for mobile come
+  with the Public API leg.
+- **Not yet**: the Public API stays anonymous until the mobile client's PKCE leg, server-side sessions and backchannel
+  logout wait for Redis, `@authorize` in TypeSpec and the OpenAPI security scheme follow.
+
 ### Database & migrations
 
 - **Mapping**: a property's value constraints are annotations on the entity - `[MaxLength]`, `[Precision]`, `[Range]` -
@@ -365,10 +438,11 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
   `ConfigureAppDbContext` attaches to the write context. `AddAppDbContextPool` resolves it from the container, so each
   host that registers the write pool registers both inputs; a host that only queries (the Public API today) registers
   `AddReadOnlyAppDbContextPool` alone and needs neither. `ExecuteUpdate` and raw SQL bypass it:
-  on `IAuditable` types set the audit columns explicitly or use `SaveChanges`. `ICurrentUser` is the fixed
-  `WellKnownUsers.Developer` until authentication lands, `WellKnownUsers.System` where no person acts (the dev seed,
-  jobs);
-  tests use `ApiFixture.TestUser` and `ApiFixture.Clock`, a `FakeTimeProvider` they advance instead of assuming a time.
+  on `IAuditable` types set the audit columns explicitly or use `SaveChanges`. `ICurrentUser` is the request's token
+  subject in the Admin API (`HttpContextCurrentUser`, see **Authentication**), `WellKnownUsers.System` where no person
+  acts (the dev seed, jobs, a request without a user); `WellKnownUsers.Developer` is the id of the realm's `developer`
+  login, so what the seed attributes to the developer belongs to whoever logs in locally.
+  Tests use `ApiFixture.TestUser` and `ApiFixture.Clock`, a `FakeTimeProvider` they advance instead of assuming a time.
   Tests arrange rows through
   `Factory.CreateDbContext()`, which carries the provider options and the interceptor like the API does.
 - **Typed ids as keys**: `VogenEfCoreConverters` in `Data` carries one `[EfCoreConverter<T>]` per id and

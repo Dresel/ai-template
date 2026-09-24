@@ -11,6 +11,10 @@
   <ItemGroup>
     <PackageVersion Include="Blazorise.Icons.Material" Version="2.3.2" />
     <PackageVersion Include="Blazorise.Material" Version="2.3.2" />
+    <PackageVersion Include="Duende.AccessTokenManagement.OpenIdConnect" Version="4.2.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="11.0.0-rc.1.26425.128" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="11.0.0-rc.1.26425.128" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="11.0.0-rc.1.26425.128" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="11.0.0-rc.1.26425.128" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="11.0.0-preview.7.26381.103" />
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.5.4" />
@@ -47,6 +51,7 @@
     <PackageVersion Include="Aspire.Hosting.Blazor" Version="13.5.4-preview.1.26464.4" />
     <PackageVersion Include="Aspire.Hosting.DevTunnels" Version="13.5.4" />
     <PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="13.5.4-preview.1.26464.4" />
+    <PackageVersion Include="Aspire.Hosting.Keycloak" Version="13.5.4-preview.1.26464.4" />
     <PackageVersion Include="Aspire.Hosting.Maui" Version="13.5.4-preview.1.26464.4" />
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.5.4" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="13.5.4" />

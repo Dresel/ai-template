@@ -3,12 +3,12 @@ using Microsoft.Playwright;
 namespace FocusTemplate.Admin.Web.E2E;
 
 [Collection(AspireCollection.Name)]
-public sealed class WeatherTests(BlazorAppFixture app) : BffPageTest
+public sealed class WeatherTests(BlazorAppFixture app) : BffPageTest(app)
 {
 	[Fact]
 	public async Task WeatherPageRendersSeededForecast()
 	{
-		await Page.GotoAsync($"{app.BaseUrl}weather");
+		await Page.GotoAsync($"{App.BaseUrl}weather");
 
 		await Expect(Page.GetByTestId("weather-table")).ToBeVisibleAsync();
 
