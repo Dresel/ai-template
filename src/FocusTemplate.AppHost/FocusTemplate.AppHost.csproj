@@ -10,6 +10,7 @@
 		<PackageReference Include="Aspire.Hosting.Blazor" />
 		<PackageReference Include="Aspire.Hosting.DevTunnels" />
 		<PackageReference Include="Aspire.Hosting.EntityFrameworkCore" />
+		<PackageReference Include="Aspire.Hosting.Keycloak" />
 		<PackageReference Include="Aspire.Hosting.Maui" />
 		<PackageReference Include="Aspire.Hosting.PostgreSQL" />
 		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Umami" />

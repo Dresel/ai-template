@@ -17,9 +17,19 @@ IResourceBuilder<PostgresDatabaseResource> focusDb = builder.AddPostgres("postgr
 	.WithImageTag("17-3.5")
 	.AddDatabase("focusdb");
 
+IResourceBuilder<KeycloakResource> keycloak = builder
+	.AddKeycloak("keycloak", 8080)
+	.WithOtlpExporter();
+
+if (builder.ExecutionContext.IsRunMode)
+{
+	keycloak.WithRealmImport("./keycloak");
+}
+
 IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api")
 	.WithReference(focusDb)
 	.WithReference(focusDb, connectionName: "focusdb-readonly")
+	.WithKeycloakAudience(keycloak, "admin-api")
 	.WaitFor(focusDb);
 
 // See https://aspire.dev/integrations/databases/efcore/migrations/
@@ -85,6 +95,10 @@ if (addMobile)
 IResourceBuilder<ProjectResource> web = builder.AddProject<FocusTemplate_Admin_Web_Bff>("admin-bff")
 	.ProxyBlazorService(api)
 	.ProxyBlazorTelemetry()
+	.WithKeycloakClient(
+		keycloak,
+		"admin-bff",
+		builder.AddParameter("oidc-admin-bff-secret", "admin-bff-secret", secret: true))
 	.WaitFor(api);
 
 if (addTlsOffloadingIngress)

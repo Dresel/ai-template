@@ -14,7 +14,7 @@ public sealed class WeatherForecastTests(ApiFixture factory) : ApiTestBase(facto
 	[Fact]
 	public async Task GetWeatherForecastReturnsEmptyWhenNoData()
 	{
-		WeatherForecastsClient client = new(Factory.CreateClient());
+		WeatherForecastsClient client = new(Factory.CreateAuthenticatedClient());
 		IReadOnlyList<WeatherForecastResponse>
 			forecasts = await client.ListAsync(TestContext.Current.CancellationToken);
 
@@ -47,7 +47,7 @@ public sealed class WeatherForecastTests(ApiFixture factory) : ApiTestBase(facto
 
 		await AddAsync(entities);
 
-		WeatherForecastsClient client = new(Factory.CreateClient());
+		WeatherForecastsClient client = new(Factory.CreateAuthenticatedClient());
 		IReadOnlyList<WeatherForecastResponse>
 			forecasts = await client.ListAsync(TestContext.Current.CancellationToken);
 
@@ -97,7 +97,7 @@ public sealed class WeatherForecastTests(ApiFixture factory) : ApiTestBase(facto
 		};
 		await AddAsync(entity);
 
-		WeatherForecastsClient client = new(Factory.CreateClient());
+		WeatherForecastsClient client = new(Factory.CreateAuthenticatedClient());
 		WeatherForecastsGetResult result = await client.GetAsync(entity.Id, TestContext.Current.CancellationToken);
 
 		WeatherForecastResponse forecast = result switch
@@ -113,7 +113,7 @@ public sealed class WeatherForecastTests(ApiFixture factory) : ApiTestBase(facto
 	[Fact]
 	public async Task GetOfAMissingIdIsTheNotFoundCaseCarryingTheProblemDetails()
 	{
-		WeatherForecastsClient client = new(Factory.CreateClient());
+		WeatherForecastsClient client = new(Factory.CreateAuthenticatedClient());
 		WeatherForecastsGetResult result = await client.GetAsync(
 			WeatherForecastId.From(4711),
 			TestContext.Current.CancellationToken);

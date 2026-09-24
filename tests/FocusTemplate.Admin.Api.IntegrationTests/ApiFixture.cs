@@ -1,6 +1,8 @@
+using System.Net.Http.Headers;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Auditing;
 using FocusTemplate.Primitives;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -23,12 +25,21 @@ public sealed class ApiFixture(PostgresFixture postgres) : WebApplicationFactory
 
 	public FakeTimeProvider Clock { get; } = new(new DateTimeOffset(2026, 1, 1, 8, 0, 0, TimeSpan.Zero));
 
+	public HttpClient CreateAuthenticatedClient(UserId? user = null)
+	{
+		HttpClient client = CreateClient();
+		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+			TestAuthenticationHandler.SchemeName,
+			(user ?? TestUser).Value.ToString());
+
+		return client;
+	}
+
 	public AppDbContext CreateDbContext(UserId? user = null) =>
 		new(
-			new DbContextOptionsBuilder<AppDbContext>()
-				.ConfigureAppDbContext(
+			new DbContextOptionsBuilder<AppDbContext>().ConfigureAppDbContext(
 					this.connectionString,
-					new AuditingInterceptor(this.Clock, new FixedCurrentUser(user ?? TestUser)))
+					new AuditingInterceptor(Clock, new FixedCurrentUser(user ?? TestUser)))
 				.Options);
 
 	public async ValueTask InitializeAsync()
@@ -64,10 +75,18 @@ public sealed class ApiFixture(PostgresFixture postgres) : WebApplicationFactory
 		builder.UseSetting("ConnectionStrings:focusdb", this.connectionString);
 		builder.UseSetting("ConnectionStrings:focusdb-readonly", this.readOnlyConnectionString);
 
+		// The values only have to pass validation: JwtBearer is registered but never asked, the test scheme is the default.
+		builder.UseSetting("Oidc:Authority", "https://keycloak.test/realms/focus");
+		builder.UseSetting("Oidc:Audience", "admin-api");
+
 		builder.ConfigureServices(services =>
 		{
-			services.AddSingleton<ICurrentUser>(new FixedCurrentUser(TestUser));
-			services.AddSingleton<TimeProvider>(this.Clock);
+			services.AddSingleton<TimeProvider>(Clock);
+
+			services.AddAuthentication(TestAuthenticationHandler.SchemeName)
+				.AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(
+					TestAuthenticationHandler.SchemeName,
+					null);
 		});
 	}
 }

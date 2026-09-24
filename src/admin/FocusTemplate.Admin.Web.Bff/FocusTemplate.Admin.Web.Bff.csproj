@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<ItemGroup>
+		<PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
 		<PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" />
 		<PackageReference Include="Yarp.ReverseProxy" />

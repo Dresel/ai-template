@@ -30,6 +30,16 @@
         "resolved": "11.0.0-rc.1.26425.128",
         "contentHash": "MhS+kMUhEWOq7GAS2WJBCU++IYXl9L4yXV8AbpHSyo9T0WKDNNiMZsskcQbpjoPIAzvQ/SEM0TCAPNKZzYDB4A=="
       },
+      "Microsoft.AspNetCore.Components.Authorization": {
+        "type": "Direct",
+        "requested": "[11.0.0-rc.1.26425.128, )",
+        "resolved": "11.0.0-rc.1.26425.128",
+        "contentHash": "7735q+MBHS5+e2zX59wXNLZ+B4z2ld6vw9dRWNBuTVAqKxWdzssTJRvV4Co2YeBo/tUWBpHKEgr6rLodLX13kA==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Authorization": "11.0.0-rc.1.26425.128",
+          "Microsoft.AspNetCore.Components": "11.0.0-rc.1.26425.128"
+        }
+      },
       "Microsoft.AspNetCore.Components.WebAssembly": {
         "type": "Direct",
         "requested": "[11.0.0-rc.1.26425.128, )",

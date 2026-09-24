@@ -22,6 +22,7 @@ public static class DbContextOptionsBuilderExtensions
 		where TBuilder : DbContextOptionsBuilder
 	{
 		options.UseAppDbContextProvider(connectionString);
+
 		// Auditing is not needed for read-only contexts
 
 		// Disable tracking for read-only contexts to improve performance

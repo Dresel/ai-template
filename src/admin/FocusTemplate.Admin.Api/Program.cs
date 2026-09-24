@@ -1,7 +1,7 @@
+using FocusTemplate.Admin.Api.Authentication;
 using FocusTemplate.Admin.Api.Features.WeatherForecasts;
 using FocusTemplate.Admin.Shared;
 using FocusTemplate.Data;
-using FocusTemplate.Data.Auditing;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +9,7 @@ builder.AddServiceDefaults();
 
 builder.Services.AddSingleton(TimeProvider.System);
 
-// Mock for now, until we have authentication and authorization in place
-builder.Services.AddSingleton<ICurrentUser>(new FixedCurrentUser(WellKnownUsers.Developer));
+builder.AddApiAuthentication();
 
 builder.Services.AddAppDbContextPool("focusdb");
 builder.EnrichNpgsqlDbContext<AppDbContext>();
@@ -33,6 +32,9 @@ WebApplication app = builder.Build();
 app.MapDefaultEndpoints();
 
 app.UseExceptionHandler();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {

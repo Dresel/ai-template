@@ -1,5 +1,8 @@
+@using System.Security.Claims
+@using FocusTemplate.Admin.Shared
 @inherits LayoutComponentBase
 @inject IJSRuntime JsRuntime
+@inject NavigationManager Navigation
 
 <Layout Sider Style="min-height: 100vh;">
 	<LayoutSider>
@@ -55,6 +58,18 @@
 						<Icon Name="@(darkMode ? "light_mode" : "dark_mode")" />
 					</Button>
 				</BarItem>
+				<AuthorizeView>
+					<Authorized>
+						<BarItem>
+							<Span data-testid="user-name">@context.User.Identity?.Name</Span>
+						</BarItem>
+						<BarItem>
+							<Button Color="Color.Secondary" Outline Clicked="@(() => Logout(context.User))" data-testid="logout-button">
+								<Icon Name="@("logout")" />
+							</Button>
+						</BarItem>
+					</Authorized>
+				</AuthorizeView>
 			</Bar>
 		</LayoutHeader>
 		<LayoutContent Padding="Padding.Is3">
@@ -66,6 +81,14 @@
 @code
 {
 	private bool darkMode;
+
+	private void Logout(ClaimsPrincipal user)
+	{
+		string logoutUrl = user.FindFirst(BffClaimTypes.LogoutUrl)?.Value ??
+			throw new InvalidOperationException("Missing bff logout url.");
+
+		Navigation.NavigateTo(logoutUrl, true);
+	}
 
 	private async Task ToggleDarkModeAsync()
 	{
