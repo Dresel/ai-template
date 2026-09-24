@@ -47,9 +47,9 @@ internal static class AuthenticationEndpoints
 		return app;
 	}
 
-	// Prevent open redirect attacks
+	// Prevent open redirect attacks. IsLocalUrl alone also passes "~/" paths, which the OIDC handlers redirect to verbatim.
 	private static string LocalPathOrRoot(string? returnUrl) =>
-		RedirectHttpResult.IsLocalUrl(returnUrl) ? returnUrl : "/";
+		returnUrl is ['/', ..,] && RedirectHttpResult.IsLocalUrl(returnUrl) ? returnUrl : "/";
 
 	private static string LogoutUrl(ClaimsPrincipal user) =>
 		$"/bff/logout?sid={Uri.EscapeDataString(user.FindFirstValue(JwtRegisteredClaimNames.Sid) ?? string.Empty)}";

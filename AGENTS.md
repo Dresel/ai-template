@@ -388,13 +388,16 @@ no feature flag.
   under its Aspire-generated name (`route-admin-api`, the way `appsettings.Development.json` already addresses
   `cluster-otlp-dashboard`) so the file is valid on its own, while the AppHost's environment adds the destination and
   the prefix transform; a further proxied API needs its own entry, and a forgotten one fails closed, since the
-  transform sends no token to a route without the policy and the API answers 401. The policy: a session and the
+  transform sends no token to a route without the policy, strips any `Authorization` header the caller sent, and the
+  API answers 401. The policy: a session and the
   `X-CSRF: 1` header, else 401 or 403,
   because the cookie handler's redirects are turned into status codes, the BFF having no login page. A request
   transform registered for those routes only (`AddAccessTokenTransform`) fetches the user's access token and puts it
-  on the outgoing request; when the refresh fails the call goes out without one and the API's own 401 comes back, so
-  nothing in the BFF short-circuits. Lax plus header, not Strict: Strict withholds the cookie on the redirect back
-  from a cross-site identity provider, so the first page after login is anonymous and loops, and the header, which a
+  on the outgoing request; when the refresh fails, the session at Keycloak is gone, so the transform signs the cookie
+  session out and answers 401 without forwarding (YARP forwards nothing once a request transform sets a status other
+  than 200), and the next `/bff/user` sends the client through login. Lax plus header, not Strict: Strict withholds
+  the cookie on the redirect back from a cross-site identity provider, so the first page after login is anonymous and
+  loops, and the header, which a
   cross-site page cannot add without a CORS preflight the BFF never grants, is the defense anyway. TLS ends at the
   ingress and the BFF itself is plain http, so its cookies cannot carry Secure and a browser would drop the OIDC
   handler's default SameSite=None correlation and nonce cookies: they are Lax here, and the callback uses the query
@@ -409,7 +412,8 @@ no feature flag.
 - **WASM**: `BffAuthenticationStateProvider` asks `/bff/user` once per load. `[Authorize]` in `_Imports.razor` and
   `AuthorizeRouteView` in `App.razor` guard every page, `RedirectToLogin` does a full load to `bff/login`, the logout
   button navigates to the `bff:logout_url` claim with `forceLoad`, since both live outside the client router. Proxied
-  clients add the `X-CSRF` header through `CsrfHeaderHandler` inside `AddProxiedHttpClient`. `data-testid`s:
+  clients add the `X-CSRF` header through `CsrfHeaderHandler` inside `AddProxiedHttpClient`, and `RedirectToLoginHandler`
+  turns a 401 from a proxied call into a full load of `bff/login` with the current page as return url. `data-testid`s:
   `user-name`, `logout-button`, `authorizing`.
 - **Tests**: the integration fixture makes `TestAuthenticationHandler` the default scheme: `Authorization: Test <UserId>`
   is that user, anything else is anonymous and gets 401, so `Factory.CreateAuthenticatedClient(user)` acts and

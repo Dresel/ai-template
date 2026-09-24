@@ -38,6 +38,7 @@ builder.Services.PostConfigure<HttpClientTraceInstrumentationOptions>(options =>
 builder.Services.AddReverseProxy()
 	.LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
 	.AddServiceDiscoveryDestinationResolver()
+	.AddCookieIsolationTransform()
 	.AddAccessTokenTransform();
 
 WebApplication app = builder.Build();
