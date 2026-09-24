@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.WeatherForecasts;
 
-public sealed class WeatherForecastsListHandler(AppDbContext dbContext)
+public sealed class WeatherForecastsListHandler(ReadOnlyAppDbContext dbContext)
 	: IQueryHandler<WeatherForecastsListQuery, IReadOnlyList<WeatherForecastResponse>>
 {
 	public async ValueTask<IReadOnlyList<WeatherForecastResponse>> Handle(

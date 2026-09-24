@@ -15,6 +15,9 @@ builder.Services.AddSingleton<ICurrentUser>(new FixedCurrentUser(WellKnownUsers.
 builder.Services.AddAppDbContextPool("focusdb");
 builder.EnrichNpgsqlDbContext<AppDbContext>();
 
+builder.Services.AddReadOnlyAppDbContextPool("focusdb-readonly");
+builder.EnrichNpgsqlDbContext<ReadOnlyAppDbContext>();
+
 builder.Services.AddProblemDetails();
 
 builder.Services.ConfigureHttpJsonOptions(options =>

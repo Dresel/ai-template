@@ -12,10 +12,21 @@ public static class ServiceCollectionExtensions
 		services.TryAddSingleton<AuditingInterceptor>();
 
 		services.AddDbContextPool<AppDbContext>((provider, options) => options.ConfigureAppDbContext(
-			provider.GetRequiredService<IConfiguration>().GetConnectionString(connectionName) ??
-			throw new InvalidOperationException($"Connection string '{connectionName}' not found."),
+			GetRequiredConnectionString(provider, connectionName),
 			provider.GetRequiredService<AuditingInterceptor>()));
 
 		return services;
 	}
+
+	public static IServiceCollection AddReadOnlyAppDbContextPool(this IServiceCollection services, string connectionName)
+	{
+		services.AddDbContextPool<ReadOnlyAppDbContext>((provider, options) =>
+			options.ConfigureReadOnlyAppDbContext(GetRequiredConnectionString(provider, connectionName)));
+
+		return services;
+	}
+
+	private static string GetRequiredConnectionString(IServiceProvider provider, string connectionName) =>
+		provider.GetRequiredService<IConfiguration>().GetConnectionString(connectionName) ??
+		throw new InvalidOperationException($"Connection string '{connectionName}' not found.");
 }

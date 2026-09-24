@@ -19,19 +19,21 @@ Shared spine:
   every contract.
 - **FocusTemplate.Data** - the entities and their EF Core mapping: `Entities/` (each table's entity next to its
   `IEntityTypeConfiguration`, the configurations listed by hand in `ApplyEntityConfigurations`), `Auditing/`
-  (`IAuditable`, `ICurrentUser`, the interceptor and the shadow columns), `AppDbContext`, the `Migrations/` folder, a
-  design-time factory, and the dev seed. Referenced by both APIs and the AppHost migration resource. **No DDD layer**:
+  (`IAuditable`, `ICurrentUser`, the interceptor and the shadow columns), the model in `AppDbContextBase` with its two
+  sealed contexts (`AppDbContext` for commands, migrations and the seed; `ReadOnlyAppDbContext` for queries, see
+  **Read/write split**), the `Migrations/` folder, a design-time factory, and the dev seed. Referenced by both APIs and
+  the AppHost migration resource. **No DDD layer**:
   entities are plain classes
   (`required`/`init`, public setters, no base types, no domain events) referencing each other by id without
   navigations. Business rules - lifecycle, ownership, thresholds - live in the Mediator handler that needs them, which
   answers a refusal with a case of its result union (see **Errors are values**). Postgres is the `postgis/postgis`
   image: the station location is a `geography` point via NetTopologySuite, created as
   `new Point(longitude, latitude) { SRID = 4326 }` (longitude first: swapped arguments still compile);
-  `StationStatus` and `AlertKind` are native Postgres enums (`MapEnum` in
-  `ConfigureAppDbContext`, which also switches on the naming and check-constraint plugins; every context gets its
-  provider through it, never from a bare `UseNpgsql`). The APIs register the pooled context with
-  `builder.Services.AddAppDbContextPool("focusdb")`, then call Aspire's
-  `builder.EnrichNpgsqlDbContext<AppDbContext>()`; Data itself stays free of Aspire.
+  `StationStatus` and `AlertKind` are native Postgres enums (`MapEnum` in the provider setup shared by
+  `ConfigureAppDbContext` and `ConfigureReadOnlyAppDbContext`, which also switches on the naming and check-constraint
+  plugins; every context gets its provider through them, never from a bare `UseNpgsql`). Admin registers both pools,
+  `AddAppDbContextPool("focusdb")` and `AddReadOnlyAppDbContextPool("focusdb-readonly")`, Public only the read-only
+  one, each followed by Aspire's `EnrichNpgsqlDbContext<TContext>()`; Data itself stays free of Aspire.
 - **FocusTemplate.ServiceDefaults** - server-side Aspire defaults (OTel, service discovery, health).
 - **`@spatialfocus/typespec-http-csharp-slim`** (npm, consumed as the packed tgz under `.npm/`; own repository
   `typespec-http-csharp-slim`, where it is documented and tested) - the TypeSpec emitter both verticals are generated
@@ -45,8 +47,8 @@ Admin vertical (`src/admin/`):
 - **FocusTemplate.Admin.Api** - internal minimal API; never exposed to the browser directly. Endpoints, request
   records and result unions are generated into its `generated/<Slice>/` folder from `../spec/api.tsp` (namespace
   `FocusTemplate.Admin.Api.Features.<Slice>`, the one the slice's handlers use), the emitted `openapi.yaml` is
-  served as-is; `Features/<Slice>/` holds the slice's Mediator handlers (EF Core via `AppDbContext`, backed by PostgreSQL)
-  and endpoint hooks.
+  served as-is; `Features/<Slice>/` holds the slice's Mediator handlers (EF Core, queries through `ReadOnlyAppDbContext`
+  and commands through `AppDbContext`, backed by PostgreSQL) and endpoint hooks.
 - **FocusTemplate.Admin.Client** - the generated typed HTTP clients of the vertical (`tspconfig.yaml`,
   `output-type: client`), referenced by every consumer so the client an app ships is the one the tests drive.
 - **FocusTemplate.Admin.Web** - the Blazor WASM client (Blazorise Material UI). Talks to the API through the typed
@@ -60,8 +62,8 @@ Admin vertical (`src/admin/`):
 Public vertical (`src/public/`):
 
 - **FocusTemplate.Public.Api** - the exposed API for external clients (mobile); generated from
-  `src/public/spec/api.tsp` the same way, same EF Core access to the shared domain, its own audience-shaped
-  contract.
+  `src/public/spec/api.tsp` the same way, read-only EF Core access to the shared domain through
+  `ReadOnlyAppDbContext`, its own audience-shaped contract.
 - **FocusTemplate.Public.Client** - the generated typed HTTP clients of the vertical (`tspconfig.yaml`,
   `output-type: client`), referenced by every consumer.
 - **FocusTemplate.Public.Mobile** - native .NET MAUI app (XAML), `net11.0-android;net11.0-ios` only
@@ -94,7 +96,8 @@ Public vertical (`src/public/`):
   `[ValueObject<T>] [Instance("Unspecified", …)] public readonly partial struct` per `@typedId` scalar into
   `FocusTemplate.Primitives`; `Data` carries the `[EfCoreConverter<T>]` marker for the EF Core converters.
 - **Data / EF Core** - `Aspire.Npgsql.EntityFrameworkCore.PostgreSQL` (client integration:
-  `EnrichNpgsqlDbContext` adds retries, health checks and OTel to the pooled context `AddAppDbContextPool` registers);
+  `EnrichNpgsqlDbContext` adds retries, health checks and OTel to the pooled contexts `AddAppDbContextPool` and
+  `AddReadOnlyAppDbContextPool` register);
   `Npgsql.EntityFrameworkCore.PostgreSQL` provider; `EFCore.CheckConstraints`
   (validation attributes such as `[Range]` become CHECK constraints); `EFCore.NamingConventions` (snake_case names in
   the database);
@@ -197,6 +200,8 @@ feature, specify the new behavior with one.
      in the test project; auto-skips without that or an emulator. Locators: MAUI `AutomationId` =
      Android `resource-id` → `MobileBy.Id("<AutomationId>")` (driver auto-prefixes the app package;
      `AccessibilityId` does not match).
+   - **Convention** (a rule every handler or type of both APIs must follow, checked by reflection over the API
+     assemblies) → `FocusTemplate.ArchitectureTests`; today the read/write context rule.
    - **Unit** (pure logic) → add a unit project when such logic first appears; none today (the emitter's tests live in
      the `typespec-http-csharp-slim` repository).
 4. **Watch it fail** - stop the AppHost (bin lock), then `dotnet test FocusTemplate.slnx --filter <name>`.
@@ -281,6 +286,15 @@ exactly this. Traps, learned the hard way:
   `FocusTemplate.Public.Shared` - never referencing each other); computed members go into hand-written
   partials next to the project file. Entities (`FocusTemplate.Data`) stay server-side; map entity =>
   DTO in the Mediator handler, never expose entities to the client.
+- **Read/write split**: query handlers (`IQueryHandler`) take `ReadOnlyAppDbContext`, command handlers
+  (`ICommandHandler`) take `AppDbContext`, never the other way round - a command reading through the second context
+  would lose its transaction and its tracking. `FocusTemplate.ArchitectureTests` checks the constructor parameters of
+  every handler in both APIs, and forbids the shared `AppDbContextBase` for both kinds, so a handler always names the
+  context it means. The read-only context tracks nothing, refuses `SaveChanges`, and is registered on its own
+  connection string key `focusdb-readonly`, meant for the SELECT-only `focusdb_reader` role (see **Reader role**); the
+  role, not the C# guard, is what stops `ExecuteUpdate`/`ExecuteDelete` and raw SQL. Locally the AppHost injects the
+  owner connection under both keys, so a plain `aspire start` needs no second login; the integration tests run the real
+  role, and a published environment points the second key at it.
 - **Keep `data-testid` attributes** - the Playwright E2E suite selects on them. The MAUI equivalent
   is **`AutomationId` on every interactive control** (Appium selects on it).
 - **Mobile dev loop**: enable `Features:Mobile` in `appsettings.local.json`; first start prompts to
@@ -348,11 +362,12 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
   use the database names; `__EFMigrationsHistory` keeps its name.
 - **Auditing**: `IAuditable` entities get four shadow columns (`CreatedAt/By`, `UpdatedAt/By` as `UserId`) from
   `AddAuditingShadowProperties`, set by `AuditingInterceptor` (`TimeProvider` + `ICurrentUser`), which
-  `ConfigureAppDbContext` attaches to every context. `AddAppDbContextPool` resolves it from the container, so each host
-  registers both inputs, even one that never writes. `ExecuteUpdate` and raw SQL bypass it:
+  `ConfigureAppDbContext` attaches to the write context. `AddAppDbContextPool` resolves it from the container, so each
+  host that registers the write pool registers both inputs; a host that only queries (the Public API today) registers
+  `AddReadOnlyAppDbContextPool` alone and needs neither. `ExecuteUpdate` and raw SQL bypass it:
   on `IAuditable` types set the audit columns explicitly or use `SaveChanges`. `ICurrentUser` is the fixed
   `WellKnownUsers.Developer` until authentication lands, `WellKnownUsers.System` where no person acts (the dev seed,
-  jobs, the Public API while it writes nothing);
+  jobs);
   tests use `ApiFixture.TestUser` and `ApiFixture.Clock`, a `FakeTimeProvider` they advance instead of assuming a time.
   Tests arrange rows through
   `Factory.CreateDbContext()`, which carries the provider options and the interceptor like the API does.
@@ -365,9 +380,19 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
   it `WaitForCompletion`s the migration resource. This is safe under scale-out (no startup migration
   race). Locally/E2E the resource runs `dotnet ef database update` on start; `aspire publish` emits it
   as an idempotent migration-bundle container (a one-shot Job/`restart:no` per compute target).
+- **Reader role**: `focusdb_reader` belongs to the environment, not to the schema. No migration creates it or grants to
+  it: roles are cluster-level, `CREATE ROLE` needs `CREATEROLE`, which the identity running the bundle usually lacks,
+  and default privileges set by a migration would bind to whichever role ran it. Every environment that uses the
+  read-only key creates the login (or grants the role to its own identity) and, once the schema is applied, runs
+  `GRANT USAGE ON SCHEMA public TO focusdb_reader; GRANT SELECT ON ALL TABLES IN SCHEMA public TO focusdb_reader;`.
+  Tests: `PostgresFixture` creates the login once per container, `ApiFixture` runs the grants on its class database
+  right after migrating it. Production: infrastructure provides both, and repeats the grant after a bundle that adds
+  tables, or sets `ALTER DEFAULT PRIVILEGES FOR ROLE <migrating role> IN SCHEMA public GRANT SELECT ON TABLES TO
+  focusdb_reader` once. Dev: nothing, no login exists and the AppHost hands the owner connection to both keys.
 - **Add a migration** (stop the AppHost first - bin lock):
-  `dotnet dotnet-ef migrations add <Name> --project src/FocusTemplate.Data --startup-project src/FocusTemplate.Data`.
-  The design-time `AppDbContextFactory` needs no live DB for this. Migration files land in
+  `dotnet dotnet-ef migrations add <Name> --project src/FocusTemplate.Data --startup-project src/FocusTemplate.Data --context AppDbContext`.
+  `--context` is required because the assembly holds two contexts and only `AppDbContext` has migrations (the
+  `migrations` resource names it too). The design-time `AppDbContextFactory` needs no live DB for this. Migration files land in
   `src/FocusTemplate.Data/Migrations/` and are exempt from StyleCop via an `.editorconfig`
   `generated_code` carve-out. You can also use the migration resource's dashboard commands
   (Add Migration, Update/Reset/Drop Database, Status).
@@ -383,12 +408,15 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
 
 Isolation model: **one container, one database per test class, fresh state per test.**
 
-- `PostgresFixture` (assembly fixture) starts **one** Postgres container and hands out databases on
+- `PostgresFixture` (assembly fixture) starts **one** Postgres container, creates the `focusdb_reader` login once
+  (cluster-level; the grants are per database and belong to `ApiFixture`), and hands out databases on
   demand (`CreateDatabaseAsync`). Only `CREATE DATABASE` is serialized (concurrent creations contend
   on the template database); migrations run in parallel.
 - `ApiFixture` (class fixture - xunit creates one instance **per test class**) provisions its own
-  GUID-named database, migrates it, and points the API at it. Test classes therefore share nothing
-  and run **in parallel** - no xUnit collection needed.
+  GUID-named database, migrates it, grants `focusdb_reader` `SELECT` on it, and points the API at it under both keys:
+  `focusdb` as the owner, `focusdb-readonly` as `focusdb_reader`, so the API's queries run on the real role.
+  `Factory.CreateDbContext()` stays on the owner. Test classes therefore share nothing and run **in parallel** - no
+  xUnit collection needed.
 - **Test classes derive from `ApiTestBase`**: before every test it resets the class database via
   `ApiFixture.ResetAsync()` ([Respawn](https://github.com/jbogard/Respawn), FK-safe,
   `__EFMigrationsHistory` preserved so migrations never re-run). Every test starts on an empty,

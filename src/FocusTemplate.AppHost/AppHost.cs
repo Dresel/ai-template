@@ -16,8 +16,10 @@ IResourceBuilder<PostgresDatabaseResource> focusDb = builder.AddPostgres("postgr
 	.WithImage("postgis/postgis")
 	.WithImageTag("17-3.5")
 	.AddDatabase("focusdb");
+
 IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api")
 	.WithReference(focusDb)
+	.WithReference(focusDb, connectionName: "focusdb-readonly")
 	.WaitFor(focusDb);
 
 // See https://aspire.dev/integrations/databases/efcore/migrations/
@@ -48,8 +50,10 @@ IResourceBuilder<EFMigrationResource> migrations = api.AddEFMigrations(
 
 api.WaitForCompletion(migrations);
 
-IResourceBuilder<ProjectResource> publicApi =
-	builder.AddProject<FocusTemplate_Public_Api>("public-api").WithReference(focusDb).WaitFor(focusDb);
+IResourceBuilder<ProjectResource> publicApi = builder.AddProject<FocusTemplate_Public_Api>("public-api")
+	.WithReference(focusDb, connectionName: "focusdb-readonly")
+	.WaitFor(focusDb);
+
 publicApi.WaitForCompletion(migrations);
 
 if (addMobile)

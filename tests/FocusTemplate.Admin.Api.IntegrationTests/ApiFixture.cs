@@ -15,6 +15,8 @@ public sealed class ApiFixture(PostgresFixture postgres) : WebApplicationFactory
 {
 	private string connectionString = string.Empty;
 
+	private string readOnlyConnectionString = string.Empty;
+
 	private Respawner respawner = null!;
 
 	public static UserId TestUser { get; } = UserId.From(new Guid("00000000-0000-7000-8000-00000000c0de"));
@@ -34,11 +36,14 @@ public sealed class ApiFixture(PostgresFixture postgres) : WebApplicationFactory
 		CancellationToken cancellationToken = TestContext.Current.CancellationToken;
 
 		this.connectionString = await postgres.CreateDatabaseAsync($"test_{Guid.NewGuid():N}");
+		this.readOnlyConnectionString = PostgresFixture.ReadOnlyConnectionString(this.connectionString);
 
 		await using (AppDbContext dbContext = CreateDbContext())
 		{
 			await dbContext.Database.MigrateAsync(cancellationToken);
 		}
+
+		await PostgresFixture.GrantReadAccessAsync(this.connectionString);
 
 		await using NpgsqlConnection connection = new(this.connectionString);
 		await connection.OpenAsync(cancellationToken);
@@ -57,6 +62,7 @@ public sealed class ApiFixture(PostgresFixture postgres) : WebApplicationFactory
 	protected override void ConfigureWebHost(IWebHostBuilder builder)
 	{
 		builder.UseSetting("ConnectionStrings:focusdb", this.connectionString);
+		builder.UseSetting("ConnectionStrings:focusdb-readonly", this.readOnlyConnectionString);
 
 		builder.ConfigureServices(services =>
 		{
