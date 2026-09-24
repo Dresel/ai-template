@@ -12,6 +12,26 @@ public static class DbContextOptionsBuilderExtensions
 		AuditingInterceptor auditing)
 		where TBuilder : DbContextOptionsBuilder
 	{
+		options.UseAppDbContextProvider(connectionString);
+		options.AddInterceptors(auditing);
+
+		return options;
+	}
+
+	public static TBuilder ConfigureReadOnlyAppDbContext<TBuilder>(this TBuilder options, string connectionString)
+		where TBuilder : DbContextOptionsBuilder
+	{
+		options.UseAppDbContextProvider(connectionString);
+		// Auditing is not needed for read-only contexts
+
+		// Disable tracking for read-only contexts to improve performance
+		options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
+		return options;
+	}
+
+	private static void UseAppDbContextProvider(this DbContextOptionsBuilder options, string connectionString)
+	{
 		options.UseNpgsql(
 			connectionString,
 			npgsql => npgsql.UseNetTopologySuite()
@@ -20,9 +40,5 @@ public static class DbContextOptionsBuilderExtensions
 
 		options.UseSnakeCaseNamingConvention();
 		options.UseValidationCheckConstraints();
-
-		options.AddInterceptors(auditing);
-
-		return options;
 	}
 }

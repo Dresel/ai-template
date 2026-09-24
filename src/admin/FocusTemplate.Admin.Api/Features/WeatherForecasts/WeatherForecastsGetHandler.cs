@@ -6,15 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.WeatherForecasts;
 
-public sealed class WeatherForecastsGetHandler(AppDbContext dbContext)
+public sealed class WeatherForecastsGetHandler(ReadOnlyAppDbContext dbContext)
 	: IQueryHandler<WeatherForecastsGetQuery, WeatherForecastsGetResult>
 {
 	public async ValueTask<WeatherForecastsGetResult> Handle(
 		WeatherForecastsGetQuery query,
 		CancellationToken cancellationToken)
 	{
-		WeatherForecast? entity = await dbContext.WeatherForecasts.AsNoTracking()
-			.SingleOrDefaultAsync(forecast => forecast.Id == query.Id, cancellationToken);
+		WeatherForecast? entity = await dbContext.WeatherForecasts.SingleOrDefaultAsync(
+			forecast => forecast.Id == query.Id,
+			cancellationToken);
 
 		return entity is null
 			? new NotFound($"No weather forecast with id {query.Id}.")

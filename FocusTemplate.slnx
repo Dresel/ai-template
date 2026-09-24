@@ -25,6 +25,7 @@
   <Folder Name="/tests/">
     <Project Path="tests/FocusTemplate.Admin.Api.IntegrationTests/FocusTemplate.Admin.Api.IntegrationTests.csproj" />
     <Project Path="tests/FocusTemplate.Admin.Web.E2E/FocusTemplate.Admin.Web.E2E.csproj" />
+    <Project Path="tests/FocusTemplate.ArchitectureTests/FocusTemplate.ArchitectureTests.csproj" />
     <Project Path="tests/FocusTemplate.Public.Mobile.E2E/FocusTemplate.Public.Mobile.E2E.csproj" />
   </Folder>
   <Folder Name="/public/">
