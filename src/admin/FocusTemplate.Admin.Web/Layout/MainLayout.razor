@@ -25,6 +25,14 @@
 							Click="@(() => Logout(context.User))"
 							data-testid="logout-button" />
 					</Authorized>
+					<NotAuthorized>
+						<RadzenButton Icon="login"
+							ButtonStyle="ButtonStyle.Base"
+							Variant="Variant.Outlined"
+							title="Log in"
+							Click="@Login"
+							data-testid="login-button" />
+					</NotAuthorized>
 				</AuthorizeView>
 			</RadzenStack>
 		</RadzenStack>
@@ -44,6 +52,11 @@
 @code
 {
 	private bool sidebarExpanded = true;
+
+	private void Login() =>
+		Navigation.NavigateTo(
+			$"bff/login?returnUrl={Uri.EscapeDataString("/" + Navigation.ToBaseRelativePath(Navigation.Uri))}",
+			true);
 
 	private void Logout(ClaimsPrincipal user)
 	{

@@ -32,24 +32,31 @@ internal static class AuthenticationEndpoints
 					[CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme,]),
 			});
 
-		// 401 rather than a challenge: the client asks on every load and reads 401 as "anonymous".
+		// 401 rather than a challenge: the client asks on every load and reads 401 as "anonymous". A session whose token
+		// can no longer be refreshed ends here already.
 		app.MapGet(
 			"/bff/user",
-			(ClaimsPrincipal user) => user.Identity?.IsAuthenticated == true
-				? Results.Ok(
-					new UserInfoResponse(
-					[
-						.. user.Claims.Select(claim => new UserClaim(claim.Type, claim.Value)),
-						new UserClaim(BffClaimTypes.LogoutUrl, LogoutUrl(user)),
-					]))
-				: Results.Unauthorized());
+			async (HttpContext context) =>
+			{
+				context.Response.Headers.CacheControl = "no-store";
+
+				return context.User.Identity?.IsAuthenticated == true &&
+					await context.GetAccessTokenOrSignOutAsync(context.RequestAborted) is not null
+						? Results.Ok(
+							new UserInfoResponse(
+							[
+								.. context.User.Claims.Select(claim => new UserClaim(claim.Type, claim.Value)),
+								new UserClaim(BffClaimTypes.LogoutUrl, LogoutUrl(context.User)),
+							]))
+						: Results.Unauthorized();
+			});
 
 		return app;
 	}
 
-	// Prevent open redirect attacks
+	// Prevent open redirect attacks. IsLocalUrl alone also passes "~/" paths, which the OIDC handlers redirect to verbatim.
 	private static string LocalPathOrRoot(string? returnUrl) =>
-		RedirectHttpResult.IsLocalUrl(returnUrl) ? returnUrl : "/";
+		returnUrl is ['/', ..,] && RedirectHttpResult.IsLocalUrl(returnUrl) ? returnUrl : "/";
 
 	private static string LogoutUrl(ClaimsPrincipal user) =>
 		$"/bff/logout?sid={Uri.EscapeDataString(user.FindFirstValue(JwtRegisteredClaimNames.Sid) ?? string.Empty)}";

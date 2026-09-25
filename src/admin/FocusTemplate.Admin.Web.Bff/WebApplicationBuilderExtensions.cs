@@ -21,8 +21,13 @@ public static class WebApplicationBuilderExtensions
 			})
 			.AddCookie(options =>
 			{
-				options.Cookie.Name = "focus.session";
+				// __Host-: browsers require Secure, Path=/ and no Domain, so no subdomain can overwrite the session.
+				options.Cookie.Name = "__Host-focus.session";
+				options.Cookie.Path = "/";
 				options.Cookie.SameSite = SameSiteMode.Lax;
+
+				// Always use a Secure cookie, even when TLS is terminated at the ingress.
+				options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
 				options.Events.OnRedirectToLogin = context =>
 				{
@@ -46,11 +51,6 @@ public static class WebApplicationBuilderExtensions
 				oidc.ClientSecret = settings.Value.ClientSecret;
 
 				oidc.ResponseType = OpenIdConnectResponseType.Code;
-
-				// TLS ends at the ingress
-				oidc.ResponseMode = OpenIdConnectResponseMode.Query;
-				oidc.CorrelationCookie.SameSite = SameSiteMode.Lax;
-				oidc.NonceCookie.SameSite = SameSiteMode.Lax;
 
 				oidc.SaveTokens = true;
 				oidc.GetClaimsFromUserInfoEndpoint = true;
