@@ -54,8 +54,8 @@ Admin vertical (`src/admin/`):
 - **FocusTemplate.Admin.Client** - the generated typed HTTP clients of the vertical (`tspconfig.yaml`,
   `output-type: client`), referenced by every consumer so the client an app ships is the one the tests drive.
 - **FocusTemplate.Admin.Web** - the Blazor WASM client (Blazorise Material UI). Talks to the API through the typed
-  `WeatherForecastsClient` from `FocusTemplate.Admin.Client`. Every page needs a signed-in user, which the client learns
-  about from the BFF (`BffAuthenticationStateProvider`).
+  `WeatherForecastsClient` from `FocusTemplate.Admin.Client`. Every page but Home needs a signed-in user, which the client
+  learns about from the BFF (`BffAuthenticationStateProvider`).
 - **FocusTemplate.Admin.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
   `/_otlp/*` → dashboard, `/_analytics/*` → Umami. The browser only ever talks to the BFF, which also holds the user's
   session (cookie + OIDC code flow against Keycloak) and attaches the access token to `/_api/*` calls.
@@ -268,7 +268,8 @@ exactly this. Traps, learned the hard way:
 ## Conventions
 
 - **Comments** explain *why*, never *what*: @.agents/comments-aspire.md.
-  Two rules on top, specific to this repo. **No XML doc comments (`///`) on hand-written C#** - the
+  Three rules on top, specific to this repo. **Keep them short** - one line with the why, two at most; longer
+  reasoning belongs in this file or the commit message. **No XML doc comments (`///`) on hand-written C#** - the
   signature carries the *what*; the exceptions are TypeSpec `/** */` (see **Spec-first APIs**) and
   hand-written partials on generated wire/client types, whose XML reaches consumers. **Nothing under
   `generated/` or `Migrations/` is commented** - it is overwritten. A comment describes the code as it
@@ -375,31 +376,46 @@ no feature flag.
   requirement, so a Keycloak left on http fails at the first login with the handler's own message instead of being
   accepted quietly. `WithKeycloakAudience` / `WithKeycloakClient` (`AuthenticationExtensions`) hand a project
   `Oidc__Authority` plus its audience or its client id and the `oidc-admin-bff-secret` parameter, and wait for
-  Keycloak. `WithRealmImport` is development-only; a published Keycloak bakes the realm into its image
-  (`WithDockerfile`). The realm file and the AppHost values must stay in sync by hand.
-- **BFF**: cookie session (`focus.session`, HttpOnly, SameSite=Lax) + OIDC code flow with the authorization request
+  Keycloak. `WithRealmImport` is development-only; a published Keycloak has to bake the realm into its image
+  (`WithDockerfile`, not wired yet). The realm file and the AppHost values must stay in sync by hand.
+- **BFF**: cookie session (`__Host-focus.session`, HttpOnly, Secure, SameSite=Lax) + OIDC code flow with the authorization request
   pushed (PAR: the handler's `UseIfAvailable` default meets Keycloak's advertised endpoint, and the E2E login test
-  asserts the `request_uri` on the authorize request), tokens saved in the cookie, refreshed by
+  asserts the `request_uri` on the authorize request) and the code posted back (form_post, the handler's default too,
+  which keeps the code out of URLs; the same test asserts the POST), tokens saved in the cookie, refreshed by
   `Duende.AccessTokenManagement`. Endpoints: `/bff/login?returnUrl=` (local paths only),
   `/bff/logout?sid=&returnUrl=` (a GET so the browser can carry on to Keycloak's end-session page; the session id is
   its CSRF token, the return url a local path again), `/bff/user` (401 when anonymous, otherwise `UserInfoResponse`:
-  the user's claims plus the BFF's own `bff:logout_url`, see `BffClaimTypes` in `Admin.Shared`). The proxied API route
+  the user's claims plus the BFF's own `bff:logout_url`, see `BffClaimTypes` in `Admin.Shared`; `Cache-Control:
+  no-store`, since no cache may keep a user's claims). The proxied API route
   carries the `ProxiedApi` authorization policy in the BFF's `appsettings.json`, where the route is declared in full
   under its Aspire-generated name (`route-admin-api`, the way `appsettings.Development.json` already addresses
   `cluster-otlp-dashboard`) so the file is valid on its own, while the AppHost's environment adds the destination and
   the prefix transform; a further proxied API needs its own entry, and a forgotten one fails closed, since the
-  transform sends no token to a route without the policy and the API answers 401. The policy: a session and the
+  transform sends no token to a route without the policy, strips any `Authorization` header the caller sent, and the
+  API answers 401. The policy: a session and the
   `X-CSRF: 1` header, else 401 or 403,
   because the cookie handler's redirects are turned into status codes, the BFF having no login page. A request
   transform registered for those routes only (`AddAccessTokenTransform`) fetches the user's access token and puts it
-  on the outgoing request; when the refresh fails the call goes out without one and the API's own 401 comes back, so
-  nothing in the BFF short-circuits. Lax plus header, not Strict: Strict withholds the cookie on the redirect back
-  from a cross-site identity provider, so the first page after login is anonymous and loops, and the header, which a
-  cross-site page cannot add without a CORS preflight the BFF never grants, is the defense anyway. TLS ends at the
-  ingress and the BFF itself is plain http, so its cookies cannot carry Secure and a browser would drop the OIDC
-  handler's default SameSite=None correlation and nonce cookies: they are Lax here, and the callback uses the query
-  response mode, a top-level GET on which Lax cookies travel even from Keycloak's origin, which a differing scheme
-  makes cross-site.
+  on the outgoing request. It and `/bff/user` both get the token through `GetAccessTokenOrSignOutAsync`: a refresh
+  Keycloak refuses means its session is gone, so the cookie session is signed out, the transform answers 401 without
+  forwarding (YARP forwards nothing once a request transform sets a status other than 200), and `/bff/user` answers 401
+  on that very load, so the client shows the user signed out instead of waiting for an API call to fail. The token
+  management renews a minute before expiry, so a session ended at Keycloak shows as ended once its access token is
+  due. A 401 the API itself answers on those routes reaches the browser as 502 Bad Gateway, without the API's
+  `WWW-Authenticate` (a response transform of `AddAccessTokenTransform`): the BFF authenticated the session and sent its
+  token, the API rejected that token, and a new login would only bring back the same kind of token. So a 401 from the
+  BFF always means the session is gone, and a 502 on a proxied call points at the BFF and the API disagreeing about
+  tokens (audience, issuer); the reason is in the API's log. Lax plus header, not Strict: Strict withholds
+  the cookie on the redirect back from a cross-site identity provider, so the first page after login is anonymous and
+  loops, and the header, which a
+  cross-site page cannot add without a CORS preflight the BFF never grants, is the defense anyway. The session cookie
+  is Secure whatever scheme reaches the BFF (`SecurePolicy.Always`: behind the ingress that scheme is http unless
+  forwarded headers are processed) and carries the `__Host-` prefix, so the browser also insists on Path=/ and no
+  Domain, and no sibling subdomain can plant or overwrite a session. The handler's correlation and nonce cookies keep
+  their defaults, SameSite=None and Secure, which the cross-site form post from Keycloak needs. TLS ending at the
+  ingress does not matter to any of them, the browser sees https there; without the ingress, Chrome and Firefox
+  accept Secure cookies from `http://localhost` (the E2E suite runs Chromium that way, `__Host-` prefix included),
+  Safari does not.
 - **Admin API**: JwtBearer with `Oidc:Authority` and `Oidc:Audience`, `MapInboundClaims = false` so the claims keep
   Keycloak's names. Every endpoint group requires authorization through its `*Endpoints.Hooks.cs` (`ConfigureGroup` →
   `RequireAuthorization()`), never a fallback policy, which would also lock the health probes Aspire relies on;
@@ -407,19 +423,31 @@ no feature flag.
   `HttpContextCurrentUser`: the `sub` claim is Keycloak's user UUID and therefore the `UserId`, no directory lookup;
   a singleton over `IHttpContextAccessor` because its consumer, the auditing interceptor, is one.
 - **WASM**: `BffAuthenticationStateProvider` asks `/bff/user` once per load. `[Authorize]` in `_Imports.razor` and
-  `AuthorizeRouteView` in `App.razor` guard every page, `RedirectToLogin` does a full load to `bff/login`, the logout
-  button navigates to the `bff:logout_url` claim with `forceLoad`, since both live outside the client router. Proxied
-  clients add the `X-CSRF` header through `CsrfHeaderHandler` inside `AddProxiedHttpClient`. `data-testid`s:
-  `user-name`, `logout-button`, `authorizing`.
+  `AuthorizeRouteView` in `App.razor` guard every page but `Home`, which is `[AllowAnonymous]`. The layout's login
+  button, shown to anonymous visitors, and `RedirectToLogin` do a full load to `bff/login`, the logout button
+  navigates to the `bff:logout_url` claim with `forceLoad`, since both live outside the client router. Proxied
+  clients add the `X-CSRF` header through `CsrfHeaderHandler` inside `AddProxiedHttpClient`, and `RedirectToLoginHandler`
+  turns a 401 from a proxied call into a full load of `bff/login` with the current page as return url; a token the API
+  refuses arrives as 502 and stays an error, since logging in again would only loop through Keycloak. `data-testid`s:
+  `user-name`, `login-button`, `logout-button`, `authorizing`.
 - **Tests**: the integration fixture makes `TestAuthenticationHandler` the default scheme: `Authorization: Test <UserId>`
   is that user, anything else is anonymous and gets 401, so `Factory.CreateAuthenticatedClient(user)` acts and
   `Factory.CreateClient()` proves the refusal; the `Oidc:*` settings it sets only satisfy validation. E2E:
   `BlazorAppFixture` logs the developer in once through Keycloak's form (`#username`, `#password`, `#kc-login`) and hands
-  the browser storage state to every context, `AuthenticationTests` start from a fresh context to test login, logout and
-  the `/_api` gate. Nothing in the tests ever handles a JWT; direct-grant tokens for scripts and PKCE for mobile come
-  with the Public API leg.
-- **Not yet**: the Public API stays anonymous until the mobile client's PKCE leg, server-side sessions and backchannel
-  logout wait for Redis, `@authorize` in TypeSpec and the OpenAPI security scheme follow.
+  the browser storage state to every context, `AuthenticationTests` start from a fresh context to test the anonymous
+  home page, login, logout, the `/_api` gate, the session cookie's `Secure` and `__Host-`, `/bff/user`'s `no-store`,
+  a session Keycloak ends behind the BFF's back, and an API refusing a live session's token (a 502, no login loop). For
+  the last two, `KeycloakAdmin` (Keycloak's admin REST API as its own admin, from `BlazorAppFixture.SignInToKeycloakAsync`)
+  shortens the realm's access token lifespan below the token management's renewal window, deletes a session by its
+  `sid`, removes the `admin-api-audience` mapper, and puts the realm back when disposed, since the whole collection
+  shares one Keycloak. Nothing in the tests handles the app's tokens, `KeycloakAdmin`'s own admin
+  token aside; direct-grant tokens for scripts and PKCE for mobile come with the Public API leg.
+- **Not yet**: the Public API stays anonymous until the mobile client's PKCE leg. Server-side sessions and backchannel
+  logout wait for Redis; refresh-token revocation on logout is open too. A restarted BFF container or a second
+  instance needs a shared, persisted Data Protection key ring to read the session cookie, and a second instance also
+  needs a refresh lock across instances, the token management's being per process. `@authorize("policy")` in TypeSpec
+  (`RequireAuthorization(policy)` on the generated endpoint) and the OpenAPI security scheme follow, and so does the
+  realm baked into a published Keycloak's image.
 
 ### Database & migrations
 

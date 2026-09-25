@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using Projects;
 
@@ -51,6 +52,29 @@ public sealed class BlazorAppFixture : IAsyncLifetime
 		StorageState = await CaptureSessionAsync();
 	}
 
+	// As Keycloak's own admin, whose password the AppHost generates.
+	public async Task<KeycloakAdmin> SignInToKeycloakAsync(IPlaywright playwright)
+	{
+		DistributedApplication started =
+			this.app ?? throw new InvalidOperationException("The AppHost has not started.");
+		KeycloakResource keycloak = started.Services.GetRequiredService<DistributedApplicationModel>()
+			.Resources.OfType<KeycloakResource>()
+			.Single();
+
+		string? userName = keycloak.AdminUserNameParameter is { } parameter
+			? await parameter.GetValueAsync(CancellationToken.None)
+			: null;
+		string password = await keycloak.AdminPasswordParameter.GetValueAsync(CancellationToken.None) ??
+			throw new InvalidOperationException("Keycloak's admin password has no value.");
+
+		// "admin" is the integration's default when the AppHost names no admin user.
+		return await KeycloakAdmin.SignInAsync(
+			playwright,
+			started.GetEndpoint("keycloak", "http"),
+			userName ?? "admin",
+			password);
+	}
+
 	// One real login per run. Every test context starts from this state, so only AuthenticationTests pays for the flow.
 	private async Task<string> CaptureSessionAsync()
 	{
@@ -61,6 +85,7 @@ public sealed class BlazorAppFixture : IAsyncLifetime
 
 		IPage page = await context.NewPageAsync();
 		await page.GotoAsync(BaseUrl);
+		await page.GetByTestId("login-button").ClickAsync();
 		await LogInAsync(page);
 
 		return await context.StorageStateAsync();

@@ -69,6 +69,13 @@
 							</Button>
 						</BarItem>
 					</Authorized>
+					<NotAuthorized>
+						<BarItem>
+							<Button Color="Color.Secondary" Outline Clicked="@Login" data-testid="login-button">
+								<Icon Name="@("login")" />
+							</Button>
+						</BarItem>
+					</NotAuthorized>
 				</AuthorizeView>
 			</Bar>
 		</LayoutHeader>
@@ -81,6 +88,11 @@
 @code
 {
 	private bool darkMode;
+
+	private void Login() =>
+		Navigation.NavigateTo(
+			$"bff/login?returnUrl={Uri.EscapeDataString("/" + Navigation.ToBaseRelativePath(Navigation.Uri))}",
+			true);
 
 	private void Logout(ClaimsPrincipal user)
 	{
