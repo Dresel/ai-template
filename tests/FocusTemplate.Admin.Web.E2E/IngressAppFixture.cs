@@ -23,7 +23,12 @@ public sealed class IngressAppFixture : IAsyncLifetime
 
 		IDistributedApplicationTestingBuilder builder =
 			await DistributedApplicationTestingBuilder.CreateAsync<FocusTemplate_AppHost>(
-				["Features:TlsOffloadingIngress=true", "Features:Analytics=false", "Features:Mobile=false",],
+				[
+					"Features:TlsOffloadingIngress=true",
+					"Features:Analytics=false",
+					"Features:Mobile=false",
+					"Features:LocalKeycloak=true",
+				],
 				cancellationTokenSource.Token);
 
 		this.app = await builder.BuildAsync(cancellationTokenSource.Token);

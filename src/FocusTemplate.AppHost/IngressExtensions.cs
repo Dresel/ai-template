@@ -4,6 +4,7 @@ internal static class IngressExtensions
 {
 	public static IResourceBuilder<ProjectResource> WithTlsOffloadingIngress(
 		this IResourceBuilder<ProjectResource> app,
+		int port,
 		string endpointName = "http")
 	{
 		app.WithEnvironment("ASPNETCORE_FORWARDEDHEADERS_ENABLED", "true");
@@ -16,7 +17,7 @@ internal static class IngressExtensions
 			.WithBindMount("nginx/default.conf.template", "/etc/nginx/templates/default.conf.template", true)
 			.WithEnvironment("APP_HOST", upstream.Property(EndpointProperty.Host))
 			.WithEnvironment("APP_PORT", upstream.Property(EndpointProperty.Port))
-			.WithHttpsEndpoint(targetPort: 443, name: "https")
+			.WithHttpsEndpoint(port: port, targetPort: 443, name: "https")
 			.WithExternalHttpEndpoints()
 			.WithHttpsDeveloperCertificate()
 			.WithHttpsCertificateConfiguration(ctx =>

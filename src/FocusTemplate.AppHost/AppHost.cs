@@ -12,24 +12,19 @@ bool addAnalytics = builder.Configuration.GetValue("Features:Analytics", true);
 bool addTlsOffloadingIngress = builder.Configuration.GetValue("Features:TlsOffloadingIngress", true);
 bool addMobile = builder.Configuration.GetValue("Features:Mobile", false);
 
+bool addLocalKeycloak = builder.ExecutionContext.IsRunMode && builder.Configuration.GetValue("Features:LocalKeycloak", true);
+
 IResourceBuilder<PostgresDatabaseResource> focusDb = builder.AddPostgres("postgres")
 	.WithImage("postgis/postgis")
 	.WithImageTag("17-3.5")
 	.AddDatabase("focusdb");
 
-IResourceBuilder<KeycloakResource> keycloak = builder
-	.AddKeycloak("keycloak", 8080)
-	.WithOtlpExporter();
-
-if (builder.ExecutionContext.IsRunMode)
-{
-	keycloak.WithRealmImport("./keycloak");
-}
+KeycloakRealm realm = addLocalKeycloak ? builder.AddLocalKeycloakRealm() : builder.AddExternalKeycloakRealm();
 
 IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api")
 	.WithReference(focusDb)
 	.WithReference(focusDb, connectionName: "focusdb-readonly")
-	.WithKeycloakAudience(keycloak, "admin-api")
+	.WithKeycloakAudience(realm)
 	.WaitFor(focusDb);
 
 // See https://aspire.dev/integrations/databases/efcore/migrations/
@@ -95,16 +90,13 @@ if (addMobile)
 IResourceBuilder<ProjectResource> web = builder.AddProject<FocusTemplate_Admin_Web_Bff>("admin-bff")
 	.ProxyBlazorService(api)
 	.ProxyBlazorTelemetry()
-	.WithKeycloakClient(
-		keycloak,
-		"admin-bff",
-		builder.AddParameter("oidc-admin-bff-secret", "admin-bff-secret", secret: true))
+	.WithKeycloakClient(realm)
 	.WaitFor(api);
 
 if (addTlsOffloadingIngress)
 {
 	// This emulates an external ingress (e.g. kubernetes ingress) with tls offloading
-	web.WithTlsOffloadingIngress();
+	web.WithTlsOffloadingIngress(7770);
 }
 
 if (addAnalytics)
