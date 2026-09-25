@@ -11,7 +11,8 @@ its own slice into its `generated/` folder.
 
 Shared spine:
 
-- **FocusTemplate.AppHost** - Aspire orchestrator. Wires both APIs, the BFF, Keycloak (see **Authentication**), an
+- **FocusTemplate.AppHost** - Aspire orchestrator. Wires both APIs, the BFF, Keycloak (its own container or an
+  existing realm, see **Authentication**), an
   optional nginx TLS ingress, optional Umami analytics, and (behind `Features:Mobile`) the MAUI device resources + Dev
   Tunnel.
 - **FocusTemplate.Primitives** - the typed ids every vertical shares, generated from `src/spec/primitives.tsp`
@@ -139,8 +140,9 @@ Use the Aspire CLI, not `dotnet run`:
 - `aspire stop`
 - `aspire wait <resource>` - block until healthy
 
-Open the BFF (`http://localhost:5770` without the ingress, the `admin-bff-ingress` https endpoint with it) and log in
-as `developer` / `developer`, the login of the imported realm. Keycloak's admin console is the `keycloak` resource's
+Open the BFF (`http://localhost:5770` without the ingress, `https://localhost:7770` through it) and log in as
+`developer` / `developer`, the login of the imported realm (with `Features:LocalKeycloak` off, your own account in the
+external realm). Keycloak's admin console is the `keycloak` resource's
 endpoint, user `admin`, password in the AppHost's secret store under `Parameters:keycloak-password`.
 
 **Stop the AppHost before `dotnet build`/`dotnet test`** - a running BFF locks its output binary and
@@ -295,10 +297,11 @@ exactly this. Traps, learned the hard way:
   are about (`Data.Auditing`), the method name what they do (`AddAuditingShadowProperties`). Names that came with a
   template stay, so the file still diffs against a newer template: `Extensions` in both ServiceDefaults projects,
   `BlazorClientExtensions`.
-- **Feature flags**: `Features:Analytics`, `Features:TlsOffloadingIngress`, and `Features:Mobile`
-  (default **off**: no devtunnel/emulator requirements on a plain `aspire start`) in the AppHost's
+- **Feature flags**: `Features:Analytics`, `Features:TlsOffloadingIngress`, `Features:Mobile`
+  (default **off**: no devtunnel/emulator requirements on a plain `aspire start`) and `Features:LocalKeycloak` (default
+  on; off takes an existing realm from parameters, see **Authentication**) in the AppHost's
   `appsettings.json`, overridable per-developer via the gitignored `appsettings.local.json`. The
-  E2E fixture pins them via CLI args. Authentication has no flag, it is always on.
+  E2E fixtures pin them via CLI args. Authentication itself has no flag, it is always on.
 - **Shared DTOs** live in the vertical's `Shared` project (`FocusTemplate.Admin.Shared` /
   `FocusTemplate.Public.Shared` - never referencing each other); computed members go into hand-written
   partials next to the project file. Entities (`FocusTemplate.Data`) stay server-side; map entity =>
@@ -367,19 +370,29 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
 
 ### Authentication
 
-Keycloak is the identity provider and the BFF holds the session: the Duende-BFF shape without Duende's BFF. Always on,
-no feature flag.
+Keycloak is the identity provider and the BFF holds the session: the Duende-BFF shape without Duende's BFF. Always on;
+`Features:LocalKeycloak` only decides whether the AppHost runs the Keycloak or takes an existing realm.
 
-- **AppHost**: `AddKeycloak("keycloak", 8080)` imports `keycloak/focus-realm.json` in run mode: realm `focus`, the
+- **AppHost**: with `Features:LocalKeycloak` on (the default) in run mode, `AddLocalKeycloakRealm` adds
+  `AddKeycloak("keycloak", 8080)`, which imports `keycloak/focus-realm.json`: realm `focus`, the
   confidential client `admin-bff` with an audience mapper that stamps `admin-api` into the access token, and the login
   `developer` / `developer`, whose user id is `WellKnownUsers.Developer`. Its primary endpoint is named `http` whatever
   its scheme: the integration switches it to https at start when the dev certificate is available (there is no
   separate `https` endpoint, adding one yields a `tcp://` authority). Both handlers keep the default https-metadata
   requirement, so a Keycloak left on http fails at the first login with the handler's own message instead of being
-  accepted quietly. `WithKeycloakAudience` / `WithKeycloakClient` (`AuthenticationExtensions`) hand a project
-  `Oidc__Authority` plus its audience or its client id and the `oidc-admin-bff-secret` parameter, and wait for
-  Keycloak. `WithRealmImport` is development-only; a published Keycloak has to bake the realm into its image
-  (`WithDockerfile`, not wired yet). The realm file and the AppHost values must stay in sync by hand.
+  accepted quietly. With the flag off, and always when publishing, since the imported realm's developer login and
+  client secret are known to everyone who has the repository, `AddExternalKeycloakRealm` takes a realm on any Keycloak
+  from parameters: `oidc-authority` (the realm's URL, such as `https://sso.example.com/realms/focus`),
+  `oidc-admin-bff-secret`, and `oidc-admin-bff-client-id` / `oidc-admin-api-audience` (defaults `admin-bff` /
+  `admin-api`), from `appsettings.local.json`, user secrets or the dashboard's prompt. That realm declares what
+  `focus-realm.json` does: the confidential client, the audience mapper, `sub` as the user's UUID, and the redirect
+  URIs `http://localhost:5770/signin-oidc` and `https://localhost:7770/signin-oidc` plus their `/signout-callback-oidc`
+  post-logout counterparts; the ingress's port is pinned for this, the local realm accepting any redirect URI. The
+  AppHost models it as the external service `keycloak`, whose health check probes the realm's URL itself: Keycloak
+  answers it once it serves the realm, and a health-check path would replace the realm, the URL's last segment.
+  `KeycloakRealm` carries what the projects need either way; `WithKeycloakAudience` / `WithKeycloakClient`
+  (`AuthenticationExtensions`) hand a project `Oidc__Authority` plus its audience or its client id and secret, and
+  wait for the Keycloak. The realm file and the values in `AddLocalKeycloakRealm` must stay in sync by hand.
 - **BFF**: cookie session (`__Host-focus.session`, HttpOnly, Secure, SameSite=Lax) + OIDC code flow with the authorization request
   pushed (PAR: the handler's `UseIfAvailable` default meets Keycloak's advertised endpoint, and the E2E login test
   asserts the `request_uri` on the authorize request) and the code posted back (form_post, the handler's default too,
@@ -443,7 +456,10 @@ no feature flag.
   shortens the realm's access token lifespan below the token management's renewal window, deletes a session by its
   `sid`, removes the `admin-api-audience` mapper, and puts the realm back when disposed, since the whole collection
   shares one Keycloak. Nothing in the tests handles the app's tokens, `KeycloakAdmin`'s own admin
-  token aside; direct-grant tokens for scripts and PKCE for mobile come with the Public API leg.
+  token aside; direct-grant tokens for scripts and PKCE for mobile come with the Public API leg. The fixtures pin
+  `Features:LocalKeycloak=true`, since they log in as the developer; `KeycloakRealmTests` covers the external realm on
+  the AppHost's model alone, built but never started: with the flag off and when publishing, no Keycloak container,
+  and each `Oidc__*` variable fed by its parameter.
 - **Not yet**: the Public API stays anonymous until the mobile client's PKCE leg. Server-side sessions and backchannel
   logout wait for Redis; refresh-token revocation on logout is open too. A restarted BFF container or a second
   instance needs a shared, persisted Data Protection key ring to read the session cookie, and a second instance also
