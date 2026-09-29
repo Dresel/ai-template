@@ -1,93 +1,57 @@
 @using System.Security.Claims
 @using FocusTemplate.Admin.Shared
 @inherits LayoutComponentBase
-@inject IJSRuntime JsRuntime
 @inject NavigationManager Navigation
 
-<Layout Sider Style="min-height: 100vh;">
-	<LayoutSider>
-		<LayoutSiderContent>
-			<Bar data-testid="nav-bar"
-				Mode="BarMode.VerticalInline"
-				CollapseMode="BarCollapseMode.Small"
-				Breakpoint="Breakpoint.Desktop"
-				NavigationBreakpoint="Breakpoint.Tablet"
-				ThemeContrast="ThemeContrast.Dark">
-				<BarBrand>
-					<BarItem>
-						<BarLink To="" data-testid="nav-brand">
-							<BarIcon IconName="@("rocket_launch")" />
-							FocusTemplate
-						</BarLink>
-					</BarItem>
-				</BarBrand>
-				<BarMenu>
-					<BarStart>
-						<BarItem>
-							<BarLink To="" data-testid="nav-home">
-								<BarIcon IconName="@("home")" />
-								Home
-							</BarLink>
-						</BarItem>
-						<BarItem>
-							<BarLink To="weather" data-testid="nav-weather">
-								<BarIcon IconName="@("cloud")" />
-								Weather
-							</BarLink>
-						</BarItem>
-						<BarItem>
-							<BarLink To="diagnostics" data-testid="nav-diagnostics">
-								<BarIcon IconName="@("troubleshoot")" />
-								Diagnostics
-							</BarLink>
-						</BarItem>
-					</BarStart>
-				</BarMenu>
-			</Bar>
-		</LayoutSiderContent>
-	</LayoutSider>
-	<Layout>
-		<LayoutHeader>
-			<Bar data-testid="top-bar" Breakpoint="Breakpoint.Desktop" ThemeContrast="ThemeContrast.Light">
-				<BarBrand>
-					<Heading Size="HeadingSize.Is5" Margin="Margin.Is0">Viva la Focus</Heading>
-				</BarBrand>
-
-				<BarItem Margin="Margin.IsAuto.FromStart">
-					<Button Color="Color.Secondary" Outline Clicked="@ToggleDarkModeAsync" data-testid="theme-toggle">
-						<Icon Name="@(darkMode ? "light_mode" : "dark_mode")" />
-					</Button>
-				</BarItem>
+<RadzenLayout Style="min-height: 100vh;">
+	<RadzenHeader data-testid="top-bar">
+		<RadzenStack Orientation="Orientation.Horizontal"
+			AlignItems="AlignItems.Center"
+			JustifyContent="JustifyContent.SpaceBetween"
+			Style="padding: 0 1rem;">
+			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+				<RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" data-testid="nav-toggle" />
+				<RadzenText TextStyle="TextStyle.H6" TagName="TagName.Span">Viva la Focus</RadzenText>
+			</RadzenStack>
+			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+				<RadzenAppearanceToggle LightTheme="standard" DarkTheme="standard-dark" data-testid="theme-toggle" />
 				<AuthorizeView>
 					<Authorized>
-						<BarItem>
-							<Span data-testid="user-name">@context.User.Identity?.Name</Span>
-						</BarItem>
-						<BarItem>
-							<Button Color="Color.Secondary" Outline Clicked="@(() => Logout(context.User))" data-testid="logout-button">
-								<Icon Name="@("logout")" />
-							</Button>
-						</BarItem>
+						<RadzenText TagName="TagName.Span" data-testid="user-name">@context.User.Identity?.Name</RadzenText>
+						<RadzenButton Icon="logout"
+							ButtonStyle="ButtonStyle.Base"
+							Variant="Variant.Outlined"
+							title="Log out"
+							Click="@(() => Logout(context.User))"
+							data-testid="logout-button" />
 					</Authorized>
 					<NotAuthorized>
-						<BarItem>
-							<Button Color="Color.Secondary" Outline Clicked="@Login" data-testid="login-button">
-								<Icon Name="@("login")" />
-							</Button>
-						</BarItem>
+						<RadzenButton Icon="login"
+							ButtonStyle="ButtonStyle.Base"
+							Variant="Variant.Outlined"
+							title="Log in"
+							Click="@Login"
+							data-testid="login-button" />
 					</NotAuthorized>
 				</AuthorizeView>
-			</Bar>
-		</LayoutHeader>
-		<LayoutContent Padding="Padding.Is3">
-			@Body
-		</LayoutContent>
-	</Layout>
-</Layout>
+			</RadzenStack>
+		</RadzenStack>
+	</RadzenHeader>
+	<RadzenSidebar @bind-Expanded="sidebarExpanded" data-testid="nav-bar">
+		<RadzenPanelMenu>
+			<RadzenPanelMenuItem Text="Home" Icon="home" Path="" data-testid="nav-home" />
+			<RadzenPanelMenuItem Text="Weather" Icon="cloud" Path="weather" data-testid="nav-weather" />
+			<RadzenPanelMenuItem Text="Diagnostics" Icon="troubleshoot" Path="diagnostics" data-testid="nav-diagnostics" />
+		</RadzenPanelMenu>
+	</RadzenSidebar>
+	<RadzenBody>
+		@Body
+	</RadzenBody>
+</RadzenLayout>
 
 @code
 {
-	private bool darkMode;
+	private bool sidebarExpanded = true;
 
 	private void Login() =>
 		Navigation.NavigateTo(
@@ -100,19 +64,5 @@
 			throw new InvalidOperationException("Missing bff logout url.");
 
 		Navigation.NavigateTo(logoutUrl, true);
-	}
-
-	private async Task ToggleDarkModeAsync()
-	{
-		darkMode = !darkMode;
-		try
-		{
-			await JsRuntime.InvokeVoidAsync("document.documentElement.setAttribute", "data-theme", darkMode ? "dark" : "light");
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-			throw;
-		}
 	}
 }

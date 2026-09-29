@@ -1,6 +1,3 @@
-using Blazorise;
-using Blazorise.Icons.Material;
-using Blazorise.Material;
 using FocusTemplate.Admin.Client.WeatherForecasts;
 using FocusTemplate.Admin.Web;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -9,6 +6,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Radzen;
 
 WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -35,7 +33,7 @@ builder.Services.AddHttpClient<AuthenticationClient>(client =>
 builder.Services.AddHttpClient<DiagnosticsClient>(client =>
 	client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
-builder.Services.AddBlazorise(options => options.Immediate = true).AddMaterialProviders().AddMaterialIcons();
+builder.Services.AddRadzenComponents();
 
 WebAssemblyHost host = builder.Build();
 

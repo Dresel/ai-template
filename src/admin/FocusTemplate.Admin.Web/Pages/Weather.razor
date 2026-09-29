@@ -5,43 +5,41 @@
 
 <PageTitle>Weather</PageTitle>
 
-<Heading Size="HeadingSize.Is1" Margin="Margin.Is3.FromBottom">Weather</Heading>
+<RadzenStack Gap="1rem">
+	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Weather</RadzenText>
 
-<Card>
-	<CardHeader>
-		<CardTitle Size="HeadingSize.Is5" Margin="Margin.Is0">Five-day forecast</CardTitle>
-	</CardHeader>
-	<CardBody>
+	<RadzenCard>
+		<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">Five-day forecast</RadzenText>
 		@if (Forecasts is null)
 		{
-			<Paragraph data-testid="weather-loading">Loading...</Paragraph>
+			<RadzenText data-testid="weather-loading">Loading...</RadzenText>
 		}
 		else
 		{
-			<Table data-testid="weather-table" Striped Hoverable Responsive>
-				<TableHeader>
-					<TableRow>
-						<TableHeaderCell>Date</TableHeaderCell>
-						<TableHeaderCell>Temp. (C)</TableHeaderCell>
-						<TableHeaderCell>Temp. (F)</TableHeaderCell>
-						<TableHeaderCell>Summary</TableHeaderCell>
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					@foreach (var forecast in Forecasts)
+			<RadzenTable AllowAlternatingRows="true" data-testid="weather-table">
+				<RadzenTableHeader>
+					<RadzenTableHeaderRow>
+						<RadzenTableHeaderCell>Date</RadzenTableHeaderCell>
+						<RadzenTableHeaderCell>Temp. (C)</RadzenTableHeaderCell>
+						<RadzenTableHeaderCell>Temp. (F)</RadzenTableHeaderCell>
+						<RadzenTableHeaderCell>Summary</RadzenTableHeaderCell>
+					</RadzenTableHeaderRow>
+				</RadzenTableHeader>
+				<RadzenTableBody>
+					@foreach (WeatherForecastResponse forecast in Forecasts)
 					{
-						<TableRow data-testid="weather-row">
-							<TableRowCell>@forecast.Date.ToShortDateString()</TableRowCell>
-							<TableRowCell>@forecast.TemperatureC</TableRowCell>
-							<TableRowCell>@forecast.TemperatureF</TableRowCell>
-							<TableRowCell>@forecast.Summary</TableRowCell>
-						</TableRow>
+						<RadzenTableRow data-testid="weather-row">
+							<RadzenTableCell>@forecast.Date.ToShortDateString()</RadzenTableCell>
+							<RadzenTableCell>@forecast.TemperatureC</RadzenTableCell>
+							<RadzenTableCell>@forecast.TemperatureF</RadzenTableCell>
+							<RadzenTableCell>@forecast.Summary</RadzenTableCell>
+						</RadzenTableRow>
 					}
-				</TableBody>
-			</Table>
+				</RadzenTableBody>
+			</RadzenTable>
 		}
-	</CardBody>
-</Card>
+	</RadzenCard>
+</RadzenStack>
 
 @code
 {

@@ -2,28 +2,6 @@
   "version": 2,
   "dependencies": {
     "net11.0": {
-      "Blazorise.Icons.Material": {
-        "type": "Direct",
-        "requested": "[2.3.2, )",
-        "resolved": "2.3.2",
-        "contentHash": "HKrUf2JOQCT1/vfj3PbLx3BVS2ycp31dUncCkHFwGJGHh0PiXhu6UW1A40IOpSZWMInh6p8O4Z0QgrF0yCjwJQ==",
-        "dependencies": {
-          "Blazorise": "2.3.2",
-          "Microsoft.AspNetCore.Components": "10.0.10",
-          "Microsoft.AspNetCore.Components.Web": "10.0.10"
-        }
-      },
-      "Blazorise.Material": {
-        "type": "Direct",
-        "requested": "[2.3.2, )",
-        "resolved": "2.3.2",
-        "contentHash": "FmhYfgcs2SrTfhX83iS7Ha9NSH0a6lhqqHea8Nr9uMrdziw5Kh9XTmIC600AHXEnILLAcrIgvF7rBMrwPgfRAQ==",
-        "dependencies": {
-          "Blazorise": "2.3.2",
-          "Microsoft.AspNetCore.Components": "10.0.10",
-          "Microsoft.AspNetCore.Components.Web": "10.0.10"
-        }
-      },
       "Microsoft.AspNetCore.App.Internal.Assets": {
         "type": "Direct",
         "requested": "[11.0.0-rc.1.26425.128, )",
@@ -95,6 +73,16 @@
           "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.19.0, 2.0.0)"
         }
       },
+      "Radzen.Blazor": {
+        "type": "Direct",
+        "requested": "[11.5.1, )",
+        "resolved": "11.5.1",
+        "contentHash": "1grwHjm04KGvp9bwE+0ZPa/cCGepxi058eGza+NRMZxuTJeEc+PuQge7gvxxzjWk/VtkxrUxuaYVF8igEpHMSQ==",
+        "dependencies": {
+          "Microsoft.AspNetCore.Components": "10.0.12",
+          "Microsoft.AspNetCore.Components.Web": "10.0.12"
+        }
+      },
       "StyleCop.Analyzers": {
         "type": "Direct",
         "requested": "[1.2.0-beta.556, )",
@@ -103,21 +91,6 @@
         "dependencies": {
           "StyleCop.Analyzers.Unstable": "1.2.0.556"
         }
-      },
-      "Blazorise": {
-        "type": "Transitive",
-        "resolved": "2.3.2",
-        "contentHash": "9uQGeVjfg0my1pjrmbTYDNVcxAyrLZYaSN1yicLLdCL2OkJrPYrwDlotemYBSPIt1WBtkb2OEk6N9W/0vpc/sQ==",
-        "dependencies": {
-          "Blazorise.Licensing": "1.3.0",
-          "Microsoft.AspNetCore.Components": "10.0.10",
-          "Microsoft.AspNetCore.Components.Web": "10.0.10"
-        }
-      },
-      "Blazorise.Licensing": {
-        "type": "Transitive",
-        "resolved": "1.3.0",
-        "contentHash": "NvQlbUgd6jY/ZfkJPlhHLaMVyvfp24OMehFV8Y6mrqLHqC0CfcoE+6+YP9FZMZKNAWmcNZ85WXmYFWVl0UXGfw=="
       },
       "Microsoft.AspNetCore.Authorization": {
         "type": "Transitive",
