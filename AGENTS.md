@@ -53,7 +53,7 @@ Admin vertical (`src/admin/`):
   token, every endpoint group requires one through its hooks file (see **Authentication**).
 - **FocusTemplate.Admin.Client** - the generated typed HTTP clients of the vertical (`tspconfig.yaml`,
   `output-type: client`), referenced by every consumer so the client an app ships is the one the tests drive.
-- **FocusTemplate.Admin.Web** - the Blazor WASM client (Blazorise Material UI). Talks to the API through the typed
+- **FocusTemplate.Admin.Web** - the Blazor WASM client (Radzen UI, `standard` theme). Talks to the API through the typed
   `WeatherForecastsClient` from `FocusTemplate.Admin.Client`. Every page needs a signed-in user, which the client learns
   about from the BFF (`BffAuthenticationStateProvider`).
 - **FocusTemplate.Admin.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
@@ -92,7 +92,9 @@ Public vertical (`src/public/`):
   (Apache-2.0, unlike Duende's BFF and IdentityServer: refreshes the user's access token for the proxied calls).
 - **API authentication** - `Microsoft.AspNetCore.Authentication.JwtBearer` against Keycloak's realm.
 - **Blazor WASM client** - `Microsoft.AspNetCore.Components.WebAssembly`; `Microsoft.AspNetCore.Components.Authorization`
-  (`AuthorizeRouteView`, `AuthorizeView`); `Blazorise.Material` + `Blazorise.Icons.Material` (Material 3 UI).
+  (`AuthorizeRouteView`, `AuthorizeView`); `Radzen.Blazor` (MIT; `standard` theme, `standard-dark` behind the header's
+  appearance toggle, Material Symbols icons bundled). `RadzenTheme` in `App.razor` loads the theme through `HeadContent`,
+  `<RadzenComponents />` hosts notifications and dialogs, and `AddRadzenComponents()` registers their services.
 - **API contracts (TypeSpec)** - root `package.json`, pinned: `@typespec/compiler`, `@typespec/http`,
   `@typespec/openapi3` (emits OpenAPI 3.2) and our emitter `@spatialfocus/typespec-http-csharp-slim` as a
   `file:` dependency on `.npm/<name>-<version>.tgz` (bump = replace the tgz, `npm install`, `npm run gen`). The
@@ -180,7 +182,7 @@ Skills live in `.claude/skills/`. Pick by task - these are all permission-allowl
 | Runtime evidence from a running app: logs, traces, resources | Aspire MCP (`list_resources`, `list_console_logs`, `list_structured_logs`, `list_traces`) |
 | Apply a code change to a running resource | Aspire MCP `execute_resource_command` → `rebuild` (no full restart) |
 | Aspire API / workflow questions | `aspire docs search/get`, `aspire docs api search --language csharp` (or MCP `search_docs`/`get_doc`) |
-| Any .NET package API question (Blazorise, YARP, OTel, …) | `dotnet-inspect` skill: `dnx dotnet-inspect -y -- member/type/find/diff --package <id>` |
+| Any .NET package API question (Radzen, YARP, OTel, …) | `dotnet-inspect` skill: `dnx dotnet-inspect -y -- member/type/find/diff --package <id>` |
 | Browser reproduction, manual UI checks, screenshots | `playwright-cli` skill (persistent E2E tests go in `FocusTemplate.Admin.Web.E2E`) |
 | Drive the app on the Android emulator: find/tap/type/screenshot/page source | `appium` MCP (element-based, same locator semantics as the tests; persistent E2E tests go in `FocusTemplate.Public.Mobile.E2E`). Raw `adb` is the fallback + logcat channel |
 | Change an API (route, wire model, status code, new operation) | edit `src/<vertical>/spec/<Slice>.tsp` (new slice: add the file + import it in `spec/api.tsp`) → `npm run gen` (repository root) → implement/adjust the Mediator handler in the Api project's `Features/<Slice>/` → fix the consumers, which compile against the regenerated `{Interface}Client` (never hand-write HTTP calls in Web/Mobile) → tests. This repository's rules: **Spec-first APIs** under Conventions; what the emitter produces is documented with the emitter |
@@ -195,7 +197,7 @@ feature, specify the new behavior with one.
 1. **Triage** - state observed vs. expected behavior, affected area, repro steps, and the test level
    (below). No production code yet.
 2. **Read first** - Grep/Glob/Read the affected code and its existing tests. Don't guess APIs:
-   Aspire questions → `aspire docs`; any other package (Blazorise, YARP, OTel, …) → `dotnet-inspect`.
+   Aspire questions → `aspire docs`; any other package (Radzen, YARP, OTel, …) → `dotnet-inspect`.
 3. **Add the failing test at the smallest level that fits:**
    - **Integration** (one service: DI, middleware, serialization, auth, framework, **EF Core / SQL**) →
      `FocusTemplate.Admin.Api.IntegrationTests`. A real Postgres runs via Testcontainers (assembly fixture,
