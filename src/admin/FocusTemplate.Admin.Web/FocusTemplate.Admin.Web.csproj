@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
 	<PropertyGroup>
 		<OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
@@ -26,12 +26,17 @@
 		<PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
 		<PackageReference Include="OpenTelemetry.Extensions.Hosting" />
 		<PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+		<PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\FocusTemplate.Admin.Client\FocusTemplate.Admin.Client.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Shared\FocusTemplate.Admin.Shared.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Web.ClientServiceDefaults\FocusTemplate.Admin.Web.ClientServiceDefaults.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="FocusTemplate.Admin.Web.UnitTests" />
 	</ItemGroup>
 
 </Project>

@@ -9,8 +9,12 @@ using FocusTemplate.Primitives;
 namespace FocusTemplate.Admin.Shared;
 
 /// <summary>The serializer contracts of this API: every request and response body, and the problem body of a modeled error. The generated clients resolve their JsonTypeInfo from it, and an API serves the same contracts by inserting it into JsonSerializerOptions.TypeInfoResolverChain, so neither end needs reflection.</summary>
+[JsonSerializable(typeof(DemoCodeResponse))]
+[JsonSerializable(typeof(DemoProfileRequest))]
+[JsonSerializable(typeof(DemoProfileResponse))]
 [JsonSerializable(typeof(IReadOnlyList<WeatherForecastResponse>))]
 [JsonSerializable(typeof(ProblemDetails))]
+[JsonSerializable(typeof(ValidationProblemDetails))]
 [JsonSerializable(typeof(WeatherForecastId))]
 [JsonSerializable(typeof(WeatherForecastResponse))]
 [JsonSerializable(typeof(int))]

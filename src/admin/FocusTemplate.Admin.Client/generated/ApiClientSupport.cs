@@ -3,6 +3,7 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -90,5 +91,26 @@ internal static class ApiClientSupport
 		}
 
 		return new ProblemDetails(Title: response.ReasonPhrase, Status: (int)response.StatusCode);
+	}
+
+	/// <summary>The validation problem of a 400: the errors by wire path and every failed rule. A 400 from elsewhere (model binding, ASP.NET Core's own validation) may lack either member, which is then empty; a body that is not problem JSON gives an empty problem with the status line.</summary>
+	public static async ValueTask<ValidationProblemDetails> ReadValidationProblemAsync(HttpResponseMessage response, JsonSerializerOptions jsonOptions, CancellationToken cancellationToken)
+	{
+		if (response.Content.Headers.ContentType?.MediaType is "application/problem+json" or "application/json")
+		{
+			try
+			{
+				if (await response.Content.ReadFromJsonAsync(jsonOptions.GetTypeInfo<ValidationProblemDetails>(), cancellationToken).ConfigureAwait(false) is { } problem)
+				{
+					return problem with { Errors = problem.Errors ?? new Dictionary<string, IReadOnlyList<string>>(), Violations = problem.Violations ?? [], };
+				}
+			}
+			catch (JsonException)
+			{
+				// Not problem JSON after all: fall through to the synthesized problem.
+			}
+		}
+
+		return new ValidationProblemDetails(new Dictionary<string, IReadOnlyList<string>>(), [], Title: response.ReasonPhrase, Status: (int)response.StatusCode);
 	}
 }

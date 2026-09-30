@@ -1,0 +1,9 @@
+@typeparam TModel where TModel : class
+@inherits FormHostBase<TModel>
+
+<CascadingValue TValue="IFormHost" Value="this" IsFixed="true">
+	<form @onsubmit="SubmitAsync" novalidate>
+		<AppValidationSummary Messages="Messages.Unmapped" />
+		@ChildContent
+	</form>
+</CascadingValue>

@@ -1,5 +1,9 @@
-using FocusTemplate.Admin.Client.WeatherForecasts;
 using FocusTemplate.Admin.Web;
+using FocusTemplate.Admin.Web.Features.DemoProfiles;
+using FocusTemplate.Admin.Web.Features.WeatherForecasts;
+using FocusTemplate.Admin.Web.Foundation.Diagnostics;
+using FocusTemplate.Admin.Web.Infrastructure.Authentication;
+using FocusTemplate.Admin.Web.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -22,15 +26,14 @@ await builder.AddClientConfigurationAsync();
 builder.AddBlazorClientServiceDefaults("admin-web");
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress), });
-builder.Services.AddProxiedHttpClient<WeatherForecastsClient>(builder.HostEnvironment, "admin-api");
+builder.Services.AddDemoProfiles(builder.HostEnvironment);
+builder.Services.AddDiagnostics(builder.HostEnvironment);
+builder.Services.AddWeatherForecasts(builder.HostEnvironment);
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, BffAuthenticationStateProvider>();
 builder.Services.AddHttpClient<AuthenticationClient>(client =>
-	client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
-
-builder.Services.AddHttpClient<DiagnosticsClient>(client =>
 	client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
 builder.Services.AddRadzenComponents();

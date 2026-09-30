@@ -1,0 +1,13 @@
+@if (Messages.Count > 0)
+{
+	<div class="app-summary" data-testid="validation-summary">
+		<AppMessageGroups Messages="Messages" />
+	</div>
+}
+
+@code
+{
+	[Parameter]
+	[EditorRequired]
+	public IReadOnlyList<FieldMessage> Messages { get; set; } = [];
+}

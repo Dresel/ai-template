@@ -15,6 +15,12 @@
           "OpenTelemetry.Extensions.Hosting": "1.15.3"
         }
       },
+      "FluentValidation": {
+        "type": "Direct",
+        "requested": "[12.1.1, )",
+        "resolved": "12.1.1",
+        "contentHash": "EPpkIe1yh1a0OXyC100oOA8WMbZvqUu5plwhvYcb7oSELfyUZzfxV48BLhvs3kKo4NwG7MGLNgy1RJiYtT8Dpw=="
+      },
       "Mediator.Abstractions": {
         "type": "Direct",
         "requested": "[3.1.0-rc.1, )",
@@ -444,6 +450,7 @@
       "focustemplate.admin.shared": {
         "type": "Project",
         "dependencies": {
+          "FluentValidation": "[12.1.1, )",
           "FocusTemplate.Primitives": "[1.0.0, )"
         }
       },

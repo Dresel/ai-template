@@ -14,6 +14,23 @@ resharper_alignment_tab_fill_style = use_tabs_only
 resharper_attribute_indent = single_indent
 resharper_space_before_self_closing = true
 resharper_max_line_length = 140
+resharper_place_accessorholder_attribute_on_same_line = false
+resharper_place_field_attribute_on_same_line = false
+
+# Expression-bodied members
+csharp_style_expression_bodied_accessors = true
+csharp_style_expression_bodied_constructors = false
+csharp_style_expression_bodied_indexers = true
+csharp_style_expression_bodied_lambdas = true
+csharp_style_expression_bodied_local_functions = false
+csharp_style_expression_bodied_methods = true
+csharp_style_expression_bodied_operators = false
+csharp_style_expression_bodied_properties = true
+
+# var preferences
+csharp_style_var_elsewhere = false
+csharp_style_var_for_built_in_types = false
+csharp_style_var_when_type_is_apparent = false
 
 [*.json]
 indent_size = 2
@@ -105,21 +122,6 @@ dotnet_style_allow_multiple_blank_lines_experimental = false
 dotnet_style_allow_statement_immediately_after_block_experimental = false
 
 #### C# Coding Conventions ####
-
-# var preferences
-csharp_style_var_elsewhere = false
-csharp_style_var_for_built_in_types = false
-csharp_style_var_when_type_is_apparent = false
-
-# Expression-bodied members
-csharp_style_expression_bodied_accessors = true
-csharp_style_expression_bodied_constructors = false
-csharp_style_expression_bodied_indexers = true
-csharp_style_expression_bodied_lambdas = true
-csharp_style_expression_bodied_local_functions = false
-csharp_style_expression_bodied_methods = true
-csharp_style_expression_bodied_operators = false
-csharp_style_expression_bodied_properties = true
 
 # Pattern matching preferences
 csharp_style_pattern_matching_over_as_with_null_check = true
@@ -294,8 +296,6 @@ resharper_keep_existing_embedded_block_arrangement = false
 resharper_keep_existing_enum_arrangement = false
 resharper_keep_existing_linebreaks = false
 resharper_new_line_before_while = true
-resharper_place_accessorholder_attribute_on_same_line = false
-resharper_place_field_attribute_on_same_line = false
 resharper_place_type_constraints_on_same_line = false
 resharper_space_within_single_line_array_initializer_braces = true
 resharper_trailing_comma_in_multiline_lists = true

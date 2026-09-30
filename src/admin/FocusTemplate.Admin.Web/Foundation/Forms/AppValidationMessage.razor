@@ -1,0 +1,74 @@
+@using FluentValidation
+@inject DialogService Dialogs
+@inject TooltipService Tooltips
+
+@if (Messages.Count > 0)
+{
+	IReadOnlyList<FieldMessage> ordered = Severities.MostSevereFirst(Messages);
+	FieldMessage shown = ordered[0];
+	string severity = Severities.Name(shown.Severity);
+	<div @ref="line"
+		id="@MessageId"
+		class="@($"app-message app-message-{severity}")"
+		@onmouseenter="ShowAll"
+		@onmouseleave="HideAll">
+		<RadzenIcon Icon="@Severities.Icon(shown.Severity)" aria-hidden="true" />
+		<span class="app-message-text"
+			role="@(shown.Severity switch { Severity.Error => "alert", Severity.Warning => "status", _ => null, })"
+			data-testid="@TestIdOf(severity)">@shown.Text</span>
+		@if (ordered.Count > 1)
+		{
+			<RadzenChip Size="ChipSize.ExtraSmall"
+				ChipStyle="BadgeStyle.Base"
+				Shade="Shade.Light"
+				Text="@($"+{ordered.Count - 1}")"
+				Click="OpenAllAsync"
+				aria-label="@($"Show all {ordered.Count} messages")"
+				data-testid="@TestIdOf("more")" />
+		}
+	</div>
+}
+
+@code
+{
+	private ElementReference line;
+
+	[Parameter]
+	[EditorRequired]
+	public IReadOnlyList<FieldMessage> Messages { get; set; } = [];
+
+	[Parameter]
+	public string? MessageId { get; set; }
+
+	[Parameter]
+	public string? TestId { get; set; }
+
+	// The dialog's title: the input's label, where it has one
+	[Parameter]
+	public string? Title { get; set; }
+
+	private RenderFragment All =>
+		@<div class="app-message-list" data-testid="@TestIdOf("tooltip")">
+			@foreach (FieldMessage message in Severities.MostSevereFirst(Messages))
+			{
+				<div class="@($"app-message app-message-{Severities.Name(message.Severity)}")">
+					<RadzenIcon Icon="@Severities.Icon(message.Severity)" aria-hidden="true" />
+					<span>@message.Text</span>
+				</div>
+			}
+		</div>;
+
+	private void HideAll() => Tooltips.Close();
+
+	private async Task OpenAllAsync()
+	{
+		Tooltips.Close();
+		await Dialogs.OpenAsync(
+			Title ?? "Messages",
+			_ => @<AppMessageGroups Messages="Messages" Title="Please review" TestId="field-messages" />);
+	}
+
+	private void ShowAll() => Tooltips.Open(line, _ => All, new TooltipOptions { Position = TooltipPosition.Bottom, CssClass = "app-tooltip", });
+
+	private string? TestIdOf(string part) => TestId is null ? null : $"{TestId}-{part}";
+}

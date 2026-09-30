@@ -6,6 +6,7 @@ import "@spatialfocus/typespec-http-csharp-slim";
 import "../../spec/primitives.tsp";
 
 // One file per feature slice next to this entry file; each contributes to the FocusTemplate.Admin namespace.
+import "./DemoProfiles.tsp";
 import "./WeatherForecasts.tsp";
 
 using Http;

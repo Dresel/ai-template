@@ -1,0 +1,25 @@
+@inherits RadzenInputBase<string?>
+
+<div class="app-field">
+	@if (Label is not null)
+	{
+		<RadzenLabel Text="@Label" Component="@ElementId" />
+	}
+	<RadzenTextBox @ref="input"
+		Name="@ElementId"
+		Value="@Value"
+		ValueChanged="OnValueChangedAsync"
+		Immediate="true"
+		@attributes="InputAttributes" />
+	<AppValidationMessage Messages="Messages" Title="@Label" MessageId="@MessageId" TestId="@TestId" />
+</div>
+
+@code
+{
+	private RadzenTextBox input = null!;
+
+	protected override Task FocusAsync() => input.FocusAsync().AsTask();
+
+	// An emptied input holds no value, as ASP.NET Core's model binding reads it, so a required member reports as missing
+	protected override string? Normalized(string? value) => string.IsNullOrEmpty(value) ? null : value;
+}

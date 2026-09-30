@@ -1,0 +1,33 @@
+@typeparam TValue
+@using System.Linq.Expressions
+@implements IDisposable
+
+<AppValidationMessage Messages="Form.Messages.For(field)" TestId="@TestId" />
+
+@code
+{
+	private FieldIdentifier field;
+
+	private FieldRegistration? registration;
+
+	// Only the test id is read: it names the messages, tags-error
+	[Parameter(CaptureUnmatchedValues = true)]
+	public IReadOnlyDictionary<string, object>? Attributes { get; set; }
+
+	[Parameter]
+	[EditorRequired]
+	public Expression<Func<TValue>> For { get; set; } = null!;
+
+	[CascadingParameter]
+	public IFormHost Form { get; set; } = null!;
+
+	private string? TestId => Attributes?.GetValueOrDefault("data-testid") as string;
+
+	public void Dispose() => registration?.Dispose();
+
+	protected override void OnInitialized()
+	{
+		field = FieldIdentifier.Create(For);
+		registration = Form.Messages.Register(FieldPath.Of(For), field);
+	}
+}

@@ -2,6 +2,7 @@
 
 #nullable enable
 
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -19,5 +20,5 @@ public sealed partial record ProblemDetails(string? Type = null, string? Title =
 {
 	/// <summary>Members not declared in the contract (extension members).</summary>
 	[JsonExtensionData]
-	public IDictionary<string, JsonElement>? Extensions { get; init; }
+	public IReadOnlyDictionary<string, JsonElement>? Extensions { get; init; }
 }
