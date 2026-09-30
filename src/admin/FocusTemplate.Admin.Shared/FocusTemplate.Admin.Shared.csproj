@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
+		<PackageReference Include="FluentValidation" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="../../FocusTemplate.Primitives/FocusTemplate.Primitives.csproj" />
 	</ItemGroup>
 

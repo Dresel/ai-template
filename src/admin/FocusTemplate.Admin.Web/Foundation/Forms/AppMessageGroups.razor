@@ -1,0 +1,36 @@
+@using FluentValidation
+
+<div class="app-message-groups" data-testid="@TestId">
+	@if (Title is not null)
+	{
+		<RadzenText TextStyle="TextStyle.Subtitle1" TagName="TagName.H2">@Title</RadzenText>
+	}
+	@foreach (IGrouping<Severity, FieldMessage> group in Messages.GroupBy(message => message.Severity).OrderBy(group => group.Key))
+	{
+		<RadzenAlert AlertStyle="@Severities.Alert(group.Key)"
+			Size="AlertSize.Small"
+			Shade="Shade.Lighter"
+			AllowClose="false"
+			data-testid="@($"message-group-{Severities.Name(group.Key)}")">
+			<ul class="app-message-group">
+				@foreach (FieldMessage message in group)
+				{
+					<li>@message.Text</li>
+				}
+			</ul>
+		</RadzenAlert>
+	}
+</div>
+
+@code
+{
+	[Parameter]
+	[EditorRequired]
+	public IReadOnlyList<FieldMessage> Messages { get; set; } = [];
+
+	[Parameter]
+	public string? TestId { get; set; }
+
+	[Parameter]
+	public string? Title { get; set; }
+}

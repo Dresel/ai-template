@@ -54,9 +54,17 @@ Admin vertical (`src/admin/`):
   token, every endpoint group requires one through its hooks file (see **Authentication**).
 - **FocusTemplate.Admin.Client** - the generated typed HTTP clients of the vertical (`tspconfig.yaml`,
   `output-type: client`), referenced by every consumer so the client an app ships is the one the tests drive.
-- **FocusTemplate.Admin.Web** - the Blazor WASM client (Radzen UI, `standard` theme). Talks to the API through the typed
-  `WeatherForecastsClient` from `FocusTemplate.Admin.Client`. Every page needs a signed-in user, which the client learns
-  about from the BFF (`BffAuthenticationStateProvider`).
+- **FocusTemplate.Admin.Web** - the Blazor WASM client (Radzen UI, `software` theme). Talks to the API through the typed
+  clients from `FocusTemplate.Admin.Client`. Every page but Home needs a signed-in user, which the client
+  learns about from the BFF (`BffAuthenticationStateProvider`). Grouped by feature: `Features/<Slice>/` holds a
+  slice's page, view model, validator, mapper and its registration (`Add<Slice>()`), named without the slice's prefix
+  (`Form`, `FormValidator`, `Mapper`) and `internal`. `Foundation/` holds the domain-neutral parts:
+  `Validation/Core/` what validated forms need apart from any component (`FormMessages`, what shows where;
+  `FormValidation`, when the rules run; the path registry, `ValidatorBase`), `Validation/App/` the component bases
+  (`FormHostBase`, `AppInputBase`, `IFormHost`), `Forms/` the Radzen components (`AppForm`, the input wrappers,
+  `AppValidationMessage`), `Shell/` the app's frame (`MainLayout`, `Home`, `NotFound`) and `Diagnostics/` the request
+  diagnostics page. `Infrastructure/` holds the integrations: `Authentication/` and `Configuration/`. The validation
+  demo is `Features/DemoProfiles/`, at `/demo/validation`; see **Forms**.
 - **FocusTemplate.Admin.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
   `/_otlp/*` → dashboard, `/_analytics/*` → Umami. The browser only ever talks to the BFF, which also holds the user's
   session (cookie + OIDC code flow against Keycloak) and attaches the access token to `/_api/*` calls.
@@ -93,16 +101,20 @@ Public vertical (`src/public/`):
   (Apache-2.0, unlike Duende's BFF and IdentityServer: refreshes the user's access token for the proxied calls).
 - **API authentication** - `Microsoft.AspNetCore.Authentication.JwtBearer` against Keycloak's realm.
 - **Blazor WASM client** - `Microsoft.AspNetCore.Components.WebAssembly`; `Microsoft.AspNetCore.Components.Authorization`
-  (`AuthorizeRouteView`, `AuthorizeView`); `Radzen.Blazor` (MIT; `standard` theme, `standard-dark` behind the header's
+  (`AuthorizeRouteView`, `AuthorizeView`); `Radzen.Blazor` (MIT; `software` theme, `software-dark` behind the header's
   appearance toggle, Material Symbols icons bundled). `RadzenTheme` in `App.razor` loads the theme through `HeadContent`,
   `<RadzenComponents />` hosts notifications and dialogs, and `AddRadzenComponents()` registers their services.
+  `Riok.Mapperly` (source-generated mapping between a view model and the contract).
 - **API contracts (TypeSpec)** - root `package.json`, pinned: `@typespec/compiler`, `@typespec/http`,
   `@typespec/openapi3` (emits OpenAPI 3.2) and our emitter `@spatialfocus/typespec-http-csharp-slim` as a
-  `file:` dependency on `.npm/<name>-<version>.tgz` (bump = replace the tgz, `npm install`, `npm run gen`). The
+  `file:` dependency on `.npm/<name>-<version>.tgz` (bump = replace the tgz, `npm install ./.npm/<name>-<version>.tgz`,
+  `npm run gen`; a plain `npm install` keeps the old contents while the version stays the same). The
   emitter wraps `@typespec/http-client-csharp` (**alpha**, daily builds) and ships its .NET plugin inside the package,
   so nothing in this solution compiles against those assemblies. The OpenAPI document is emitted from the spec and served as a static file, not reflected at
   runtime. **Mediator** - `Mediator.Abstractions` + `Mediator.SourceGenerator` (martinothamar, source-generated,
   MIT): generated endpoints dispatch `IQuery<T>`/`ICommand<T>` records to hand-written handlers.
+- **Validation** - `FluentValidation`: the validators the emitter generates from the spec's constraints, see
+  **Spec-first APIs**.
 - **Typed ids** - `Vogen` (source generator + `Vogen.SharedTypes` at run time). The emitter writes
   `[ValueObject<T>] [Instance("Unspecified", …)] public readonly partial struct` per `@typedId` scalar into
   `FocusTemplate.Primitives`; `Data` carries the `[EfCoreConverter<T>]` marker for the EF Core converters.
@@ -158,7 +170,7 @@ on the affected resource (Aspire dashboard or MCP).
   The shared spine project `FocusTemplate.Primitives` compiles `src/spec/primitives.tsp` in the same run (a project directly
   under `src/` compiles `src/spec/<name>.tsp`). Never edit generated files by hand; `tsp-output/` is disposable.
 - `dotnet build FocusTemplate.slnx`
-- `dotnet test FocusTemplate.slnx` - xUnit integration tests + Playwright E2E through the BFF
+- `dotnet test FocusTemplate.slnx` - xUnit unit and integration tests + Playwright E2E through the BFF
 - `dotnet format <project>` - analyzers are strict (StyleCop + IDE rules as errors). Files written
   by tooling usually need this to fix line endings (CRLF, no final newline).
   **Never run `dotnet format` on the multi-targeted MAUI project** (`FocusTemplate.Public.Mobile`) -
@@ -220,8 +232,9 @@ feature, specify the new behavior with one.
      `AccessibilityId` does not match).
    - **Convention** (a rule every handler or type of both APIs must follow, checked by reflection over the API
      assemblies) → `FocusTemplate.ArchitectureTests`; today the read/write context rule.
-   - **Unit** (pure logic) → add a unit project when such logic first appears; none today (the emitter's tests live in
-     the `typespec-http-csharp-slim` repository).
+   - **Unit** (pure logic: no browser, no server, no DI) → `FocusTemplate.Admin.Web.UnitTests`; today the forms store,
+     the path registry, and the demo form's validator and mapping (the emitter's own tests live in the
+     `typespec-http-csharp-slim` repository).
 4. **Watch it fail** - stop the AppHost (bin lock), then `dotnet test FocusTemplate.slnx --filter <name>`.
    Confirm the failure matches the report, not a setup gap.
 5. **Smallest fix** - minimal production change to green the test; `dotnet format <project>` new files.
@@ -315,7 +328,8 @@ exactly this. Traps, learned the hard way:
   role, not the C# guard, is what stops `ExecuteUpdate`/`ExecuteDelete` and raw SQL. Locally the AppHost injects the
   owner connection under both keys, so a plain `aspire start` needs no second login; the integration tests run the real
   role, and a published environment points the second key at it.
-- **Keep `data-testid` attributes** - the Playwright E2E suite selects on them. The MAUI equivalent
+- **Keep `data-testid` attributes** - the Playwright E2E suite selects on them. An input wrapper names its messages
+  after its own: `code-error`, `code-warning`, `code-info`. The MAUI equivalent
   is **`AutomationId` on every interactive control** (Appium selects on it).
 - **Mobile dev loop**: enable `Features:Mobile` in `appsettings.local.json`; first start prompts to
   install/login the `devtunnel` CLI (the Dev Tunnel exposes `public-api` to the emulator; anonymous,
@@ -347,6 +361,16 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
   unhandled becomes a 500 problem response through `AddProblemDetails()`. Consumers match the
   client-side union exhaustively, so a status added to the spec is a compile error everywhere it is
   not handled yet.
+- **Validation**: the Admin Api and Shared projects generate with `validation: fluentvalidation`, so the spec's
+  constraint decorators (`@maxLength`, `@minValue`, ...) become FluentValidation validators, and a filter on each
+  validated endpoint answers a violation with a 400 before the handler runs. `AddAdminValidators()` in `Program.cs`
+  registers them; mapping the endpoints without it fails at startup. Rules the spec cannot state (min at most max,
+  uniqueness) stay in the handler, or go into a validator registered in place of `IValidator<T>` that includes the
+  generated one; those that need no server data can live in `Admin.Shared`, so the forms run them too (see **Forms**).
+  The 400 carries `errors` by wire path and `violations` (key, code, severity, message), a typed `ValidationProblem`
+  case on the client; an operation behind a form declares the `ValidationProblem` alias, since under `Problem<400>` the
+  same members arrive as untyped extensions that no form reads. With `RespectRequiredConstructorParameters` on, a
+  missing required member is a model-binding 400 instead, without keys.
 - **Client registration**: reference `FocusTemplate.<V>.Client` and register the generated client with the
   existing typed-HttpClient helpers,
   whose `BaseAddress` carries the BFF prefix or the service-discovery name. Extra members go into a
@@ -367,6 +391,64 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
   then fix the consumers, which stop compiling exactly where the contract moved. Never edit a file
   under `generated/`. The `generated/` folders and `openapi.yaml` are checked in and belong in the
   same commit as the spec change.
+
+### Forms
+
+How a form validates, as the demo at `/demo/validation` (`Features/DemoProfiles/`) does it.
+
+- **View model, never the contract**: a mutable class shaped for the form (`int?` so an input can be empty, a row
+  object per list item, keyed in the markup), plain data. A Mapperly `[Mapper]` converts: `[MapProperty]` for a renamed
+  member, and user conversions such as `string Sent(string? value) => value!`, since Mapperly throws on a null required
+  member while the server, validating again, is the one to report it.
+- **Rules**: the view model's validator derives from `ValidatorBase<TModel>` and applies the generated `{Model}Rules`
+  to its own members; it is registered as `IValidator<TModel>` by the slice's `Add<Slice>()` and injected by the page
+  (`@inject IValidator<Form> FormValidator`), so DI supplies what its rules need. Rules the spec cannot state
+  go into a hand-written class in `Admin.Shared` (`DemoProfileCustomRules`), which the API's validator and the view
+  model's both apply, so code and message are written once. The generated rules carry the contract's display names, so
+  a member the view model names differently still reads like the contract's, without `WithName`. Wire keys are never
+  written as strings: the API's validator and a handler's own failures key with the generated paths
+  (`AdminPaths.DemoProfileRequest.Nickname`), a renamed or moved member then breaks the build. A rule that reads
+  another field declares it beneath the rule, `DependsOn(form => form.MaxTemperatureC, on: form => form.MinTemperatureC)`,
+  so a change to the lowest validates the highest too. What only the server knows (a code already taken) is an async
+  shared rule that takes its lookup: the API's validator passes the store, the view model's a GET per value in the spec
+  (`GET /demo-profiles/codes/{code}`, safe to repeat and nothing sensitive in the URL), last in its chain behind
+  `Cascade(CascadeMode.Stop)` so it asks only about a value that passes its own rules; the API's validator checks again
+  on submit.
+- **When the rules run**: a change validates its field and the fields depending on it (a list row's input its whole
+  list, a field no input claims the whole form), at once, or once the server answers where an async rule asks it. A
+  run takes the place of every waiting run it shares a field with and validates their fields along with its own, so no
+  answer for an older value lands; the whole form shares a field with every run. A submit validates the whole form and
+  waits for the async rules; one whose place a change or a second submit took does nothing, so the form is sent once
+  and never with a value it did not check. A field shows its messages once it changed or lost focus, and every field
+  once a submit was tried. Nothing waits for the typing to pause: a field whose check needs a pause gets a debounce on
+  its input, which then releases its value on blur and before submit.
+- **Markup**: `<AppForm Model="form" Validator="…" Renames="…Mapper.Renames" OnValidSubmit="…">` with an `AppTextInput`
+  or `AppNumericInput` per member (`@bind-Value`, `Label`, `data-testid`). `AppForm` builds the form's messages and
+  validation from the model and its validator and keeps them while it is rendered; a new model is a new form. A member the view model names differently
+  from the wire gets an entry in the mapper's `Renames`, its wire path (`AdminPaths.DemoProfileRequest.Name`) to the
+  view model's, next to its `[MapProperty]`;
+  a list row's input names its path,
+  `Path="Tags[1]"`; a member no input edits shows its messages through `AppFieldMessages`. Whatever no rendered input
+  claims shows in the summary `AppForm` renders. A page that changes a value in code, not through an input, calls
+  `appForm.NotifyFieldChangedAsync(field)` for it.
+- **Messages at a field**: one line, the most severe with its icon, and a pill counting the rest; hovering the line
+  lists them all, clicking the pill opens them grouped by severity, as the summary groups its own. The
+  store only says which messages a field has (`For(field)`); `Foundation/Forms/` decides how they show, and the input
+  takes its state from the most severe.
+- **Submit**: call the client and match its union. A `ValidationProblem` case goes to
+  `appForm.ShowServerErrorsAsync(problem.Problem)`; a success clears the server's messages; any other status is an
+  alert, never field errors.
+- **Radzen**: it styles a field's state only through an `EditContext`, which the forms do not use, so each wrapper puts
+  the state on the input element itself (`aria-invalid` for an error, `data-severity` for `app.css`, `aria-describedby`
+  for the line below) and renders its messages through `AppValidationMessage`, the tooltip and the dialog through
+  Radzen's `TooltipService` and `DialogService`. `RadzenTextBox` is a bare `<input>`
+  that takes the attributes directly; `RadzenNumeric` wraps its input in a span, so its attributes go to
+  `InputAttributes`. Both run with `Immediate`, a value on every keystroke, and focus with `FocusAsync()`.
+- **Another UI library** rewrites `Foundation/Forms/`: its form derives from `FormHostBase<TModel>`, which owns the
+  form's messages and validation, the submit and the `IFormHost` its inputs call, and overrides `RefreshAsync` only
+  where the library keeps a validation state of its own to trigger again. Its inputs derive from `AppInputBase`. No
+  folder named like the library (`Radzen`, `MudBlazor`): that namespace segment hides the library's own namespace from
+  the Razor files inside it.
 
 ### Authentication
 

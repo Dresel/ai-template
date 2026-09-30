@@ -1,4 +1,4 @@
-@using FocusTemplate.Admin.Web.Pages
+@using FocusTemplate.Admin.Web.Infrastructure.Authentication
 <Router AppAssembly="@typeof(App).Assembly" NotFoundPage="typeof(NotFound)">
 	<Found Context="routeData">
 		<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
@@ -14,6 +14,6 @@
 </Router>
 
 <HeadContent>
-	<RadzenTheme Theme="standard" />
+	<RadzenTheme Theme="software" />
 </HeadContent>
 <RadzenComponents />

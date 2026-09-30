@@ -14,6 +14,102 @@ h1:focus {
 	outline: none;
 }
 
+/* The Radzen adapter's inputs. Radzen styles a field's state only through an EditContext, which the forms do not use:
+   the input element states it in data-severity, and the numeric input's border is on the span around it */
+.app-fields {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+	gap: 1rem;
+}
+
+.app-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.rz-textbox[data-severity="error"],
+.rz-numeric:has(input[data-severity="error"]) {
+	border-color: var(--rz-danger);
+}
+
+.rz-textbox[data-severity="warning"],
+.rz-numeric:has(input[data-severity="warning"]) {
+	border-color: var(--rz-warning);
+}
+
+.app-message {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	min-width: 0;
+	font-size: var(--rz-text-caption-font-size);
+}
+
+.app-message .rzi {
+	font-size: 1.25em;
+}
+
+.app-message-text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.app-tooltip {
+	--rz-tooltip-background-color: var(--rz-base-100);
+	--rz-tooltip-color: var(--rz-text-color);
+}
+
+.app-tooltip .rz-tooltip-content {
+	border: 1px solid var(--rz-base-200);
+}
+
+.app-message-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.app-message-groups {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.app-summary {
+	margin-bottom: 1rem;
+}
+
+.app-message-groups > .rz-text-subtitle1 {
+	margin: 0;
+}
+
+.app-message-groups .rz-alert {
+	margin: 0;
+}
+
+.app-message-error {
+	color: var(--rz-danger);
+}
+
+.app-message-warning {
+	color: var(--rz-warning-darker);
+}
+
+.app-message-info {
+	color: var(--rz-text-secondary-color);
+}
+
+.app-message-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
 .valid.modified:not([type=checkbox]) {
 	outline: 1px solid #26b050;
 }

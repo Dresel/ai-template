@@ -12,3 +12,4 @@ options:
     output-type: api
     generated-dir: "generated"
     api-namespace: "FocusTemplate.Admin.Api.Features.{interface}"
+    validation: fluentvalidation

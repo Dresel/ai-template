@@ -4,8 +4,62 @@ info:
   version: 0.1.0
   description: Internal API of the Admin vertical. Reached only through the BFF, never by a browser directly.
 tags:
+  - name: DemoProfiles
   - name: WeatherForecasts
 paths:
+  /demo-profiles:
+    post:
+      operationId: DemoProfiles_create
+      description: Validates a profile and answers it back; nothing is stored.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoProfileResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/SpatialFocus.Http.ValidationProblemDetails'
+      tags:
+        - DemoProfiles
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DemoProfileRequest'
+  /demo-profiles/codes/{code}:
+    get:
+      operationId: DemoProfiles_checkCode
+      description: |-
+        Tells whether a profile holds the code, for a form that checks it while the user types. Creating a profile checks
+        again, since another one can take the code in between.
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/DemoCode'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemoCodeResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/SpatialFocus.Http.ValidationProblemDetails'
+      tags:
+        - DemoProfiles
   /weather-forecasts:
     get:
       operationId: WeatherForecasts_list
@@ -49,6 +103,110 @@ paths:
         - WeatherForecasts
 components:
   schemas:
+    DemoAddressRequest:
+      type: object
+      required:
+        - street
+        - postalCode
+        - city
+      properties:
+        street:
+          type: string
+          maxLength: 100
+          description: Street and number.
+        postalCode:
+          type: string
+          pattern: ^[0-9]{4}$
+          description: 'Postal code: four digits.'
+        city:
+          type: string
+          maxLength: 50
+          description: City.
+      description: A postal address.
+    DemoCode:
+      type: string
+      pattern: ^[A-Z]{3}$
+      description: "A profile's short code: three upper-case letters."
+    DemoCodeResponse:
+      type: object
+      required:
+        - code
+        - taken
+      properties:
+        code:
+          type: string
+          description: The code as asked for.
+        taken:
+          type: boolean
+          description: True when a profile holds the code, so creating another one with it fails.
+      description: Whether a profile holds a code.
+    DemoProfileRequest:
+      type: object
+      required:
+        - code
+        - name
+        - age
+        - address
+      properties:
+        code:
+          $ref: '#/components/schemas/DemoCode'
+          description: 'Short code: three upper-case letters, not yet taken.'
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Display name.
+        nickname:
+          type: string
+          maxLength: 20
+          description: Nickname.
+        age:
+          type: integer
+          format: int32
+          minimum: 18
+          maximum: 120
+          description: Age in years.
+        weightKg:
+          type: number
+          format: double
+          description: Weight in kilograms, above zero.
+          exclusiveMinimum: 0
+        minTemperatureC:
+          type: integer
+          format: int32
+          description: Lowest comfortable temperature in degrees Celsius, at most the highest.
+        maxTemperatureC:
+          type: integer
+          format: int32
+          description: Highest comfortable temperature in degrees Celsius, at least the lowest.
+        address:
+          $ref: '#/components/schemas/DemoAddressRequest'
+          description: Postal address.
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/DemoTag'
+          maxItems: 5
+          description: Tags, at most five.
+      description: A profile to validate.
+    DemoProfileResponse:
+      type: object
+      required:
+        - code
+        - name
+      properties:
+        code:
+          type: string
+          description: Short code.
+        name:
+          type: string
+          description: Display name.
+      description: A profile as accepted.
+    DemoTag:
+      type: string
+      minLength: 1
+      maxLength: 20
+      description: 'A tag: one to twenty characters.'
     ProblemDetails:
       type: object
       properties:
@@ -73,6 +231,76 @@ components:
         Problem details for an HTTP API response, as defined by RFC 9457
         (https://www.rfc-editor.org/rfc/rfc9457). Extension members are allowed and carry information
         specific to the problem type, such as a trace id or the fields of a validation failure.
+    SpatialFocus.Http.ValidationProblemDetails:
+      type: object
+      required:
+        - errors
+        - violations
+      properties:
+        type:
+          type: string
+          description: URI reference identifying the problem type.
+        title:
+          type: string
+          description: Short summary of the problem type.
+        status:
+          type: integer
+          format: int32
+          description: HTTP status code.
+        detail:
+          type: string
+          description: Explanation specific to this occurrence.
+        instance:
+          type: string
+          description: URI reference identifying this occurrence.
+        errors:
+          type: object
+          unevaluatedProperties:
+            type: array
+            items:
+              type: string
+          description: Error messages by wire path (name, address.street, lines[2].quantity), errors only; the shape of ASP.NET Core's HttpValidationProblemDetails.
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpatialFocus.Http.Violation'
+          description: Every failed rule, warnings and infos included.
+      unevaluatedProperties: {}
+      description: |-
+        Problem details (RFC 9457) of a request that failed validation: the errors by the wire path of the member or parameter
+        they concern, and every failed rule with its code, severity and the constraint's values.
+    SpatialFocus.Http.Violation:
+      type: object
+      required:
+        - key
+        - code
+        - severity
+        - message
+      properties:
+        key:
+          type: string
+          description: Wire path of the member or parameter, as in the errors of the problem.
+        code:
+          type: string
+          description: "What failed: for a rule of the contract the constraint's name (required, minLength, maxLength, pattern, minValue, maxValue, minValueExclusive, maxValueExclusive, minItems, maxItems), otherwise the code the rule sets."
+        severity:
+          $ref: '#/components/schemas/SpatialFocus.Http.ViolationSeverity'
+          description: Only an error blocks the request.
+        message:
+          type: string
+          description: The message, in the language of the server.
+        args:
+          type: object
+          unevaluatedProperties: {}
+          description: The constraint's values by name, maxLength for example, for a client that phrases its own message.
+      description: One failed rule of a validation.
+    SpatialFocus.Http.ViolationSeverity:
+      type: string
+      enum:
+        - error
+        - warning
+        - info
+      description: 'How much a failed rule weighs: only an error blocks the request.'
     WeatherForecastId:
       type: integer
       format: int32

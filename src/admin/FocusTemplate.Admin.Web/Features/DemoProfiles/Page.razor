@@ -1,0 +1,171 @@
+@page "/demo/validation"
+@using FluentValidation
+@using FocusTemplate.Admin.Client
+@using FocusTemplate.Admin.Client.DemoProfiles
+@using FocusTemplate.Admin.Shared
+
+@inject DemoProfilesClient Api
+@inject IValidator<Form> FormValidator
+
+<PageTitle>Validation</PageTitle>
+
+<RadzenStack Gap="1rem">
+	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Validation</RadzenText>
+
+	<RadzenCard>
+		<RadzenText TextStyle="TextStyle.Body1">
+			The spec's constraints check the profile while you type, and the server checks it again when you submit, with
+			rules of its own. Every message shows at its input; one that none claims shows above the form.
+		</RadzenText>
+		<ul>
+			<li>Code <code>TAK</code> is taken, which only the server knows: it tells while you type, and again on submit.</li>
+			<li>Name <code>Reserved</code> is refused by the handler after the validators passed.</li>
+			<li>An all upper-case nickname is a warning, an age of a hundred or more an info; neither blocks.</li>
+			<li>City <code>Atlantis</code> is refused for the address as a whole, which no input shows.</li>
+			<li>Switch off the browser's checks to see what the server reports by itself.</li>
+		</ul>
+	</RadzenCard>
+
+	<RadzenCard>
+		<RadzenStack Gap="1rem">
+			<RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap" Gap="2rem">
+				<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+					<RadzenSwitch @bind-Value="form.ClientRules"
+						@bind-Value:after="ClientRulesChangedAsync"
+						Name="client-rules"
+						data-testid="client-rules" />
+					<RadzenLabel Text="Check in the browser" Component="client-rules" />
+				</RadzenStack>
+				<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+					<RadzenSwitch @bind-Value="showOptional" Name="show-optional" data-testid="show-optional" />
+					<RadzenLabel Text="Show the optional fields" Component="show-optional" />
+				</RadzenStack>
+			</RadzenStack>
+
+			<AppForm @ref="appForm"
+				Model="form"
+				Validator="FormValidator"
+				Renames="Mapper.Renames"
+				OnValidSubmit="SubmitAsync">
+				<RadzenStack Gap="1rem">
+					@if (accepted is not null)
+					{
+						<RadzenAlert AlertStyle="AlertStyle.Success" Shade="Shade.Lighter" AllowClose="false" data-testid="accepted">
+							Accepted: @accepted.Code, @accepted.Name
+						</RadzenAlert>
+					}
+					@if (failure is not null)
+					{
+						<RadzenAlert AlertStyle="AlertStyle.Danger" Shade="Shade.Lighter" AllowClose="false" data-testid="submit-failure">
+							@failure
+						</RadzenAlert>
+					}
+
+					<div class="app-fields">
+						<AppTextInput Label="Code" @bind-Value="form.Code" data-testid="code" />
+						<AppTextInput Label="Name" @bind-Value="form.DisplayName" data-testid="name" />
+						<AppNumericInput Label="Age" @bind-Value="form.Age" data-testid="age" />
+					</div>
+
+					@if (showOptional)
+					{
+						<div class="app-fields">
+							<AppTextInput Label="Nickname" @bind-Value="form.Nickname" data-testid="nickname" />
+							<AppNumericInput Label="Weight (kg)" @bind-Value="form.WeightKg" data-testid="weight" />
+							<AppNumericInput Label="Lowest temperature (°C)" @bind-Value="form.MinTemperatureC" data-testid="min-temperature" />
+							<AppNumericInput Label="Highest temperature (°C)" @bind-Value="form.MaxTemperatureC" data-testid="max-temperature" />
+						</div>
+					}
+
+					<div class="app-fields">
+						<AppTextInput Label="Street" @bind-Value="form.Address.Street" data-testid="street" />
+						<AppTextInput Label="Postal code" @bind-Value="form.Address.PostalCode" data-testid="postal-code" />
+						<AppTextInput Label="City" @bind-Value="form.Address.City" data-testid="city" />
+					</div>
+
+					<RadzenStack Gap="0.5rem" AlignItems="AlignItems.Start">
+						<RadzenLabel Text="Tags" />
+						@foreach ((TagRow tag, int index) in form.Tags.Select((tag, index) => (tag, index)))
+						{
+							<RadzenStack @key="tag"
+								Orientation="Orientation.Horizontal"
+								AlignItems="AlignItems.Start"
+								Gap="0.5rem"
+								data-testid="tag-row">
+								<AppTextInput @bind-Value="tag.Value" Path="@($"Tags[{index}]")" data-testid="@($"tag-{index}")" />
+								<RadzenButton Icon="delete"
+									ButtonStyle="ButtonStyle.Base"
+									Variant="Variant.Outlined"
+									title="Remove the tag"
+									Click="() => RemoveTagAsync(tag)"
+									data-testid="@($"remove-tag-{index}")" />
+							</RadzenStack>
+						}
+						<AppFieldMessages For="() => form.Tags" data-testid="tags" />
+						<RadzenButton Text="Add a tag"
+							ButtonStyle="ButtonStyle.Base"
+							Variant="Variant.Outlined"
+							Click="AddTagAsync"
+							data-testid="add-tag" />
+					</RadzenStack>
+
+					<RadzenStack Orientation="Orientation.Horizontal">
+						<RadzenButton ButtonType="ButtonType.Submit" Text="Submit" ButtonStyle="ButtonStyle.Primary" data-testid="submit" />
+					</RadzenStack>
+				</RadzenStack>
+			</AppForm>
+		</RadzenStack>
+	</RadzenCard>
+</RadzenStack>
+
+@code
+{
+	private readonly Form form = new();
+
+	private AcceptedProfile? accepted;
+
+	private AppForm<Form> appForm = null!;
+
+	private string? failure;
+
+	private bool showOptional = true;
+
+	private async Task AcceptAsync(DemoProfileResponse profile)
+	{
+		accepted = profile.ToAcceptedProfile();
+		await appForm.ClearServerErrorsAsync();
+	}
+
+	private async Task AddTagAsync()
+	{
+		form.Tags.Add(new TagRow());
+		await appForm.NotifyFieldChangedAsync(FieldIdentifier.Create(() => form.Tags));
+	}
+
+	// Flipping the demo's switch changes what the form's rules find
+	private Task ClientRulesChangedAsync() => appForm.NotifyFieldChangedAsync(FieldIdentifier.Create(() => form.ClientRules));
+
+	private async Task RemoveTagAsync(TagRow tag)
+	{
+		form.Tags.Remove(tag);
+		await appForm.NotifyFieldChangedAsync(FieldIdentifier.Create(() => form.Tags));
+	}
+
+	private async Task SubmitAsync()
+	{
+		(accepted, failure) = (null, null);
+
+		try
+		{
+			await (await Api.CreateAsync(form.ToContract()) switch
+			{
+				DemoProfileResponse profile => AcceptAsync(profile),
+				ValidationProblem problem => appForm.ShowServerErrorsAsync(problem.Problem)
+			});
+		}
+		catch (HttpRequestException exception)
+		{
+			failure = $"The server could not take the profile ({(int?)exception.StatusCode}).";
+		}
+	}
+}

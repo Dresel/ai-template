@@ -5,3 +5,4 @@ options:
     emitter-output-dir: "{output-dir}"
     output-type: contracts
     generated-dir: "generated"
+    validation: fluentvalidation

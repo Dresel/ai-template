@@ -1,4 +1,6 @@
 using FocusTemplate.Admin.Api.Authentication;
+using FocusTemplate.Admin.Api.Features;
+using FocusTemplate.Admin.Api.Features.DemoProfiles;
 using FocusTemplate.Admin.Api.Features.WeatherForecasts;
 using FocusTemplate.Admin.Shared;
 using FocusTemplate.Data;
@@ -26,6 +28,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
+builder.Services.AddAdminValidators();
+builder.Services.AddDemoProfiles();
 
 WebApplication app = builder.Build();
 
@@ -43,6 +47,7 @@ if (app.Environment.IsDevelopment())
 		() => Results.File(Path.Combine(AppContext.BaseDirectory, "openapi.yaml"), "application/yaml"));
 }
 
+app.MapDemoProfilesEndpoints();
 app.MapWeatherForecastsEndpoints();
 
 app.Run();

@@ -1,0 +1,24 @@
+@typeparam TValue
+@inherits RadzenInputBase<TValue>
+
+<div class="app-field">
+	@if (Label is not null)
+	{
+		<RadzenLabel Text="@Label" Component="@ElementId" />
+	}
+	<RadzenNumeric TValue="TValue"
+		@ref="input"
+		Name="@ElementId"
+		Value="@Value"
+		ValueChanged="OnValueChangedAsync"
+		Immediate="true"
+		InputAttributes="InputAttributes" />
+	<AppValidationMessage Messages="Messages" Title="@Label" MessageId="@MessageId" TestId="@TestId" />
+</div>
+
+@code
+{
+	private RadzenNumeric<TValue> input = null!;
+
+	protected override Task FocusAsync() => input.FocusAsync().AsTask();
+}
