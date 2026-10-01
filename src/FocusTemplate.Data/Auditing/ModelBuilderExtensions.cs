@@ -6,7 +6,7 @@ namespace FocusTemplate.Data.Auditing;
 
 public static class ModelBuilderExtensions
 {
-	// Shadow properties rather than members: the four columns are in the model and the migrations, but an entity cannot read or set them directly.
+	// Shadow properties, not members, so only AuditingInterceptor writes the audit columns and the entities stay plain.
 	public static ModelBuilder AddAuditingShadowProperties(this ModelBuilder modelBuilder)
 	{
 		foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())

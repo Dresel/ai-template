@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Data;
 
-// Read-only db context for queries only, guarded by read-only database user.
+// The SaveChanges guard fails early, but only a read-only database user role stops ExecuteUpdate, ExecuteDelete and raw SQL.
 public sealed class ReadOnlyAppDbContext(DbContextOptions<ReadOnlyAppDbContext> options) : AppDbContextBase(options)
 {
 	public override int SaveChanges(bool acceptAllChangesOnSuccess) =>

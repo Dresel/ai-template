@@ -20,7 +20,7 @@ public abstract class AppDbContextBase(DbContextOptions options) : DbContext(opt
 
 	protected sealed override void OnModelCreating(ModelBuilder modelBuilder)
 	{
-		// The migration creates the extension; the postgis/postgis image ships it
+		// The migration creates the extension, which the postgis/postgis image ships.
 		modelBuilder.HasPostgresExtension("postgis");
 
 		modelBuilder.ApplyEntityConfigurations();

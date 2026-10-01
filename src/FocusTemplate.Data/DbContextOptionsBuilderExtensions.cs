@@ -23,9 +23,7 @@ public static class DbContextOptionsBuilderExtensions
 	{
 		options.UseAppDbContextProvider(connectionString);
 
-		// Auditing is not needed for read-only contexts
-
-		// Disable tracking for read-only contexts to improve performance
+		// No auditing interceptor and no tracking: this context never saves, so neither would have anything to do.
 		options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 
 		return options;
