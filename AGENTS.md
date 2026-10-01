@@ -16,9 +16,10 @@ Shared spine:
   optional nginx TLS ingress, optional Umami analytics, and (behind `Features:Mobile`) the MAUI device resources + Dev
   Tunnel.
 - **FocusTemplate.Primitives** - the typed ids every vertical shares, generated from `src/spec/primitives.tsp`
-  (`output-type: primitives`) as Vogen value objects in namespace `FocusTemplate.Primitives`. The only project running
-  Vogen's generator; `Data` and both `Shared` projects reference it, so one `WeatherForecastId` serves the domain and
-  every contract.
+  (`output-type: primitives`) as Vogen value objects in namespace `FocusTemplate.Primitives`, and the permissions
+  (`Permission`, a string id, with one static class per `src/spec/permissions/<slice>.tsp` enum in
+  `FocusTemplate.Primitives.Permissions`). The only project running Vogen's generator; `Data` and both `Shared` projects
+  reference it, so one `WeatherForecastId` serves the domain and every contract.
 - **FocusTemplate.Data** - the entities and their EF Core mapping: `Entities/` (each table's entity next to its
   `IEntityTypeConfiguration`, the configurations listed by hand in `ApplyEntityConfigurations`), `Auditing/`
   (`IAuditable`, `ICurrentUser`, the interceptor and the shadow columns), the model in `AppDbContextBase` with its two
@@ -26,8 +27,7 @@ Shared spine:
   **Read/write split**), the `Migrations/` folder, a design-time factory, and the dev seed. Referenced by both APIs and
   the AppHost migration resource. **No DDD layer**:
   entities are plain classes
-  (`required`/`init`, public setters, no base types, no domain events) referencing each other by id without
-  navigations. Business rules - lifecycle, ownership, thresholds - live in the Mediator handler that needs them, which
+  (`required`/`init`, public setters, no base types, no domain events). Business rules - lifecycle, ownership, thresholds - live in the Mediator handler that needs them, which
   answers a refusal with a case of its result union (see **Errors are values**). Postgres is the `postgis/postgis`
   image: the station location is a `geography` point via NetTopologySuite, created as
   `new Point(longitude, latitude) { SRID = 4326 }` (longitude first: swapped arguments still compile);
@@ -50,21 +50,21 @@ Admin vertical (`src/admin/`):
   records and result unions are generated into its `generated/<Slice>/` folder from `../spec/api.tsp` (namespace
   `FocusTemplate.Admin.Api.Features.<Slice>`, the one the slice's handlers use), the emitted `openapi.yaml` is
   served as-is; `Features/<Slice>/` holds the slice's Mediator handlers (EF Core, queries through `ReadOnlyAppDbContext`
-  and commands through `AppDbContext`, backed by PostgreSQL) and endpoint hooks. Callers present a Keycloak bearer
-  token, every endpoint group requires one through its hooks file (see **Authentication**).
+  and commands through `AppDbContext`, backed by PostgreSQL) and, where needed, endpoint hooks. Callers present a
+  Keycloak bearer token, which the spec's `@useAuth` requires of every endpoint, and the permissions an operation's
+  `@requiresPermission` names (see **Authentication** and **Authorization**).
 - **FocusTemplate.Admin.Client** - the generated typed HTTP clients of the vertical (`tspconfig.yaml`,
   `output-type: client`), referenced by every consumer so the client an app ships is the one the tests drive.
 - **FocusTemplate.Admin.Web** - the Blazor WASM client (Radzen UI, `software` theme). Talks to the API through the typed
   clients from `FocusTemplate.Admin.Client`. Every page but Home needs a signed-in user, which the client
-  learns about from the BFF (`BffAuthenticationStateProvider`). Grouped by feature: `Features/<Slice>/` holds a
-  slice's page, view model, validator, mapper and its registration (`Add<Slice>()`), named without the slice's prefix
-  (`Form`, `FormValidator`, `Mapper`) and `internal`. `Foundation/` holds the domain-neutral parts:
-  `Validation/Core/` what validated forms need apart from any component (`FormMessages`, what shows where;
-  `FormValidation`, when the rules run; the path registry, `ValidatorBase`), `Validation/App/` the component bases
-  (`FormHostBase`, `AppInputBase`, `IFormHost`), `Forms/` the Radzen components (`AppForm`, the input wrappers,
-  `AppValidationMessage`), `Shell/` the app's frame (`MainLayout`, `Home`, `NotFound`) and `Diagnostics/` the request
-  diagnostics page. `Infrastructure/` holds the integrations: `Authentication/` and `Configuration/`. The validation
-  demo is `Features/DemoProfiles/`, at `/demo/validation`; see **Forms**.
+  learns about from the BFF (`BffAuthenticationStateProvider`). The app is grouped by feature: `Features/<Slice>/` holds
+  a slice's page, view model, validator, mapper and its registration (`Add<Slice>()`), named without the slice's prefix
+  (`Form`, `FormValidator`, `Mapper`) and marked `internal`. `Foundation/` holds the domain-neutral parts:
+  `Validation/Core/` (shared validation primitives: `FormMessages`, `FormValidation`, the path registry, `ValidatorBase`),
+  `Validation/App/` (component base classes: `FormHostBase`, `AppInputBase`, `IFormHost`), `Forms/` (Radzen wrappers: `AppForm`,
+  input wrappers, `AppValidationMessage`), `Shell/` (app shell: `MainLayout`, `Home`, `NotFound`) and `Diagnostics/` (request
+  diagnostics page). `Infrastructure/` contains integrations like `Authentication/` and `Configuration/`. The validation
+  demo lives in `Features/DemoProfiles/` at `/demo/validation`; see **Forms**.
 - **FocusTemplate.Admin.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
   `/_otlp/*` → dashboard, `/_analytics/*` → Umami. The browser only ever talks to the BFF, which also holds the user's
   session (cookie + OIDC code flow against Keycloak) and attaches the access token to `/_api/*` calls.
@@ -157,6 +157,12 @@ Open the BFF (`http://localhost:5770` without the ingress, `https://localhost:77
 external realm). Keycloak's admin console is the `keycloak` resource's
 endpoint, user `admin`, password in the AppHost's secret store under `Parameters:keycloak-password`.
 
+The AppHost's launch profile uses `localhost` URLs on purpose, so every dashboard link is a `localhost` origin: the
+browser-refresh servers of Visual Studio and `dotnet watch` accept only `localhost` origins since CVE-2026-58649, and a
+page opened through a `*.dev.localhost` link loads fine but silently loses Hot Reload (its refresh WebSocket is
+answered with 403). Hot Reload of the WASM client works with the AppHost started from Visual Studio (Start Without
+Debugging); `aspire start` and `dotnet watch` only rebuild and restart the BFF, after which the browser needs F5.
+
 **Stop the AppHost before `dotnet build`/`dotnet test`** - a running BFF locks its output binary and
 the build fails (MSB3027). To apply code changes without a full restart, use the **rebuild** command
 on the affected resource (Aspire dashboard or MCP).
@@ -199,7 +205,7 @@ Skills live in `.claude/skills/`. Pick by task - these are all permission-allowl
 | Any .NET package API question (Radzen, YARP, OTel, …) | `dotnet-inspect` skill: `dnx dotnet-inspect -y -- member/type/find/diff --package <id>` |
 | Browser reproduction, manual UI checks, screenshots | `playwright-cli` skill (persistent E2E tests go in `FocusTemplate.Admin.Web.E2E`) |
 | Drive the app on the Android emulator: find/tap/type/screenshot/page source | `appium` MCP (element-based, same locator semantics as the tests; persistent E2E tests go in `FocusTemplate.Public.Mobile.E2E`). Raw `adb` is the fallback + logcat channel |
-| Change an API (route, wire model, status code, new operation) | edit `src/<vertical>/spec/<Slice>.tsp` (new slice: add the file + import it in `spec/api.tsp`) → `npm run gen` (repository root) → implement/adjust the Mediator handler in the Api project's `Features/<Slice>/` → fix the consumers, which compile against the regenerated `{Interface}Client` (never hand-write HTTP calls in Web/Mobile) → tests. This repository's rules: **Spec-first APIs** under Conventions; what the emitter produces is documented with the emitter |
+| Change an API (route, wire model, status code, new operation) | edit `src/<vertical>/spec/<slice>/*.tsp` (new slice: add the kebab-case folder + import its files in `spec/api.tsp`; new permissions: `src/spec/permissions/<slice>.tsp`) → `npm run gen` (repository root) → implement/adjust the Mediator handler in the Api project's `Features/<Slice>/` → fix the consumers, which compile against the regenerated `{Interface}Client` (never hand-write HTTP calls in Web/Mobile) → tests. This repository's rules: **Spec-first APIs** under Conventions; what the emitter produces is documented with the emitter |
 | Formatting | `dotnet format`, `dotnet jb cleanupcode` (see above) |
 | Wire an existing app into Aspire (one-time) | `aspireify` skill - already completed for this repo |
 
@@ -344,7 +350,10 @@ exactly this. Traps, learned the hard way:
 Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-slim`.
 
 - **Layout**: one contract per vertical in `src/<vertical>/spec/`. `api.tsp` carries the service
-  metadata and imports one `<Slice>.tsp` per feature slice, all sharing the namespace. Three projects per
+  metadata and `@useAuth`, and imports the files of one folder per feature slice (`weather-forecasts/weather-forecasts.tsp`,
+  `user-management/users.tsp` + `groups.tsp`), all sharing the namespace; files and folders are kebab-case, like the
+  routes. What both verticals share sits in `src/spec/`: `primitives.tsp`, `paging.tsp` (`PageQuery`, spread into a
+  search request) and `permissions/`. Three projects per
   vertical generate, each with its own `tspconfig.yaml` and `generated/` folder: the Api project
   (`output-type: api`), the Shared project (`contracts`) and the Client project (`client`). Everything
   else consumes them by project reference, so a new consumer references `FocusTemplate.<V>.Client`
@@ -356,9 +365,9 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
   FocusTemplate.<V>.Client.{interface}` does the same on the consumer side. What every slice shares
   (`NotFound`, `ApiClientSupport`, the `{Status}Problem` cases) lands one namespace up.
 - **Hand-written code per slice** lives in `src/<vertical>/FocusTemplate.<V>.Api/Features/<Slice>/`:
-  the Mediator handlers, and `*Endpoints.Hooks.cs` implementing the `ConfigureGroup` /
-  `Configure{Op}` hooks for auth, rate limiting and caching. Consumers call the generated client and
-  never hand-write HTTP.
+  the Mediator handlers, and where needed `*Endpoints.Hooks.cs` implementing the `ConfigureGroup` /
+  `Configure{Op}` hooks for rate limiting and caching; authorization comes from the spec, never from a hook.
+  Consumers call the generated client and never hand-write HTTP.
 - **Errors are values**: a handler returns the generated result union, answering a modeled status
   with its case record (`new NotFound("…")`) and never with an exception. Anything genuinely
   unhandled becomes a 500 problem response through `AddProblemDetails()`. Consumers match the
@@ -378,7 +387,10 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
   existing typed-HttpClient helpers,
   whose `BaseAddress` carries the BFF prefix or the service-discovery name. Extra members go into a
   hand-written partial next to the consumer's project file.
-- **Spec style**: routes are kebab-case plural nouns (`/weather-forecasts`). DTOs carry a `Request`
+- **Spec style**: routes are kebab-case plural nouns (`/weather-forecasts`); an action that is no CRUD is a custom
+  method after a colon (`POST /users/{id}:deactivate`, AIP-136), `/users/me` the alias of the signed-in user. A list
+  that searches, sorts or pages is `@httpQuery` (HTTP QUERY with a body) over a request spreading `PageQuery`, sorted
+  by an enum the handler switches over, never a column name. DTOs carry a `Request`
   or `Response` suffix, which also keeps them distinct from the like-named entities in
   `FocusTemplate.Data` that the handlers map from. DELETE of a missing resource answers 204, so a
   retrying client stays idempotent. JSON stays camelCase, which is TypeSpec's property style and
@@ -513,8 +525,9 @@ Keycloak is the identity provider and the BFF holds the session: the Duende-BFF 
   due. A 401 the API itself answers on those routes reaches the browser as 502 Bad Gateway, without the API's
   `WWW-Authenticate` (a response transform of `AddAccessTokenTransform`): the BFF authenticated the session and sent its
   token, the API rejected that token, and a new login would only bring back the same kind of token. So a 401 from the
-  BFF always means the session is gone, and a 502 on a proxied call points at the BFF and the API disagreeing about
-  tokens (audience, issuer); the reason is in the API's log. Lax plus header, not Strict: Strict withholds
+  BFF always means the session is gone, and a 502 on a proxied call or on `/bff/user` (which asks the API for the
+  user's permissions) points at the BFF and the API disagreeing about tokens (audience, issuer), or at the API being
+  down; the reason is in the API's log. Lax plus header, not Strict: Strict withholds
   the cookie on the redirect back from a cross-site identity provider, so the first page after login is anonymous and
   loops, and the header, which a
   cross-site page cannot add without a CORS preflight the BFF never grants, is the defense anyway. The session cookie
@@ -526,12 +539,13 @@ Keycloak is the identity provider and the BFF holds the session: the Duende-BFF 
   accept Secure cookies from `http://localhost` (the E2E suite runs Chromium that way, `__Host-` prefix included),
   Safari does not.
 - **Admin API**: JwtBearer with `Oidc:Authority` and `Oidc:Audience`, `MapInboundClaims = false` so the claims keep
-  Keycloak's names. Every endpoint group requires authorization through its `*Endpoints.Hooks.cs` (`ConfigureGroup` →
-  `RequireAuthorization()`), never a fallback policy, which would also lock the health probes Aspire relies on;
-  `AuthenticationTests.EveryApiEndpointRequiresAuthorization` catches a slice without its hook. `ICurrentUser` is
+  Keycloak's names. Every generated endpoint requires authorization because `api.tsp` declares `@useAuth(BearerAuth)`,
+  never a fallback policy, which would also lock the health probes Aspire relies on;
+  `AuthenticationTests.EveryApiEndpointRequiresAuthorization` catches a spec that lost it. `ICurrentUser` is
   `HttpContextCurrentUser`: the `sub` claim is Keycloak's user UUID and therefore the `UserId`, no directory lookup;
   a singleton over `IHttpContextAccessor` because its consumer, the auditing interceptor, is one.
-- **WASM**: `BffAuthenticationStateProvider` asks `/bff/user` once per load. `[Authorize]` in `_Imports.razor` and
+- **WASM**: `BffAuthenticationStateProvider` asks `/bff/user` once per load; only its 401 means anonymous, any other
+  failure throws into the error UI, since a login would bring back the same state. `[Authorize]` in `_Imports.razor` and
   `AuthorizeRouteView` in `App.razor` guard every page but `Home`, which is `[AllowAnonymous]`. The layout's login
   button, shown to anonymous visitors, and `RedirectToLogin` do a full load to `bff/login`, the logout button
   navigates to the `bff:logout_url` claim with `forceLoad`, since both live outside the client router. Proxied
@@ -558,16 +572,60 @@ Keycloak is the identity provider and the BFF holds the session: the Duende-BFF 
 - **Not yet**: the Public API stays anonymous until the mobile client's PKCE leg. Server-side sessions and backchannel
   logout wait for Redis; refresh-token revocation on logout is open too. A restarted BFF container or a second
   instance needs a shared, persisted Data Protection key ring to read the session cookie, and a second instance also
-  needs a refresh lock across instances, the token management's being per process. `@authorize("policy")` in TypeSpec
-  (`RequireAuthorization(policy)` on the generated endpoint) and the OpenAPI security scheme follow, and so does the
-  realm baked into a published Keycloak's image.
+  needs a refresh lock across instances, the token management's being per process. The realm baked into a published
+  Keycloak's image follows.
+
+### Authorization
+
+Keycloak says who the user is, the database says what they may do. No roles in the token, no ASP.NET Identity.
+
+- **Permissions** are named in the spec: one enum per slice in `src/spec/permissions/<slice>.tsp`, marked
+  `@permissions(Permission)` in namespace `FocusTemplate.Primitives.Permissions`
+  (`enum UserManagement { ViewUsers, ManageUsers, ViewGroups, ManageGroups }`), generated into Primitives as
+  `UserManagement.ViewUsers` (the `Permission` "UserManagement.ViewUsers") plus `Permission.All`. An operation or
+  interface states what it needs with `@requiresPermission(Permissions.UserManagement.ViewUsers)` (qualified, since
+  the enum lives outside the service namespace), and the generated endpoint carries it as
+  `RequiresPermissionAttribute` metadata (generated into `Admin.Shared`), answering 403 without it; an operation
+  without one only needs a signed-in user. Renaming or removing a permission is a migration, since groups grant it by
+  name.
+- **One mechanism on both ends**, no policies and no roles: the attribute yields a `PermissionRequirement`, and each
+  side registers its own handler of it. The API's `PermissionRequirementHandler` asks the database; the WASM client's
+  `PermissionClaimsHandler` reads the `permission` claims (`BffClaimTypes.Permission`) of `/bff/user`, which the BFF
+  adds from the API's `GET /users/me` with the session's token, so a load costs one request. Without the API's answer
+  `/bff/user` answers 502, never a user without permissions. A page or component requires a permission with
+  `@attribute [RequiresPermission(UserManagement.Names.ViewUsers)]` (attribute arguments must be constants, hence
+  `Names`; code passes the values); `AuthorizeRouteView` and `AuthorizeView` honor it from .NET 11
+  (`RequiresPermissionTests`). The client only hides, the API decides.
+- **Model**: a `Group` grants permissions (`Group.Permissions`) and has users as members (`Group.Members`,
+  `User.Groups`); nothing is granted to a user directly. Both many-to-many relationships have a join entity class
+  (`GroupPermission`, `GroupMember`), since a join entity EF makes up is no `IAuditable` and who added a member or
+  granted a permission is the audit trail that matters most. Writes go through the navigations too
+  (`group.Members.Add(user)`, after a filtered `Include` of what they touch), and EF adds or deletes the join row.
+  `PermissionDefinition` is the table of the release's permissions, seeded by `HasData` from
+  `Permission.All`, so a new permission is `dotnet ef migrations add`. The managed group `Administrators`
+  (`WellKnownGroups.Administrators`, `IsManaged`) is seeded the same way with every permission: it cannot be deleted
+  or have its grants changed, and its last active member can neither leave nor be deactivated.
+- **Runtime**: `UserProvisioningMiddleware` (between authentication and authorization) mirrors the token's user into
+  `users` on their first request and writes `user_activities.last_seen_at` at most once per 15 minutes and instance
+  (remembered in `IMemoryCache`), through `User.Activity` in the same `SaveChanges`: the activity table is no
+  `IAuditable`, so the user's audit columns stay the changes somebody
+  made. `PermissionRequirementHandler` asks the scoped `UserPermissions`, one query per request over the groups of an
+  **active** user; a deactivated user holds nothing, whatever their token.
+- **First administrator**: in run mode the dev seed (`DevelopmentSeed`, which also runs `WeatherSeed`) makes
+  `WellKnownUsers.Developer` a member of `Administrators`. In production the Admin API image runs once as a job with
+  `bootstrap-admin --subject <keycloak sub>` (`AdministratorBootstrap`): idempotent, works before the user's first
+  sign-in, reactivates them, and is also the repair when the managed group lost its last active member.
+- **Tests**: `UserManagementArrangements` arranges users, a group granting permissions to one user (`GrantAsync`) and
+  the managed group (`AddAdministratorsAsync`: the reset removes it, Respawn keeps only the `permissions` table). Use
+  a fresh `UserId` per test: the provisioning middleware remembers whom it has seen across the tests of a class, while
+  the reset removes their rows.
 
 ### Database & migrations
 
 - **Mapping**: a property's value constraints are annotations on the entity - `[MaxLength]`, `[Precision]`, `[Range]` -
   so the limit sits where the property is declared. Every string property has a `[MaxLength]`, so no column ends up
   unbounded `text` by default. The entity's `IEntityTypeConfiguration` keeps what is not a constraint on a single
-  value: keys and sentinels, column types, relationships without navigations, and indexes.
+  value: keys and sentinels, column types, relationships, and indexes.
   Validation attributes EF ignores (`[Range]`, `[MinLength]`, `[RegularExpression]`, ...) become CHECK constraints
   through `EFCore.CheckConstraints` - but it silently skips a `[Range]` whose bounds are not of the property's type,
   and `RangeAttribute` has no decimal bounds, so a decimal range is a `HasCheckConstraint` in the configuration.
@@ -611,7 +669,8 @@ Keycloak is the identity provider and the BFF holds the session: the Duende-BFF 
   `src/FocusTemplate.Data/Migrations/` and are exempt from StyleCop via an `.editorconfig`
   `generated_code` carve-out. You can also use the migration resource's dashboard commands
   (Add Migration, Update/Reset/Drop Database, Status).
-- **Dev seed data** lives in `WeatherSeed` and runs via EF `UseSeeding`/`UseAsyncSeeding` when the
+- **Dev seed data** lives in `DevelopmentSeed` (`WeatherSeed` plus the developer as administrator, see
+  **Authorization**) and runs via EF `UseSeeding`/`UseAsyncSeeding` when the
   migration tool applies migrations in **run mode only** (the AppHost sets `Database__SeedTestData` on
   the tool resource via `configureToolResource`; the published bundle never seeds). The seed is
   idempotent (insert-if-empty). Implement **both** the sync and async seed delegates - the EF CLI uses
@@ -642,7 +701,7 @@ Isolation model: **one container, one database per test class, fresh state per t
   `__EFMigrationsHistory` preserved so migrations never re-run). Every test starts on an empty,
   migrated schema and **arranges exactly the rows it asserts** (`Factory.CreateDbContext()`).
 
-Tests never rely on the dev seed - `WeatherSeed` is dev/E2E-only, and the E2E suite verifies it
+Tests never rely on the dev seed - `DevelopmentSeed` is dev/E2E-only, and the E2E suite verifies it
 through the production seeding path. If a read-heavy suite over an expensive shared dataset emerges
 later, add a **seeded, immutable, shared** database + fixture for those tests (seed once, read in
-parallel, never mutate).
+parallel, never mutate).parallel, never mutate).

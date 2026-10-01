@@ -282,6 +282,10 @@ dotnet_diagnostic.sa1636.severity = none
 # CA1716: Identifiers should not match keywords
 dotnet_diagnostic.ca1716.severity = none
 
+# CA1711: Identifiers should not have incorrect suffix. Permission is reserved for Code Access Security, which .NET no
+# longer has, and our permissions are a domain concept (GroupPermission).
+dotnet_code_quality.ca1711.allowed_suffixes = Permission
+
 # ReSharper properties
 resharper_align_multiline_binary_expressions_chain = false
 resharper_align_multiline_statement_conditions = false
