@@ -8,8 +8,10 @@ public sealed class KeycloakRealmTests
 	[Fact]
 	public async Task PublishingTakesTheRealmFromParametersEvenWithTheLocalKeycloakOn()
 	{
-		await using IDistributedApplicationTestingBuilder builder =
-			await CreateAsync("--operation", "publish", "Features:LocalKeycloak=true");
+		await using IDistributedApplicationTestingBuilder builder = await CreateAsync(
+			"--operation",
+			"publish",
+			"Features:LocalKeycloak=true");
 
 		Assert.True(builder.ExecutionContext.IsPublishMode);
 		await AssertRealmFromParametersAsync(builder);
@@ -23,11 +25,40 @@ public sealed class KeycloakRealmTests
 	}
 
 	[Fact]
+	public async Task TheLocalKeycloakIsRecreatedOnEveryStartByDefault()
+	{
+		await using IDistributedApplicationTestingBuilder builder = await CreateAsync("Features:LocalKeycloak=true");
+
+		KeycloakResource keycloak = Assert.Single(builder.Resources.OfType<KeycloakResource>());
+
+		Assert.False(keycloak.TryGetLastAnnotation(out ContainerLifetimeAnnotation? _));
+		Assert.DoesNotContain(
+			keycloak.Annotations.OfType<ContainerMountAnnotation>(),
+			mount => mount.Type == ContainerMountType.Volume);
+	}
+
+	[Fact]
 	public async Task TurningTheLocalKeycloakOffTakesTheRealmFromParameters()
 	{
 		await using IDistributedApplicationTestingBuilder builder = await CreateAsync("Features:LocalKeycloak=false");
 
 		await AssertRealmFromParametersAsync(builder);
+	}
+
+	[Fact]
+	public async Task TurningThePersistentLocalKeycloakOnKeepsTheContainerAndItsDataBetweenStarts()
+	{
+		await using IDistributedApplicationTestingBuilder builder = await CreateAsync(
+			"Features:LocalKeycloak=true",
+			"Features:PersistentLocalKeycloak=true");
+
+		KeycloakResource keycloak = Assert.Single(builder.Resources.OfType<KeycloakResource>());
+
+		Assert.True(keycloak.TryGetLastAnnotation(out ContainerLifetimeAnnotation? lifetime));
+		Assert.Equal(ContainerLifetime.Persistent, lifetime.Lifetime);
+		Assert.Contains(
+			keycloak.Annotations.OfType<ContainerMountAnnotation>(),
+			mount => mount.Type == ContainerMountType.Volume);
 	}
 
 	private static async Task AssertRealmFromParametersAsync(IDistributedApplicationTestingBuilder builder)
@@ -66,7 +97,14 @@ public sealed class KeycloakRealmTests
 
 	private static Task<IDistributedApplicationTestingBuilder> CreateAsync(params string[] args) =>
 		DistributedApplicationTestingBuilder.CreateAsync<FocusTemplate_AppHost>(
-			["Features:TlsOffloadingIngress=false", "Features:Analytics=false", "Features:Mobile=false", .. args,],
+			[
+				"Features:TlsOffloadingIngress=false",
+				"Features:Analytics=false",
+				"Features:Mobile=false",
+				"Features:PersistentLocalKeycloak=false",
+				"Features:PersistentDatabase=false",
+				.. args,
+			],
 			TestContext.Current.CancellationToken);
 
 	private static async Task<Dictionary<string, string>> OidcEnvironmentAsync(

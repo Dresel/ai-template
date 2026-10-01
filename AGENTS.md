@@ -311,8 +311,11 @@ exactly this. Traps, learned the hard way:
   template stay, so the file still diffs against a newer template: `Extensions` in both ServiceDefaults projects,
   `BlazorClientExtensions`.
 - **Feature flags**: `Features:Analytics`, `Features:TlsOffloadingIngress`, `Features:Mobile`
-  (default **off**: no devtunnel/emulator requirements on a plain `aspire start`) and `Features:LocalKeycloak` (default
-  on; off takes an existing realm from parameters, see **Authentication**) in the AppHost's
+  (default **off**: no devtunnel/emulator requirements on a plain `aspire start`), `Features:LocalKeycloak` (default
+  on; off takes an existing realm from parameters, see **Authentication**) and `Features:PersistentLocalKeycloak` (default
+  **off**; on keeps the local Keycloak container and its data between starts, see **Authentication**) and
+  `Features:PersistentDatabase` (default **off**; on keeps the dev Postgres and its data between starts, see
+  **Database & migrations**) in the AppHost's
   `appsettings.json`, overridable per-developer via the gitignored `appsettings.local.json`. The
   E2E fixtures pin them via CLI args. Authentication itself has no flag, it is always on.
 - **Shared DTOs** live in the vertical's `Shared` project (`FocusTemplate.Admin.Shared` /
@@ -475,6 +478,15 @@ Keycloak is the identity provider and the BFF holds the session: the Duende-BFF 
   `KeycloakRealm` carries what the projects need either way; `WithKeycloakAudience` / `WithKeycloakClient`
   (`AuthenticationExtensions`) hand a project `Oidc__Authority` plus its audience or its client id and secret, and
   wait for the Keycloak. The realm file and the values in `AddLocalKeycloakRealm` must stay in sync by hand.
+  Every start waits for Keycloak's JVM and the realm import. `Features:PersistentLocalKeycloak` (off by default, on in your
+  `appsettings.local.json`) gives the container a persistent lifetime and a data volume: it keeps running between
+  `aspire stop` and `aspire start`, so the wait is gone, and the developer's Keycloak session and refresh token survive,
+  so the BFF session cookie signs you in again without a login. The price is that Keycloak skips importing a realm
+  that already exists: a change to `focus-realm.json` arrives only after `aspire stop --force --volumes`, which removes
+  the AppHost's persistent containers and their volumes (before Aspire.Hosting 13.6 the CLI warns that it cannot
+  verify volume ownership and still tries; `docker volume rm` of the volume named after the resource is the
+  fallback). The E2E fixtures pin the flag off, since the
+  testing builder would otherwise share the developer's container and `KeycloakAdmin` edits the realm.
 - **BFF**: cookie session (`__Host-focus.session`, HttpOnly, Secure, SameSite=Lax) + OIDC code flow with the authorization request
   pushed (PAR: the handler's `UseIfAvailable` default meets Keycloak's advertised endpoint, and the E2E login test
   asserts the `request_uri` on the authorize request) and the code posted back (form_post, the handler's default too,
@@ -539,9 +551,10 @@ Keycloak is the identity provider and the BFF holds the session: the Duende-BFF 
   `sid`, removes the `admin-api-audience` mapper, and puts the realm back when disposed, since the whole collection
   shares one Keycloak. Nothing in the tests handles the app's tokens, `KeycloakAdmin`'s own admin
   token aside; direct-grant tokens for scripts and PKCE for mobile come with the Public API leg. The fixtures pin
-  `Features:LocalKeycloak=true`, since they log in as the developer; `KeycloakRealmTests` covers the external realm on
-  the AppHost's model alone, built but never started: with the flag off and when publishing, no Keycloak container,
-  and each `Oidc__*` variable fed by its parameter.
+  `Features:LocalKeycloak=true`, since they log in as the developer, and `Features:PersistentLocalKeycloak=false`;
+  `KeycloakRealmTests` covers both flags on the AppHost's model alone, built but never started: with the local
+  Keycloak off and when publishing, no Keycloak container and each `Oidc__*` variable fed by its parameter; with the
+  persistent flag on, the container's persistent lifetime and volume, and neither by default.
 - **Not yet**: the Public API stays anonymous until the mobile client's PKCE leg. Server-side sessions and backchannel
   logout wait for Redis; refresh-token revocation on logout is open too. A restarted BFF container or a second
   instance needs a shared, persisted Data Protection key ring to read the session cookie, and a second instance also
@@ -603,8 +616,13 @@ Keycloak is the identity provider and the BFF holds the session: the Duende-BFF 
   the tool resource via `configureToolResource`; the published bundle never seeds). The seed is
   idempotent (insert-if-empty). Implement **both** the sync and async seed delegates - the EF CLI uses
   the synchronous one. Integration tests deliberately run against an unseeded schema.
-- **No data volume** on the dev Postgres: each `aspire start` / E2E run gets a fresh, re-seeded
-  database, keeping runs deterministic and hermetic.
+- **No data volume** on the dev Postgres by default: each `aspire start` / E2E run gets a fresh, re-seeded
+  database, keeping runs deterministic and hermetic. `Features:PersistentDatabase` (on in your `appsettings.local.json`)
+  gives the container a persistent lifetime and a data volume, so a start waits for neither Postgres nor the
+  migrations, which `dotnet ef database update` finds applied, and the seed finds its rows and inserts nothing. The
+  price: a migration edited after it was applied, or one removed, is out of step with `__EFMigrationsHistory` until
+  `aspire stop --force --volumes` drops container and volume (see **Authentication** for the CLI's version caveat).
+  The E2E fixtures pin the flag off.
 
 ### Integration test database
 

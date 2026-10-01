@@ -173,6 +173,7 @@
 			"Bash(rmdir *)",
 
 			"PowerShell(aspire stop --all)",
+			"PowerShell(aspire stop --force *)",
 			"PowerShell(aspire run *)",
 			"PowerShell(aspire restart *)",
 			"PowerShell(aspire command *)",
@@ -185,6 +186,7 @@
 			"PowerShell(aspire new *)",
 
 			"Bash(aspire stop --all)",
+			"Bash(aspire stop --force *)",
 			"Bash(aspire run *)",
 			"Bash(aspire restart *)",
 			"Bash(aspire command *)",

@@ -13,13 +13,23 @@ bool addTlsOffloadingIngress = builder.Configuration.GetValue("Features:TlsOfflo
 bool addMobile = builder.Configuration.GetValue("Features:Mobile", false);
 
 bool addLocalKeycloak = builder.ExecutionContext.IsRunMode && builder.Configuration.GetValue("Features:LocalKeycloak", true);
+bool persistentLocalKeycloak = builder.Configuration.GetValue("Features:PersistentLocalKeycloak", false);
+bool persistentDatabase = builder.Configuration.GetValue("Features:PersistentDatabase", false);
 
-IResourceBuilder<PostgresDatabaseResource> focusDb = builder.AddPostgres("postgres")
+IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres("postgres")
 	.WithImage("postgis/postgis")
-	.WithImageTag("17-3.5")
-	.AddDatabase("focusdb");
+	.WithImageTag("17-3.5");
 
-KeycloakRealm realm = addLocalKeycloak ? builder.AddLocalKeycloakRealm() : builder.AddExternalKeycloakRealm();
+if (persistentDatabase)
+{
+	// No wait for Postgres and the migrations on the next start, and the data survives it. A migration edited after it
+	// was applied needs `aspire stop --force --volumes`.
+	postgres.WithLifetime(ContainerLifetime.Persistent).WithDataVolume();
+}
+
+IResourceBuilder<PostgresDatabaseResource> focusDb = postgres.AddDatabase("focusdb");
+
+KeycloakRealm realm = addLocalKeycloak ? builder.AddLocalKeycloakRealm(persistentLocalKeycloak) : builder.AddExternalKeycloakRealm();
 
 IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api")
 	.WithReference(focusDb)

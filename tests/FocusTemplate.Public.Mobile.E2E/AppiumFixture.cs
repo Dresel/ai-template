@@ -108,6 +108,8 @@ public sealed class AppiumFixture : IAsyncLifetime
 					"Features:Analytics=false",
 					"Features:Mobile=false",
 					"Features:LocalKeycloak=true",
+					"Features:PersistentLocalKeycloak=false",
+					"Features:PersistentDatabase=false",
 				],
 				cancellationTokenSource.Token);
 

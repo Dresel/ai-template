@@ -26,11 +26,18 @@ internal static class AuthenticationExtensions
 			builder.AddParameter("oidc-admin-bff-secret", true));
 	}
 
-	public static KeycloakRealm AddLocalKeycloakRealm(this IDistributedApplicationBuilder builder)
+	public static KeycloakRealm AddLocalKeycloakRealm(this IDistributedApplicationBuilder builder, bool persistent)
 	{
 		IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak("keycloak", 8080)
 			.WithOtlpExporter()
 			.WithRealmImport("./keycloak");
+
+		if (persistent)
+		{
+			// No wait for the JVM and the realm import on the next start, and the developer's session survives it. Keycloak
+			// skips importing a realm that already exists, so a changed focus-realm.json needs `aspire stop --force --volumes`.
+			keycloak.WithLifetime(ContainerLifetime.Persistent).WithDataVolume();
+		}
 
 		return new KeycloakRealm(
 			keycloak,
