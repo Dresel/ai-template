@@ -17,14 +17,18 @@ public sealed class BlazorAppFixture : IAsyncLifetime
 
 	public string StorageState { get; private set; } = string.Empty;
 
-	// Keycloak's login theme: the field ids are stable across its versions, unlike the markup around them.
 	public static async Task LogInAsync(IPage page)
+	{
+		await SubmitLogInAsync(page);
+		await page.GetByTestId("user-name").WaitForAsync();
+	}
+
+	// Keycloak's login theme: the field ids are stable across its versions, unlike the markup around them.
+	public static async Task SubmitLogInAsync(IPage page)
 	{
 		await page.FillAsync("#username", Username);
 		await page.FillAsync("#password", Password);
 		await page.ClickAsync("#kc-login");
-
-		await page.GetByTestId("user-name").WaitForAsync();
 	}
 
 	public async ValueTask DisposeAsync()

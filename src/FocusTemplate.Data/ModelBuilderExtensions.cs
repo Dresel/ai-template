@@ -10,5 +10,11 @@ public static class ModelBuilderExtensions
 		modelBuilder.ApplyConfiguration(new StationConfiguration())
 			.ApplyConfiguration(new ObservationConfiguration())
 			.ApplyConfiguration(new AlertConfiguration())
-			.ApplyConfiguration(new WeatherForecastConfiguration());
+			.ApplyConfiguration(new WeatherForecastConfiguration())
+			.ApplyConfiguration(new UserConfiguration())
+			.ApplyConfiguration(new UserActivityConfiguration())
+			.ApplyConfiguration(new GroupConfiguration())
+			.ApplyConfiguration(new GroupMemberConfiguration())
+			.ApplyConfiguration(new PermissionDefinitionConfiguration())
+			.ApplyConfiguration(new GroupPermissionConfiguration());
 }

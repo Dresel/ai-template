@@ -1,8 +1,11 @@
 import "@spatialfocus/typespec-http-csharp-slim";
 
+// The permissions of the verticals, one file per feature slice
+import "./permissions/user-management.tsp";
+
 using SpatialFocus.Http;
 
-// The spec of the shared spine: the typed ids every vertical uses, and nothing else. No @service on purpose:
+// The spec of the shared spine: the typed ids and the permissions every vertical uses, and nothing else. No @service on purpose:
 // FocusTemplate.Primitives compiles this file alone with output-type: primitives into one Vogen struct per id, and
 // each vertical's api.tsp imports it to reference the ids by this namespace, which is also their C# namespace.
 // @friendlyName keeps the OpenAPI schema names bare: a type outside the service namespace is otherwise published as
@@ -34,3 +37,13 @@ scalar WeatherForecastId extends int32;
 @friendlyName("AlertId")
 @typedId
 scalar AlertId extends uuid;
+
+/** Identifier of a group of users, the unit permissions are granted to. */
+@friendlyName("GroupId")
+@typedId
+scalar GroupId extends uuid;
+
+/** A permission, named after its feature slice and action, such as UserManagement.ManageGroups. Admins grant permissions to groups. */
+@friendlyName("Permission")
+@typedId
+scalar Permission extends string;

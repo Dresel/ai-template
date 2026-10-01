@@ -14,36 +14,7 @@ public static class WeatherSeed
 		(18, "Mild"), (21, "Warm"), (24, "Warm"), (28, "Hot"), (31, "Scorching"),
 	];
 
-	// See https://learn.microsoft.com/en-us/ef/core/modeling/data-seeding#configuration-options-useseeding-and-useasyncseeding-methods
-	public static DbContextOptionsBuilder UseWeatherSeeding(this DbContextOptionsBuilder optionsBuilder) =>
-		optionsBuilder.UseSeeding((context, _) =>
-			{
-				if (Seed(context))
-				{
-					context.SaveChanges();
-				}
-			})
-			.UseAsyncSeeding(async (context, _, cancellationToken) =>
-			{
-				if (Seed(context))
-				{
-					await context.SaveChangesAsync(cancellationToken);
-				}
-			});
-
-	// The seed runs on the migration connection, whose Npgsql type catalog predates PostGIS.
-	// Reloading is required so the first geography insert can resolve the type.
-	private static void ReloadTypes(DbContext context)
-	{
-		if (context.Database.GetDbConnection() is NpgsqlConnection connection)
-		{
-			context.Database.OpenConnection();
-			connection.ReloadTypes();
-		}
-	}
-
-	// Shared by both seed delegates - the EF CLI calls the synchronous one, so neither may be left out.
-	private static bool Seed(DbContext context)
+	internal static bool Seed(DbContext context)
 	{
 		if (context.Set<Station>().Any())
 		{
@@ -115,5 +86,16 @@ public static class WeatherSeed
 				});
 
 		return true;
+	}
+
+	// The seed runs on the migration connection, whose Npgsql type catalog predates PostGIS.
+	// Reloading is required so the first geography insert can resolve the type.
+	private static void ReloadTypes(DbContext context)
+	{
+		if (context.Database.GetDbConnection() is NpgsqlConnection connection)
+		{
+			context.Database.OpenConnection();
+			connection.ReloadTypes();
+		}
 	}
 }

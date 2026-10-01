@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using FocusTemplate.Admin.Client.Users;
 using FocusTemplate.Admin.Shared;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -33,22 +34,36 @@ internal static class AuthenticationEndpoints
 			});
 
 		// 401 rather than a challenge: the client asks on every load and reads 401 as "anonymous". A session whose token
-		// can no longer be refreshed ends here already.
+		// can no longer be refreshed ends here already. The permissions come from the API; when it refuses the token or
+		// fails, 502 as on the proxied routes, since the session is fine and a new login would bring the same token.
 		app.MapGet(
 			"/bff/user",
-			async (HttpContext context) =>
+			async (HttpContext context, UsersClient users) =>
 			{
 				context.Response.Headers.CacheControl = "no-store";
 
-				return context.User.Identity?.IsAuthenticated == true &&
-					await context.GetAccessTokenOrSignOutAsync(context.RequestAborted) is not null
-						? Results.Ok(
-							new UserInfoResponse(
-							[
-								.. context.User.Claims.Select(claim => new UserClaim(claim.Type, claim.Value)),
-								new UserClaim(BffClaimTypes.LogoutUrl, LogoutUrl(context.User)),
-							]))
-						: Results.Unauthorized();
+				if (context.User.Identity?.IsAuthenticated != true ||
+					await context.GetAccessTokenOrSignOutAsync(context.RequestAborted) is null)
+				{
+					return Results.Unauthorized();
+				}
+
+				try
+				{
+					CurrentUserResponse me = await users.MeAsync(context.RequestAborted);
+
+					return Results.Ok(
+						new UserInfoResponse(
+						[
+							.. context.User.Claims.Select(claim => new UserClaim(claim.Type, claim.Value)),
+							new UserClaim(BffClaimTypes.LogoutUrl, LogoutUrl(context.User)),
+							.. me.Permissions.Select(permission => new UserClaim(BffClaimTypes.Permission, permission.Value)),
+						]));
+				}
+				catch (HttpRequestException)
+				{
+					return Results.StatusCode(StatusCodes.Status502BadGateway);
+				}
 			});
 
 		return app;

@@ -5,6 +5,8 @@ info:
   description: Internal API of the Admin vertical. Reached only through the BFF, never by a browser directly.
 tags:
   - name: DemoProfiles
+  - name: Groups
+  - name: Users
   - name: WeatherForecasts
 paths:
   /demo-profiles:
@@ -60,6 +62,339 @@ paths:
                 $ref: '#/components/schemas/SpatialFocus.Http.ValidationProblemDetails'
       tags:
         - DemoProfiles
+  /groups:
+    get:
+      operationId: Groups_list
+      description: Every group, by name.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupSummaryResponse'
+      tags:
+        - Groups
+    post:
+      operationId: Groups_create
+      description: Creates a group without members or permissions.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/SpatialFocus.Http.ValidationProblemDetails'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      tags:
+        - Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+  /groups/{id}:
+    get:
+      operationId: Groups_get
+      description: A group with its members and permissions.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/GroupId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      tags:
+        - Groups
+    put:
+      operationId: Groups_update
+      description: Renames a group or changes its description, a managed group too.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/GroupId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/SpatialFocus.Http.ValidationProblemDetails'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      tags:
+        - Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+    delete:
+      operationId: Groups_delete
+      description: Deletes a group; its members lose what it granted. Not a managed group. A missing group answers 204 too, so a retry stays idempotent.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/GroupId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      tags:
+        - Groups
+  /groups/{id}/members/{userId}:
+    put:
+      operationId: Groups_addMember
+      description: Adds a user to the group; a member already stays one.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/GroupId'
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      tags:
+        - Groups
+    delete:
+      operationId: Groups_removeMember
+      description: Removes a user from the group; one who is no member answers 204 too. Not the last active member of a managed group.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/GroupId'
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      tags:
+        - Groups
+  /groups/{id}/permissions:
+    put:
+      operationId: Groups_setPermissions
+      description: Sets every permission the group grants, replacing the ones before. Not for a managed group.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/GroupId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      tags:
+        - Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Permission'
+  /users:
+    post:
+      operationId: Users_search
+      description: Searches the users who have signed in at least once.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPageResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/SpatialFocus.Http.ValidationProblemDetails'
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSearchRequest'
+  /users/me:
+    get:
+      operationId: Users_me
+      description: The signed-in user and their permissions.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUserResponse'
+      tags:
+        - Users
+  /users/{id}:
+    get:
+      operationId: Users_get
+      description: A user, their groups and their permissions.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      tags:
+        - Users
+  /users/{id}:activate:
+    post:
+      operationId: Users_activate
+      description: Reactivates a deactivated user.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      tags:
+        - Users
+  /users/{id}:deactivate:
+    post:
+      operationId: Users_deactivate
+      description: 'Deactivates a user: from their next request on they hold no permission. Neither the caller nor the last active member of a managed group.'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      tags:
+        - Users
   /weather-forecasts:
     get:
       operationId: WeatherForecasts_list
@@ -101,8 +436,29 @@ paths:
                 $ref: '#/components/schemas/ProblemDetails'
       tags:
         - WeatherForecasts
+security:
+  - BearerAuth: []
 components:
   schemas:
+    CurrentUserResponse:
+      type: object
+      required:
+        - id
+        - displayName
+        - permissions
+      properties:
+        id:
+          $ref: '#/components/schemas/UserId'
+          description: Identifier, the subject the identity provider issued.
+        displayName:
+          type: string
+          description: Display name.
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+          description: Every permission the user's groups grant, so the UI can hide what the user may not do.
+      description: The signed-in user and what they may do.
     DemoAddressRequest:
       type: object
       required:
@@ -207,6 +563,120 @@ components:
       minLength: 1
       maxLength: 20
       description: 'A tag: one to twenty characters.'
+    GroupId:
+      type: string
+      format: uuid
+      description: Identifier of a group of users, the unit permissions are granted to.
+    GroupMemberResponse:
+      type: object
+      required:
+        - id
+        - displayName
+        - isActive
+      properties:
+        id:
+          $ref: '#/components/schemas/UserId'
+          description: Identifier of the user.
+        displayName:
+          type: string
+          description: Display name.
+        isActive:
+          type: boolean
+          description: False once the user is deactivated.
+      description: A member of a group.
+    GroupReferenceResponse:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          $ref: '#/components/schemas/GroupId'
+          description: Identifier.
+        name:
+          type: string
+          description: Name.
+      description: A group a user is a member of.
+    GroupRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Name, unique.
+        description:
+          type: string
+          maxLength: 500
+          description: What the group is for.
+      description: The name and description of a group.
+    GroupResponse:
+      type: object
+      required:
+        - id
+        - name
+        - isManaged
+        - memberCount
+        - members
+        - permissions
+      properties:
+        id:
+          $ref: '#/components/schemas/GroupId'
+          description: Identifier.
+        name:
+          type: string
+          description: Name, unique.
+        description:
+          type: string
+          description: What the group is for.
+        isManaged:
+          type: boolean
+          description: 'Managed by the application: its permissions come with each release, and it cannot be deleted.'
+        memberCount:
+          type: integer
+          format: int32
+          description: How many users are members.
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupMemberResponse'
+          description: The members, by display name.
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+          description: The permissions the group grants its members.
+      description: A group with its members and permissions.
+    GroupSummaryResponse:
+      type: object
+      required:
+        - id
+        - name
+        - isManaged
+        - memberCount
+      properties:
+        id:
+          $ref: '#/components/schemas/GroupId'
+          description: Identifier.
+        name:
+          type: string
+          description: Name, unique.
+        description:
+          type: string
+          description: What the group is for.
+        isManaged:
+          type: boolean
+          description: 'Managed by the application: its permissions come with each release, and it cannot be deleted.'
+        memberCount:
+          type: integer
+          format: int32
+          description: How many users are members.
+      description: A group in a list.
+    Permission:
+      type: string
+      description: A permission, named after its feature slice and action, such as UserManagement.ManageGroups. Admins grant permissions to groups.
     ProblemDetails:
       type: object
       properties:
@@ -301,6 +771,126 @@ components:
         - warning
         - info
       description: 'How much a failed rule weighs: only an error blocks the request.'
+    UserId:
+      type: string
+      format: uuid
+      description: Identifier of a user, the owner of stations and the author of audited changes.
+    UserPageResponse:
+      type: object
+      required:
+        - items
+        - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummaryResponse'
+          description: The users of this page.
+        total:
+          type: integer
+          format: int32
+          description: How many users match in all.
+      description: A page of users, and how many match in all.
+    UserResponse:
+      type: object
+      required:
+        - id
+        - displayName
+        - isActive
+        - lastSeenAt
+        - firstSeenAt
+        - groups
+        - permissions
+      properties:
+        id:
+          $ref: '#/components/schemas/UserId'
+          description: Identifier, the subject the identity provider issued.
+        displayName:
+          type: string
+          description: Display name, as the identity provider last reported it.
+        email:
+          type: string
+          description: E-mail address, as the identity provider last reported it.
+        isActive:
+          type: boolean
+          description: 'False once deactivated: the user then holds no permission, whatever their token says.'
+        lastSeenAt:
+          type: string
+          format: date-time
+          description: Last request the user made, to a quarter of an hour.
+        firstSeenAt:
+          type: string
+          format: date-time
+          description: First request the user made.
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupReferenceResponse'
+          description: The groups the user is a member of, by name.
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+          description: Every permission the user's groups grant.
+      description: A user with their groups and the permissions those grant.
+    UserSearchRequest:
+      type: object
+      properties:
+        search:
+          type: string
+          maxLength: 100
+          description: Part of the display name or e-mail address.
+        sort:
+          $ref: '#/components/schemas/UserSort'
+          description: Order of the list, by display name unless given.
+        descending:
+          type: boolean
+          description: From last to first instead.
+        skip:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Items to skip.
+          default: 0
+        top:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 100
+          description: Items per page, at most 100.
+          default: 25
+      description: Which users to list, in which order, and which page of them.
+    UserSort:
+      type: string
+      enum:
+        - displayName
+        - lastSeenAt
+      description: What a user list is ordered by.
+    UserSummaryResponse:
+      type: object
+      required:
+        - id
+        - displayName
+        - isActive
+        - lastSeenAt
+      properties:
+        id:
+          $ref: '#/components/schemas/UserId'
+          description: Identifier, the subject the identity provider issued.
+        displayName:
+          type: string
+          description: Display name, as the identity provider last reported it.
+        email:
+          type: string
+          description: E-mail address, as the identity provider last reported it.
+        isActive:
+          type: boolean
+          description: 'False once deactivated: the user then holds no permission, whatever their token says.'
+        lastSeenAt:
+          type: string
+          format: date-time
+          description: Last request the user made, to a quarter of an hour.
+      description: A user in a list.
     WeatherForecastId:
       type: integer
       format: int32
@@ -327,3 +917,7 @@ components:
           type: string
           description: Free-text summary.
       description: A weather forecast for one day.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: Bearer

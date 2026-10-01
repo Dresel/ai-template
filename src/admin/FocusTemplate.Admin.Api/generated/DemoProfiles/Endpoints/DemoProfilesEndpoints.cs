@@ -28,10 +28,10 @@ public static partial class DemoProfilesEndpoints
 		RouteGroupBuilder group = app.MapGroup("/demo-profiles").WithTags("DemoProfiles");
 		ConfigureGroup(group);
 
-		RouteHandlerBuilder createEndpoint = group.MapPost("", CreateHandler).WithName("DemoProfiles_create").Produces<DemoProfileResponse>(200).Produces<ValidationProblemDetails>(400, "application/problem+json").AddEndpointFilter(ValidateCreate);
+		RouteHandlerBuilder createEndpoint = group.MapPost("", CreateHandler).WithName("DemoProfiles_create").Produces<DemoProfileResponse>(200).Produces<ValidationProblemDetails>(400, "application/problem+json").Produces(401).AddEndpointFilter(ValidateCreate).RequireAuthorization();
 		ConfigureCreate(createEndpoint);
 
-		RouteHandlerBuilder checkCodeEndpoint = group.MapGet("/codes/{code}", CheckCodeHandler).WithName("DemoProfiles_checkCode").Produces<DemoCodeResponse>(200).Produces<ValidationProblemDetails>(400, "application/problem+json").AddEndpointFilter(ValidateCheckCode);
+		RouteHandlerBuilder checkCodeEndpoint = group.MapGet("/codes/{code}", CheckCodeHandler).WithName("DemoProfiles_checkCode").Produces<DemoCodeResponse>(200).Produces<ValidationProblemDetails>(400, "application/problem+json").Produces(401).AddEndpointFilter(ValidateCheckCode).RequireAuthorization();
 		ConfigureCheckCode(checkCodeEndpoint);
 
 		return group;

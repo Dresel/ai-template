@@ -25,8 +25,8 @@ public sealed class AuthenticationTests(ApiFixture factory) : ApiTestBase(factor
 		Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
 	}
 
-	// A fallback policy would also lock the health endpoints Aspire probes, so authorization is attached per endpoint
-	// group in the slice's hooks file, and this test is what catches a new slice that forgot its hook.
+	// A fallback policy would also lock the health endpoints Aspire probes, so the generated endpoints carry the
+	// authorization of the spec's @useAuth, and this test is what catches a spec that lost it.
 	[Fact]
 	public void EveryApiEndpointRequiresAuthorization()
 	{

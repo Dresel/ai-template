@@ -60,7 +60,10 @@ public sealed class ApiFixture(PostgresFixture postgres) : WebApplicationFactory
 		await connection.OpenAsync(cancellationToken);
 		this.respawner = await Respawner.CreateAsync(
 			connection,
-			new RespawnerOptions { DbAdapter = DbAdapter.Postgres, TablesToIgnore = ["__EFMigrationsHistory",], });
+			new RespawnerOptions
+			{
+				DbAdapter = DbAdapter.Postgres, TablesToIgnore = ["__EFMigrationsHistory", "permissions",],
+			});
 	}
 
 	public async Task ResetAsync()

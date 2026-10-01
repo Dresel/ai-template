@@ -15,6 +15,18 @@ public abstract class AppDbContextBase(DbContextOptions options) : DbContext(opt
 
 	public DbSet<WeatherForecast> WeatherForecasts => Set<WeatherForecast>();
 
+	public DbSet<User> Users => Set<User>();
+
+	public DbSet<UserActivity> UserActivities => Set<UserActivity>();
+
+	public DbSet<Group> Groups => Set<Group>();
+
+	public DbSet<GroupMember> GroupMembers => Set<GroupMember>();
+
+	public DbSet<GroupPermission> GroupPermissions => Set<GroupPermission>();
+
+	public DbSet<PermissionDefinition> Permissions => Set<PermissionDefinition>();
+
 	protected sealed override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) =>
 		configurationBuilder.RegisterAllInVogenEfCoreConverters();
 
