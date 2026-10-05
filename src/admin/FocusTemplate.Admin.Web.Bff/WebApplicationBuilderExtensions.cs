@@ -58,6 +58,15 @@ public static class WebApplicationBuilderExtensions
 				// Keep the original claim names
 				oidc.MapInboundClaims = false;
 				oidc.TokenValidationParameters.NameClaimType = JwtRegisteredClaimNames.PreferredUsername;
+
+				if (settings.Value.LoginHint is { } loginHint)
+				{
+					oidc.Events.OnRedirectToIdentityProvider = context =>
+					{
+						context.ProtocolMessage.LoginHint = loginHint;
+						return Task.CompletedTask;
+					};
+				}
 			});
 
 		builder.Services.AddAuthorizationBuilder()

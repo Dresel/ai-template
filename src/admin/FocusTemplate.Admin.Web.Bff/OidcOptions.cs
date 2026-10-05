@@ -14,4 +14,7 @@ public sealed class OidcOptions
 
 	[Required]
 	public string ClientSecret { get; init; } = string.Empty;
+
+	// Only the AppHost's local realm sets it: an external realm has no login the template could know
+	public string? LoginHint { get; init; }
 }

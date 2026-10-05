@@ -1,6 +1,11 @@
 {
 	"realm": "focus",
 	"enabled": true,
+	"rememberMe": true,
+	"ssoSessionIdleTimeout": 604800,
+	"ssoSessionMaxLifespan": 2592000,
+	"ssoSessionIdleTimeoutRememberMe": 604800,
+	"ssoSessionMaxLifespanRememberMe": 2592000,
 	"clients": [
 		{
 			"clientId": "admin-bff",

@@ -5,4 +5,5 @@ internal sealed record KeycloakRealm(
 	ReferenceExpression Authority,
 	ReferenceExpression AdminApiAudience,
 	ReferenceExpression AdminBffClientId,
-	IResourceBuilder<ParameterResource> AdminBffClientSecret);
+	IResourceBuilder<ParameterResource> AdminBffClientSecret,
+	string? LoginHint = null);

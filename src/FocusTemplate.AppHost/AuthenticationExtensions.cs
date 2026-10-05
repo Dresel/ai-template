@@ -2,6 +2,8 @@ namespace FocusTemplate.AppHost;
 
 internal static class AuthenticationExtensions
 {
+	private const string DeveloperLogin = "developer";
+
 	// The realm keycloak/focus-realm.json imports, which is also where its client, audience and secret are declared.
 	private const string Realm = "focus";
 
@@ -44,7 +46,8 @@ internal static class AuthenticationExtensions
 			ReferenceExpression.Create($"{keycloak.GetEndpoint("http")}/realms/{Realm}"),
 			ReferenceExpression.Create($"admin-api"),
 			ReferenceExpression.Create($"admin-bff"),
-			builder.AddParameter("oidc-admin-bff-secret", "admin-bff-secret", secret: true));
+			builder.AddParameter("oidc-admin-bff-secret", "admin-bff-secret", secret: true),
+			DeveloperLogin);
 	}
 
 	public static IResourceBuilder<ProjectResource> WithKeycloakAudience(
@@ -54,10 +57,14 @@ internal static class AuthenticationExtensions
 
 	public static IResourceBuilder<ProjectResource> WithKeycloakClient(
 		this IResourceBuilder<ProjectResource> app,
-		KeycloakRealm realm) =>
+		KeycloakRealm realm)
+	{
 		app.WithKeycloakAuthority(realm)
 			.WithEnvironment("Oidc__ClientId", realm.AdminBffClientId)
 			.WithEnvironment("Oidc__ClientSecret", realm.AdminBffClientSecret);
+
+		return realm.LoginHint is { } loginHint ? app.WithEnvironment("Oidc__LoginHint", loginHint) : app;
+	}
 
 	private static IResourceBuilder<ProjectResource> WithKeycloakAuthority(
 		this IResourceBuilder<ProjectResource> app,

@@ -25,6 +25,17 @@ public sealed class KeycloakRealmTests
 	}
 
 	[Fact]
+	public async Task TheLocalRealmHintsItsDeveloperLoginToTheBff()
+	{
+		await using IDistributedApplicationTestingBuilder builder = await CreateAsync("Features:LocalKeycloak=true");
+		await using DistributedApplication app = await builder.BuildAsync(TestContext.Current.CancellationToken);
+
+		Dictionary<string, string> environment = await OidcEnvironmentAsync(Publishing(app), builder, "admin-bff");
+
+		Assert.Equal(BlazorAppFixture.Username, environment["Oidc__LoginHint"]);
+	}
+
+	[Fact]
 	public async Task TheLocalKeycloakIsRecreatedOnEveryStartByDefault()
 	{
 		await using IDistributedApplicationTestingBuilder builder = await CreateAsync("Features:LocalKeycloak=true");
@@ -68,14 +79,8 @@ public sealed class KeycloakRealmTests
 			"oidc-authority",
 			Assert.Single(builder.Resources.OfType<ExternalServiceResource>()).UrlParameter?.Name);
 
-		// Built, not started. Evaluated as for publishing, each value is the expression naming its source, so no parameter
-		// needs a value.
 		await using DistributedApplication app = await builder.BuildAsync(TestContext.Current.CancellationToken);
-		DistributedApplicationExecutionContext publishing = new(
-			new DistributedApplicationExecutionContextOptions(DistributedApplicationOperation.Publish)
-			{
-				Services = app.Services,
-			});
+		DistributedApplicationExecutionContext publishing = Publishing(app);
 
 		Assert.Equal(
 			new Dictionary<string, string>
@@ -106,6 +111,11 @@ public sealed class KeycloakRealmTests
 				.. args,
 			],
 			TestContext.Current.CancellationToken);
+
+	// Built, not started. Evaluated as for publishing, each value is the expression naming its source, so no parameter
+	// needs a value.
+	private static DistributedApplicationExecutionContext Publishing(DistributedApplication app) =>
+		new(new DistributedApplicationExecutionContextOptions(DistributedApplicationOperation.Publish) { Services = app.Services, });
 
 	private static async Task<Dictionary<string, string>> OidcEnvironmentAsync(
 		DistributedApplicationExecutionContext executionContext,

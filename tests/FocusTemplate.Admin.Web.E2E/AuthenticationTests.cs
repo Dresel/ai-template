@@ -23,6 +23,8 @@ public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
 
 		Assert.Contains("request_uri=", (await authorize).Url, StringComparison.Ordinal);
 
+		// The pushed request carries the local realm's login as a hint, so only the password is left to type
+		await Expect(Page.Locator("#username")).ToHaveValueAsync(BlazorAppFixture.Username);
 		await BlazorAppFixture.LogInAsync(Page);
 
 		// Keycloak posts the code back (form_post) instead of putting it into the callback's URL, where the browser

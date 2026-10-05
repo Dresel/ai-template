@@ -461,7 +461,10 @@ Keycloak is the identity provider and the BFF holds the session: the Duende-BFF 
 - **AppHost**: with `Features:LocalKeycloak` on (the default) in run mode, `AddLocalKeycloakRealm` adds
   `AddKeycloak("keycloak", 8080)`, which imports `keycloak/focus-realm.json`: realm `focus`, the
   confidential client `admin-bff` with an audience mapper that stamps `admin-api` into the access token, and the login
-  `developer` / `developer`, whose user id is `WellKnownUsers.Developer`. Its primary endpoint is named `http` whatever
+  `developer` / `developer`, whose user id is `WellKnownUsers.Developer`. Its sessions last 7 days idle and 30 days at
+  most, remembered across browser restarts, so a persistent Keycloak rarely shows its form, and `WithKeycloakClient`
+  hands the BFF that login as `Oidc__LoginHint`, which the BFF sends as `login_hint` (inside the pushed request), so the
+  form asks only for the password; an external realm gets no hint. Its primary endpoint is named `http` whatever
   its scheme: the integration switches it to https at start when the dev certificate is available (there is no
   separate `https` endpoint, adding one yields a `tcp://` authority). Both handlers keep the default https-metadata
   requirement, so a Keycloak left on http fails at the first login with the handler's own message instead of being
@@ -553,8 +556,10 @@ Keycloak is the identity provider and the BFF holds the session: the Duende-BFF 
   token aside; direct-grant tokens for scripts and PKCE for mobile come with the Public API leg. The fixtures pin
   `Features:LocalKeycloak=true`, since they log in as the developer, and `Features:PersistentLocalKeycloak=false`;
   `KeycloakRealmTests` covers both flags on the AppHost's model alone, built but never started: with the local
-  Keycloak off and when publishing, no Keycloak container and each `Oidc__*` variable fed by its parameter; with the
-  persistent flag on, the container's persistent lifetime and volume, and neither by default.
+  Keycloak off and when publishing, no Keycloak container and each `Oidc__*` variable fed by its parameter, no login
+  hint among them; with the local Keycloak, the BFF's login hint; with the persistent flag on, the container's
+  persistent lifetime and volume, and neither by default. The E2E login test also checks the form arrives with the
+  username filled in.
 - **Not yet**: the Public API stays anonymous until the mobile client's PKCE leg. Server-side sessions and backchannel
   logout wait for Redis; refresh-token revocation on logout is open too. A restarted BFF container or a second
   instance needs a shared, persisted Data Protection key ring to read the session cookie, and a second instance also
