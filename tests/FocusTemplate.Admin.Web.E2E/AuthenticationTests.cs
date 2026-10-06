@@ -56,24 +56,26 @@ public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
 
 		await Page.GotoAsync(App.BaseUrl);
 		await Page.GetByTestId("login-button").ClickAsync();
-		await BlazorAppFixture.LogInAsync(Page);
+
+		// /bff/user asks the API for the permissions, so the refusal shows on the first load after the login
+		Task<IResponse> user = Page.WaitForResponseAsync(response =>
+			response.Url.EndsWith("/bff/user", StringComparison.Ordinal) && response.Status != 401);
+		await BlazorAppFixture.SubmitLogInAsync(Page);
+
+		Assert.Equal(502, (await user).Status);
 
 		// A new login would bring back the same token, in a loop.
-		Task<IRequest> login = Page.WaitForRequestAsync(
+		await Assert.ThrowsAnyAsync<TimeoutException>(() => Page.WaitForRequestAsync(
 			request => request.Url.Contains("/bff/login", StringComparison.Ordinal),
-			new PageWaitForRequestOptions { Timeout = 5000, });
-		Task<IResponse> proxied = Page.WaitForResponseAsync(response =>
-			response.Url.Contains("/_api/admin-api/", StringComparison.Ordinal));
-
-		await Page.GetByTestId("nav-weather").ClickAsync();
-
-		IResponse refused = await proxied;
-		Assert.Equal(502, refused.Status);
-		Assert.DoesNotContain("www-authenticate", (await refused.AllHeadersAsync()).Keys);
-
-		await Assert.ThrowsAnyAsync<TimeoutException>(() => login);
-		await Expect(Page).ToHaveURLAsync($"{App.BaseUrl}weather");
+			new PageWaitForRequestOptions { Timeout = 5000, }));
 		await Expect(Page.Locator("#blazor-error-ui")).ToBeVisibleAsync();
+
+		// A proxied call answers the same, without the API's challenge
+		IAPIResponse proxied = await Page.APIRequest.GetAsync(
+			$"{App.BaseUrl}_api/admin-api/weather-forecasts",
+			new APIRequestContextOptions { Headers = new Dictionary<string, string> { ["X-CSRF"] = "1", }, });
+		Assert.Equal(502, proxied.Status);
+		Assert.DoesNotContain("www-authenticate", proxied.Headers.Keys);
 	}
 
 	public override BrowserNewContextOptions ContextOptions() => new() { IgnoreHTTPSErrors = true, };
@@ -164,6 +166,28 @@ public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
 
 		Assert.NotEmpty(session);
 		Assert.All(session, cookie => Assert.True(cookie.Secure, $"{cookie.Name} lacks Secure."));
+	}
+
+	[Fact]
+	public async Task TheUserEndpointCarriesThePermissionsTheApiGrants()
+	{
+		await Page.GotoAsync(App.BaseUrl);
+		await Page.GetByTestId("login-button").ClickAsync();
+		await BlazorAppFixture.LogInAsync(Page);
+
+		IAPIResponse user = await Page.APIRequest.GetAsync($"{App.BaseUrl}bff/user");
+		JsonElement body = await user.JsonAsync() ??
+			throw new InvalidOperationException("/bff/user answered without a body.");
+
+		string?[] permissions =
+		[
+			.. body.GetProperty("claims")
+				.EnumerateArray()
+				.Where(claim => claim.GetProperty("type").GetString() == "permission")
+				.Select(claim => claim.GetProperty("value").GetString()),
+		];
+		Assert.Contains("UserManagement.ViewUsers", permissions);
+		Assert.Contains("UserManagement.ManageGroups", permissions);
 	}
 
 	[Fact]

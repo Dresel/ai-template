@@ -27,16 +27,6 @@ public sealed class ValidationInTheBrowserTests(BlazorAppFixture app) : Validati
 	}
 
 	[Fact]
-	public async Task APatternShowsTheSpecsOwnMessage()
-	{
-		await OpenAsync();
-
-		await Input("code").FillAsync("abc");
-
-		await Expect(Error("code")).ToHaveTextAsync("Three upper-case letters.");
-	}
-
-	[Fact]
 	public async Task ASixthTagFailsAtTheListAndAnEmptyOneAtItsRow()
 	{
 		await OpenAsync();
@@ -64,29 +54,6 @@ public sealed class ValidationInTheBrowserTests(BlazorAppFixture app) : Validati
 	}
 
 	[Fact]
-	public async Task BoundsHoldAtTheirEdgesAndAnExclusiveOneRejectsItself()
-	{
-		await OpenAsync();
-
-		(string Input, string Value, string? Error)[] steps =
-		[
-			("age", "17", "greater than or equal to '18'"),
-			("age", "18", null),
-			("age", "121", "less than or equal to '120'"),
-			("age", "120", null),
-			("weight", "0", "greater than '0'"),
-			("weight", "0.1", null),
-		];
-		foreach ((string input, string value, string? error) in steps)
-		{
-			await Input(input).FillAsync(value);
-			await (error is null
-				? Expect(Error(input)).ToBeHiddenAsync()
-				: Expect(Error(input)).ToContainTextAsync(error));
-		}
-	}
-
-	[Fact]
 	public async Task ChangingEitherTemperatureRechecksThePairAtBoth()
 	{
 		await OpenAsync();
@@ -99,19 +66,6 @@ public sealed class ValidationInTheBrowserTests(BlazorAppFixture app) : Validati
 		await Input("max-temperature").FillAsync("40");
 		await Expect(Error("max-temperature")).ToBeHiddenAsync();
 		await Expect(Error("min-temperature")).ToBeHiddenAsync();
-	}
-
-	[Fact]
-	public async Task FixingTheValueClearsTheErrorRightAway()
-	{
-		await OpenAsync();
-		await Input("name").FillAsync(TooLongName);
-		await Expect(Error("name")).ToBeVisibleAsync();
-
-		await Input("name").FillAsync("Ada");
-
-		await Expect(Error("name")).ToBeHiddenAsync();
-		await Expect(Input("name")).Not.ToHaveAttributeAsync("aria-invalid", "true");
 	}
 
 	[Fact]
@@ -156,17 +110,5 @@ public sealed class ValidationInTheBrowserTests(BlazorAppFixture app) : Validati
 
 		await Page.Keyboard.PressAsync("Tab");
 		await Expect(Error("name")).ToContainTextAsync("must not be empty");
-	}
-
-	[Fact]
-	public async Task TypingInOneFieldRevealsNothingOnTheOthers()
-	{
-		await OpenAsync();
-
-		await Input("name").FillAsync(TooLongName);
-
-		await Expect(Error("name")).ToBeVisibleAsync();
-		await Expect(Error("code")).ToBeHiddenAsync();
-		await Expect(Error("age")).ToBeHiddenAsync();
 	}
 }

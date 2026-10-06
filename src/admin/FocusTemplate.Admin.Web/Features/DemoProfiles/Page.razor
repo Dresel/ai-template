@@ -3,7 +3,6 @@
 @using FocusTemplate.Admin.Client
 @using FocusTemplate.Admin.Client.DemoProfiles
 @using FocusTemplate.Admin.Shared
-
 @inject DemoProfilesClient Api
 @inject IValidator<Form> FormValidator
 
@@ -54,12 +53,7 @@
 							Accepted: @accepted.Code, @accepted.Name
 						</RadzenAlert>
 					}
-					@if (failure is not null)
-					{
-						<RadzenAlert AlertStyle="AlertStyle.Danger" Shade="Shade.Lighter" AllowClose="false" data-testid="submit-failure">
-							@failure
-						</RadzenAlert>
-					}
+					<AppFailure Message="@failure" data-testid="submit-failure" />
 
 					<div class="app-fields">
 						<AppTextInput Label="Code" @bind-Value="form.Code" data-testid="code" />
@@ -130,12 +124,6 @@
 
 	private bool showOptional = true;
 
-	private async Task AcceptAsync(DemoProfileResponse profile)
-	{
-		accepted = profile.ToAcceptedProfile();
-		await appForm.ClearServerErrorsAsync();
-	}
-
 	private async Task AddTagAsync()
 	{
 		form.Tags.Add(new TagRow());
@@ -153,19 +141,23 @@
 
 	private async Task SubmitAsync()
 	{
-		(accepted, failure) = (null, null);
+		accepted = null;
+		failure = null;
 
-		try
+		switch (await Api.CreateAsync(form.ToContract()).ToOutcome<ValidationProblem>())
 		{
-			await (await Api.CreateAsync(form.ToContract()) switch
-			{
-				DemoProfileResponse profile => AcceptAsync(profile),
-				ValidationProblem problem => appForm.ShowServerErrorsAsync(problem.Problem)
-			});
-		}
-		catch (HttpRequestException exception)
-		{
-			failure = $"The server could not take the profile ({(int?)exception.StatusCode}).";
+			case DemoProfileResponse profile:
+				accepted = profile.ToAcceptedProfile();
+				await appForm.ClearServerErrorsAsync();
+				break;
+
+			case ValidationProblem invalid:
+				await appForm.ShowServerErrorsAsync(invalid.Problem);
+				break;
+
+			case ApiFailure failed:
+				failure = failed.Message;
+				break;
 		}
 	}
 }

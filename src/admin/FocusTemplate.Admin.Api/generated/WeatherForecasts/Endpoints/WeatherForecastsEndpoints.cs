@@ -26,10 +26,10 @@ public static partial class WeatherForecastsEndpoints
 		RouteGroupBuilder group = app.MapGroup("/weather-forecasts").WithTags("WeatherForecasts");
 		ConfigureGroup(group);
 
-		RouteHandlerBuilder listEndpoint = group.MapGet("", ListHandler).WithName("WeatherForecasts_list").Produces<IReadOnlyList<WeatherForecastResponse>>(200);
+		RouteHandlerBuilder listEndpoint = group.MapGet("", ListHandler).WithName("WeatherForecasts_list").Produces<IReadOnlyList<WeatherForecastResponse>>(200).Produces(401).RequireAuthorization();
 		ConfigureList(listEndpoint);
 
-		RouteHandlerBuilder getEndpoint = group.MapGet("/{id:int}", GetHandler).WithName("WeatherForecasts_get").Produces<WeatherForecastResponse>(200).ProducesProblem(404);
+		RouteHandlerBuilder getEndpoint = group.MapGet("/{id:int}", GetHandler).WithName("WeatherForecasts_get").Produces<WeatherForecastResponse>(200).ProducesProblem(404).Produces(401).RequireAuthorization();
 		ConfigureGet(getEndpoint);
 
 		return group;

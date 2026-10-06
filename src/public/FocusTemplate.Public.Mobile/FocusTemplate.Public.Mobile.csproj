@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<!-- Directory.Build.props pins the single net11.0 TFM repo-wide; clear it so multi-targeting works. -->
+		<!-- Directory.Build.props pins the single net11.0 TFM repo-wide, cleared here so multi-targeting works. -->
 		<TargetFramework></TargetFramework>
 		<TargetFrameworks>net11.0-android;net11.0-ios</TargetFrameworks>
 
@@ -46,7 +46,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- Version comes from the installed MAUI workload; VersionOverride keeps it in lockstep under CPM. -->
+		<!-- Version comes from the installed MAUI workload, and VersionOverride keeps it in lockstep under CPM. -->
 		<PackageReference Include="Microsoft.Maui.Controls" VersionOverride="$(MauiVersion)" />
 	</ItemGroup>
 

@@ -42,7 +42,7 @@ public sealed class AuditingInterceptor(TimeProvider timeProvider, ICurrentUser 
 		}
 
 		DateTimeOffset now = timeProvider.GetUtcNow();
-		UserId user = currentUser.Id;
+		UserId user = currentUser.IdOrDefault ?? WellKnownUsers.System;
 
 		foreach (EntityEntry<IAuditable> entry in context.ChangeTracker.Entries<IAuditable>())
 		{

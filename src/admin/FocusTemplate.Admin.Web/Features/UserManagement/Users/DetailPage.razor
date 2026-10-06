@@ -1,0 +1,129 @@
+@attribute [Route("/" + ListPage.Path + "/{Id:guid}")]
+@attribute [RequiresPermission(UserManagement.Names.ViewUsers)]
+@using FocusTemplate.Primitives.Permissions
+@inherits ViewModelPage<DetailPageViewModel>
+
+<RadzenStack Gap="1rem">
+	<AppFailure Message="@ViewModel.Failure" data-testid="user-failure" />
+
+	<AppItemView TItem="UserResponse"
+		Item="ViewModel.User"
+		Loading="ViewModel.Loading"
+		Missing="ViewModel.Missing"
+		Title="UserResponseTitle"
+		Fallback="User"
+		MissingTitle="No such user"
+		BackPath="@ListPage.Path"
+		BackText="All users"
+		TestId="user"
+		Context="user">
+		<RadzenStack Orientation="Orientation.Horizontal"
+			AlignItems="AlignItems.Center"
+			JustifyContent="JustifyContent.SpaceBetween"
+			Wrap="FlexWrap.Wrap">
+			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+				<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1" data-testid="user-title">@user.DisplayName</RadzenText>
+				<RadzenBadge BadgeStyle="@(user.IsActive ? BadgeStyle.Success : BadgeStyle.Light)"
+					Text="@(user.IsActive ? "Active" : "Deactivated")"
+					data-testid="user-status" />
+			</RadzenStack>
+			@* Self deactivating not supported by the API *@
+			@if (CanManageUsers && !Self)
+			{
+				@if (user.IsActive)
+				{
+					<RadzenButton Text="Deactivate"
+						Icon="person_off"
+						ButtonStyle="ButtonStyle.Danger"
+						Variant="Variant.Outlined"
+						Disabled="ViewModel.SettingActive"
+						Click="DeactivateAsync"
+						data-testid="deactivate-user" />
+				}
+				else
+				{
+					<RadzenButton Text="Activate"
+						Icon="person_check"
+						ButtonStyle="ButtonStyle.Base"
+						Variant="Variant.Outlined"
+						Disabled="ViewModel.SettingActive"
+						Click="ViewModel.ActivateAsync"
+						data-testid="activate-user" />
+				}
+			}
+		</RadzenStack>
+
+		<RadzenCard>
+			<RadzenStack Gap="0.5rem">
+				<RadzenText TextStyle="TextStyle.Body1" data-testid="user-email">@(user.Email ?? "No e-mail address")</RadzenText>
+				<RadzenText TextStyle="TextStyle.Body2">
+					First seen @user.FirstSeenAt.ToLocalTime().ToString("g"), last seen @user.LastSeenAt.ToLocalTime().ToString("g")
+				</RadzenText>
+			</RadzenStack>
+		</RadzenCard>
+
+		<RadzenCard>
+			<RadzenStack Gap="0.5rem" data-testid="user-groups">
+				<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">Groups</RadzenText>
+				@if (user.Groups.Count == 0)
+				{
+					<RadzenText TextStyle="TextStyle.Body2">A member of no group, so without any permission.</RadzenText>
+				}
+				@foreach (GroupReferenceResponse group in user.Groups)
+				{
+					<RadzenLink @key="group.Id"
+						Path="@Groups.DetailPage.PathOf(group.Id)"
+						Text="@group.Name"
+						data-testid="user-group" />
+				}
+			</RadzenStack>
+		</RadzenCard>
+
+		<RadzenCard>
+			<RadzenStack Gap="0.5rem" data-testid="user-permissions">
+				<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">Permissions</RadzenText>
+				@if (!user.IsActive)
+				{
+					<RadzenText TextStyle="TextStyle.Body2">Deactivated: holds none of them until activated again.</RadzenText>
+				}
+				@foreach (IGrouping<string, PermissionLabel> section in user.Permissions.Select(PermissionLabel.Of).GroupBy(label => label.Section))
+				{
+					<RadzenText TextStyle="TextStyle.Subtitle1" TagName="TagName.H3">@section.Key</RadzenText>
+					<ul>
+						@foreach (PermissionLabel label in section)
+						{
+							<li @key="label">@label.Action</li>
+						}
+					</ul>
+				}
+			</RadzenStack>
+		</RadzenCard>
+	</AppItemView>
+</RadzenStack>
+
+@code
+{
+	public static string PathOf(UserId user) => $"{ListPage.Path}/{user.Value}";
+
+	private static string UserResponseTitle(UserResponse user) => user.DisplayName;
+
+	[Parameter]
+	public Guid Id { get; set; }
+
+	private bool CanManageUsers => CurrentUser.Has(UserManagementPermissions.ManageUsers);
+
+	private bool Self => CurrentUser.Id == UserId.From(Id);
+
+	protected override Task OnInitializedAsync() => ViewModel.LoadAsync(UserId.From(Id));
+
+	private async Task DeactivateAsync()
+	{
+		if (await Dialogs.ConfirmAsync(
+				$"Deactivate {ViewModel.User!.DisplayName}? From their next request on they hold no permission.",
+				"Deactivate the user",
+				"Deactivate"))
+		{
+			await ViewModel.DeactivateAsync();
+		}
+	}
+}

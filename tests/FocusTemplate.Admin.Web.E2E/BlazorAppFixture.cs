@@ -6,6 +6,9 @@ namespace FocusTemplate.Admin.Web.E2E;
 
 public sealed class BlazorAppFixture : IAsyncLifetime
 {
+	// What the token's name claim says, the realm file's first and last name, and so what the API calls the user
+	public const string DisplayName = "Dev Eloper";
+
 	public const string Password = "developer";
 
 	// The developer login of the imported realm, src/FocusTemplate.AppHost/keycloak/focus-realm.json.
@@ -17,14 +20,22 @@ public sealed class BlazorAppFixture : IAsyncLifetime
 
 	public string StorageState { get; private set; } = string.Empty;
 
-	// Keycloak's login theme: the field ids are stable across its versions, unlike the markup around them.
-	public static async Task LogInAsync(IPage page)
-	{
-		await page.FillAsync("#username", Username);
-		await page.FillAsync("#password", Password);
-		await page.ClickAsync("#kc-login");
+	public static Task LogInAsync(IPage page) => LogInAsync(page, Username, Password);
 
+	public static async Task LogInAsync(IPage page, string username, string password)
+	{
+		await SubmitLogInAsync(page, username, password);
 		await page.GetByTestId("user-name").WaitForAsync();
+	}
+
+	public static Task SubmitLogInAsync(IPage page) => SubmitLogInAsync(page, Username, Password);
+
+	// Keycloak's login theme: the field ids are stable across its versions, unlike the markup around them.
+	public static async Task SubmitLogInAsync(IPage page, string username, string password)
+	{
+		await page.FillAsync("#username", username);
+		await page.FillAsync("#password", password);
+		await page.ClickAsync("#kc-login");
 	}
 
 	public async ValueTask DisposeAsync()
@@ -48,6 +59,7 @@ public sealed class BlazorAppFixture : IAsyncLifetime
 					"Features:LocalKeycloak=true",
 					"Features:PersistentLocalKeycloak=false",
 					"Features:PersistentDatabase=false",
+					"Features:Chaos=false",
 				],
 				cancellationTokenSource.Token);
 

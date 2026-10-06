@@ -1,0 +1,19 @@
+@if (Message is not null)
+{
+	<RadzenAlert AlertStyle="AlertStyle.Danger"
+		Size="AlertSize.Small"
+		Shade="Shade.Lighter"
+		AllowClose="false"
+		@attributes="Attributes">
+		@Message
+	</RadzenAlert>
+}
+
+@code
+{
+	[Parameter(CaptureUnmatchedValues = true)]
+	public IReadOnlyDictionary<string, object>? Attributes { get; set; }
+
+	[Parameter]
+	public string? Message { get; set; }
+}

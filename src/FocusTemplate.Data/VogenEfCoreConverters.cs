@@ -10,4 +10,6 @@ namespace FocusTemplate.Data;
 [EfCoreConverter<ObservationId>]
 [EfCoreConverter<WeatherForecastId>]
 [EfCoreConverter<AlertId>]
+[EfCoreConverter<GroupId>]
+[EfCoreConverter<Permission>]
 internal sealed partial class VogenEfCoreConverters;

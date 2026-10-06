@@ -282,6 +282,9 @@ dotnet_diagnostic.sa1636.severity = none
 # CA1716: Identifiers should not match keywords
 dotnet_diagnostic.ca1716.severity = none
 
+# CA1711: Identifiers should not have incorrect suffix.
+dotnet_code_quality.ca1711.allowed_suffixes = Permission
+
 # ReSharper properties
 resharper_align_multiline_binary_expressions_chain = false
 resharper_align_multiline_statement_conditions = false

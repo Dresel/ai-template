@@ -1,0 +1,7 @@
+# Hand-written until the emitter generates the outcomes next to each union: same namespaces as the generated code, so the swap deletes this folder and no caller changes
+[*.cs]
+dotnet_style_namespace_match_folder = false
+
+# StyleCop.Analyzers cannot read a union declaration yet (SA1649 throws AD0001)
+[ApiOutcome.cs]
+generated_code = true

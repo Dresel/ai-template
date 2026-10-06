@@ -4,23 +4,17 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FocusTemplate.Admin.Web.Infrastructure.Authentication;
 
-// The session is the BFF's cookie, so the client learns who is signed in by asking the BFF, once per load
 public sealed class BffAuthenticationStateProvider(AuthenticationClient client) : AuthenticationStateProvider
 {
 	private static readonly AuthenticationState Anonymous = new(new ClaimsPrincipal(new ClaimsIdentity()));
 
-	public override async Task<AuthenticationState> GetAuthenticationStateAsync()
-	{
-		UserInfoResponse? user;
+	private Task<AuthenticationState>? state;
 
-		try
-		{
-			user = await client.GetUserAsync();
-		}
-		catch (HttpRequestException)
-		{
-			return Anonymous;
-		}
+	public override Task<AuthenticationState> GetAuthenticationStateAsync() => this.state ??= LoadAsync();
+
+	private async Task<AuthenticationState> LoadAsync()
+	{
+		UserInfoResponse? user = await client.GetUserAsync();
 
 		if (user is null)
 		{

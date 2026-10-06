@@ -84,6 +84,175 @@ namespace FocusTemplate.Data.Migrations
                     b.ToTable("alerts", (string)null);
                 });
 
+            modelBuilder.Entity("FocusTemplate.Data.Entities.Group", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsManaged")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_managed");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_groups");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasDatabaseName("ix_groups_name");
+
+                    b.ToTable("groups", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("00000000-0000-7000-8001-000000000001"),
+                            CreatedAt = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = new Guid("00000000-0000-7000-8000-000000000000"),
+                            Description = "Everything the application can do. Managed: its permissions come with each release.",
+                            IsManaged = true,
+                            Name = "Administrators",
+                            UpdatedAt = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedBy = new Guid("00000000-0000-7000-8000-000000000000")
+                        });
+                });
+
+            modelBuilder.Entity("FocusTemplate.Data.Entities.GroupMember", b =>
+                {
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("group_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("GroupId", "UserId")
+                        .HasName("pk_group_members");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_group_members_user_id");
+
+                    b.ToTable("group_members", (string)null);
+                });
+
+            modelBuilder.Entity("FocusTemplate.Data.Entities.GroupPermission", b =>
+                {
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("group_id");
+
+                    b.Property<string>("Permission")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("permission");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("GroupId", "Permission")
+                        .HasName("pk_group_permissions");
+
+                    b.HasIndex("Permission")
+                        .HasDatabaseName("ix_group_permissions_permission");
+
+                    b.ToTable("group_permissions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            GroupId = new Guid("00000000-0000-7000-8001-000000000001"),
+                            Permission = "UserManagement.ViewUsers",
+                            CreatedAt = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = new Guid("00000000-0000-7000-8000-000000000000"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedBy = new Guid("00000000-0000-7000-8000-000000000000")
+                        },
+                        new
+                        {
+                            GroupId = new Guid("00000000-0000-7000-8001-000000000001"),
+                            Permission = "UserManagement.ManageUsers",
+                            CreatedAt = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = new Guid("00000000-0000-7000-8000-000000000000"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedBy = new Guid("00000000-0000-7000-8000-000000000000")
+                        },
+                        new
+                        {
+                            GroupId = new Guid("00000000-0000-7000-8001-000000000001"),
+                            Permission = "UserManagement.ViewGroups",
+                            CreatedAt = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = new Guid("00000000-0000-7000-8000-000000000000"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedBy = new Guid("00000000-0000-7000-8000-000000000000")
+                        },
+                        new
+                        {
+                            GroupId = new Guid("00000000-0000-7000-8001-000000000001"),
+                            Permission = "UserManagement.ManageGroups",
+                            CreatedAt = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            CreatedBy = new Guid("00000000-0000-7000-8000-000000000000"),
+                            UpdatedAt = new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            UpdatedBy = new Guid("00000000-0000-7000-8000-000000000000")
+                        });
+                });
+
             modelBuilder.Entity("FocusTemplate.Data.Entities.Observation", b =>
                 {
                     b.Property<long>("Id")
@@ -127,6 +296,37 @@ namespace FocusTemplate.Data.Migrations
                             t.HasCheckConstraint("CK_observations_pressure_hpa_Range", "pressure_hpa BETWEEN 800.0 AND 1200.0");
 
                             t.HasCheckConstraint("CK_observations_temperature_c_Range", "temperature_c BETWEEN -100.0 AND 100.0");
+                        });
+                });
+
+            modelBuilder.Entity("FocusTemplate.Data.Entities.PermissionDefinition", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Name")
+                        .HasName("pk_permissions");
+
+                    b.ToTable("permissions", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Name = "UserManagement.ViewUsers"
+                        },
+                        new
+                        {
+                            Name = "UserManagement.ManageUsers"
+                        },
+                        new
+                        {
+                            Name = "UserManagement.ViewGroups"
+                        },
+                        new
+                        {
+                            Name = "UserManagement.ManageGroups"
                         });
                 });
 
@@ -200,6 +400,75 @@ namespace FocusTemplate.Data.Migrations
                     b.ToTable("stations", (string)null);
                 });
 
+            modelBuilder.Entity("FocusTemplate.Data.Entities.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("display_name");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(320)
+                        .HasColumnType("character varying(320)")
+                        .HasColumnName("email");
+
+                    b.Property<DateTimeOffset>("FirstSeenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("first_seen_at");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id")
+                        .HasName("pk_users");
+
+                    b.HasIndex("DisplayName")
+                        .HasDatabaseName("ix_users_display_name");
+
+                    b.HasIndex("Email")
+                        .HasDatabaseName("ix_users_email");
+
+                    b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("FocusTemplate.Data.Entities.UserActivity", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<DateTimeOffset>("LastSeenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_seen_at");
+
+                    b.HasKey("UserId")
+                        .HasName("pk_user_activities");
+
+                    b.ToTable("user_activities", (string)null);
+                });
+
             modelBuilder.Entity("FocusTemplate.Data.Entities.WeatherForecast", b =>
                 {
                     b.Property<int>("Id")
@@ -245,6 +514,40 @@ namespace FocusTemplate.Data.Migrations
                         .HasConstraintName("fk_alerts_stations_station_id");
                 });
 
+            modelBuilder.Entity("FocusTemplate.Data.Entities.GroupMember", b =>
+                {
+                    b.HasOne("FocusTemplate.Data.Entities.Group", null)
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_members_groups_group_id");
+
+                    b.HasOne("FocusTemplate.Data.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_members_users_user_id");
+                });
+
+            modelBuilder.Entity("FocusTemplate.Data.Entities.GroupPermission", b =>
+                {
+                    b.HasOne("FocusTemplate.Data.Entities.Group", null)
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_permissions_groups_group_id");
+
+                    b.HasOne("FocusTemplate.Data.Entities.PermissionDefinition", null)
+                        .WithMany()
+                        .HasForeignKey("Permission")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_group_permissions_permissions_permission");
+                });
+
             modelBuilder.Entity("FocusTemplate.Data.Entities.Observation", b =>
                 {
                     b.HasOne("FocusTemplate.Data.Entities.Station", null)
@@ -253,6 +556,16 @@ namespace FocusTemplate.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_observations_stations_station_id");
+                });
+
+            modelBuilder.Entity("FocusTemplate.Data.Entities.UserActivity", b =>
+                {
+                    b.HasOne("FocusTemplate.Data.Entities.User", null)
+                        .WithOne()
+                        .HasForeignKey("FocusTemplate.Data.Entities.UserActivity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_activities_users_user_id");
                 });
 
             modelBuilder.Entity("FocusTemplate.Data.Entities.WeatherForecast", b =>

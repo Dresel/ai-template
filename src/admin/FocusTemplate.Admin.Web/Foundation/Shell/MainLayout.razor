@@ -1,5 +1,6 @@
 @using System.Security.Claims
 @using FocusTemplate.Admin.Shared
+@using FocusTemplate.Primitives.Permissions
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
 
@@ -42,17 +43,43 @@
 			<RadzenPanelMenuItem Text="Home" Icon="home" Path="" data-testid="nav-home" />
 			<RadzenPanelMenuItem Text="Weather" Icon="cloud" Path="weather" data-testid="nav-weather" />
 			<RadzenPanelMenuItem Text="Validation" Icon="fact_check" Path="demo/validation" data-testid="nav-validation" />
+			@* Shown with either of its pages' permissions, so a PermissionView, which asks for one, does not fit *@
+			<AuthorizeView>
+				@{
+					bool users = context.User.Has(UserManagement.ViewUsers);
+					bool groups = context.User.Has(UserManagement.ViewGroups);
+				}
+				@if (users || groups)
+				{
+					<RadzenPanelMenuItem Text="User management" Icon="manage_accounts" data-testid="nav-user-management">
+						@if (users)
+						{
+							<RadzenPanelMenuItem Text="Users" Icon="person" Path="@Features.UserManagement.Users.ListPage.Path" data-testid="nav-users" />
+						}
+						@if (groups)
+						{
+							<RadzenPanelMenuItem Text="Groups" Icon="group" Path="@Features.UserManagement.Groups.ListPage.Path" data-testid="nav-groups" />
+						}
+					</RadzenPanelMenuItem>
+				}
+			</AuthorizeView>
 			<RadzenPanelMenuItem Text="Diagnostics" Icon="troubleshoot" Path="diagnostics" data-testid="nav-diagnostics" />
 		</RadzenPanelMenu>
 	</RadzenSidebar>
 	<RadzenBody>
-		@Body
+		@* Blazor reuses a page when only its route values change. The key makes each address a new page with a new view model *@
+		<div @key="PagePath">
+			@Body
+		</div>
 	</RadzenBody>
 </RadzenLayout>
 
 @code
 {
 	private bool sidebarExpanded = true;
+
+	// Without the query, so a page that keeps its filters there survives changing them
+	private string PagePath => new Uri(Navigation.Uri).AbsolutePath;
 
 	private void Login() =>
 		Navigation.NavigateTo(

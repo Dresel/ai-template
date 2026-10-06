@@ -48,7 +48,7 @@ app.MapDefaultEndpoints();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// The AppHost sets Client__ConfigEndpointPath and Client__ConfigResponse; the BFF serves that JSON to the WASM client.
+// The AppHost sets Client__ConfigEndpointPath and Client__ConfigResponse, and the BFF serves that JSON to the WASM client.
 string? configEndpointPath = app.Configuration["Client:ConfigEndpointPath"];
 string? configResponse = app.Configuration["Client:ConfigResponse"];
 

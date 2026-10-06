@@ -26,7 +26,7 @@ public sealed partial class DemoProfilesClient
 		this.jsonOptions = new JsonSerializerOptions(jsonOptions ?? ApiClientSupport.CreateDefaultJsonOptions());
 	}
 
-	/// <summary>Validates a profile and answers it back; nothing is stored.</summary>
+	/// <summary>Validates a profile and answers it back without storing it.</summary>
 	/// <param name="body">body.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
 	public async Task<DemoProfilesCreateResult> CreateAsync(DemoProfileRequest body, CancellationToken cancellationToken = default)

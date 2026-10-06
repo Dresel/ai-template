@@ -46,6 +46,34 @@ public sealed class AuditingTests(ApiFixture factory) : ApiTestBase(factory)
 			await ReadAuditColumnsAsync(station.Id));
 	}
 
+	// A job such as bootstrap-admin writes through the API's own context, with no request in flight
+	[Fact]
+	public async Task PooledContextOutsideARequestAuditsAsSystem()
+	{
+		DateTimeOffset createdAt = Factory.Clock.GetUtcNow();
+		Station station = new()
+		{
+			Id = StationId.New(),
+			OwnerId = ApiFixture.TestUser,
+			Code = "JOB",
+			Name = "Saved by a job",
+			Location = new Point(16.4, 48.2) { SRID = 4326, },
+		};
+
+		await using (AsyncServiceScope scope = Factory.Services.CreateAsyncScope())
+		{
+			scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext = null;
+
+			AppDbContext dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+			dbContext.Stations.Add(station);
+			await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
+		}
+
+		Assert.Equal(
+			new AuditColumns(createdAt, WellKnownUsers.System, createdAt, WellKnownUsers.System),
+			await ReadAuditColumnsAsync(station.Id));
+	}
+
 	[Fact]
 	public async Task PooledContextTakesTheUserFromTheRequestAndTheClockFromTheHost()
 	{

@@ -1,0 +1,75 @@
+@typeparam TItem where TItem : class
+
+<PageTitle>@(Item is { } titled ? Title(titled) : Missing ? MissingTitle : Fallback)</PageTitle>
+
+@if (Item is null && !Missing)
+{
+	@if (LoadingContent is null)
+	{
+		<AppLoading Busy="Loading" data-testid="@($"{TestId}-loading")" />
+	}
+	else if (Loading)
+	{
+		@LoadingContent
+	}
+}
+else if (Missing)
+{
+	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1" data-testid="@($"{TestId}-missing")">@MissingTitle</RadzenText>
+	<RadzenLink Path="@BackPath" Text="@BackText" />
+}
+else if (Item is { } item)
+{
+	@if (Loading)
+	{
+		@ReloadingContent
+	}
+
+	@ChildContent(item)
+}
+
+@code
+{
+	[Parameter]
+	[EditorRequired]
+	public string BackPath { get; set; } = string.Empty;
+
+	[Parameter]
+	[EditorRequired]
+	public string BackText { get; set; } = string.Empty;
+
+	[Parameter]
+	[EditorRequired]
+	public RenderFragment<TItem> ChildContent { get; set; } = null!;
+
+	[Parameter]
+	[EditorRequired]
+	public string Fallback { get; set; } = string.Empty;
+
+	[Parameter]
+	public TItem? Item { get; set; }
+
+	[Parameter]
+	public bool Loading { get; set; }
+
+	[Parameter]
+	public RenderFragment? LoadingContent { get; set; }
+
+	[Parameter]
+	public bool Missing { get; set; }
+
+	[Parameter]
+	[EditorRequired]
+	public string MissingTitle { get; set; } = string.Empty;
+
+	[Parameter]
+	public RenderFragment? ReloadingContent { get; set; }
+
+	[Parameter]
+	[EditorRequired]
+	public string TestId { get; set; } = string.Empty;
+
+	[Parameter]
+	[EditorRequired]
+	public Func<TItem, string> Title { get; set; } = null!;
+}

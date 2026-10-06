@@ -1,0 +1,60 @@
+@using FluentValidation
+@using FocusTemplate.Admin.Client.Groups
+@inject GroupsClient Api
+@inject IValidator<Form> FormValidator
+
+<AppForm @ref="appForm" Model="form" Validator="FormValidator" OnValidSubmit="SaveAsync">
+	<RadzenStack Gap="1rem">
+		<AppFailure Message="@failure" data-testid="group-form-failure" />
+
+		<AppTextInput Label="Name" @bind-Value="form.Name" data-testid="group-name" />
+		<AppTextInput Label="Description" @bind-Value="form.Description" data-testid="group-description" />
+
+		<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+			<RadzenButton Text="Cancel"
+				ButtonStyle="ButtonStyle.Base"
+				Variant="Variant.Outlined"
+				Click="() => Dialogs.Close()"
+				data-testid="cancel-group" />
+			<RadzenButton ButtonType="ButtonType.Submit" Text="Save" ButtonStyle="ButtonStyle.Primary" data-testid="save-group" />
+		</RadzenStack>
+	</RadzenStack>
+</AppForm>
+
+@code
+{
+	private AppForm<Form> appForm = null!;
+
+	private string? failure;
+
+	private Form form = new();
+
+	[Parameter]
+	public GroupResponse? Group { get; set; }
+
+	protected override void OnInitialized() => form = Group?.ToForm() ?? new Form();
+
+	private async Task SaveAsync()
+	{
+		failure = null;
+
+		ApiOutcome<GroupResponse, ValidationProblem> outcome = Group is null
+			? await Api.CreateAsync(form.ToContract()).ToOutcome<ValidationProblem>()
+			: await Api.UpdateAsync(Group.Id, form.ToContract()).ToOutcome<ValidationProblem>();
+
+		switch (outcome)
+		{
+			case GroupResponse saved:
+				Dialogs.Close(saved);
+				break;
+
+			case ValidationProblem invalid:
+				await appForm.ShowServerErrorsAsync(invalid.Problem);
+				break;
+
+			case ApiFailure failed:
+				failure = failed.Message;
+				break;
+		}
+	}
+}

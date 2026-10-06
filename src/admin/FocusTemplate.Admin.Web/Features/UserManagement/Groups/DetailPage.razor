@@ -1,0 +1,203 @@
+@attribute [Route("/" + ListPage.Path + "/{Id:guid}")]
+@attribute [RequiresPermission(UserManagement.Names.ViewGroups)]
+@using FocusTemplate.Primitives.Permissions
+@inherits ViewModelPage<DetailPageViewModel>
+
+<RadzenStack Gap="1rem">
+	<AppFailure Message="@ViewModel.Failure" data-testid="group-failure" />
+
+	<AppItemView TItem="GroupResponse"
+		Item="ViewModel.Group"
+		Loading="ViewModel.Loading"
+		Missing="ViewModel.Missing"
+		Title="GroupResponseTitle"
+		Fallback="Group"
+		MissingTitle="No such group"
+		BackPath="@ListPage.Path"
+		BackText="All groups"
+		TestId="group"
+		Context="group">
+		<RadzenStack Orientation="Orientation.Horizontal"
+			AlignItems="AlignItems.Center"
+			JustifyContent="JustifyContent.SpaceBetween"
+			Wrap="FlexWrap.Wrap">
+			<RadzenStack Gap="0.25rem">
+				<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+					<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1" data-testid="group-title">@group.Name</RadzenText>
+					@if (group.IsManaged)
+					{
+						<RadzenBadge BadgeStyle="BadgeStyle.Info" Text="Managed" data-testid="group-managed" />
+					}
+				</RadzenStack>
+				@if (group.Description is not null)
+				{
+					<RadzenText TextStyle="TextStyle.Body1" data-testid="group-description-text">@group.Description</RadzenText>
+				}
+			</RadzenStack>
+			@if (CanManageGroups)
+			{
+				<RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem">
+					<RadzenButton Text="Rename"
+						Icon="edit"
+						ButtonStyle="ButtonStyle.Base"
+						Variant="Variant.Outlined"
+						Disabled="ViewModel.Acting"
+						Click="RenameAsync"
+						data-testid="edit-group" />
+					<RadzenButton Text="Delete"
+						Icon="delete"
+						ButtonStyle="ButtonStyle.Danger"
+						Variant="Variant.Outlined"
+						Disabled="group.IsManaged || ViewModel.Acting"
+						title="@(group.IsManaged ? "A managed group comes with the release and stays" : "Delete the group")"
+						Click="DeleteAsync"
+						data-testid="delete-group" />
+				</RadzenStack>
+			}
+		</RadzenStack>
+
+		<RadzenCard>
+			<RadzenStack Gap="0.75rem" data-testid="group-members">
+				<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">Members</RadzenText>
+				@if (group.Members.Count == 0)
+				{
+					<RadzenText TextStyle="TextStyle.Body2">No members yet.</RadzenText>
+				}
+				@foreach (GroupMemberResponse member in group.Members)
+				{
+					<RadzenStack @key="member.Id"
+						Orientation="Orientation.Horizontal"
+						AlignItems="AlignItems.Center"
+						JustifyContent="JustifyContent.SpaceBetween"
+						data-testid="member-row">
+						<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+							<RadzenLink Path="@Users.DetailPage.PathOf(member.Id)" Text="@member.DisplayName" />
+							@if (!member.IsActive)
+							{
+								<RadzenBadge BadgeStyle="BadgeStyle.Light" Text="Deactivated" />
+							}
+						</RadzenStack>
+						@if (CanManageGroups)
+						{
+							<RadzenButton Icon="person_remove"
+								ButtonStyle="ButtonStyle.Base"
+								Variant="Variant.Outlined"
+								Disabled="ViewModel.Acting"
+								title="@($"Remove {member.DisplayName} from the group")"
+								Click="() => RemoveAsync(member)"
+								data-testid="remove-member" />
+						}
+					</RadzenStack>
+				}
+				@* The picker searches the users, which takes a permission of its own *@
+				@if (CanManageGroups && CanViewUsers)
+				{
+					<MemberPicker Picked="user => ViewModel.AddMemberAsync(user.Id)" />
+				}
+			</RadzenStack>
+		</RadzenCard>
+
+		<RadzenCard>
+			<RadzenStack Gap="0.75rem" data-testid="group-permissions">
+				<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">Permissions</RadzenText>
+				@if (group.IsManaged)
+				{
+					<RadzenText TextStyle="TextStyle.Body2" data-testid="managed-note">
+						Managed: its permissions come with each release.
+					</RadzenText>
+				}
+				@foreach (IGrouping<string, Permission> section in Permission.All.GroupBy(permission => PermissionLabel.Of(permission).Section))
+				{
+					<RadzenText TextStyle="TextStyle.Subtitle1" TagName="TagName.H3">@section.Key</RadzenText>
+					@foreach (Permission permission in section)
+					{
+						string name = $"permission-{permission.Value}";
+						string action = PermissionLabel.Of(permission).Action;
+						@* Without the label of its own, the checkbox is named after its icon's ligature, "check" *@
+						<RadzenStack @key="permission" Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+							<RadzenCheckBox TValue="bool"
+								Value="ViewModel.Granted.Contains(permission)"
+								ValueChanged="on => ViewModel.Grant(permission, on)"
+								Disabled="!CanSetPermissions"
+								Name="@name"
+								aria-label="@action"
+								data-testid="@name" />
+							<RadzenLabel Text="@action" Component="@name" />
+						</RadzenStack>
+					}
+				}
+				@if (CanSetPermissions)
+				{
+					<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+						<RadzenButton Text="Save permissions"
+							ButtonStyle="ButtonStyle.Primary"
+							Disabled="ViewModel.Acting"
+							Click="ViewModel.SavePermissionsAsync"
+							data-testid="save-permissions" />
+						@if (ViewModel.PermissionsSaved)
+						{
+							<RadzenText TextStyle="TextStyle.Body2" data-testid="permissions-saved">Saved.</RadzenText>
+						}
+					</RadzenStack>
+				}
+			</RadzenStack>
+		</RadzenCard>
+	</AppItemView>
+</RadzenStack>
+
+@code
+{
+	public static string PathOf(GroupId group) => $"{ListPage.Path}/{group.Value}";
+
+	private static string GroupResponseTitle(GroupResponse group) => group.Name;
+
+	[Parameter]
+	public Guid Id { get; set; }
+
+	private bool CanManageGroups => CurrentUser.Has(UserManagementPermissions.ManageGroups);
+
+	private bool CanSetPermissions => CanManageGroups && ViewModel.Group is { IsManaged: false };
+
+	private bool CanViewUsers => CurrentUser.Has(UserManagementPermissions.ViewUsers);
+
+	protected override Task OnInitializedAsync() => ViewModel.LoadAsync(GroupId.From(Id));
+
+	private async Task DeleteAsync()
+	{
+		if (await Dialogs.ConfirmAsync(
+				$"Delete {ViewModel.Group!.Name}? Its members lose what it grants.",
+				"Delete the group",
+				"Delete"))
+		{
+			await ViewModel.DeleteAsync();
+
+			if (ViewModel.Deleted)
+			{
+				Navigation.NavigateTo(ListPage.Path);
+			}
+		}
+	}
+
+	private async Task RemoveAsync(GroupMemberResponse member)
+	{
+		if (await Dialogs.ConfirmAsync(
+				$"Remove {member.DisplayName} from {ViewModel.Group!.Name}? They lose what the group grants.",
+				"Remove the member",
+				"Remove"))
+		{
+			await ViewModel.RemoveMemberAsync(member.Id);
+		}
+	}
+
+	private async Task RenameAsync()
+	{
+		object? renamed = await Dialogs.OpenAsync<FormDialog>(
+			"Rename the group",
+			new Dictionary<string, object?> { [nameof(FormDialog.Group)] = ViewModel.Group });
+
+		if (renamed is GroupResponse updated)
+		{
+			ViewModel.Renamed(updated);
+		}
+	}
+}

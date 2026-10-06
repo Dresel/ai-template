@@ -1,0 +1,20 @@
+<div class="app-loading">
+	@if (Busy)
+	{
+		<RadzenProgressBar Mode="ProgressBarMode.Indeterminate"
+			Value="100"
+			ShowValue="false"
+			aria-label="Loading"
+			@attributes="Attributes" />
+	}
+</div>
+
+@code
+{
+	[Parameter(CaptureUnmatchedValues = true)]
+	public IReadOnlyDictionary<string, object>? Attributes { get; set; }
+
+	[Parameter]
+	[EditorRequired]
+	public bool Busy { get; set; }
+}

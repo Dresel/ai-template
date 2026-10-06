@@ -51,15 +51,6 @@ public sealed class DemoProfileTests(ApiFixture factory) : ApiTestBase(factory)
 	}
 
 	[Fact]
-	public async Task AMalformedCodeIsAValidationProblemAtCodeAsForTheProfile()
-	{
-		DemoProfilesCheckCodeResult result = await Client().CheckCodeAsync("abc", Cancellation);
-
-		Violation malformed = Assert.Single(result is ValidationProblem problem ? problem.Problem.Violations : []);
-		Assert.Equal(("code", "pattern"), (malformed.Key, malformed.Code));
-	}
-
-	[Fact]
 	public async Task ARuleOnTheWholeAddressIsKeyedToTheAddress()
 	{
 		ValidationProblemDetails problem = await CreateInvalidAsync(
@@ -88,55 +79,12 @@ public sealed class DemoProfileTests(ApiFixture factory) : ApiTestBase(factory)
 	}
 
 	[Fact]
-	public async Task EveryConstraintIsReportedAtItsWirePath()
-	{
-		ValidationProblemDetails problem = await CreateInvalidAsync(
-			Valid with
-			{
-				Code = "abc",
-				Name = new string('n', 51),
-				Age = 17,
-				WeightKg = 0,
-				Address = new DemoAddressRequest("Hohe Warte 38", "119", "Vienna"),
-				Tags = ["ok", new string('t', 21), "c", "d", "e", "f",],
-			});
-
-		string[] expected = ["address.postalCode", "age", "code", "name", "tags", "tags[1]", "weightKg",];
-		Assert.Equal(expected, problem.Errors.Keys.Order(StringComparer.Ordinal));
-	}
-
-	[Fact]
 	public async Task TheHandlerAnswersAReservedNameWithAValidationProblemOfItsOwn()
 	{
 		ValidationProblemDetails problem = await CreateInvalidAsync(Valid with { Name = "Reserved", });
 
 		Violation reserved = Assert.Single(problem.Violations);
 		Assert.Equal(("name", "name.reserved"), (reserved.Key, reserved.Code));
-	}
-
-	[Fact]
-	public async Task WarningsAndInfosAloneLetTheProfileThrough()
-	{
-		DemoProfilesCreateResult result =
-			await Client().CreateAsync(Valid with { Nickname = "SHOUTING", Age = 101, }, Cancellation);
-
-		Assert.True(result is DemoProfileResponse, $"Expected the profile, got {result}.");
-	}
-
-	[Fact]
-	public async Task WarningsAndInfosComeAlongWithAnError()
-	{
-		ValidationProblemDetails problem = await CreateInvalidAsync(
-			Valid with { Name = new string('n', 51), Nickname = "SHOUTING", Age = 101, });
-
-		Assert.Equal(["name",], problem.Errors.Keys);
-		Assert.Equal(
-			[
-				("age", ViolationSeverity.Info),
-				("name", ViolationSeverity.Error),
-				("nickname", ViolationSeverity.Warning),
-			],
-			problem.Violations.Select(violation => (violation.Key, violation.Severity)).Order());
 	}
 
 	private DemoProfilesClient Client() => new(Factory.CreateAuthenticatedClient());

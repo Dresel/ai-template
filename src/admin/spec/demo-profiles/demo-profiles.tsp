@@ -93,7 +93,7 @@ model DemoProfileResponse {
 @route("/demo-profiles")
 @tag("DemoProfiles")
 interface DemoProfiles {
-  /** Validates a profile and answers it back; nothing is stored. */
+  /** Validates a profile and answers it back without storing it. */
   @post
   create(@body body: DemoProfileRequest): DemoProfileResponse | ValidationProblem;
 

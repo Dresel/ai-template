@@ -2,8 +2,8 @@ import "@typespec/http";
 import "@typespec/openapi";
 import "@spatialfocus/typespec-http-csharp-slim";
 
-// One file per feature slice next to this entry file; each contributes to the FocusTemplate.Public namespace.
-import "./WeatherForecasts.tsp";
+// One folder per feature slice next to this entry file, each contributing to the FocusTemplate.Public namespace.
+import "./weather-forecasts/weather-forecasts.tsp";
 
 using Http;
 using OpenAPI;

@@ -247,3 +247,17 @@ h1:focus {
 code {
 	color: #c02d76;
 }
+
+/* The software theme draws every linear bar 1.25rem high. Like the Zen theme, a bar is slim unless it shows its value */
+.rz-progressbar {
+	--rz-progressbar-height: 0.25rem;
+}
+
+.rz-progressbar:has(.rz-progressbar-label) {
+	--rz-progressbar-height: 1.25rem;
+}
+
+/* AppLoading: the slot keeps the bar's height while none shows, so nothing below it moves */
+.app-loading {
+	height: 0.25rem;
+}

@@ -26,7 +26,10 @@ public static class ServiceCollectionExtensions
 			.AddHttpMessageHandler(() => new CsrfHeaderHandler())
 
 			// TODO: Show popup login dialog instead of redirecting to login page (use message center service & error boundary)
-			.AddHttpMessageHandler(provider => new RedirectToLoginHandler(provider.GetRequiredService<NavigationManager>()));
+			.AddHttpMessageHandler(provider => new RedirectToLoginHandler(provider.GetRequiredService<NavigationManager>()))
+
+			// Outside the resilience handler, so it sees what that one gives up on
+			.AddHttpMessageHandler(() => new NoAnswerHandler());
 
 		// Transient failures retried for reads only: a create or deactivate sent twice would act twice
 		builder.AddStandardResilienceHandler(options => options.Retry.DisableForUnsafeHttpMethods());

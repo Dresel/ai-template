@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace FocusTemplate.Admin.Web.Foundation.Validation.Core;
 
-// A change validates its field and those depending on it, a submit the whole form; an answer a later run replaced is dropped
+// A change validates its field and those depending on it, a submit the whole form. A replaced run's answer is dropped
 public sealed class FormValidation(
 	FormMessages messages,
 	ValidateScope validate,
 	IReadOnlyDictionary<string, IReadOnlyList<string>>? dependencies = null) : IDisposable
 {
-	// Waiting for the server, null paths for the whole form; cancelling one drops its answer
+	// Waiting for the server, null paths for the whole form. Cancelling one drops its answer
 	private readonly Dictionary<CancellationTokenSource, IReadOnlyCollection<string>?> pending = [];
 
 	public void Dispose() => Cancel([.. this.pending.Keys,]);
@@ -27,7 +27,7 @@ public sealed class FormValidation(
 	public async Task<bool> FieldFocusLostAsync(FieldIdentifier field) =>
 		messages.Touch(field) && await RunAsync(ScopeOf(field)) is not null;
 
-	// Only errors block, as on the server; null when a change or a second submit took its place, so the form is sent once
+	// Only errors block, as on the server. Null when a change or a second submit took its place, so the form is sent once
 	public async Task<bool?> ValidateAllAsync()
 	{
 		messages.MarkSubmitted();
@@ -93,7 +93,7 @@ public sealed class FormValidation(
 		}
 	}
 
-	// A row's input stands for its list; a field no input claims may be read by any rule, so the whole form
+	// A row's input stands for its list. A field no input claims may be read by any rule, so the whole form
 	private IReadOnlyCollection<string>? ScopeOf(FieldIdentifier field)
 	{
 		if (messages.PathOf(field) is not { } registered)

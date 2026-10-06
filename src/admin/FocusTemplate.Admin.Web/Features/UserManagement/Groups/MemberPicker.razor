@@ -1,0 +1,65 @@
+@using FocusTemplate.Admin.Client.Users
+@inject UsersClient Users
+
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+	<RadzenAutoComplete @bind-Value="text"
+		Data="candidates"
+		TextProperty="@nameof(UserSummaryResponse.DisplayName)"
+		LoadData="SearchAsync"
+		FilterDelay="300"
+		SelectedItemChanged="Select"
+		Placeholder="Find a user by name or e-mail"
+		InputAttributes="inputAttributes" />
+	<RadzenButton Text="Add"
+		Icon="person_add"
+		ButtonStyle="ButtonStyle.Base"
+		Variant="Variant.Outlined"
+		Disabled="selected is null"
+		Click="AddAsync"
+		data-testid="add-member" />
+</RadzenStack>
+
+@code
+{
+	private static readonly IReadOnlyDictionary<string, object> inputAttributes = new Dictionary<string, object>
+	{
+		["aria-label"] = "Find a user to add", ["data-testid"] = "member-picker"
+	};
+
+	private IReadOnlyList<UserSummaryResponse> candidates = [];
+
+	private UserSummaryResponse? selected;
+
+	private string? text;
+
+	[Parameter]
+	[EditorRequired]
+	public EventCallback<UserSummaryResponse> Picked { get; set; }
+
+	private async Task AddAsync()
+	{
+		if (selected is { } user)
+		{
+			await Picked.InvokeAsync(user);
+			(selected, text) = (null, null);
+		}
+	}
+
+	private async Task SearchAsync(LoadDataArgs args)
+	{
+		try
+		{
+			candidates = await Users.SearchAsync(new UserSearchRequest(args.Filter, Top: 10)) switch
+			{
+				UserPageResponse page => page.Items,
+				ValidationProblem _ => []
+			};
+		}
+		catch (HttpRequestException)
+		{
+			candidates = [];
+		}
+	}
+
+	private void Select(object? item) => selected = item as UserSummaryResponse;
+}

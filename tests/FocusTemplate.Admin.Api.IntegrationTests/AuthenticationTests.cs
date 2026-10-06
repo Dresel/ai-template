@@ -1,10 +1,15 @@
 using System.Net;
+using System.Security.Claims;
 using FocusTemplate.Data.Auditing;
 using FocusTemplate.Primitives;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 
@@ -12,6 +17,28 @@ public sealed class AuthenticationTests(ApiFixture factory) : ApiTestBase(factor
 {
 	// Health probes and the OpenAPI document are the only endpoints a caller reaches without a token.
 	private static readonly string[] AnonymousRoutes = ["/health", "/alive", "/openapi/v1.yaml",];
+
+	// The test scheme is the default, so the JwtBearer check is driven through its event directly.
+	[Fact]
+	public async Task ATokenWhoseSubjectIsNoUuidIsRejected()
+	{
+		JwtBearerOptions options = Factory.Services.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>()
+			.Get(JwtBearerDefaults.AuthenticationScheme);
+		TokenValidatedContext context = new(
+			new DefaultHttpContext { RequestServices = Factory.Services, },
+			new AuthenticationScheme(JwtBearerDefaults.AuthenticationScheme, null, typeof(JwtBearerHandler)),
+			options)
+		{
+			Principal = new ClaimsPrincipal(
+				new ClaimsIdentity(
+					[new Claim(JwtRegisteredClaimNames.Sub, "service-account-admin-bff"),],
+					JwtBearerDefaults.AuthenticationScheme)),
+		};
+
+		await options.Events.TokenValidated(context);
+
+		Assert.NotNull(context.Result?.Failure);
+	}
 
 	[Fact]
 	public async Task AnonymousRequestsAreRejectedWith401()
@@ -25,8 +52,8 @@ public sealed class AuthenticationTests(ApiFixture factory) : ApiTestBase(factor
 		Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
 	}
 
-	// A fallback policy would also lock the health endpoints Aspire probes, so authorization is attached per endpoint
-	// group in the slice's hooks file, and this test is what catches a new slice that forgot its hook.
+	// A fallback policy would also lock the health endpoints Aspire probes, so the generated endpoints carry the
+	// authorization of the spec's @useAuth, and this test is what catches a spec that lost it.
 	[Fact]
 	public void EveryApiEndpointRequiresAuthorization()
 	{
@@ -41,18 +68,20 @@ public sealed class AuthenticationTests(ApiFixture factory) : ApiTestBase(factor
 		Assert.Empty(unprotected);
 	}
 
-	// Jobs and the seed have no request, and their writes must not be attributed to a person.
+	// Jobs have no request, and nobody may stand in for the person who is not there.
 	[Fact]
-	public void OutsideARequestTheActingUserIsSystem()
+	public void OutsideARequestNobodyIsSignedIn()
 	{
 		using IServiceScope scope = Factory.Services.CreateScope();
 		scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext = null;
+		ICurrentUser currentUser = scope.ServiceProvider.GetRequiredService<ICurrentUser>();
 
-		Assert.Equal(WellKnownUsers.System, scope.ServiceProvider.GetRequiredService<ICurrentUser>().Id);
+		Assert.Null(currentUser.IdOrDefault);
+		Assert.Throws<InvalidOperationException>(() => currentUser.Id);
 	}
 
 	[Fact]
-	public void TheActingUserIsTheTokenSubject()
+	public void TheSignedInUserIsTheTokenSubject()
 	{
 		UserId subject = UserId.From(new Guid("00000000-0000-7000-8000-00000000005b"));
 
@@ -61,7 +90,9 @@ public sealed class AuthenticationTests(ApiFixture factory) : ApiTestBase(factor
 		{
 			User = TestAuthenticationHandler.CreatePrincipal(subject), RequestServices = scope.ServiceProvider,
 		};
+		ICurrentUser currentUser = scope.ServiceProvider.GetRequiredService<ICurrentUser>();
 
-		Assert.Equal(subject, scope.ServiceProvider.GetRequiredService<ICurrentUser>().Id);
+		Assert.Equal(subject, currentUser.IdOrDefault);
+		Assert.Equal(subject, currentUser.Id);
 	}
 }

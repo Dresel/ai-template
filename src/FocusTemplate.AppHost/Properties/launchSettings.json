@@ -5,7 +5,7 @@
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"launchBrowser": true,
-			"applicationUrl": "https://focustemplate-apphost.dev.localhost:17049;http://focustemplate-apphost.dev.localhost:15044",
+			"applicationUrl": "https://localhost:17049;http://localhost:15044",
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development",
 				"DOTNET_ENVIRONMENT": "Development",
@@ -19,7 +19,7 @@
 			"commandName": "Project",
 			"dotnetRunMessages": true,
 			"launchBrowser": true,
-			"applicationUrl": "http://focustemplate-apphost.dev.localhost:15044",
+			"applicationUrl": "http://localhost:15044",
 			"environmentVariables": {
 				"ASPNETCORE_ENVIRONMENT": "Development",
 				"DOTNET_ENVIRONMENT": "Development",

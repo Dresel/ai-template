@@ -30,6 +30,7 @@ public sealed class IngressAppFixture : IAsyncLifetime
 					"Features:LocalKeycloak=true",
 					"Features:PersistentLocalKeycloak=false",
 					"Features:PersistentDatabase=false",
+					"Features:Chaos=false",
 				],
 				cancellationTokenSource.Token);
 

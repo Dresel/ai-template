@@ -7,7 +7,7 @@ using static FocusTemplate.Admin.Web.UnitTests.Foundation.Validation.Core.FormTe
 
 namespace FocusTemplate.Admin.Web.UnitTests.Foundation.Validation.Core;
 
-// Where the server's messages show; the view model validator's are FormValidationTests'
+// Where the server's messages show. The view model validator's are FormValidationTests'
 public sealed class FormMessagesTests
 {
 	private readonly TestForm form = new();

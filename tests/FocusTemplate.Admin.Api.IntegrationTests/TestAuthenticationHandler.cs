@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 
-// "Authorization: Test <UserId>" authenticates users; all other requests are anonymous.
+// "Authorization: Test <UserId>" authenticates users, all other requests are anonymous.
 // Claims mirror Keycloak access tokens, so existing API mapping works unchanged.
 public sealed class TestAuthenticationHandler(
 	IOptionsMonitor<AuthenticationSchemeOptions> options,

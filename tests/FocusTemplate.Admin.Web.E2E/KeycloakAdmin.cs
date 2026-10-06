@@ -9,6 +9,8 @@ public sealed class KeycloakAdmin(IAPIRequestContext api) : IAsyncDisposable
 {
 	private const string Realm = "admin/realms/focus";
 
+	private readonly List<string> createdUsers = [];
+
 	private readonly List<(string Client, JsonObject Mapper)> removedMappers = [];
 
 	private int? accessTokenLifespan;
@@ -52,8 +54,39 @@ public sealed class KeycloakAdmin(IAPIRequestContext api) : IAsyncDisposable
 				}));
 	}
 
+	// The profile is complete, so Keycloak asks for nothing more at the first login
+	public async Task CreateUserAsync(string userName, string password)
+	{
+		IAPIResponse response = await EnsureSuccessAsync(
+			api.PostAsync(
+				$"{Realm}/users",
+				new APIRequestContextOptions
+				{
+					DataObject = new
+					{
+						username = userName,
+						enabled = true,
+						email = $"{userName}@focus.local",
+						emailVerified = true,
+						firstName = "End",
+						lastName = "To End",
+						credentials =
+							new[] { new { type = "password", value = password, temporary = false, }, },
+					},
+				}));
+
+		// Keycloak answers with the new user's URL, the id its last segment
+		string location = response.Headers["location"];
+		this.createdUsers.Add(location[(location.LastIndexOf('/') + 1)..]);
+	}
+
 	public async ValueTask DisposeAsync()
 	{
+		foreach (string user in this.createdUsers)
+		{
+			await EnsureSuccessAsync(api.DeleteAsync($"{Realm}/users/{user}"));
+		}
+
 		foreach ((string client, JsonObject mapper) in this.removedMappers)
 		{
 			await EnsureSuccessAsync(

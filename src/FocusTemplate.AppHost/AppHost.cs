@@ -15,6 +15,7 @@ bool addMobile = builder.Configuration.GetValue("Features:Mobile", false);
 bool addLocalKeycloak = builder.ExecutionContext.IsRunMode && builder.Configuration.GetValue("Features:LocalKeycloak", true);
 bool persistentLocalKeycloak = builder.Configuration.GetValue("Features:PersistentLocalKeycloak", false);
 bool persistentDatabase = builder.Configuration.GetValue("Features:PersistentDatabase", false);
+bool addChaos = builder.ExecutionContext.IsRunMode && builder.Configuration.GetValue("Features:Chaos", false);
 
 IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres("postgres")
 	.WithImage("postgis/postgis")
@@ -36,6 +37,15 @@ IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_A
 	.WithReference(focusDb, connectionName: "focusdb-readonly")
 	.WithKeycloakAudience(realm)
 	.WaitFor(focusDb);
+
+if (addChaos)
+{
+	// Run mode only, so no published environment ever answers slowly or fails on purpose
+	IConfigurationSection chaos = builder.Configuration.GetSection("Chaos");
+	api.WithEnvironment("Chaos__LatencyRate", chaos["LatencyRate"])
+		.WithEnvironment("Chaos__Latency", chaos["Latency"])
+		.WithEnvironment("Chaos__FaultRate", chaos["FaultRate"]);
+}
 
 // See https://aspire.dev/integrations/databases/efcore/migrations/
 IResourceBuilder<EFMigrationResource> migrations = api.AddEFMigrations(

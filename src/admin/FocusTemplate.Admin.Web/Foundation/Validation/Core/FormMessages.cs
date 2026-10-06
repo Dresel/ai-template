@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.Forms;
 
 namespace FocusTemplate.Admin.Web.Foundation.Validation.Core;
 
-// The browser's messages show once their field is touched, the server's until it changes; one without a rendered input
+// The browser's messages show once their field is touched, the server's until it changes. One without a rendered input
 // goes to the summary rather than nowhere
 public sealed class FormMessages(IReadOnlyDictionary<string, string>? renames = null)
 {
@@ -90,7 +90,7 @@ public sealed class FormMessages(IReadOnlyDictionary<string, string>? renames = 
 	internal string? PathOf(FieldIdentifier field) =>
 		this.fields.Find(registration => registration.Field.Equals(field))?.Path;
 
-	// Replaces what its rules found before, at, beneath and above its paths; no paths: the whole form
+	// Replaces what its rules found before, at, beneath and above its paths, or in the whole form without paths
 	internal void Replace(IReadOnlyCollection<string>? paths, ValidationResult result)
 	{
 		List<PathMessage> found =
@@ -134,7 +134,7 @@ public sealed class FormMessages(IReadOnlyDictionary<string, string>? renames = 
 		this.fields.Exists(registration =>
 			registration.Field.Equals(field) && FieldPath.IsBeneath(path, registration.Path));
 
-	// Wire paths are camelCase, the view model's PascalCase; a rename leads to the view model's own path, matched exactly
+	// Wire paths are camelCase, the view model's PascalCase. A rename leads to the view model's own path, matched exactly
 	private FieldIdentifier? ServerField(string path) =>
 		this.renames.TryGetValue(path, out string? renamed)
 			? ClientField(renamed)

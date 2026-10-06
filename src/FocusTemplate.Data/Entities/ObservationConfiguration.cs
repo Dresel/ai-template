@@ -1,4 +1,3 @@
-using FocusTemplate.Primitives;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,7 +7,7 @@ public sealed class ObservationConfiguration : IEntityTypeConfiguration<Observat
 {
 	public void Configure(EntityTypeBuilder<Observation> builder)
 	{
-		builder.Property(o => o.Id).ValueGeneratedOnAdd().HasSentinel(ObservationId.Unspecified);
+		builder.Property(o => o.Id).ValueGeneratedOnAdd();
 
 		builder.HasOne<Station>().WithMany().HasForeignKey(o => o.StationId).OnDelete(DeleteBehavior.Cascade);
 

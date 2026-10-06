@@ -1,0 +1,74 @@
+@attribute [Route("/" + Path)]
+@attribute [RequiresPermission(UserManagement.Names.ViewGroups)]
+@using FocusTemplate.Primitives.Permissions
+@inherits ViewModelPage<ListPageViewModel>
+
+<PageTitle>Groups</PageTitle>
+
+<RadzenStack Gap="1rem">
+	<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+		<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Groups</RadzenText>
+		<PermissionView Permission="UserManagementPermissions.ManageGroups">
+			<RadzenButton Text="New group" Icon="group_add" ButtonStyle="ButtonStyle.Primary" Click="CreateAsync" data-testid="new-group" />
+		</PermissionView>
+	</RadzenStack>
+
+	<AppFailure Message="@ViewModel.Failure" data-testid="groups-failure" />
+
+	<RadzenCard>
+		<AppLoading Busy="ViewModel is { Groups: null, Loading: true }" data-testid="groups-loading" />
+		<RadzenDataGrid TItem="GroupSummaryResponse"
+			Data="ViewModel.Groups"
+			AllowSorting="true"
+			RowRender="RenderRow"
+			RowClick="Open"
+			EmptyText="@(ViewModel.Groups is null ? string.Empty : "No groups yet.")"
+			data-testid="groups-table">
+			<Columns>
+				<RadzenDataGridColumn TItem="GroupSummaryResponse" Property="@nameof(GroupSummaryResponse.Name)" Title="Name">
+					<Template Context="group">
+						<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+							<span>@group.Name</span>
+							@if (group.IsManaged)
+							{
+								<RadzenBadge BadgeStyle="BadgeStyle.Info" Text="Managed" />
+							}
+						</RadzenStack>
+					</Template>
+				</RadzenDataGridColumn>
+				<RadzenDataGridColumn TItem="GroupSummaryResponse"
+					Property="@nameof(GroupSummaryResponse.Description)"
+					Title="Description"
+					Sortable="false" />
+				<RadzenDataGridColumn TItem="GroupSummaryResponse"
+					Property="@nameof(GroupSummaryResponse.MemberCount)"
+					Title="Members"
+					TextAlign="TextAlign.Right"
+					Width="8rem" />
+			</Columns>
+		</RadzenDataGrid>
+	</RadzenCard>
+</RadzenStack>
+
+@code
+{
+	public const string Path = "user-management/groups";
+
+	protected override Task OnInitializedAsync() => ViewModel.LoadAsync();
+
+	private async Task CreateAsync()
+	{
+		object? created = await Dialogs.OpenAsync<FormDialog>("New group");
+
+		if (created is GroupResponse group)
+		{
+			Navigation.NavigateTo(DetailPage.PathOf(group.Id));
+		}
+	}
+
+	private void Open(DataGridRowMouseEventArgs<GroupSummaryResponse> args) =>
+		Navigation.NavigateTo(DetailPage.PathOf(args.Data!.Id));
+
+	private static void RenderRow(RowRenderEventArgs<GroupSummaryResponse> args) =>
+		args.Attributes.Add("data-testid", "group-row");
+}

@@ -1,4 +1,5 @@
 using Duende.AccessTokenManagement.OpenIdConnect;
+using FocusTemplate.Admin.Client.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;
@@ -78,6 +79,10 @@ public static class WebApplicationBuilderExtensions
 						http.Request.Headers.ContainsKey(ProxiedApiDefaults.CsrfHeader)));
 
 		builder.Services.AddOpenIdConnectAccessTokenManagement();
+
+		// /bff/user asks the API for the user's permissions, with the session's access token
+		builder.Services.AddHttpClient<UsersClient>(client => client.BaseAddress = new Uri("https+http://admin-api/"))
+			.AddUserAccessTokenHandler();
 
 		return builder;
 	}

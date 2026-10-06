@@ -1,4 +1,3 @@
-using FocusTemplate.Primitives;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,7 +7,7 @@ public sealed class WeatherForecastConfiguration : IEntityTypeConfiguration<Weat
 {
 	public void Configure(EntityTypeBuilder<WeatherForecast> builder)
 	{
-		builder.Property(f => f.Id).ValueGeneratedOnAdd().HasSentinel(WeatherForecastId.Unspecified);
+		builder.Property(f => f.Id).ValueGeneratedOnAdd();
 
 		builder.HasOne<Station>().WithMany().HasForeignKey(f => f.StationId).OnDelete(DeleteBehavior.Cascade);
 		builder.HasIndex(f => new { f.StationId, f.Date, });

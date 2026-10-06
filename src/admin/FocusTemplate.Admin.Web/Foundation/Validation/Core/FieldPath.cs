@@ -4,7 +4,7 @@ namespace FocusTemplate.Admin.Web.Foundation.Validation.Core;
 
 public static class FieldPath
 {
-	// The members after the captured variable; only names are read, the view model is never reflected over
+	// The members after the captured variable. Only names are read, the view model is never reflected over
 	public static string Of<TValue>(Expression<Func<TValue>> value) => Walk(value.Body);
 
 	// The same for a validator's expressions, which start from the model: form => form.Address.Street

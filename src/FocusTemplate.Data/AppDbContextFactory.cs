@@ -20,7 +20,7 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
 		if (bool.TryParse(Environment.GetEnvironmentVariable("Database__SeedTestData"), out bool seedTestData) &&
 			seedTestData)
 		{
-			optionsBuilder.UseWeatherSeeding();
+			optionsBuilder.UseDevelopmentSeeding();
 		}
 
 		return new AppDbContext(optionsBuilder.Options);

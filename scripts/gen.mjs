@@ -2,7 +2,7 @@
 // A project inside a vertical, src/<vertical>/FocusTemplate.<Vertical>.*, and a test project compile that vertical's spec at
 // src/<vertical>/spec/api.tsp. A project of the shared spine, src/FocusTemplate.<Name>, compiles src/spec/<name>.tsp: today
 // FocusTemplate.Primitives over primitives.tsp, the typed ids every vertical imports.
-// Temporary TypeSpec output goes to tsp-output/; generated C# goes to each project's generated/ folder.
+// Temporary TypeSpec output goes to tsp-output/, generated C# to each project's generated/ folder.
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";

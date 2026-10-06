@@ -20,6 +20,10 @@ public static class AdminModelValidators
 		services.TryAddScoped<IValidator<DemoAddressRequest>, DemoAddressRequestContractValidator>();
 		services.TryAddScoped<DemoProfileRequestContractValidator>();
 		services.TryAddScoped<IValidator<DemoProfileRequest>, DemoProfileRequestContractValidator>();
+		services.TryAddScoped<GroupRequestContractValidator>();
+		services.TryAddScoped<IValidator<GroupRequest>, GroupRequestContractValidator>();
+		services.TryAddScoped<UserSearchRequestContractValidator>();
+		services.TryAddScoped<IValidator<UserSearchRequest>, UserSearchRequestContractValidator>();
 		return services;
 	}
 }

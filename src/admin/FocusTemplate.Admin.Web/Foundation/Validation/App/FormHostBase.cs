@@ -78,7 +78,7 @@ public abstract class FormHostBase<TModel> : ComponentBase, IFormHost, IDisposab
 		await Messages.FocusFirstInvalidAsync();
 	}
 
-	// Another model is another form: nothing touched, no messages, no run still waiting; the inputs claim their paths in
+	// Another model is another form: nothing touched, no messages, no run still waiting. The inputs claim their paths in
 	// the new messages
 	protected override void OnParametersSet()
 	{

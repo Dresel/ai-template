@@ -1,9 +1,14 @@
 using FocusTemplate.Admin.Api.Authentication;
+using FocusTemplate.Admin.Api.Authorization;
+using FocusTemplate.Admin.Api.Chaos;
 using FocusTemplate.Admin.Api.Features;
 using FocusTemplate.Admin.Api.Features.DemoProfiles;
+using FocusTemplate.Admin.Api.Features.Groups;
+using FocusTemplate.Admin.Api.Features.Users;
 using FocusTemplate.Admin.Api.Features.WeatherForecasts;
 using FocusTemplate.Admin.Shared;
 using FocusTemplate.Data;
+using FocusTemplate.Primitives;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -33,11 +38,21 @@ builder.Services.AddDemoProfiles();
 
 WebApplication app = builder.Build();
 
+if (args is [AdministratorBootstrap.Command, "--subject", { } subject,])
+{
+	await AdministratorBootstrap.PromoteAsync(app.Services, UserId.From(Guid.Parse(subject)), CancellationToken.None);
+	return;
+}
+
 app.MapDefaultEndpoints();
 
 app.UseExceptionHandler();
 
 app.UseAuthentication();
+
+// Before the authorization, so a user who may not do anything yet still appears in the user list
+app.UseMiddleware<UserProvisioningMiddleware>();
+
 app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
@@ -47,7 +62,11 @@ if (app.Environment.IsDevelopment())
 		() => Results.File(Path.Combine(AppContext.BaseDirectory, "openapi.yaml"), "application/yaml"));
 }
 
-app.MapDemoProfilesEndpoints();
-app.MapWeatherForecastsEndpoints();
+RouteGroupBuilder endpoints = app.MapGroup(string.Empty).AddChaosFilter(app.Configuration);
+
+endpoints.MapDemoProfilesEndpoints();
+endpoints.MapGroupsEndpoints();
+endpoints.MapUsersEndpoints();
+endpoints.MapWeatherForecastsEndpoints();
 
 app.Run();

@@ -39,7 +39,7 @@ internal sealed class FormValidator : ValidatorBase<Form>
 				DemoAddressRequestRules.PostalCode(RuleFor(form => form.Address.PostalCode));
 				DemoAddressRequestRules.City(RuleFor(form => form.Address.City));
 
-				// The rows exist for the inputs; the rules see the strings the contract holds, at the contract's paths
+				// The rows exist for the inputs. The rules see the strings the contract holds, at the contract's paths
 				DemoProfileRequestRules
 					.Tags(RuleFor(form => form.Tags.Select(tag => tag.Value ?? string.Empty).ToList()))
 					.OverridePropertyName(nameof(Form.Tags));

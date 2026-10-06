@@ -30,7 +30,7 @@ public abstract class AppInputBase<TValue> : ComponentBase, IDisposable
 	[Parameter]
 	public EventCallback<TValue> ValueChanged { get; set; }
 
-	// Messages find the input through the field and path it spells, without reflection; @bind-Value supplies it
+	// Messages find the input through the field and path it spells, without reflection. @bind-Value supplies it
 	[Parameter]
 	[EditorRequired]
 	public Expression<Func<TValue>> ValueExpression { get; set; } = null!;
@@ -56,7 +56,7 @@ public abstract class AppInputBase<TValue> : ComponentBase, IDisposable
 
 	protected Task OnBlurAsync() => Form.NotifyFieldFocusLostAsync(Field);
 
-	// A row that moved keeps its field and takes its new index; another form or another row needs a new claim
+	// A row that moved keeps its field and takes its new index. Another form or another row needs a new claim
 	protected override void OnParametersSet()
 	{
 		Field = FieldIdentifier.Create(ValueExpression);

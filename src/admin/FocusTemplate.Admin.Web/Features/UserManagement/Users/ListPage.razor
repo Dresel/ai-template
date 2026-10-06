@@ -1,0 +1,92 @@
+@attribute [Route("/" + Path)]
+@attribute [RequiresPermission(UserManagement.Names.ViewUsers)]
+@using FocusTemplate.Primitives.Permissions
+@inherits ViewModelPage<ListPageViewModel>
+
+<PageTitle>Users</PageTitle>
+
+<RadzenStack Gap="1rem">
+	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Users</RadzenText>
+
+	<AppFailure Message="@ViewModel.Failure" data-testid="users-failure" />
+
+	<RadzenCard>
+		<RadzenStack Gap="1rem">
+			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+				<RadzenTextBox Value="@ViewModel.Search"
+					ValueChanged="SearchChangedAsync"
+					Immediate="true"
+					Placeholder="Search by name or e-mail"
+					aria-label="Search by name or e-mail"
+					Style="max-width: 24rem; flex: 1;"
+					data-testid="users-search" />
+				<RadzenButton Icon="refresh"
+					ButtonStyle="ButtonStyle.Base"
+					Variant="Variant.Outlined"
+					title="Reload"
+					aria-label="Reload"
+					Disabled="ViewModel.Users is null || ViewModel.Reloading"
+					Click="ViewModel.ReloadAsync"
+					data-testid="users-reload" />
+			</RadzenStack>
+			<AppLoading Busy="ViewModel is { Users: null, Loading: true }" data-testid="users-loading" />
+			<RadzenDataGrid @ref="grid"
+				TItem="UserSummaryResponse"
+				Data="ViewModel.Users"
+				Count="ViewModel.Total"
+				LoadData="ViewModel.LoadAsync"
+				IsLoading="ViewModel is { Users: not null, Loading: true }"
+				AllowPaging="true"
+				PageSize="10"
+				AllowSorting="true"
+				RowRender="RenderRow"
+				RowClick="Open"
+				EmptyText="@(ViewModel.Users is null ? string.Empty : "No user matches.")"
+				data-testid="users-table">
+				<Columns>
+					<RadzenDataGridColumn TItem="UserSummaryResponse" Property="@nameof(UserSummaryResponse.DisplayName)" Title="Name" />
+					<RadzenDataGridColumn TItem="UserSummaryResponse"
+						Property="@nameof(UserSummaryResponse.Email)"
+						Title="E-mail" />
+					<RadzenDataGridColumn TItem="UserSummaryResponse"
+						Property="@nameof(UserSummaryResponse.IsActive)"
+						Title="Status"
+						Sortable="false"
+						Width="10rem">
+						<Template Context="user">
+							<RadzenBadge BadgeStyle="@(user.IsActive ? BadgeStyle.Success : BadgeStyle.Light)"
+								Text="@(user.IsActive ? "Active" : "Deactivated")" />
+						</Template>
+					</RadzenDataGridColumn>
+					<RadzenDataGridColumn TItem="UserSummaryResponse"
+						Property="@nameof(UserSummaryResponse.LastSeenAt)"
+						Title="Last seen"
+						Width="12rem">
+						<Template Context="user">@user.LastSeenAt.ToLocalTime().ToString("g")</Template>
+					</RadzenDataGridColumn>
+				</Columns>
+			</RadzenDataGrid>
+		</RadzenStack>
+	</RadzenCard>
+</RadzenStack>
+
+@code
+{
+	public const string Path = "user-management/users";
+
+	private RadzenDataGrid<UserSummaryResponse> grid = null!;
+
+	private static void RenderRow(RowRenderEventArgs<UserSummaryResponse> args) =>
+		args.Attributes.Add("data-testid", "user-row");
+
+	private void Open(DataGridRowMouseEventArgs<UserSummaryResponse> args) =>
+		Navigation.NavigateTo(DetailPage.PathOf(args.Data!.Id));
+
+	private async Task SearchChangedAsync(string? value)
+	{
+		if (await ViewModel.TryChangeSearchAsync(value))
+		{
+			await grid.FirstPage(true);
+		}
+	}
+}

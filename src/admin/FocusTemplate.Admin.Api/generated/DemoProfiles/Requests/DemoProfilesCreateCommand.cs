@@ -7,6 +7,6 @@ using Mediator;
 
 namespace FocusTemplate.Admin.Api.Features.DemoProfiles;
 
-/// <summary>Validates a profile and answers it back; nothing is stored.</summary>
+/// <summary>Validates a profile and answers it back without storing it.</summary>
 /// <param name="Body">body.</param>
 public sealed partial record DemoProfilesCreateCommand(DemoProfileRequest Body) : ICommand<DemoProfilesCreateResult>;
