@@ -2,9 +2,12 @@
 
 #nullable enable
 
+using FocusTemplate.Admin.Client.DemoProfiles;
+using FocusTemplate.Admin.Client.UserManagement.Groups;
+using FocusTemplate.Admin.Client.UserManagement.Users;
 using FocusTemplate.Admin.Shared;
 
 namespace FocusTemplate.Admin.Client;
 
 /// <summary>Modeled error: HTTP 400 (Bad request) of a request that failed validation, with the validation problem the server sent: the errors by wire path and every failed rule.</summary>
-public sealed record ValidationProblem(ValidationProblemDetails Problem);
+public sealed record ValidationProblem(ValidationProblemDetails Problem) : IProblemOf<DemoProfilesCheckCodeResult>, IProblemOf<DemoProfilesCreateResult>, IProblemOf<GroupsCreateResult>, IProblemOf<GroupsUpdateResult>, IProblemOf<UsersSearchResult>;

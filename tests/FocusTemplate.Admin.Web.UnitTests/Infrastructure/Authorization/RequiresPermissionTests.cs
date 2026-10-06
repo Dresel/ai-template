@@ -1,5 +1,5 @@
 using FocusTemplate.Admin.Shared;
-using FocusTemplate.Primitives.Permissions;
+using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -12,7 +12,7 @@ public sealed class RequiresPermissionTests
 	[Fact]
 	public async Task APageRequiringAPermissionIsRefusedToAUserWithoutIt()
 	{
-		string html = await RenderAsync(UserManagement.Names.ViewGroups);
+		string html = await RenderAsync(UserManagementPermissions.Names.ViewGroups);
 
 		Assert.Contains("not authorized", html, StringComparison.Ordinal);
 		Assert.DoesNotContain("the protected page", html, StringComparison.Ordinal);
@@ -21,7 +21,7 @@ public sealed class RequiresPermissionTests
 	[Fact]
 	public async Task APageRequiringAPermissionShowsToAUserHoldingIt()
 	{
-		string html = await RenderAsync(UserManagement.Names.ViewUsers);
+		string html = await RenderAsync(UserManagementPermissions.Names.ViewUsers);
 
 		Assert.Contains("the protected page", html, StringComparison.Ordinal);
 	}
@@ -37,7 +37,7 @@ public sealed class RequiresPermissionTests
 			},
 			permissions);
 
-	[RequiresPermission(UserManagement.Names.ViewUsers)]
+	[RequiresPermission(UserManagementPermissions.Names.ViewUsers)]
 	private sealed class ProtectedPage : ComponentBase
 	{
 		protected override void BuildRenderTree(RenderTreeBuilder builder) =>

@@ -1,6 +1,6 @@
 using FocusTemplate.Admin.Client;
-using FocusTemplate.Admin.Client.Users;
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Admin.Client.UserManagement.Users;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Admin.Web.Foundation;
 using FocusTemplate.Admin.Web.Foundation.Feedback;
 using FocusTemplate.Admin.Web.Foundation.Pages;

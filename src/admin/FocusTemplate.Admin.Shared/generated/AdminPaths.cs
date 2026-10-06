@@ -2,6 +2,8 @@
 
 #nullable enable
 
+using FocusTemplate.Admin.Shared.UserManagement;
+
 namespace FocusTemplate.Admin.Shared;
 
 /// <summary>The keys of the validation problems of Admin: the wire paths of the members of every model it accepts, from the root of a body. Key failures of your own with them, and map a problem's errors to inputs.</summary>

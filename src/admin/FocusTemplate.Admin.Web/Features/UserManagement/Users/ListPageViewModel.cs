@@ -1,6 +1,6 @@
 using FocusTemplate.Admin.Client;
-using FocusTemplate.Admin.Client.Users;
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Admin.Client.UserManagement.Users;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Admin.Web.Foundation;
 using FocusTemplate.Admin.Web.Foundation.Feedback;
 using FocusTemplate.Admin.Web.Foundation.Pages;
@@ -103,12 +103,13 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 	private UserSearchRequest RequestOf(LoadDataArgs args)
 	{
 		SortDescriptor? sort = args.Sorts?.FirstOrDefault();
+		UserSearchRequest request = new(Search, Descending: sort?.SortOrder == SortOrder.Descending);
 
-		return new UserSearchRequest(
-			Search,
-			SortOf(sort),
-			sort?.SortOrder == SortOrder.Descending,
-			args.Skip,
-			args.Top);
+		return request with
+		{
+			Sort = SortOf(sort) ?? request.Sort,
+			Skip = args.Skip ?? request.Skip,
+			Top = args.Top ?? request.Top,
+		};
 	}
 }

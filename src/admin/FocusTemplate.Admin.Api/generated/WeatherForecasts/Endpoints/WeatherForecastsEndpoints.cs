@@ -37,13 +37,13 @@ public static partial class WeatherForecastsEndpoints
 
 	/// <param name="mediator">The Mediator instance.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
-	private static ValueTask<IReadOnlyList<WeatherForecastResponse>> ListHandler(IMediator mediator, CancellationToken cancellationToken) =>
+	private static ValueTask<IReadOnlyList<WeatherForecastResponse>> ListHandler(IMediator mediator, CancellationToken cancellationToken = default) =>
 		mediator.Send(new WeatherForecastsListQuery(), cancellationToken);
 
-	/// <param name="id">id.</param>
 	/// <param name="mediator">The Mediator instance.</param>
+	/// <param name="id">id.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
-	private static async Task<Results<Ok<WeatherForecastResponse>, ProblemHttpResult>> GetHandler(WeatherForecastId id, IMediator mediator, CancellationToken cancellationToken)
+	private static async Task<Results<Ok<WeatherForecastResponse>, ProblemHttpResult>> GetHandler(IMediator mediator, WeatherForecastId id, CancellationToken cancellationToken = default)
 	{
 		WeatherForecastsGetResult result = await mediator.Send(new WeatherForecastsGetQuery(id), cancellationToken);
 		return result.ToHttpResult();

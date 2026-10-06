@@ -11,5 +11,6 @@ options:
     emitter-output-dir: "{output-dir}"
     output-type: api
     generated-dir: "generated"
-    api-namespace: "FocusTemplate.Admin.Api.Features.{interface}"
+    api-namespace: "FocusTemplate.Admin.Api.Features.{feature}.{interface}"
+    contracts-namespace: "FocusTemplate.Admin.Shared.{feature}"
     validation: fluentvalidation

@@ -1,9 +1,8 @@
 using FocusTemplate.Admin.Client;
-using FocusTemplate.Admin.Client.Users;
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Admin.Client.UserManagement.Users;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Primitives;
-using FocusTemplate.Primitives.Permissions;
 using Xunit.Sdk;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
@@ -33,7 +32,7 @@ public sealed class UsersTests(ApiFixture factory) : ApiTestBase(factory)
 	{
 		User caller = await AdminAsync();
 		User other = await Factory.AddUserAsync("Other");
-		Group group = await Factory.GrantAsync(other.Id, UserManagement.ViewGroups);
+		Group group = await Factory.GrantAsync(other.Id, UserManagementPermissions.ViewGroups);
 
 		UsersGetResult result = await Client(caller).GetAsync(other.Id, TestContext.Current.CancellationToken);
 
@@ -43,7 +42,7 @@ public sealed class UsersTests(ApiFixture factory) : ApiTestBase(factory)
 			_ => throw new XunitException($"Expected the user, got {result}"),
 		};
 		Assert.Equal([new GroupReferenceResponse(group.Id, group.Name),], user.Groups);
-		Assert.Equal([UserManagement.ViewGroups,], user.Permissions);
+		Assert.Equal([UserManagementPermissions.ViewGroups,], user.Permissions);
 	}
 
 	[Fact]
@@ -132,7 +131,7 @@ public sealed class UsersTests(ApiFixture factory) : ApiTestBase(factory)
 	public async Task TheLastActiveAdministratorCannotBeDeactivated()
 	{
 		User caller = await Factory.AddUserAsync();
-		await Factory.GrantAsync(caller.Id, UserManagement.ManageUsers);
+		await Factory.GrantAsync(caller.Id, UserManagementPermissions.ManageUsers);
 		User administrator = await Factory.AddUserAsync();
 		User deactivated = await Factory.AddUserAsync(isActive: false);
 		await Factory.AddAdministratorsAsync(administrator.Id, deactivated.Id);
@@ -148,7 +147,7 @@ public sealed class UsersTests(ApiFixture factory) : ApiTestBase(factory)
 	public async Task TheLastActiveMemberOfAnotherManagedGroupCanBeDeactivated()
 	{
 		User caller = await Factory.AddUserAsync();
-		await Factory.GrantAsync(caller.Id, UserManagement.ManageUsers);
+		await Factory.GrantAsync(caller.Id, UserManagementPermissions.ManageUsers);
 		User member = await Factory.AddUserAsync();
 		await Factory.AddManagedGroupAsync(member.Id);
 
@@ -162,7 +161,7 @@ public sealed class UsersTests(ApiFixture factory) : ApiTestBase(factory)
 	private async Task<User> AdminAsync()
 	{
 		User caller = await Factory.AddUserAsync("Admin");
-		await Factory.GrantAsync(caller.Id, UserManagement.ViewUsers, UserManagement.ManageUsers);
+		await Factory.GrantAsync(caller.Id, UserManagementPermissions.ViewUsers, UserManagementPermissions.ManageUsers);
 
 		return caller;
 	}

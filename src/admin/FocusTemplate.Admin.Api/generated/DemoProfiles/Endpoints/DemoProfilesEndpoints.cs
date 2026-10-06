@@ -37,10 +37,10 @@ public static partial class DemoProfilesEndpoints
 		return group;
 	}
 
-	/// <param name="body">body.</param>
 	/// <param name="mediator">The Mediator instance.</param>
+	/// <param name="body">body.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
-	private static async Task<Results<Ok<DemoProfileResponse>, ValidationProblemResult>> CreateHandler([FromBody] DemoProfileRequest body, IMediator mediator, CancellationToken cancellationToken)
+	private static async Task<Results<Ok<DemoProfileResponse>, ValidationProblemResult>> CreateHandler(IMediator mediator, [FromBody] DemoProfileRequest body, CancellationToken cancellationToken = default)
 	{
 		DemoProfilesCreateResult result = await mediator.Send(new DemoProfilesCreateCommand(body), cancellationToken);
 		return result.ToHttpResult();
@@ -48,12 +48,12 @@ public static partial class DemoProfilesEndpoints
 
 	/// <summary>The validation filter of the create endpoint.</summary>
 	private static ValueTask<object?> ValidateCreate(EndpointFilterInvocationContext context, EndpointFilterDelegate next) =>
-		ValidationProblems.ValidateAsync(context, next, new DemoProfilesCreateCommand(context.GetArgument<DemoProfileRequest>(0)));
+		ValidationProblems.ValidateAsync(context, next, new DemoProfilesCreateCommand(context.GetArgument<DemoProfileRequest>(1)));
 
-	/// <param name="code">code.</param>
 	/// <param name="mediator">The Mediator instance.</param>
+	/// <param name="code">code.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
-	private static async Task<Results<Ok<DemoCodeResponse>, ValidationProblemResult>> CheckCodeHandler(string code, IMediator mediator, CancellationToken cancellationToken)
+	private static async Task<Results<Ok<DemoCodeResponse>, ValidationProblemResult>> CheckCodeHandler(IMediator mediator, string code, CancellationToken cancellationToken = default)
 	{
 		DemoProfilesCheckCodeResult result = await mediator.Send(new DemoProfilesCheckCodeQuery(code), cancellationToken);
 		return result.ToHttpResult();
@@ -61,7 +61,7 @@ public static partial class DemoProfilesEndpoints
 
 	/// <summary>The validation filter of the checkCode endpoint.</summary>
 	private static ValueTask<object?> ValidateCheckCode(EndpointFilterInvocationContext context, EndpointFilterDelegate next) =>
-		ValidationProblems.ValidateAsync(context, next, new DemoProfilesCheckCodeQuery(context.GetArgument<string>(0)));
+		ValidationProblems.ValidateAsync(context, next, new DemoProfilesCheckCodeQuery(context.GetArgument<string>(1)));
 
 	/// <summary>Implement in a hand-written partial to attach policies (authorization, rate limiting, caching) to every DemoProfiles endpoint at once; the Configure{Op} hooks refine single endpoints.</summary>
 	/// <param name="group">The route group of the DemoProfiles endpoints.</param>

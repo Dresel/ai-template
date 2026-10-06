@@ -32,7 +32,7 @@ public static partial class WeatherForecastsEndpoints
 
 	/// <param name="mediator">The Mediator instance.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
-	private static ValueTask<IReadOnlyList<WeatherForecastResponse>> ListHandler(IMediator mediator, CancellationToken cancellationToken) =>
+	private static ValueTask<IReadOnlyList<WeatherForecastResponse>> ListHandler(IMediator mediator, CancellationToken cancellationToken = default) =>
 		mediator.Send(new WeatherForecastsListQuery(), cancellationToken);
 
 	/// <summary>Implement in a hand-written partial to attach policies (authorization, rate limiting, caching) to every WeatherForecasts endpoint at once; the Configure{Op} hooks refine single endpoints.</summary>

@@ -1,11 +1,10 @@
 using FocusTemplate.Admin.Client;
-using FocusTemplate.Admin.Client.Groups;
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Admin.Client.UserManagement.Groups;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Auditing;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Primitives;
-using FocusTemplate.Primitives.Permissions;
 using Microsoft.EntityFrameworkCore;
 using Xunit.Sdk;
 
@@ -102,7 +101,7 @@ public sealed class GroupsTests(ApiFixture factory) : ApiTestBase(factory)
 	{
 		User caller = await AdminAsync();
 		User member = await Factory.AddUserAsync();
-		Group group = await Factory.GrantAsync(member.Id, UserManagement.ViewUsers);
+		Group group = await Factory.GrantAsync(member.Id, UserManagementPermissions.ViewUsers);
 
 		GroupsDeleteResult result = await Client(caller).DeleteAsync(group.Id, TestContext.Current.CancellationToken);
 
@@ -120,16 +119,16 @@ public sealed class GroupsTests(ApiFixture factory) : ApiTestBase(factory)
 	{
 		User caller = await AdminAsync();
 		User member = await Factory.AddUserAsync();
-		Group group = await Factory.GrantAsync(member.Id, UserManagement.ViewUsers, UserManagement.ViewGroups);
+		Group group = await Factory.GrantAsync(member.Id, UserManagementPermissions.ViewUsers, UserManagementPermissions.ViewGroups);
 
 		GroupsSetPermissionsResult result = await Client(caller)
 			.SetPermissionsAsync(
 				group.Id,
-				[UserManagement.ViewGroups, UserManagement.ManageGroups,],
+				[UserManagementPermissions.ViewGroups, UserManagementPermissions.ManageGroups,],
 				TestContext.Current.CancellationToken);
 
 		Assert.True(result is Success, $"Expected Success, got {result}");
-		Assert.Equal([UserManagement.ManageGroups, UserManagement.ViewGroups,], await GrantsOfAsync(group.Id));
+		Assert.Equal([UserManagementPermissions.ManageGroups, UserManagementPermissions.ViewGroups,], await GrantsOfAsync(group.Id));
 	}
 
 	// A permission an older release had and this one no longer knows. The client sends names, the database knows them
@@ -207,7 +206,7 @@ public sealed class GroupsTests(ApiFixture factory) : ApiTestBase(factory)
 	private async Task<User> AdminAsync()
 	{
 		User caller = await Factory.AddUserAsync("Admin");
-		await Factory.GrantAsync(caller.Id, UserManagement.ViewGroups, UserManagement.ManageGroups);
+		await Factory.GrantAsync(caller.Id, UserManagementPermissions.ViewGroups, UserManagementPermissions.ManageGroups);
 
 		return caller;
 	}

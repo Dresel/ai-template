@@ -1,6 +1,6 @@
 using FluentValidation;
-using FocusTemplate.Admin.Client.Groups;
-using FocusTemplate.Admin.Client.Users;
+using FocusTemplate.Admin.Client.UserManagement.Groups;
+using FocusTemplate.Admin.Client.UserManagement.Users;
 using FocusTemplate.Admin.Web.Features.UserManagement.Users;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Hosting;

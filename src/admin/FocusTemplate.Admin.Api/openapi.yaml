@@ -4,9 +4,9 @@ info:
   version: 0.1.0
   description: Internal API of the Admin vertical. Reached only through the BFF, never by a browser directly.
 tags:
-  - name: DemoProfiles
   - name: Groups
   - name: Users
+  - name: DemoProfiles
   - name: WeatherForecasts
 paths:
   /demo-profiles:
@@ -75,7 +75,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/GroupSummaryResponse'
+                  $ref: '#/components/schemas/UserManagement.GroupSummaryResponse'
       tags:
         - Groups
     post:
@@ -88,7 +88,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GroupResponse'
+                $ref: '#/components/schemas/UserManagement.GroupResponse'
         '400':
           description: The server could not understand the request due to invalid syntax.
           content:
@@ -108,7 +108,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GroupRequest'
+              $ref: '#/components/schemas/UserManagement.GroupRequest'
   /groups/{id}:
     get:
       operationId: Groups_get
@@ -125,7 +125,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GroupResponse'
+                $ref: '#/components/schemas/UserManagement.GroupResponse'
         '404':
           description: The server cannot find the requested resource.
           content:
@@ -149,7 +149,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GroupResponse'
+                $ref: '#/components/schemas/UserManagement.GroupResponse'
         '400':
           description: The server could not understand the request due to invalid syntax.
           content:
@@ -175,7 +175,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GroupRequest'
+              $ref: '#/components/schemas/UserManagement.GroupRequest'
     delete:
       operationId: Groups_delete
       description: Deletes a group, and its members lose what it granted. Not a managed group. A missing group answers 204 too, so a retry stays idempotent.
@@ -293,7 +293,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserPageResponse'
+                $ref: '#/components/schemas/UserManagement.UserPageResponse'
         '400':
           description: The server could not understand the request due to invalid syntax.
           content:
@@ -307,7 +307,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserSearchRequest'
+              $ref: '#/components/schemas/UserManagement.UserSearchRequest'
   /users/me:
     get:
       operationId: Users_me
@@ -319,7 +319,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CurrentUserResponse'
+                $ref: '#/components/schemas/UserManagement.CurrentUserResponse'
       tags:
         - Users
   /users/{id}:
@@ -338,7 +338,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/UserManagement.UserResponse'
         '404':
           description: The server cannot find the requested resource.
           content:
@@ -440,25 +440,6 @@ security:
   - BearerAuth: []
 components:
   schemas:
-    CurrentUserResponse:
-      type: object
-      required:
-        - id
-        - displayName
-        - permissions
-      properties:
-        id:
-          $ref: '#/components/schemas/UserId'
-          description: Identifier, the subject the identity provider issued.
-        displayName:
-          type: string
-          description: Display name.
-        permissions:
-          type: array
-          items:
-            $ref: '#/components/schemas/Permission'
-          description: Every permission the user's groups grant, so the UI can hide what the user may not do.
-      description: The signed-in user and what they may do.
     DemoAddressRequest:
       type: object
       required:
@@ -567,113 +548,6 @@ components:
       type: string
       format: uuid
       description: Identifier of a group of users, the unit permissions are granted to.
-    GroupMemberResponse:
-      type: object
-      required:
-        - id
-        - displayName
-        - isActive
-      properties:
-        id:
-          $ref: '#/components/schemas/UserId'
-          description: Identifier of the user.
-        displayName:
-          type: string
-          description: Display name.
-        isActive:
-          type: boolean
-          description: False once the user is deactivated.
-      description: A member of a group.
-    GroupReferenceResponse:
-      type: object
-      required:
-        - id
-        - name
-      properties:
-        id:
-          $ref: '#/components/schemas/GroupId'
-          description: Identifier.
-        name:
-          type: string
-          description: Name.
-      description: A group a user is a member of.
-    GroupRequest:
-      type: object
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          minLength: 1
-          maxLength: 100
-          description: Name, unique.
-        description:
-          type: string
-          maxLength: 500
-          description: What the group is for.
-      description: The name and description of a group.
-    GroupResponse:
-      type: object
-      required:
-        - id
-        - name
-        - isManaged
-        - memberCount
-        - members
-        - permissions
-      properties:
-        id:
-          $ref: '#/components/schemas/GroupId'
-          description: Identifier.
-        name:
-          type: string
-          description: Name, unique.
-        description:
-          type: string
-          description: What the group is for.
-        isManaged:
-          type: boolean
-          description: 'Managed by the application: its permissions come with each release, and it cannot be deleted.'
-        memberCount:
-          type: integer
-          format: int32
-          description: How many users are members.
-        members:
-          type: array
-          items:
-            $ref: '#/components/schemas/GroupMemberResponse'
-          description: The members, by display name.
-        permissions:
-          type: array
-          items:
-            $ref: '#/components/schemas/Permission'
-          description: The permissions the group grants its members.
-      description: A group with its members and permissions.
-    GroupSummaryResponse:
-      type: object
-      required:
-        - id
-        - name
-        - isManaged
-        - memberCount
-      properties:
-        id:
-          $ref: '#/components/schemas/GroupId'
-          description: Identifier.
-        name:
-          type: string
-          description: Name, unique.
-        description:
-          type: string
-          description: What the group is for.
-        isManaged:
-          type: boolean
-          description: 'Managed by the application: its permissions come with each release, and it cannot be deleted.'
-        memberCount:
-          type: integer
-          format: int32
-          description: How many users are members.
-      description: A group in a list.
     Permission:
       type: string
       description: A permission, named after its feature slice and action, such as UserManagement.ManageGroups. Admins grant permissions to groups.
@@ -775,7 +649,133 @@ components:
       type: string
       format: uuid
       description: Identifier of a user, the owner of stations and the author of audited changes.
-    UserPageResponse:
+    UserManagement.CurrentUserResponse:
+      type: object
+      required:
+        - id
+        - displayName
+        - permissions
+      properties:
+        id:
+          $ref: '#/components/schemas/UserId'
+          description: Identifier, the subject the identity provider issued.
+        displayName:
+          type: string
+          description: Display name.
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+          description: Every permission the user's groups grant, so the UI can hide what the user may not do.
+      description: The signed-in user and what they may do.
+    UserManagement.GroupMemberResponse:
+      type: object
+      required:
+        - id
+        - displayName
+        - isActive
+      properties:
+        id:
+          $ref: '#/components/schemas/UserId'
+          description: Identifier of the user.
+        displayName:
+          type: string
+          description: Display name.
+        isActive:
+          type: boolean
+          description: False once the user is deactivated.
+      description: A member of a group.
+    UserManagement.GroupReferenceResponse:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          $ref: '#/components/schemas/GroupId'
+          description: Identifier.
+        name:
+          type: string
+          description: Name.
+      description: A group a user is a member of.
+    UserManagement.GroupRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Name, unique.
+        description:
+          type: string
+          maxLength: 500
+          description: What the group is for.
+      description: The name and description of a group.
+    UserManagement.GroupResponse:
+      type: object
+      required:
+        - id
+        - name
+        - isManaged
+        - memberCount
+        - members
+        - permissions
+      properties:
+        id:
+          $ref: '#/components/schemas/GroupId'
+          description: Identifier.
+        name:
+          type: string
+          description: Name, unique.
+        description:
+          type: string
+          description: What the group is for.
+        isManaged:
+          type: boolean
+          description: 'Managed by the application: its permissions come with each release, and it cannot be deleted.'
+        memberCount:
+          type: integer
+          format: int32
+          description: How many users are members.
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserManagement.GroupMemberResponse'
+          description: The members, by display name.
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+          description: The permissions the group grants its members.
+      description: A group with its members and permissions.
+    UserManagement.GroupSummaryResponse:
+      type: object
+      required:
+        - id
+        - name
+        - isManaged
+        - memberCount
+      properties:
+        id:
+          $ref: '#/components/schemas/GroupId'
+          description: Identifier.
+        name:
+          type: string
+          description: Name, unique.
+        description:
+          type: string
+          description: What the group is for.
+        isManaged:
+          type: boolean
+          description: 'Managed by the application: its permissions come with each release, and it cannot be deleted.'
+        memberCount:
+          type: integer
+          format: int32
+          description: How many users are members.
+      description: A group in a list.
+    UserManagement.UserPageResponse:
       type: object
       required:
         - items
@@ -784,14 +784,14 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/UserSummaryResponse'
+            $ref: '#/components/schemas/UserManagement.UserSummaryResponse'
           description: The users of this page.
         total:
           type: integer
           format: int32
           description: How many users match in all.
       description: A page of users, and how many match in all.
-    UserResponse:
+    UserManagement.UserResponse:
       type: object
       required:
         - id
@@ -825,7 +825,7 @@ components:
         groups:
           type: array
           items:
-            $ref: '#/components/schemas/GroupReferenceResponse'
+            $ref: '#/components/schemas/UserManagement.GroupReferenceResponse'
           description: The groups the user is a member of, by name.
         permissions:
           type: array
@@ -833,7 +833,7 @@ components:
             $ref: '#/components/schemas/Permission'
           description: Every permission the user's groups grant.
       description: A user with their groups and the permissions those grant.
-    UserSearchRequest:
+    UserManagement.UserSearchRequest:
       type: object
       properties:
         search:
@@ -841,8 +841,9 @@ components:
           maxLength: 100
           description: Part of the display name or e-mail address.
         sort:
-          $ref: '#/components/schemas/UserSort'
-          description: Order of the list, by display name unless given.
+          $ref: '#/components/schemas/UserManagement.UserSort'
+          description: Order of the list.
+          default: displayName
         descending:
           type: boolean
           description: From last to first instead.
@@ -860,14 +861,14 @@ components:
           description: Items per page, at most 100.
           default: 10
       description: Which users to list, in which order, and which page of them.
-    UserSort:
+    UserManagement.UserSort:
       type: string
       enum:
         - displayName
         - lastSeenAt
         - email
       description: What a user list is ordered by.
-    UserSummaryResponse:
+    UserManagement.UserSummaryResponse:
       type: object
       required:
         - id

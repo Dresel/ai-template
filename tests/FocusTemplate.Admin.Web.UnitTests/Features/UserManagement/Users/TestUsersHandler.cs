@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using FocusTemplate.Admin.Shared;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Primitives;
 
 namespace FocusTemplate.Admin.Web.UnitTests.Features.UserManagement.Users;

@@ -1,6 +1,5 @@
 @attribute [Route("/" + ListPage.Path + "/{Id:guid}")]
-@attribute [RequiresPermission(UserManagement.Names.ViewUsers)]
-@using FocusTemplate.Primitives.Permissions
+@attribute [RequiresPermission(UserManagementPermissions.Names.ViewUsers)]
 @inherits ViewModelPage<DetailPageViewModel>
 
 <RadzenStack Gap="1rem">

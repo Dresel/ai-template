@@ -17,8 +17,8 @@ Shared spine:
   Tunnel.
 - **FocusTemplate.Primitives** - the typed ids every vertical shares, generated from `src/spec/primitives.tsp`
   (`output-type: primitives`) as Vogen value objects in namespace `FocusTemplate.Primitives`, and the permissions
-  (`Permission`, a string id, with one static class per `src/spec/permissions/<slice>.tsp` enum in
-  `FocusTemplate.Primitives.Permissions`). The only project running Vogen's generator; `Data` and both `Shared` projects
+  (`Permission`, a string id, with one static class `{Enum}Permissions` per `src/spec/permissions/<slice>.tsp` enum
+  beside it, such as `UserManagementPermissions`). The only project running Vogen's generator; `Data` and both `Shared` projects
   reference it, so one `WeatherForecastId` serves the domain and every contract.
 - **FocusTemplate.Data** - the entities and their EF Core mapping: `Entities/` (each table's entity next to its
   `IEntityTypeConfiguration`, the configurations listed by hand in `ApplyEntityConfigurations`), `Auditing/`
@@ -48,15 +48,15 @@ Admin vertical (`src/admin/`):
 
 - **FocusTemplate.Admin.Api** - internal minimal API; never exposed to the browser directly. Endpoints, request
   records and result unions are generated into its `generated/<Slice>/` folder from `../spec/api.tsp` (namespace
-  `FocusTemplate.Admin.Api.Features.<Slice>`, the one the slice's handlers use), the emitted `openapi.yaml` is
+  `FocusTemplate.Admin.Api.Features.<Slice>`, the one the slice's handlers use; `<Feature>/<Interface>/` for a slice
+  with several interfaces, `UserManagement/Users/`), the emitted `openapi.yaml` is
   served as-is; `Features/<Slice>/` holds the slice's Mediator handlers (EF Core, queries through `ReadOnlyAppDbContext`
   and commands through `AppDbContext`, backed by PostgreSQL) and, where needed, endpoint hooks. Callers present a
   Keycloak bearer token, which the spec's `@useAuth` requires of every endpoint, and the permissions an operation's
   `@requiresPermission` names (see **Authentication** and **Authorization**).
 - **FocusTemplate.Admin.Client** - the generated typed HTTP clients of the vertical (`tspconfig.yaml`,
-  `output-type: client`), referenced by every consumer so the client an app ships is the one the tests drive. Its
-  `Outcomes/` folder is hand-written until the emitter generates it next to each union (see **Answers** under **Pages
-  and view models**).
+  `output-type: client`), referenced by every consumer so the client an app ships is the one the tests drive, with
+  `ToOutcome()` next to each result union (see **Answers** under **Pages and view models**).
 - **FocusTemplate.Admin.Web** - the Blazor WASM client (Radzen UI, `software` theme). Talks to the API through the typed
   clients from `FocusTemplate.Admin.Client`. Every page but Home needs a signed-in user, which the client
   learns about from the BFF (`BffAuthenticationStateProvider`). The app is grouped by feature: `Features/<Slice>/` holds
@@ -77,8 +77,7 @@ Admin vertical (`src/admin/`):
   `Authorization/` and `Configuration/`. The validation demo lives in `Features/DemoProfiles/` at `/demo/validation`; see
   **Forms**. A slice with several areas gets a folder per area, `Features/UserManagement/Users/` and `Groups/` (list and
   detail pages at `/user-management/…`, the group's form in a dialog), its registration (`AddUserManagement()`) and an
-  `_Imports.razor` one level up; that file aliases the permission class (`UserManagementPermissions`), which the slice's
-  own namespace would hide.
+  `_Imports.razor` one level up, which imports the slice's contracts (`FocusTemplate.Admin.Shared.UserManagement`).
 - **FocusTemplate.Admin.Web.Bff** - thin YARP BFF: serves the WASM app and proxies `/_api/*` → API,
   `/_otlp/*` → dashboard, `/_analytics/*` → Umami. The browser only ever talks to the BFF, which also holds the user's
   session (cookie + OIDC code flow against Keycloak) and attaches the access token to `/_api/*` calls.
@@ -378,8 +377,9 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
 
 - **Layout**: one contract per vertical in `src/<vertical>/spec/`. `api.tsp` carries the service
   metadata and `@useAuth`, and imports the files of one folder per feature slice (`weather-forecasts/weather-forecasts.tsp`,
-  `user-management/users.tsp` + `groups.tsp`), all sharing the namespace; files and folders are kebab-case, like the
-  routes. What both verticals share sits in `src/spec/`: `primitives.tsp`, `paging.tsp` (`PageQuery`, spread into a
+  `user-management/users.tsp` + `groups.tsp`); files and folders are kebab-case, like the routes. A slice with one
+  interface stays in the service namespace (`FocusTemplate.Admin`), a slice with several declares a namespace below it
+  (`FocusTemplate.Admin.UserManagement`), its feature. What both verticals share sits in `src/spec/`: `primitives.tsp`, `paging.tsp` (`PageQuery`, spread into a
   search request) and `permissions/`. Three projects per
   vertical generate, each with its own `tspconfig.yaml` and `generated/` folder: the Api project
   (`output-type: api`), the Shared project (`contracts`) and the Client project (`client`). Everything
@@ -387,11 +387,16 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
   rather than generating a copy of it, and generated files are never linked across projects. The typed ids live in
   `src/spec/primitives.tsp` (namespace `FocusTemplate.Primitives`, no service), imported by every `api.tsp`;
   `FocusTemplate.Primitives` generates them with `output-type: primitives`, the verticals reference them by namespace.
-- **Namespaces**: `api-namespace: FocusTemplate.<V>.Api.Features.{interface}` puts a slice's
+- **Namespaces**: `api-namespace: FocusTemplate.<V>.Api.Features.{feature}.{interface}` puts a slice's
   generated code in the same namespace as its hand-written handlers, and `client-namespace:
-  FocusTemplate.<V>.Client.{interface}` does the same on the consumer side. What every slice shares
-  (`NotFound`, `ApiClientSupport`, the `{Status}Problem` cases) lands one namespace up.
-- **Hand-written code per slice** lives in `src/<vertical>/FocusTemplate.<V>.Api/Features/<Slice>/`:
+  FocusTemplate.<V>.Client.{feature}.{interface}` does the same on the consumer side; `{feature}` is empty for an
+  interface in the service namespace, so `Features.WeatherForecasts` and `Features.UserManagement.Users`.
+  `contracts-namespace: FocusTemplate.<V>.Shared.{feature}`, in all three of the vertical's `tspconfig.yaml`, gives a
+  feature's models a namespace of their own (`FocusTemplate.Admin.Shared.UserManagement`). What every slice shares
+  (`NotFound`, `ApiClientSupport`, the `{Status}Problem` cases, the outcomes, the JSON context and the paths) lands in
+  the namespace without the placeholders. OpenAPI names a feature's schemas after it, `UserManagement.GroupResponse`.
+- **Hand-written code per slice** lives in `src/<vertical>/FocusTemplate.<V>.Api/Features/<Slice>/`
+  (`Features/UserManagement/Users/` for a feature's interface):
   the Mediator handlers, and where needed `*Endpoints.Hooks.cs` implementing the `ConfigureGroup` /
   `Configure{Op}` hooks for rate limiting and caching; authorization comes from the spec, never from a hook.
   Consumers call the generated client and never hand-write HTTP.
@@ -419,15 +424,16 @@ Both APIs are generated from TypeSpec by `@spatialfocus/typespec-http-csharp-sli
   that searches, sorts or pages is `@httpQuery` (HTTP QUERY with a body) over a request spreading `PageQuery`, sorted
   by an enum the handler switches over, never a column name. DTOs carry a `Request`
   or `Response` suffix, which also keeps them distinct from the like-named entities in
-  `FocusTemplate.Data` that the handlers map from. DELETE of a missing resource answers 204, so a
+  `FocusTemplate.Data` that the handlers map from. An optional member's default (`top?: int32 = 10`) reaches both ends
+  as the C# default (`int Top = 10`), so neither a handler nor a client repeats it; an optional member without one
+  stays off the wire while null, and an explicit `null` is a 400. DELETE of a missing resource answers 204, so a
   retrying client stays idempotent. JSON stays camelCase, which is TypeSpec's property style and
   ASP.NET Core's web default rather than a setting anyone chose.
 - **Doc comments** (`/** */`) are published to OpenAPI and generated XML summaries, so write them for API
   callers. Use `//` comments for spec rationale, including emitter workarounds; these stay in source.
 - **Emitter traps worth repeating here**, because they fail silently rather than at build time:
   identifiers use the shared `uuid` scalar, never
-  `@format("uuid")` on a string; error responses are `Problem<Status>`, never `@error` models; and
-  TypeSpec defaults on optional parameters never reach the server, so the handler applies them; and a `@typedId` scalar
+  `@format("uuid")` on a string; error responses are `Problem<Status>`, never `@error` models; and a `@typedId` scalar
   declared inside a service namespace is an emitter error, typed ids belong in `primitives.tsp`.
 - **Workflow**: change a slice file, run `npm run gen` at the repository root, adjust the handler,
   then fix the consumers, which stop compiling exactly where the contract moved. Never edit a file
@@ -478,19 +484,17 @@ How a page with logic is built, as the user management pages (`Features/UserMana
   `.ToOutcome<ValidationProblem>()` (see **Forms**), an action plain `.ToOutcome()`; an operation that models no problem answers without a union
   and gets a plain `ToOutcome()` on its own `Task` (`ListAsync()`). Every other problem becomes an
   `ApiFailure(Status, Problem)`, and so does an `HttpRequestException`, which the client throws for a status the
-  contract does not model and for no answer; so no view model catches, and what retrying cannot fix (an unreadable
-  body, a bug) stays an exception. Then `Failure = outcome is ApiFailure failure ? failure.Message : null;`, which says
-  on its line that success clears it, and `if (outcome is Success)`. Two parts, split the way the emitter will take
-  one: the outcome types and the two methods per union live in `Admin.Client`'s `Outcomes/`, describing the contract
-  only, hand-written until the emitter generates them next to each union under the same names and namespaces (the
-  swap deletes the folder; its `.editorconfig` exempts the hand-written unions from StyleCop, unable to read one yet,
-  and lets the files take the generated namespaces); the app's policy stays in the app: `ApiFailure.Message` (the
+  contract does not model and for no answer, and a call `HttpClient.Timeout` ends; so no view model catches, and what
+  retrying cannot fix (an unreadable body, a bug) stays an exception. Then
+  `Failure = outcome is ApiFailure failure ? failure.Message : null;`, which says on its line that success clears it,
+  and `if (outcome is Success)`. Two parts: the emitter generates the outcome types and the two methods next to each
+  union in `Admin.Client`, describing the contract only; the app's policy stays in the app: `ApiFailure.Message` (the
   server's words, or the status, or "not answering") in `Foundation/Feedback/`, and `NoAnswerHandler` in
   `ClientServiceDefaults`, outside the resilience handler, which turns Polly giving up (`ExecutionRejectedException`)
-  into an `HttpRequestException` without a status, so the client and its outcomes stay free of Polly. Until the
-  emitter marks each problem record with the unions it appears in (`IProblemOf<TUnion>`, the records are not
-  `partial`), `TProblem` is unconstrained: a problem the operation cannot answer compiles and simply never arrives.
-  C# matches a union's direct cases only, so the outcome cannot wrap the client's union instead.
+  into an `HttpRequestException` without a status, so the client and its outcomes stay free of Polly. Each problem
+  record implements `IProblemOf<TUnion>` for the unions it appears in, which constrains `TProblem`: a problem the
+  operation cannot answer does not compile (CS0311). C# matches a union's direct cases only, so the outcome cannot wrap
+  the client's union instead.
 - **A detail page's states** go through `<AppItemView TItem="…" Item="…" Loading="…" Missing="…" Context="group">`, in
   the order they happen: a spinner while there is no item and the busy state is on, the not-found title with a link
   back, or the item; it also sets the tab's title. A reload keeps the item on screen (`ReloadingContent` may add to it,
@@ -689,7 +693,8 @@ Keycloak says who the user is, the database says what they may do. No roles in t
 - **Permissions** are named in the spec: one enum per slice in `src/spec/permissions/<slice>.tsp`, marked
   `@permissions(Permission)` in namespace `FocusTemplate.Primitives.Permissions`
   (`enum UserManagement { ViewUsers, ManageUsers, ViewGroups, ManageGroups }`), generated into Primitives as
-  `UserManagement.ViewUsers` (the `Permission` "UserManagement.ViewUsers") plus `Permission.All`. An operation or
+  `UserManagementPermissions.ViewUsers` (the `Permission` "UserManagement.ViewUsers"), beside `Permission` in
+  `FocusTemplate.Primitives`, plus `Permission.All`. An operation or
   interface states what it needs with `@requiresPermission(Permissions.UserManagement.ViewUsers)` (qualified, since
   the enum lives outside the service namespace), and the generated endpoint carries it as
   `RequiresPermissionAttribute` metadata (generated into `Admin.Shared`), answering 403 without it; an operation
@@ -700,7 +705,7 @@ Keycloak says who the user is, the database says what they may do. No roles in t
   `PermissionClaimsHandler` reads the `permission` claims (`BffClaimTypes.Permission`) of `/bff/user`, which the BFF
   adds from the API's `GET /users/me` with the session's token, so a load costs one request. Without the API's answer
   `/bff/user` answers 502, never a user without permissions. A page or component requires a permission with
-  `@attribute [RequiresPermission(UserManagement.Names.ViewUsers)]` (attribute arguments must be constants, hence
+  `@attribute [RequiresPermission(UserManagementPermissions.Names.ViewUsers)]` (attribute arguments must be constants, hence
   `Names`; code passes the values); `AuthorizeRouteView` honors it from .NET 11 (`RequiresPermissionTests`).
   `AuthorizeView` takes only a policy or roles, so a part of a page asks with `<PermissionView Permission="…">`, an
   `AuthorizeViewCore` handing over the same requirement (`PermissionViewTests`); code that weighs several permissions,
@@ -768,8 +773,7 @@ Keycloak says who the user is, the database says what they may do. No roles in t
   `ConfigureConventions` calls the generated `RegisterAllInVogenEfCoreConverters()`, then makes each id's `Unspecified`
   the sentinel of every property of its type (`Properties<T>().HaveSentinel(T.Unspecified)`): the compiled model writes
   each sentinel through the converter, and Vogen refuses the CLR default, an uninitialized id. A new id needs both
-  lines, and `ModelSentinelTests` fails without the second. `Permission` takes its `Unspecified` from a hand-written
-  partial, since the emitter gives string ids none. A store-generated key also declares `ValueGeneratedOnAdd()` and the
+  lines, and `ModelSentinelTests` fails without the second. A store-generated key also declares `ValueGeneratedOnAdd()` and the
   entity initializes it with `Id.Unspecified`, since the integer-key convention does not reach a key behind a converter
   and EF reads the key before generating one; without the sentinel the zero is written into the identity column and
   the second insert collides.

@@ -7,7 +7,7 @@ using OpenAPI;
 using SpatialFocus.Http;
 using FocusTemplate.Primitives;
 
-namespace FocusTemplate.Admin;
+namespace FocusTemplate.Admin.UserManagement;
 
 /** A group in a list. */
 model GroupSummaryResponse {

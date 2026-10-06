@@ -1,6 +1,6 @@
 @using System.Security.Claims
 @using FocusTemplate.Admin.Shared
-@using FocusTemplate.Primitives.Permissions
+@using FocusTemplate.Primitives
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
 
@@ -46,8 +46,8 @@
 			@* Shown with either of its pages' permissions, so a PermissionView, which asks for one, does not fit *@
 			<AuthorizeView>
 				@{
-					bool users = context.User.Has(UserManagement.ViewUsers);
-					bool groups = context.User.Has(UserManagement.ViewGroups);
+					bool users = context.User.Has(UserManagementPermissions.ViewUsers);
+					bool groups = context.User.Has(UserManagementPermissions.ViewGroups);
 				}
 				@if (users || groups)
 				{

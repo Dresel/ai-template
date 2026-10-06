@@ -3,6 +3,7 @@
 #nullable enable
 
 using FluentValidation;
+using FocusTemplate.Admin.Shared.UserManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

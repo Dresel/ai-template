@@ -11,4 +11,5 @@ options:
     emitter-output-dir: "{output-dir}"
     output-type: api
     generated-dir: "generated"
-    api-namespace: "FocusTemplate.Public.Api.Features.{interface}"
+    api-namespace: "FocusTemplate.Public.Api.Features.{feature}.{interface}"
+    contracts-namespace: "FocusTemplate.Public.Shared.{feature}"

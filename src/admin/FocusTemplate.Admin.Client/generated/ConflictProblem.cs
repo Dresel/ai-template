@@ -2,9 +2,11 @@
 
 #nullable enable
 
+using FocusTemplate.Admin.Client.UserManagement.Groups;
+using FocusTemplate.Admin.Client.UserManagement.Users;
 using FocusTemplate.Admin.Shared;
 
 namespace FocusTemplate.Admin.Client;
 
 /// <summary>Modeled error: HTTP 409 (Conflict), with the problem details the server sent.</summary>
-public sealed record ConflictProblem(ProblemDetails Problem);
+public sealed record ConflictProblem(ProblemDetails Problem) : IProblemOf<GroupsCreateResult>, IProblemOf<GroupsDeleteResult>, IProblemOf<GroupsRemoveMemberResult>, IProblemOf<GroupsSetPermissionsResult>, IProblemOf<GroupsUpdateResult>, IProblemOf<UsersDeactivateResult>;

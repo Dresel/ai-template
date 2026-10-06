@@ -5,4 +5,5 @@ options:
     emitter-output-dir: "{output-dir}"
     output-type: client
     generated-dir: "generated"
-    client-namespace: "FocusTemplate.Admin.Client.{interface}"
+    client-namespace: "FocusTemplate.Admin.Client.{feature}.{interface}"
+    contracts-namespace: "FocusTemplate.Admin.Shared.{feature}"

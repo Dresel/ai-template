@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Primitives;
 
 namespace FocusTemplate.Admin.Shared;

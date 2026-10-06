@@ -7,7 +7,8 @@ import "@spatialfocus/typespec-http-csharp-slim";
 import "../../spec/primitives.tsp";
 import "../../spec/paging.tsp";
 
-// One folder per feature slice next to this entry file, each contributing to the FocusTemplate.Admin namespace.
+// One folder per feature slice next to this entry file. A slice with several interfaces declares a namespace below
+// FocusTemplate.Admin (UserManagement), which the {feature} placeholder turns into C# namespaces and folders.
 import "./demo-profiles/demo-profiles.tsp";
 import "./user-management/groups.tsp";
 import "./user-management/users.tsp";

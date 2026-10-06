@@ -1,4 +1,4 @@
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Admin.Web.Foundation.Forms;
 using Riok.Mapperly.Abstractions;
 

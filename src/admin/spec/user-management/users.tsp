@@ -8,7 +8,7 @@ using SpatialFocus.Http;
 using FocusTemplate.Paging;
 using FocusTemplate.Primitives;
 
-namespace FocusTemplate.Admin;
+namespace FocusTemplate.Admin.UserManagement;
 
 /** The signed-in user and what they may do. */
 model CurrentUserResponse {
@@ -81,8 +81,8 @@ model UserSearchRequest {
   @maxLength(100)
   search?: string;
 
-  /** Order of the list, by display name unless given. */
-  sort?: UserSort;
+  /** Order of the list. */
+  sort?: UserSort = UserSort.displayName;
 
   /** From last to first instead. */
   descending?: boolean;

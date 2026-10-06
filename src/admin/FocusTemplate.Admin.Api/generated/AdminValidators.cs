@@ -4,8 +4,8 @@
 
 using FluentValidation;
 using FocusTemplate.Admin.Api.Features.DemoProfiles;
-using FocusTemplate.Admin.Api.Features.Groups;
-using FocusTemplate.Admin.Api.Features.Users;
+using FocusTemplate.Admin.Api.Features.UserManagement.Groups;
+using FocusTemplate.Admin.Api.Features.UserManagement.Users;
 using FocusTemplate.Admin.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

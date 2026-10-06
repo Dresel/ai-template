@@ -1,7 +1,6 @@
 using Bogus;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Primitives;
-using FocusTemplate.Primitives.Permissions;
 using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Data;
@@ -24,8 +23,8 @@ internal static class UserManagementSeed
 		}
 
 		context.Set<User>().AddRange(users);
-		AddGroup(context, faker, "Support", "Look up users and their groups.", users[..8], UserManagement.ViewUsers, UserManagement.ViewGroups);
-		AddGroup(context, faker, "User administration", "Deactivate and reactivate users.", users[8..11], UserManagement.ViewUsers, UserManagement.ManageUsers);
+		AddGroup(context, faker, "Support", "Look up users and their groups.", users[..8], UserManagementPermissions.ViewUsers, UserManagementPermissions.ViewGroups);
+		AddGroup(context, faker, "User administration", "Deactivate and reactivate users.", users[8..11], UserManagementPermissions.ViewUsers, UserManagementPermissions.ManageUsers);
 
 		return true;
 	}

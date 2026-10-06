@@ -3,6 +3,7 @@
 #nullable enable
 
 using System;
+using System.Text.Json.Serialization;
 using FocusTemplate.Primitives;
 
 namespace FocusTemplate.Admin.Shared;
@@ -12,4 +13,4 @@ namespace FocusTemplate.Admin.Shared;
 /// <param name="Date">Day the forecast applies to.</param>
 /// <param name="TemperatureC">Temperature in degrees Celsius.</param>
 /// <param name="Summary">Free-text summary.</param>
-public sealed partial record WeatherForecastResponse(WeatherForecastId Id, DateOnly Date, int TemperatureC, string? Summary = null);
+public sealed partial record WeatherForecastResponse(WeatherForecastId Id, DateOnly Date, int TemperatureC, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull), JsonConverter(typeof(RejectNull<string>))] string? Summary = null);

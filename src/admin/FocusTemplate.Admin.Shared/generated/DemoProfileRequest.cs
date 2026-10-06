@@ -3,6 +3,7 @@
 #nullable enable
 
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace FocusTemplate.Admin.Shared;
 
@@ -16,4 +17,4 @@ namespace FocusTemplate.Admin.Shared;
 /// <param name="MinTemperatureC">Lowest comfortable temperature in degrees Celsius, at most the highest.</param>
 /// <param name="MaxTemperatureC">Highest comfortable temperature in degrees Celsius, at least the lowest.</param>
 /// <param name="Tags">Tags, at most five.</param>
-public sealed partial record DemoProfileRequest(string Code, string Name, int Age, DemoAddressRequest Address, string? Nickname = null, double? WeightKg = null, int? MinTemperatureC = null, int? MaxTemperatureC = null, IReadOnlyList<string>? Tags = null);
+public sealed partial record DemoProfileRequest(string Code, string Name, int Age, DemoAddressRequest Address, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull), JsonConverter(typeof(RejectNull<string>))] string? Nickname = null, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull), JsonConverter(typeof(RejectNull<double?>))] double? WeightKg = null, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull), JsonConverter(typeof(RejectNull<int?>))] int? MinTemperatureC = null, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull), JsonConverter(typeof(RejectNull<int?>))] int? MaxTemperatureC = null, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull), JsonConverter(typeof(RejectNull<IReadOnlyList<string>>))] IReadOnlyList<string>? Tags = null);

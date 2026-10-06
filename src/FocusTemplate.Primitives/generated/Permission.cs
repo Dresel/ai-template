@@ -9,6 +9,7 @@ namespace FocusTemplate.Primitives;
 
 /// <summary>A permission, named after its feature slice and action, such as UserManagement.ManageGroups. Admins grant permissions to groups.</summary>
 [ValueObject<string>]
+[Instance("Unspecified", "")]
 public readonly partial struct Permission
 {
 	/// <summary>Every permission of this release, for seeding and for the admin UI.</summary>

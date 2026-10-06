@@ -1,6 +1,5 @@
 @attribute [Route("/" + Path)]
-@attribute [RequiresPermission(UserManagement.Names.ViewUsers)]
-@using FocusTemplate.Primitives.Permissions
+@attribute [RequiresPermission(UserManagementPermissions.Names.ViewUsers)]
 @inherits ViewModelPage<ListPageViewModel>
 
 <PageTitle>Users</PageTitle>

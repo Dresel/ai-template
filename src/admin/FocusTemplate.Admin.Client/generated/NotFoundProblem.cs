@@ -2,9 +2,12 @@
 
 #nullable enable
 
+using FocusTemplate.Admin.Client.UserManagement.Groups;
+using FocusTemplate.Admin.Client.UserManagement.Users;
+using FocusTemplate.Admin.Client.WeatherForecasts;
 using FocusTemplate.Admin.Shared;
 
 namespace FocusTemplate.Admin.Client;
 
 /// <summary>Modeled error: HTTP 404 (Not found), with the problem details the server sent.</summary>
-public sealed record NotFoundProblem(ProblemDetails Problem);
+public sealed record NotFoundProblem(ProblemDetails Problem) : IProblemOf<GroupsAddMemberResult>, IProblemOf<GroupsGetResult>, IProblemOf<GroupsSetPermissionsResult>, IProblemOf<GroupsUpdateResult>, IProblemOf<UsersActivateResult>, IProblemOf<UsersDeactivateResult>, IProblemOf<UsersGetResult>, IProblemOf<WeatherForecastsGetResult>;

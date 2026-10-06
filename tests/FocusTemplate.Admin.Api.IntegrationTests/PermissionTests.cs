@@ -1,10 +1,9 @@
 using System.Net;
-using FocusTemplate.Admin.Client.Users;
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Admin.Client.UserManagement.Users;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Primitives;
-using FocusTemplate.Primitives.Permissions;
 using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
@@ -32,7 +31,7 @@ public sealed class PermissionTests(ApiFixture factory) : ApiTestBase(factory)
 	{
 		User caller = await Factory.AddUserAsync();
 		User other = await Factory.AddUserAsync("Other");
-		await Factory.GrantAsync(caller.Id, UserManagement.ViewUsers);
+		await Factory.GrantAsync(caller.Id, UserManagementPermissions.ViewUsers);
 
 		UsersGetResult result = await new UsersClient(Factory.CreateAuthenticatedClient(caller.Id)).GetAsync(
 			other.Id,
@@ -45,7 +44,7 @@ public sealed class PermissionTests(ApiFixture factory) : ApiTestBase(factory)
 	public async Task ADeactivatedUserHoldsNoPermissionWhateverTheirToken()
 	{
 		User caller = await Factory.AddUserAsync(isActive: false);
-		await Factory.GrantAsync(caller.Id, UserManagement.ViewUsers);
+		await Factory.GrantAsync(caller.Id, UserManagementPermissions.ViewUsers);
 
 		HttpRequestException error = await Assert.ThrowsAsync<HttpRequestException>(() =>
 			new UsersClient(Factory.CreateAuthenticatedClient(caller.Id)).GetAsync(
@@ -60,14 +59,14 @@ public sealed class PermissionTests(ApiFixture factory) : ApiTestBase(factory)
 	public async Task TheCurrentUserNeedsNoPermissionAndListsWhatTheirGroupsGrant()
 	{
 		User caller = await Factory.AddUserAsync();
-		await Factory.GrantAsync(caller.Id, UserManagement.ViewUsers, UserManagement.ViewGroups);
-		await Factory.GrantAsync(caller.Id, UserManagement.ViewUsers);
+		await Factory.GrantAsync(caller.Id, UserManagementPermissions.ViewUsers, UserManagementPermissions.ViewGroups);
+		await Factory.GrantAsync(caller.Id, UserManagementPermissions.ViewUsers);
 
 		CurrentUserResponse me = await new UsersClient(Factory.CreateAuthenticatedClient(caller.Id)).MeAsync(
 			TestContext.Current.CancellationToken);
 
 		Assert.Equal(caller.Id, me.Id);
-		Assert.Equal([UserManagement.ViewGroups, UserManagement.ViewUsers,], me.Permissions);
+		Assert.Equal([UserManagementPermissions.ViewGroups, UserManagementPermissions.ViewUsers,], me.Permissions);
 	}
 
 	[Fact]

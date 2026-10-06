@@ -1,6 +1,5 @@
 using FocusTemplate.Admin.Web.Features.UserManagement;
 using FocusTemplate.Primitives;
-using UserManagementPermissions = FocusTemplate.Primitives.Permissions.UserManagement;
 
 namespace FocusTemplate.Admin.Web.UnitTests.Features.UserManagement;
 

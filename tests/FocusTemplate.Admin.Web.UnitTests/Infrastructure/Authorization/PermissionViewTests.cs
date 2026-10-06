@@ -1,6 +1,5 @@
 using FocusTemplate.Admin.Web.Infrastructure.Authorization;
 using FocusTemplate.Primitives;
-using FocusTemplate.Primitives.Permissions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 
@@ -13,7 +12,7 @@ public sealed class PermissionViewTests
 	[Fact]
 	public async Task APartOfAPageIsHiddenFromAUserWithoutItsPermission()
 	{
-		string html = await RenderAsync(UserManagement.ManageGroups, UserManagement.Names.ViewGroups);
+		string html = await RenderAsync(UserManagementPermissions.ManageGroups, UserManagementPermissions.Names.ViewGroups);
 
 		Assert.Contains("not authorized", html, StringComparison.Ordinal);
 		Assert.DoesNotContain("the guarded part", html, StringComparison.Ordinal);
@@ -22,7 +21,7 @@ public sealed class PermissionViewTests
 	[Fact]
 	public async Task APartOfAPageShowsToAUserHoldingItsPermission()
 	{
-		string html = await RenderAsync(UserManagement.ManageGroups, UserManagement.Names.ManageGroups);
+		string html = await RenderAsync(UserManagementPermissions.ManageGroups, UserManagementPermissions.Names.ManageGroups);
 
 		Assert.Contains("the guarded part", html, StringComparison.Ordinal);
 	}

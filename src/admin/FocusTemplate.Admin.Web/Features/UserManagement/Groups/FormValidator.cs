@@ -1,4 +1,4 @@
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Admin.Web.Foundation.Validation.Core;
 
 namespace FocusTemplate.Admin.Web.Features.UserManagement.Groups;
