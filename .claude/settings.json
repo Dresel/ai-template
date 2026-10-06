@@ -1,4 +1,5 @@
 {
+	"attribution": { "commit": "", "pr": "" },
 	"enabledMcpjsonServers": [ "aspire", "spatial-focus-docs" ],
 	"permissions": {
 		"allow": [
