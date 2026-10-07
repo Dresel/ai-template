@@ -439,3 +439,6 @@ appsettings.local.json
 tsp-output/*
 !tsp-output/Directory.Build.props
 !tsp-output/Directory.Packages.props
+
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
