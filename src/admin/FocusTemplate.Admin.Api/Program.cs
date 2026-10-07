@@ -6,6 +6,7 @@ using FocusTemplate.Admin.Api.Features.DemoProfiles;
 using FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 using FocusTemplate.Admin.Api.Features.UserManagement.Users;
 using FocusTemplate.Admin.Api.Features.WeatherForecasts;
+using FocusTemplate.Admin.Api.Localization;
 using FocusTemplate.Admin.Shared;
 using FocusTemplate.Data;
 using FocusTemplate.Primitives;
@@ -17,6 +18,8 @@ builder.AddServiceDefaults();
 builder.Services.AddSingleton(TimeProvider.System);
 
 builder.AddApiAuthentication();
+
+builder.AddApiLocalization();
 
 builder.Services.AddAppDbContextPool("focusdb");
 builder.EnrichNpgsqlDbContext<AppDbContext>();
@@ -48,6 +51,8 @@ app.MapDefaultEndpoints();
 
 app.UseExceptionHandler();
 
+app.UseRequestLocalization();
+
 app.UseAuthentication();
 
 // Before the authorization, so a user who may not do anything yet still appears in the user list
@@ -57,9 +62,7 @@ app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
-	app.MapGet(
-		"/openapi/v1.yaml",
-		() => Results.File(Path.Combine(AppContext.BaseDirectory, "openapi.yaml"), "application/yaml"));
+	app.MapGet("/openapi/v1.yaml", () => Results.File(Path.Combine(AppContext.BaseDirectory, "openapi.yaml"), "application/yaml"));
 }
 
 RouteGroupBuilder endpoints = app.MapGroup(string.Empty).AddChaosFilter(app.Configuration);

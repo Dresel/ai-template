@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="CodeTaken" xml:space="preserve"><value>The code is taken.</value></data>
+  <data name="AgeHigh" xml:space="preserve"><value>Over a hundred: please check the age.</value></data>
+  <data name="MaxTemperatureBelowMin" xml:space="preserve"><value>The highest temperature must not be below the lowest.</value></data>
+  <data name="MinTemperatureAboveMax" xml:space="preserve"><value>The lowest temperature must not be above the highest.</value></data>
+  <data name="NicknameLettersOnly" xml:space="preserve"><value>Letters only keep a nickname easy to type.</value></data>
+  <data name="NicknameShouting" xml:space="preserve"><value>The nickname is all upper case.</value></data>
+  <data name="NicknameDigits" xml:space="preserve"><value>The nickname must not contain digits.</value></data>
+  <data name="NicknameSpaces" xml:space="preserve"><value>The nickname must not contain spaces.</value></data>
+</root>

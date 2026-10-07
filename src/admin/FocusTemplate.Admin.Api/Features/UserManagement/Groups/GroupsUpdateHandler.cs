@@ -6,19 +6,18 @@ using Npgsql;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 
-public sealed class GroupsUpdateHandler(AppDbContext dbContext) : ICommandHandler<GroupsUpdateCommand, GroupsUpdateResult>
+public sealed class GroupsUpdateHandler(AppDbContext dbContext, IGroupsLocalizations localizations)
+	: ICommandHandler<GroupsUpdateCommand, GroupsUpdateResult>
 {
 	public async ValueTask<GroupsUpdateResult> Handle(GroupsUpdateCommand command, CancellationToken cancellationToken)
 	{
 		Group? group = await dbContext.Groups.SingleOrDefaultAsync(entity => entity.Id == command.Id, cancellationToken);
 		if (group is null)
 		{
-			return new NotFound($"No group with id {command.Id}.");
+			return new NotFound(localizations.NoGroup(command.Id));
 		}
 
-		if (await dbContext.Groups.AnyAsync(
-				entity => entity.Id != command.Id && entity.Name == command.Body.Name,
-				cancellationToken))
+		if (await dbContext.Groups.AnyAsync(entity => entity.Id != command.Id && entity.Name == command.Body.Name, cancellationToken))
 		{
 			return Taken(command.Body.Name);
 		}

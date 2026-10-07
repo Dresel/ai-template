@@ -1,10 +1,12 @@
+@inject IAppLoadingLocalizations L
+
 <div class="app-loading">
 	@if (Busy)
 	{
 		<RadzenProgressBar Mode="ProgressBarMode.Indeterminate"
 			Value="100"
 			ShowValue="false"
-			aria-label="Loading"
+			aria-label="@L.Loading"
 			@attributes="Attributes" />
 	}
 </div>

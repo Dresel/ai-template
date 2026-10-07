@@ -4,6 +4,7 @@
 
 using System.Text.RegularExpressions;
 using FluentValidation;
+using FocusTemplate.Admin.Shared;
 
 namespace FocusTemplate.Admin.Api.Features.DemoProfiles;
 
@@ -16,7 +17,7 @@ public sealed class DemoProfilesCheckCodeQueryContractValidator : AbstractValida
 	public DemoProfilesCheckCodeQueryContractValidator()
 	{
 		RuleFor(x => x.Code)
-			.Matches(CodePattern).WithErrorCode("pattern").WithMessage("Three upper-case letters.")
-			.WithName("Code").OverridePropertyName(DemoProfilesCheckCodeQueryPaths.Code);
+			.Matches(CodePattern).WithErrorCode("pattern").WithMessage(_ => AdminTexts.Message?.Invoke(typeof(DemoProfilesCheckCodeQuery), nameof(DemoProfilesCheckCodeQuery.Code), "pattern") ?? "Three upper-case letters.")
+			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoProfilesCheckCodeQuery), nameof(DemoProfilesCheckCodeQuery.Code)) ?? "Code").OverridePropertyName(DemoProfilesCheckCodeQueryPaths.Code);
 	}
 }

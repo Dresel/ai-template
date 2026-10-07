@@ -20,9 +20,10 @@ paths:
   `IgnoreWhileRunning`, its button disabled through `IsRunning`. A private fetch method behind a command has a name of its
   own (`FetchAsync`).
 - A call's result becomes an outcome through `ToOutcome()` or `ToOutcome<TProblem>()`, and no view model catches.
-  `Failure = outcome is ApiFailure failure ? failure.Message : null;`.
+  `Failure = outcome is ApiFailure failure ? messages.Of(failure) : null;`, with `ApiFailureMessages` injected.
 - Failures show through `<AppFailure>`, a first load through `<AppLoading>`, a detail page's states through
   `<AppItemView TItem="…">`, a grid's reload through its `IsLoading` mask.
+- Text a user reads comes from the component's resx through `@inject I{Component}Localizations L`.
 - Services a slice's pages share come from `@inject` in the slice's `_Imports.razor`.
 - A list page declares `public const string Path`, a detail page `PathOf(id)`, and routes, links, `NavigateTo` and the menu
   build on them.

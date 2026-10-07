@@ -22,7 +22,7 @@ dialogs, and `AddRadzenComponents()` registers their services.
     `Validation/App/` (`FormHostBase`, `AppInputBase`, `IFormHost`), see [web forms](web-forms.md)
   - `Forms/`: the Radzen wrappers (`AppForm`, the inputs, `AppValidationMessage`)
   - `Pages/`: `ViewModelPage<TViewModel>`, `IViewModel`
-  - `Feedback/`: `AppFailure`, `AppItemView`, `AppLoading`, `DialogService.ConfirmAsync`, `ApiFailure.Message`
+  - `Feedback/`: `AppFailure`, `AppItemView`, `AppLoading`, `DialogService.ConfirmAsync`, `ApiFailureMessages`
   - `Shell/`: `MainLayout`, `Home`, `NotFound`, `Forbidden`
   - `Diagnostics/`: the request diagnostics page
   - directly in it, the async helpers a view model composes: `Debouncer` (one per input), `AsyncCommand<T>`
@@ -32,7 +32,10 @@ dialogs, and `AddRadzenComponents()` registers their services.
     transient with their timings, so a view model takes them in its constructor and the page's scope disposes them. A
     view model disposes only the commands it creates. They run on the renderer's dispatcher and take no locks.
     `Users/ListPageViewModel` uses all of them.
-- **`Infrastructure/`**: `Authentication/`, `Authorization/`, `Configuration/`.
+- **`Infrastructure/`**: `Authentication/`, `Authorization/`, `Configuration/`, `Localization/` (the culture's storage,
+  its setting at startup and the header's `LanguageSwitch`, see [localization](localization.md)).
+- **Texts** a page shows come from its resx pair through `@inject I{Page}Localizations L`, as do a confirmation's
+  message and title. Radzen's own texts, such as a confirmation's cancel button, come in its own German.
 - `Riok.Mapperly` maps between a form's view model and the contract.
 
 ## Pages and view models
@@ -94,11 +97,11 @@ A view model turns a call's result union into an outcome:
 - Every other problem becomes an `ApiFailure(Status, Problem)`, and so does an `HttpRequestException` (the client throws
   it for a status the contract does not model and for no answer) and a call `HttpClient.Timeout` ends. No view model
   catches, and what retrying cannot fix (an unreadable body, a bug) stays an exception.
-- Then `Failure = outcome is ApiFailure failure ? failure.Message : null;`, which says on its line that success clears
-  it, and `if (outcome is Success)`.
+- Then `Failure = outcome is ApiFailure failure ? messages.Of(failure) : null;`, which says on its line that success
+  clears it, and `if (outcome is Success)`. The view model takes `ApiFailureMessages messages` in its constructor.
 
 The emitter generates the outcome types and methods next to each union in `Admin.Client`, describing the contract only.
-The app's policy stays in the app: `ApiFailure.Message` (the server's words, or the status, or "not answering") in
+The app's policy stays in the app: `ApiFailureMessages` (the server's words, or the status, or "not answering") in
 `Foundation/Feedback/`, and `NoAnswerHandler` in `ClientServiceDefaults`, outside the resilience handler, which turns
 Polly giving up (`ExecutionRejectedException`) into an `HttpRequestException` without a status, so the client and its
 outcomes stay free of Polly. C# matches a union's direct cases only, so the outcome cannot wrap the client's union.

@@ -1,8 +1,34 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<!-- The hosts generate a registration class of the same name, see Localization/ServiceCollectionExtensions -->
+		<ResXGenerator_InternalRegistration>true</ResXGenerator_InternalRegistration>
+	</PropertyGroup>
+
 	<ItemGroup>
+		<PackageReference Include="Aigamo.ResXGenerator" PrivateAssets="all" />
 		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="Microsoft.AspNetCore.Authorization" />
+		<PackageReference Include="Microsoft.Extensions.Localization" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Remove="**\*.de.resx" />
+		<EmbeddedResource Include="**\*.de.resx">
+			<DependentUpon>$([System.String]::Copy(%(Filename)).Replace('.de', '.resx'))</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="**\*.resx">
+			<GenerationType>StringLocalizer</GenerationType>
+			<ClassNamePostfix>Localizations</ClassNamePostfix>
+			<StaticClass>false</StaticClass>
+			<StaticMembers>false</StaticMembers>
+			<GenerateFormatMethods>true</GenerateFormatMethods>
+		</EmbeddedResource>
+
+		<!-- A contract's names and pattern messages, read by its type through the localizer factory (ValidationTexts) -->
+		<EmbeddedResource Update="DemoProfileRequest.resx;DemoAddressRequest.resx;UserManagement\GroupRequest.resx;UserManagement\UserSearchRequest.resx">
+			<SkipFile>true</SkipFile>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>

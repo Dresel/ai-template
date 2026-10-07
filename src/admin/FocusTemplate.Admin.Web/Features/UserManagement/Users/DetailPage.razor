@@ -1,6 +1,7 @@
 @attribute [Route("/" + ListPage.Path + "/{Id:guid}")]
 @attribute [RequiresPermission(UserManagementPermissions.Names.ViewUsers)]
 @inherits ViewModelPage<DetailPageViewModel>
+@inject IDetailPageLocalizations L
 
 <RadzenStack Gap="1rem">
 	<AppFailure Message="@ViewModel.Failure" data-testid="user-failure" />
@@ -10,10 +11,10 @@
 		Loading="ViewModel.Loading"
 		Missing="ViewModel.Missing"
 		Title="UserResponseTitle"
-		Fallback="User"
-		MissingTitle="No such user"
+		Fallback="@L.Fallback"
+		MissingTitle="@L.Missing"
 		BackPath="@ListPage.Path"
-		BackText="All users"
+		BackText="@L.AllUsers"
 		TestId="user"
 		Context="user">
 		<RadzenStack Orientation="Orientation.Horizontal"
@@ -23,7 +24,7 @@
 			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
 				<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1" data-testid="user-title">@user.DisplayName</RadzenText>
 				<RadzenBadge BadgeStyle="@(user.IsActive ? BadgeStyle.Success : BadgeStyle.Light)"
-					Text="@(user.IsActive ? "Active" : "Deactivated")"
+					Text="@(user.IsActive ? L.Active : L.Deactivated)"
 					data-testid="user-status" />
 			</RadzenStack>
 			@* Self deactivating not supported by the API *@
@@ -31,7 +32,7 @@
 			{
 				@if (user.IsActive)
 				{
-					<RadzenButton Text="Deactivate"
+					<RadzenButton Text="@L.Deactivate"
 						Icon="person_off"
 						ButtonStyle="ButtonStyle.Danger"
 						Variant="Variant.Outlined"
@@ -41,7 +42,7 @@
 				}
 				else
 				{
-					<RadzenButton Text="Activate"
+					<RadzenButton Text="@L.Activate"
 						Icon="person_check"
 						ButtonStyle="ButtonStyle.Base"
 						Variant="Variant.Outlined"
@@ -54,19 +55,19 @@
 
 		<RadzenCard>
 			<RadzenStack Gap="0.5rem">
-				<RadzenText TextStyle="TextStyle.Body1" data-testid="user-email">@(user.Email ?? "No e-mail address")</RadzenText>
+				<RadzenText TextStyle="TextStyle.Body1" data-testid="user-email">@(user.Email ?? L.NoEmail)</RadzenText>
 				<RadzenText TextStyle="TextStyle.Body2">
-					First seen @user.FirstSeenAt.ToLocalTime().ToString("g"), last seen @user.LastSeenAt.ToLocalTime().ToString("g")
+					@L.Seen(user.FirstSeenAt.ToLocalTime(), user.LastSeenAt.ToLocalTime())
 				</RadzenText>
 			</RadzenStack>
 		</RadzenCard>
 
 		<RadzenCard>
 			<RadzenStack Gap="0.5rem" data-testid="user-groups">
-				<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">Groups</RadzenText>
+				<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">@L.Groups</RadzenText>
 				@if (user.Groups.Count == 0)
 				{
-					<RadzenText TextStyle="TextStyle.Body2">A member of no group, so without any permission.</RadzenText>
+					<RadzenText TextStyle="TextStyle.Body2">@L.NoGroups</RadzenText>
 				}
 				@foreach (GroupReferenceResponse group in user.Groups)
 				{
@@ -80,12 +81,12 @@
 
 		<RadzenCard>
 			<RadzenStack Gap="0.5rem" data-testid="user-permissions">
-				<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">Permissions</RadzenText>
+				<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">@L.Permissions</RadzenText>
 				@if (!user.IsActive)
 				{
-					<RadzenText TextStyle="TextStyle.Body2">Deactivated: holds none of them until activated again.</RadzenText>
+					<RadzenText TextStyle="TextStyle.Body2">@L.DeactivatedNote</RadzenText>
 				}
-				@foreach (IGrouping<string, PermissionLabel> section in user.Permissions.Select(PermissionLabel.Of).GroupBy(label => label.Section))
+				@foreach (IGrouping<string, PermissionLabel> section in user.Permissions.Select(PermissionLabels.Of).GroupBy(label => label.Section))
 				{
 					<RadzenText TextStyle="TextStyle.Subtitle1" TagName="TagName.H3">@section.Key</RadzenText>
 					<ul>
@@ -117,10 +118,7 @@
 
 	private async Task DeactivateAsync()
 	{
-		if (await Dialogs.ConfirmAsync(
-				$"Deactivate {ViewModel.User!.DisplayName}? From their next request on they hold no permission.",
-				"Deactivate the user",
-				"Deactivate"))
+		if (await Dialogs.ConfirmAsync(L.ConfirmDeactivate(ViewModel.User!.DisplayName), L.DeactivateUser, L.Deactivate))
 		{
 			await ViewModel.DeactivateAsync();
 		}

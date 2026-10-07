@@ -9,8 +9,7 @@ public sealed class DemoProfileTests(ApiFixture factory) : ApiTestBase(factory)
 {
 	private static CancellationToken Cancellation => TestContext.Current.CancellationToken;
 
-	private static DemoProfileRequest Valid =>
-		new("ABC", "Ada", 36, new DemoAddressRequest("Hohe Warte 38", "1190", "Vienna"));
+	private static DemoProfileRequest Valid => new("ABC", "Ada", 36, new DemoAddressRequest("Hohe Warte 38", "1190", "Vienna"));
 
 	[Theory]
 	[InlineData("TAK", true)]
@@ -34,8 +33,7 @@ public sealed class DemoProfileTests(ApiFixture factory) : ApiTestBase(factory)
 	[Fact]
 	public async Task AFieldCanFailSeveralRulesOfEverySeverity()
 	{
-		ValidationProblemDetails problem =
-			await CreateInvalidAsync(Valid with { Nickname = "SHOUTING 12 SHOUTING 34", });
+		ValidationProblemDetails problem = await CreateInvalidAsync(Valid with { Nickname = "SHOUTING 12 SHOUTING 34", });
 
 		Assert.Equal(
 			[
@@ -48,6 +46,14 @@ public sealed class DemoProfileTests(ApiFixture factory) : ApiTestBase(factory)
 			problem.Violations.Where(violation => violation.Key == "nickname")
 				.Select(violation => (violation.Code, violation.Severity))
 				.Order());
+	}
+
+	[Fact]
+	public async Task ALanguageTheApiDoesNotSpeakIsAnsweredInEnglish()
+	{
+		ValidationProblemDetails problem = await CreateInvalidAsync(Valid with { Code = "abc", }, "fr");
+
+		Assert.Equal(["Three upper-case letters.",], problem.Errors["code"]);
 	}
 
 	[Fact]
@@ -70,12 +76,23 @@ public sealed class DemoProfileTests(ApiFixture factory) : ApiTestBase(factory)
 	[Fact]
 	public async Task CrossedTemperaturesFailAtBoth()
 	{
-		ValidationProblemDetails problem =
-			await CreateInvalidAsync(Valid with { MinTemperatureC = 30, MaxTemperatureC = 10, });
+		ValidationProblemDetails problem = await CreateInvalidAsync(Valid with { MinTemperatureC = 30, MaxTemperatureC = 10, });
 
 		Assert.Equal(
 			[("maxTemperatureC", "maxTemperatureC.belowMin"), ("minTemperatureC", "minTemperatureC.aboveMax"),],
 			problem.Violations.Select(violation => (violation.Key, violation.Code)).Order());
+	}
+
+	[Fact]
+	public async Task InGermanTheMessagesAndTheNamesInThemAreGerman()
+	{
+		ValidationProblemDetails problem = await CreateInvalidAsync(
+			Valid with { Code = "abc", Nickname = "Ada 12 Ada 34 Ada Lovelace", },
+			"de");
+
+		Assert.Equal(["Drei Großbuchstaben.",], problem.Errors["code"]);
+		Assert.Contains("Der Spitzname darf keine Ziffern enthalten.", problem.Errors["nickname"]);
+		Assert.Contains(problem.Errors["nickname"], message => message.Contains("'Spitzname'", StringComparison.Ordinal));
 	}
 
 	[Fact]
@@ -87,10 +104,19 @@ public sealed class DemoProfileTests(ApiFixture factory) : ApiTestBase(factory)
 		Assert.Equal(("name", "name.reserved"), (reserved.Key, reserved.Code));
 	}
 
-	private DemoProfilesClient Client() => new(Factory.CreateAuthenticatedClient());
+	private DemoProfilesClient Client(string? language = null)
+	{
+		HttpClient client = Factory.CreateAuthenticatedClient();
+		if (language is not null)
+		{
+			client.DefaultRequestHeaders.AcceptLanguage.ParseAdd(language);
+		}
 
-	private async Task<ValidationProblemDetails> CreateInvalidAsync(DemoProfileRequest request) =>
-		await Client().CreateAsync(request, Cancellation) switch
+		return new DemoProfilesClient(client);
+	}
+
+	private async Task<ValidationProblemDetails> CreateInvalidAsync(DemoProfileRequest request, string? language = null) =>
+		await Client(language).CreateAsync(request, Cancellation) switch
 		{
 			ValidationProblem problem => problem.Problem,
 			DemoProfileResponse profile => throw new XunitException($"Expected a validation problem, got {profile}."),

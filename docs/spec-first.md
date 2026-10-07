@@ -69,7 +69,9 @@ emitter error.
   answers a violation with a 400 before the handler runs. `AddAdminValidators()` in `Program.cs` registers them, and
   mapping the endpoints without it fails at startup. Rules the spec cannot state stay in the handler, or go into a
   validator registered as `IValidator<T>` that includes the generated one. Those that need no server data can live in
-  `Admin.Shared`, so the forms run them too (see [web forms](web-forms.md)).
+  `Admin.Shared`, so the forms run them too (see [web forms](web-forms.md)). The generated rules ask the generated
+  `AdminTexts` hook for the names of their members and for the messages of their patterns, see
+  [localization](localization.md).
 - The 400 carries `errors` by wire path and `violations` (key, code, severity, message, args), a typed
   `ValidationProblem` case on the client. An operation behind a form declares the `ValidationProblem` alias, since under
   `Problem<400>` the same members would arrive as untyped extensions. With `RespectRequiredConstructorParameters` on, a

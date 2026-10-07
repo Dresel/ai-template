@@ -1,4 +1,6 @@
 @using FocusTemplate.Admin.Web.Infrastructure.Authentication
+@inject IAppLocalizations L
+
 <Router AppAssembly="@typeof(App).Assembly" NotFoundPage="typeof(NotFound)">
 	<Found Context="routeData">
 		<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
@@ -13,7 +15,7 @@
 				}
 			</NotAuthorized>
 			<Authorizing>
-				<p data-testid="authorizing">Checking your session...</p>
+				<p data-testid="authorizing">@L.CheckingSession</p>
 			</Authorizing>
 		</AuthorizeRouteView>
 		<FocusOnNavigate RouteData="@routeData" Selector="h1" />

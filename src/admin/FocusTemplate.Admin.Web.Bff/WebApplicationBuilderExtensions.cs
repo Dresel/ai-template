@@ -60,14 +60,21 @@ public static class WebApplicationBuilderExtensions
 				oidc.MapInboundClaims = false;
 				oidc.TokenValidationParameters.NameClaimType = JwtRegisteredClaimNames.PreferredUsername;
 
-				if (settings.Value.LoginHint is { } loginHint)
+				// Both go into the pushed authorization request
+				oidc.Events.OnRedirectToIdentityProvider = context =>
 				{
-					oidc.Events.OnRedirectToIdentityProvider = context =>
+					if (settings.Value.LoginHint is { } loginHint)
 					{
 						context.ProtocolMessage.LoginHint = loginHint;
-						return Task.CompletedTask;
-					};
-				}
+					}
+
+					if (context.Properties.Items.TryGetValue(AuthenticationEndpoints.UiLocales, out string? uiLocales))
+					{
+						context.ProtocolMessage.UiLocales = uiLocales;
+					}
+
+					return Task.CompletedTask;
+				};
 			});
 
 		builder.Services.AddAuthorizationBuilder()

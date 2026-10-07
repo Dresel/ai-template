@@ -7,7 +7,7 @@ using FocusTemplate.Admin.Web.Foundation.Pages;
 
 namespace FocusTemplate.Admin.Web.Features.UserManagement.Groups;
 
-public sealed class ListPageViewModel(GroupsClient api, BusyState busyState) : IViewModel
+public sealed class ListPageViewModel(GroupsClient api, BusyState busyState, ApiFailureMessages messages) : IViewModel
 {
 	public event Action? Changed
 	{
@@ -30,7 +30,7 @@ public sealed class ListPageViewModel(GroupsClient api, BusyState busyState) : I
 				break;
 
 			case ApiFailure failure:
-				Failure = failure.Message;
+				Failure = messages.Of(failure);
 				break;
 		}
 	}

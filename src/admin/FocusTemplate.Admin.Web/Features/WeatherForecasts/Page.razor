@@ -2,27 +2,28 @@
 @using FocusTemplate.Admin.Client.WeatherForecasts
 @using FocusTemplate.Admin.Shared
 @inject WeatherForecastsClient Api
+@inject IPageLocalizations L
 
-<PageTitle>Weather</PageTitle>
+<PageTitle>@L.Title</PageTitle>
 
 <RadzenStack Gap="1rem">
-	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Weather</RadzenText>
+	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">@L.Title</RadzenText>
 
 	<RadzenCard>
-		<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">Five-day forecast</RadzenText>
+		<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">@L.Forecast</RadzenText>
 		@if (Forecasts is null)
 		{
-			<RadzenText data-testid="weather-loading">Loading...</RadzenText>
+			<RadzenText data-testid="weather-loading">@L.Loading</RadzenText>
 		}
 		else
 		{
 			<RadzenTable AllowAlternatingRows="true" data-testid="weather-table">
 				<RadzenTableHeader>
 					<RadzenTableHeaderRow>
-						<RadzenTableHeaderCell>Date</RadzenTableHeaderCell>
-						<RadzenTableHeaderCell>Temp. (C)</RadzenTableHeaderCell>
-						<RadzenTableHeaderCell>Temp. (F)</RadzenTableHeaderCell>
-						<RadzenTableHeaderCell>Summary</RadzenTableHeaderCell>
+						<RadzenTableHeaderCell>@L.Date</RadzenTableHeaderCell>
+						<RadzenTableHeaderCell>@L.TemperatureC</RadzenTableHeaderCell>
+						<RadzenTableHeaderCell>@L.TemperatureF</RadzenTableHeaderCell>
+						<RadzenTableHeaderCell>@L.Summary</RadzenTableHeaderCell>
 					</RadzenTableHeaderRow>
 				</RadzenTableHeader>
 				<RadzenTableBody>

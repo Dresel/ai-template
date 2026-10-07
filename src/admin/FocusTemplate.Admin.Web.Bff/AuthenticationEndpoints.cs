@@ -1,6 +1,8 @@
+using System.Globalization;
 using System.Security.Claims;
 using FocusTemplate.Admin.Client.UserManagement.Users;
 using FocusTemplate.Admin.Shared;
+using FocusTemplate.Admin.Shared.Localization;
 using FocusTemplate.Admin.Shared.UserManagement;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -12,14 +14,24 @@ namespace FocusTemplate.Admin.Web.Bff;
 
 internal static class AuthenticationEndpoints
 {
+	// The language of Keycloak's form, which the OIDC handler sends along as ui_locales
+	public const string UiLocales = "ui_locales";
+
 	public static WebApplication MapAuthenticationEndpoints(this WebApplication app)
 	{
 		// The WASM client sends the browser here, Keycloak sends it back to the page it came from.
 		app.MapGet(
 			"/bff/login",
-			(string? returnUrl) => Results.Challenge(
-				new AuthenticationProperties { RedirectUri = LocalPathOrRoot(returnUrl), },
-				[OpenIdConnectDefaults.AuthenticationScheme,]));
+			(string? returnUrl, string? culture) =>
+			{
+				AuthenticationProperties properties = new() { RedirectUri = LocalPathOrRoot(returnUrl), };
+				if (LanguageOf(culture) is { } language)
+				{
+					properties.Items[UiLocales] = language;
+				}
+
+				return Results.Challenge(properties, [OpenIdConnectDefaults.AuthenticationScheme,]);
+			});
 
 		// A GET, so a top-level navigation can carry the browser on to Keycloak's end-session page. The session id in the
 		// query is its CSRF protection: only the page holding the session learned it from /bff/user.
@@ -68,6 +80,21 @@ internal static class AuthenticationEndpoints
 			});
 
 		return app;
+	}
+
+	// Only a language the app speaks reaches Keycloak, as its two-letter tag
+	private static string? LanguageOf(string? culture)
+	{
+		try
+		{
+			return culture is null || CultureInfo.GetCultureInfo(culture) is not { } parsed || !Cultures.IsSupported(parsed)
+				? null
+				: parsed.TwoLetterISOLanguageName;
+		}
+		catch (CultureNotFoundException)
+		{
+			return null;
+		}
 	}
 
 	// Prevent open redirect attacks. IsLocalUrl alone also passes "~/" paths, which the OIDC handlers redirect to verbatim.

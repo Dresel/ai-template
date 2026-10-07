@@ -1,5 +1,6 @@
 @using FocusTemplate.Admin.Client.UserManagement.Users
 @inject UsersClient Users
+@inject IMemberPickerLocalizations L
 
 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
 	<RadzenAutoComplete @bind-Value="text"
@@ -8,9 +9,9 @@
 		LoadData="SearchAsync"
 		FilterDelay="300"
 		SelectedItemChanged="Select"
-		Placeholder="Find a user by name or e-mail"
+		Placeholder="@L.FindUser"
 		InputAttributes="inputAttributes" />
-	<RadzenButton Text="Add"
+	<RadzenButton Text="@L.Add"
 		Icon="person_add"
 		ButtonStyle="ButtonStyle.Base"
 		Variant="Variant.Outlined"
@@ -21,12 +22,9 @@
 
 @code
 {
-	private static readonly IReadOnlyDictionary<string, object> inputAttributes = new Dictionary<string, object>
-	{
-		["aria-label"] = "Find a user to add", ["data-testid"] = "member-picker"
-	};
-
 	private IReadOnlyList<UserSummaryResponse> candidates = [];
+
+	private IReadOnlyDictionary<string, object> inputAttributes = null!;
 
 	private UserSummaryResponse? selected;
 
@@ -35,6 +33,12 @@
 	[Parameter]
 	[EditorRequired]
 	public EventCallback<UserSummaryResponse> Picked { get; set; }
+
+	protected override void OnInitialized() =>
+		inputAttributes = new Dictionary<string, object>
+		{
+			["aria-label"] = L.FindUserToAdd, ["data-testid"] = "member-picker"
+		};
 
 	private async Task AddAsync()
 	{

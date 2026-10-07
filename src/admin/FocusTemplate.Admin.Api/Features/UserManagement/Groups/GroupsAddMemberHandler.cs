@@ -5,20 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 
-public sealed class GroupsAddMemberHandler(AppDbContext dbContext)
+public sealed class GroupsAddMemberHandler(AppDbContext dbContext, IGroupsLocalizations localizations)
 	: ICommandHandler<GroupsAddMemberCommand, GroupsAddMemberResult>
 {
-	public async ValueTask<GroupsAddMemberResult> Handle(
-		GroupsAddMemberCommand command,
-		CancellationToken cancellationToken)
+	public async ValueTask<GroupsAddMemberResult> Handle(GroupsAddMemberCommand command, CancellationToken cancellationToken)
 	{
-		Group? group = await dbContext.Groups
-			.Include(group => group.Members.Where(member => member.Id == command.UserId))
+		Group? group = await dbContext.Groups.Include(group => group.Members.Where(member => member.Id == command.UserId))
 			.SingleOrDefaultAsync(entity => entity.Id == command.Id, cancellationToken);
 
 		if (group is null)
 		{
-			return new NotFound($"No group with id {command.Id}.");
+			return new NotFound(localizations.NoGroup(command.Id));
 		}
 
 		if (group.Members.Count > 0)
@@ -26,13 +23,11 @@ public sealed class GroupsAddMemberHandler(AppDbContext dbContext)
 			return Unit.Value;
 		}
 
-		User? user = await dbContext.Users.SingleOrDefaultAsync(
-			entity => entity.Id == command.UserId,
-			cancellationToken);
+		User? user = await dbContext.Users.SingleOrDefaultAsync(entity => entity.Id == command.UserId, cancellationToken);
 
 		if (user is null)
 		{
-			return new NotFound($"No user with id {command.UserId}.");
+			return new NotFound(localizations.NoUser(command.UserId));
 		}
 
 		group.Members.Add(user);

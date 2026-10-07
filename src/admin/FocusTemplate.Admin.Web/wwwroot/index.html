@@ -18,9 +18,9 @@
 <body>
 <div id="app">
 	<div class="app-startup">
-		<div class="app-startup-shell" role="status" aria-label="Loading the application">
+		<div class="app-startup-shell" role="status" aria-label="Loading the application" data-label="loading">
 			<img src="images/logo.png" class="app-startup-logo" alt="" />
-			<p class="app-startup-label">Preparing your workspace…</p>
+			<p class="app-startup-label" data-text="preparing" data-testid="startup-label">Preparing your workspace…</p>
 			<div class="loading-progress"></div>
 			<div class="app-startup-meta">
 				<div class="loading-progress-text"></div>
@@ -30,10 +30,45 @@
 </div>
 
 <div id="blazor-error-ui">
-	An unhandled error has occurred.
-	<a href="." class="reload">Reload</a>
+	<span data-text="error">An unhandled error has occurred.</span>
+	<a href="." class="reload" data-text="reload">Reload</a>
 	<span class="dismiss">🗙</span>
 </div>
+<script>
+	// Shown before .NET runs, so no resx reaches these texts. The language follows CultureStorage: the stored choice,
+	// else the browser's, else English. A new language goes into Cultures.Supported and here.
+	(() => {
+		const texts = {
+			en: {
+				loading: "Loading the application",
+				preparing: "Preparing your workspace…",
+				error: "An unhandled error has occurred.",
+				reload: "Reload",
+			},
+			de: {
+				loading: "Die Anwendung wird geladen",
+				preparing: "Ihr Arbeitsbereich wird vorbereitet …",
+				error: "Ein unerwarteter Fehler ist aufgetreten.",
+				reload: "Neu laden",
+			},
+		};
+
+		let stored = null;
+		try {
+			stored = localStorage.getItem("culture");
+		} catch {
+			// Some browsers refuse local storage in a private window
+		}
+
+		const culture = stored ?? navigator.language;
+		const language = culture.split("-")[0].toLowerCase();
+		const text = texts[language] ?? texts.en;
+
+		document.documentElement.lang = texts[language] ? culture : "en";
+		document.querySelectorAll("[data-text]").forEach(element => element.textContent = text[element.dataset.text]);
+		document.querySelectorAll("[data-label]").forEach(element => element.setAttribute("aria-label", text[element.dataset.label]));
+	})();
+</script>
 <script src="_content/Radzen.Blazor/Radzen.Blazor#[.{fingerprint}].js"></script>
 <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
 </body>

@@ -18,7 +18,8 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
   with an audience mapper that stamps `admin-api` into the access token, and the login `developer` / `developer`, whose
   user id is `WellKnownUsers.Developer`. Sessions last 7 days idle and 30 days at most, and survive browser restarts
   when "Remember me" is ticked. `WithKeycloakClient` hands the BFF that login as `Oidc__LoginHint`, sent as
-  `login_hint` inside the pushed request, so the form asks only for the password. The realm file and the values in
+  `login_hint` inside the pushed request, so the form asks only for the password. The realm has internationalization on
+  (en, de) for the form's language, see [localization](localization.md). The realm file and the values in
   `AddLocalKeycloakRealm` change together by hand.
 - **Keycloak's endpoint** is named `http` whatever its scheme: the integration switches it to https at start when the
   dev certificate is available, and a separate `https` endpoint would yield a `tcp://` authority. Both handlers keep the
@@ -28,7 +29,7 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
   public): `AddExternalKeycloakRealm` takes a realm on any Keycloak from the parameters `oidc-authority` (the realm's
   URL, `https://sso.example.com/realms/focus`), `oidc-admin-bff-secret`, `oidc-admin-bff-client-id` and
   `oidc-admin-api-audience` (defaults `admin-bff`, `admin-api`). That realm needs the confidential client, the audience
-  mapper, `sub` as the user's UUID, and the redirect URIs `http://localhost:5770/signin-oidc` and
+  mapper, `sub` as the user's UUID, internationalization with en and de, and the redirect URIs `http://localhost:5770/signin-oidc` and
   `https://localhost:7770/signin-oidc` with their `/signout-callback-oidc` counterparts. The ingress's port is pinned
   for this. The AppHost models it as the external service `keycloak`, whose health check probes the realm URL itself,
   since a health-check path would replace the URL's last segment, the realm. No login hint goes to an external realm.
@@ -53,6 +54,7 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
   Keycloak's end-session page, with the session id as its CSRF token) accept local return paths only. `/bff/user` answers
   401 when anonymous, otherwise `UserInfoResponse`: the user's claims, the BFF's own `bff:logout_url` (`BffClaimTypes`
   in `Admin.Shared`) and the permissions it asks the API for (`GET /users/me`), with `Cache-Control: no-store`.
+  `/bff/login` also takes the app's `culture`, which reaches Keycloak as `ui_locales` when the app speaks it.
 - **Proxied routes**: the `/_api` route is declared in full in the BFF's `appsettings.json` under its Aspire-generated
   name (`route-admin-api`), carrying the `ProxiedApi` policy, while the AppHost's environment adds the destination and
   the prefix transform. The policy requires a session and an `X-CSRF` header (the client sends `1`, any value passes), else
@@ -97,10 +99,11 @@ authorization. A handler reads `Id`, which throws then. The provisioning middlew
 - `[Authorize]` in `_Imports.razor` and `AuthorizeRouteView` in `App.razor` guard every page but `Home`
   (`[AllowAnonymous]`). A page the user may not see renders `Forbidden` for a signed-in user and `RedirectToLogin` for an
   anonymous one, since a signed-in user sent to log in would come straight back from Keycloak's session.
-- Login and `RedirectToLogin` do a full load of `bff/login`, logout navigates to the `bff:logout_url` claim with
-  `forceLoad`: both live outside the client router.
-- `AddProxiedHttpClient` adds `CsrfHeaderHandler` and `RedirectToLoginHandler`, which turns a 401 into a full load of
-  `bff/login` with the current page as return URL. A 502 stays an error, since logging in again would only loop.
+- Login, `RedirectToLogin` and `RedirectToLoginHandler` do a full load of `bff/login` through `NavigateToLogin()`, which
+  carries the culture. Logout navigates to the `bff:logout_url` claim with `forceLoad`: both live outside the client
+  router.
+- `AddProxiedHttpClient` adds `CsrfHeaderHandler`, `AcceptLanguageHandler` and `RedirectToLoginHandler`, which turns a
+  401 into a full load of `bff/login` with the current page as return URL. A 502 stays an error, since logging in again would only loop.
 - Test ids: `user-name`, `login-button`, `logout-button`, `authorizing`, `forbidden`.
 
 ## Tests

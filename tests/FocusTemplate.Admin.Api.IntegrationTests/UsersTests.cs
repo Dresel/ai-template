@@ -10,16 +10,28 @@ namespace FocusTemplate.Admin.Api.IntegrationTests;
 public sealed class UsersTests(ApiFixture factory) : ApiTestBase(factory)
 {
 	[Fact]
+	public async Task AConflictIsWordedInTheLanguageOfTheRequest()
+	{
+		User caller = await AdminAsync();
+		HttpClient client = Factory.CreateAuthenticatedClient(caller.Id);
+		client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("de-AT");
+
+		UsersDeactivateResult result = await new UsersClient(client).DeactivateAsync(caller.Id, TestContext.Current.CancellationToken);
+
+		Assert.Equal(
+			"Benutzer können sich nicht selbst deaktivieren.",
+			result is ConflictProblem conflict ? conflict.Problem.Detail : null);
+	}
+
+	[Fact]
 	public async Task AUserDeactivatedAndReactivatedIsActiveAgain()
 	{
 		User caller = await AdminAsync();
 		User other = await Factory.AddUserAsync();
 
-		UsersDeactivateResult deactivated =
-			await Client(caller).DeactivateAsync(other.Id, TestContext.Current.CancellationToken);
+		UsersDeactivateResult deactivated = await Client(caller).DeactivateAsync(other.Id, TestContext.Current.CancellationToken);
 		bool activeAfterDeactivation = (await Factory.FindUserAsync(other.Id)).IsActive;
-		UsersActivateResult activated =
-			await Client(caller).ActivateAsync(other.Id, TestContext.Current.CancellationToken);
+		UsersActivateResult activated = await Client(caller).ActivateAsync(other.Id, TestContext.Current.CancellationToken);
 
 		Assert.True(deactivated is Success, $"Expected Success, got {deactivated}");
 		Assert.False(activeAfterDeactivation);
@@ -50,8 +62,7 @@ public sealed class UsersTests(ApiFixture factory) : ApiTestBase(factory)
 	{
 		User caller = await AdminAsync();
 
-		UsersGetResult result = await Client(caller)
-			.GetAsync(UserId.From(Guid.CreateVersion7()), TestContext.Current.CancellationToken);
+		UsersGetResult result = await Client(caller).GetAsync(UserId.From(Guid.CreateVersion7()), TestContext.Current.CancellationToken);
 
 		Assert.True(result is NotFoundProblem, $"Expected NotFoundProblem, got {result}");
 	}
@@ -61,8 +72,7 @@ public sealed class UsersTests(ApiFixture factory) : ApiTestBase(factory)
 	{
 		User caller = await AdminAsync();
 
-		UsersDeactivateResult result =
-			await Client(caller).DeactivateAsync(caller.Id, TestContext.Current.CancellationToken);
+		UsersDeactivateResult result = await Client(caller).DeactivateAsync(caller.Id, TestContext.Current.CancellationToken);
 
 		Assert.True(result is ConflictProblem, $"Expected ConflictProblem, got {result}");
 	}
@@ -90,9 +100,7 @@ public sealed class UsersTests(ApiFixture factory) : ApiTestBase(factory)
 		await Factory.AddUserAsync("Nobody");
 
 		UserPageResponse ascending = await SearchAsync(caller, new UserSearchRequest(Sort: UserSort.Email));
-		UserPageResponse descending = await SearchAsync(
-			caller,
-			new UserSearchRequest(Sort: UserSort.Email, Descending: true));
+		UserPageResponse descending = await SearchAsync(caller, new UserSearchRequest(Sort: UserSort.Email, Descending: true));
 
 		Assert.Equal(["ada@example.com", "bea@example.com", null, null,], ascending.Items.Select(user => user.Email));
 		Assert.Equal(["bea@example.com", "ada@example.com", null, null,], descending.Items.Select(user => user.Email));
@@ -136,8 +144,7 @@ public sealed class UsersTests(ApiFixture factory) : ApiTestBase(factory)
 		User deactivated = await Factory.AddUserAsync(isActive: false);
 		await Factory.AddAdministratorsAsync(administrator.Id, deactivated.Id);
 
-		UsersDeactivateResult result =
-			await Client(caller).DeactivateAsync(administrator.Id, TestContext.Current.CancellationToken);
+		UsersDeactivateResult result = await Client(caller).DeactivateAsync(administrator.Id, TestContext.Current.CancellationToken);
 
 		Assert.True(result is ConflictProblem, $"Expected ConflictProblem, got {result}");
 		Assert.True((await Factory.FindUserAsync(administrator.Id)).IsActive);
@@ -151,8 +158,7 @@ public sealed class UsersTests(ApiFixture factory) : ApiTestBase(factory)
 		User member = await Factory.AddUserAsync();
 		await Factory.AddManagedGroupAsync(member.Id);
 
-		UsersDeactivateResult result =
-			await Client(caller).DeactivateAsync(member.Id, TestContext.Current.CancellationToken);
+		UsersDeactivateResult result = await Client(caller).DeactivateAsync(member.Id, TestContext.Current.CancellationToken);
 
 		Assert.True(result is Success, $"Expected Success, got {result}");
 		Assert.False((await Factory.FindUserAsync(member.Id)).IsActive);

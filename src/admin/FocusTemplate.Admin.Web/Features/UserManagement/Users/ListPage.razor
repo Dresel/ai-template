@@ -1,11 +1,12 @@
 @attribute [Route("/" + Path)]
 @attribute [RequiresPermission(UserManagementPermissions.Names.ViewUsers)]
 @inherits ViewModelPage<ListPageViewModel>
+@inject IListPageLocalizations L
 
-<PageTitle>Users</PageTitle>
+<PageTitle>@L.Title</PageTitle>
 
 <RadzenStack Gap="1rem">
-	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Users</RadzenText>
+	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">@L.Title</RadzenText>
 
 	<AppFailure Message="@ViewModel.Failure" data-testid="users-failure" />
 
@@ -15,15 +16,15 @@
 				<RadzenTextBox Value="@ViewModel.Search"
 					ValueChanged="SearchChangedAsync"
 					Immediate="true"
-					Placeholder="Search by name or e-mail"
-					aria-label="Search by name or e-mail"
+					Placeholder="@L.Search"
+					aria-label="@L.Search"
 					Style="max-width: 24rem; flex: 1;"
 					data-testid="users-search" />
 				<RadzenButton Icon="refresh"
 					ButtonStyle="ButtonStyle.Base"
 					Variant="Variant.Outlined"
-					title="Reload"
-					aria-label="Reload"
+					title="@L.Reload"
+					aria-label="@L.Reload"
 					Disabled="ViewModel.Users is null || ViewModel.Reloading"
 					Click="ViewModel.ReloadAsync"
 					data-testid="users-reload" />
@@ -40,26 +41,26 @@
 				AllowSorting="true"
 				RowRender="RenderRow"
 				RowClick="Open"
-				EmptyText="@(ViewModel.Users is null ? string.Empty : "No user matches.")"
+				EmptyText="@(ViewModel.Users is null ? string.Empty : L.NoMatch)"
 				data-testid="users-table">
 				<Columns>
-					<RadzenDataGridColumn TItem="UserSummaryResponse" Property="@nameof(UserSummaryResponse.DisplayName)" Title="Name" />
+					<RadzenDataGridColumn TItem="UserSummaryResponse" Property="@nameof(UserSummaryResponse.DisplayName)" Title="@L.Name" />
 					<RadzenDataGridColumn TItem="UserSummaryResponse"
 						Property="@nameof(UserSummaryResponse.Email)"
-						Title="E-mail" />
+						Title="@L.Email" />
 					<RadzenDataGridColumn TItem="UserSummaryResponse"
 						Property="@nameof(UserSummaryResponse.IsActive)"
-						Title="Status"
+						Title="@L.Status"
 						Sortable="false"
 						Width="10rem">
 						<Template Context="user">
 							<RadzenBadge BadgeStyle="@(user.IsActive ? BadgeStyle.Success : BadgeStyle.Light)"
-								Text="@(user.IsActive ? "Active" : "Deactivated")" />
+								Text="@(user.IsActive ? L.Active : L.Deactivated)" />
 						</Template>
 					</RadzenDataGridColumn>
 					<RadzenDataGridColumn TItem="UserSummaryResponse"
 						Property="@nameof(UserSummaryResponse.LastSeenAt)"
-						Title="Last seen"
+						Title="@L.LastSeen"
 						Width="12rem">
 						<Template Context="user">@user.LastSeenAt.ToLocalTime().ToString("g")</Template>
 					</RadzenDataGridColumn>

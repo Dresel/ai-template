@@ -2,35 +2,33 @@
 @attribute [AllowAnonymous]
 @inject ILogger<Home> Logger
 @inject NotificationService Notifications
+@inject IHomeLocalizations L
 
-<PageTitle>Home</PageTitle>
+<PageTitle>@L.Title</PageTitle>
 
 <RadzenStack Gap="1rem">
-	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Welcome</RadzenText>
+	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">@L.Welcome</RadzenText>
 
 	<RadzenCard>
-		<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">AI-first .NET template</RadzenText>
-		<RadzenText TextStyle="TextStyle.Subtitle1">Where your journey begins</RadzenText>
-		<RadzenText TextStyle="TextStyle.Body1">
-			Blazor WebAssembly behind a thin BFF, orchestrated by Aspire — with a TLS-offloading
-			ingress, end-to-end OpenTelemetry, Umami analytics, and Playwright E2E tests.
-		</RadzenText>
+		<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">@L.TemplateTitle</RadzenText>
+		<RadzenText TextStyle="TextStyle.Subtitle1">@L.TemplateSubtitle</RadzenText>
+		<RadzenText TextStyle="TextStyle.Body1">@L.TemplateText</RadzenText>
 	</RadzenCard>
 
 	<RadzenCard>
-		<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">Playground</RadzenText>
+		<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">@L.Playground</RadzenText>
 		<RadzenStack Gap="1rem">
 			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
-				<RadzenText TagName="TagName.Span">Counter:</RadzenText>
+				<RadzenText TagName="TagName.Span">@L.Counter</RadzenText>
 				<RadzenBadge BadgeStyle="BadgeStyle.Primary" data-testid="counter-value">@counter</RadzenBadge>
 			</RadzenStack>
 			<RadzenStack Orientation="Orientation.Horizontal" Gap="0.5rem">
-				<RadzenButton Text="Count"
+				<RadzenButton Text="@L.Count"
 					ButtonStyle="ButtonStyle.Primary"
 					Click="() => counter++"
 					data-testid="counter-increment"
 					data-umami-event="Counter Button clicked" />
-				<RadzenButton Text="Log" ButtonStyle="ButtonStyle.Secondary" Click="LogClicked" />
+				<RadzenButton Text="@L.Log" ButtonStyle="ButtonStyle.Secondary" Click="LogClicked" />
 			</RadzenStack>
 		</RadzenStack>
 	</RadzenCard>
@@ -44,6 +42,6 @@
 	{
 		Logger.LogInformation("Hit it!");
 
-		Notifications.Notify(NotificationSeverity.Info, "Logged", "Logged a message — see the dashboard's structured logs.");
+		Notifications.Notify(NotificationSeverity.Info, L.Logged, L.LoggedDetail);
 	}
 }

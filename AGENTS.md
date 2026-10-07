@@ -158,6 +158,7 @@ writes a file of its area, and other agents read it from here.
 | Authorization: permissions, groups | [authorization](docs/authorization.md) | [authorization](.claude/rules/authorization.md) |
 | Web pages and view models | [web pages](docs/web-pages.md) | [web-pages](.claude/rules/web-pages.md) |
 | Web forms and validation | [web forms](docs/web-forms.md) | [web-forms](.claude/rules/web-forms.md) |
+| Localization: cultures, resx, translated messages | [localization](docs/localization.md) | [localization](.claude/rules/localization.md) |
 | Web E2E tests | [web E2E](docs/web-e2e.md) | [web-e2e](.claude/rules/web-e2e.md) |
 | Mobile | [mobile](docs/mobile.md) | [mobile](.claude/rules/mobile.md) |
 | C# conventions | – | [csharp](.claude/rules/csharp.md) |

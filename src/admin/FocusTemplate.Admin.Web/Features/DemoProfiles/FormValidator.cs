@@ -7,7 +7,7 @@ namespace FocusTemplate.Admin.Web.Features.DemoProfiles;
 
 internal sealed class FormValidator : ValidatorBase<Form>
 {
-	public FormValidator(DemoProfilesClient api)
+	public FormValidator(DemoProfilesClient api, IDemoProfileCustomRulesLocalizations ruleLocalizations)
 	{
 		When(
 			form => form.ClientRules,
@@ -16,23 +16,26 @@ internal sealed class FormValidator : ValidatorBase<Form>
 				// Asked only about a code that passes its own rules, which the cascade checks first
 				DemoProfileCustomRules.CodeNotTaken(
 					DemoProfileRequestRules.Code(RuleFor(form => form.Code).Cascade(CascadeMode.Stop)),
-					(code, cancellationToken) => IsTakenAsync(api, code, cancellationToken));
+					(code, cancellationToken) => IsTakenAsync(api, code, cancellationToken),
+					ruleLocalizations);
 				DemoProfileRequestRules.Name(RuleFor(form => form.DisplayName));
 				DemoProfileRequestRules.Nickname(RuleFor(form => form.Nickname));
-				DemoProfileCustomRules.NicknameNotShouting(RuleFor(form => form.Nickname));
-				DemoProfileCustomRules.NicknameWithoutDigits(RuleFor(form => form.Nickname));
-				DemoProfileCustomRules.NicknameWithoutSpaces(RuleFor(form => form.Nickname));
-				DemoProfileCustomRules.NicknameLettersOnly(RuleFor(form => form.Nickname));
+				DemoProfileCustomRules.NicknameNotShouting(RuleFor(form => form.Nickname), ruleLocalizations);
+				DemoProfileCustomRules.NicknameWithoutDigits(RuleFor(form => form.Nickname), ruleLocalizations);
+				DemoProfileCustomRules.NicknameWithoutSpaces(RuleFor(form => form.Nickname), ruleLocalizations);
+				DemoProfileCustomRules.NicknameLettersOnly(RuleFor(form => form.Nickname), ruleLocalizations);
 				DemoProfileRequestRules.Age(RuleFor(form => form.Age));
-				DemoProfileCustomRules.AgeUnderHundred(RuleFor(form => form.Age));
+				DemoProfileCustomRules.AgeUnderHundred(RuleFor(form => form.Age), ruleLocalizations);
 				DemoProfileRequestRules.WeightKg(RuleFor(form => form.WeightKg));
 				DemoProfileCustomRules.MaxTemperatureNotBelowMin(
 					RuleFor(form => form.MaxTemperatureC),
-					form => form.MinTemperatureC);
+					form => form.MinTemperatureC,
+					ruleLocalizations);
 				DependsOn(form => form.MaxTemperatureC, form => form.MinTemperatureC);
 				DemoProfileCustomRules.MinTemperatureNotAboveMax(
 					RuleFor(form => form.MinTemperatureC),
-					form => form.MaxTemperatureC);
+					form => form.MaxTemperatureC,
+					ruleLocalizations);
 				DependsOn(form => form.MinTemperatureC, form => form.MaxTemperatureC);
 
 				DemoAddressRequestRules.Street(RuleFor(form => form.Address.Street));
@@ -40,19 +43,14 @@ internal sealed class FormValidator : ValidatorBase<Form>
 				DemoAddressRequestRules.City(RuleFor(form => form.Address.City));
 
 				// The rows exist for the inputs. The rules see the strings the contract holds, at the contract's paths
-				DemoProfileRequestRules
-					.Tags(RuleFor(form => form.Tags.Select(tag => tag.Value ?? string.Empty).ToList()))
+				DemoProfileRequestRules.Tags(RuleFor(form => form.Tags.Select(tag => tag.Value ?? string.Empty).ToList()))
 					.OverridePropertyName(nameof(Form.Tags));
-				DemoProfileRequestRules
-					.TagsItem(RuleForEach(form => form.Tags.Select(tag => tag.Value ?? string.Empty)))
+				DemoProfileRequestRules.TagsItem(RuleForEach(form => form.Tags.Select(tag => tag.Value ?? string.Empty)))
 					.OverridePropertyName(nameof(Form.Tags));
 			});
 	}
 
-	private static async Task<bool> IsTakenAsync(
-		DemoProfilesClient api,
-		string code,
-		CancellationToken cancellationToken)
+	private static async Task<bool> IsTakenAsync(DemoProfilesClient api, string code, CancellationToken cancellationToken)
 	{
 		try
 		{

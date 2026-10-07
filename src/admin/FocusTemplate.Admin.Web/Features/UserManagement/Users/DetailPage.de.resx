@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Fallback" xml:space="preserve"><value>Benutzer</value></data>
+  <data name="Missing" xml:space="preserve"><value>Diesen Benutzer gibt es nicht</value></data>
+  <data name="AllUsers" xml:space="preserve"><value>Alle Benutzer</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="Deactivated" xml:space="preserve"><value>Deaktiviert</value></data>
+  <data name="Deactivate" xml:space="preserve"><value>Deaktivieren</value></data>
+  <data name="Activate" xml:space="preserve"><value>Aktivieren</value></data>
+  <data name="NoEmail" xml:space="preserve"><value>Keine E-Mail-Adresse</value></data>
+  <data name="Seen" xml:space="preserve"><value>Zuerst gesehen {0:g}, zuletzt gesehen {1:g}</value></data>
+  <data name="Groups" xml:space="preserve"><value>Gruppen</value></data>
+  <data name="NoGroups" xml:space="preserve"><value>Mitglied keiner Gruppe und damit ohne Berechtigung.</value></data>
+  <data name="Permissions" xml:space="preserve"><value>Berechtigungen</value></data>
+  <data name="DeactivatedNote" xml:space="preserve"><value>Deaktiviert: hat keine davon, bis der Benutzer wieder aktiviert wird.</value></data>
+  <data name="ConfirmDeactivate" xml:space="preserve"><value>{0} deaktivieren? Ab der nächsten Anfrage gilt keine Berechtigung mehr.</value></data>
+  <data name="DeactivateUser" xml:space="preserve"><value>Benutzer deaktivieren</value></data>
+</root>

@@ -57,6 +57,9 @@ that load with the files apply as usual.
    field's rule as a validation problem keyed with the generated paths.
 2. `endpoints.Map<Interface>Endpoints();` in `src/admin/FocusTemplate.Admin.Api/Program.cs`. Mediator finds the
    handlers itself. Services or a validator of the slice's own go into an `Add<Slice>()` called there.
+3. Messages a user reads (`NotFound`, `Conflict`, a handler's validation failure) come from the interface's resx pair,
+   `Features/<Slice>/<Interface>.resx` and `.de.resx`, through `I<Interface>Localizations localizations`
+   ([localization](../../../docs/localization.md)).
 
 ## 5. Web ([web pages](../../../docs/web-pages.md), [web forms](../../../docs/web-forms.md))
 
@@ -66,9 +69,13 @@ that load with the files apply as usual.
    view models on `ViewModelPage<T>` with `AsyncCommand` loads and `ToOutcome()`, a `data-testid` on everything a test
    touches.
 3. A form: `Form`, `FormValidator` applying the generated `{Model}Rules`, `Mapper`, `<AppForm>`.
-4. The menu entry in `Foundation/Shell/MainLayout.razor`, shown with `context.User.Has(<Permission>)`.
+4. The menu entry in `Foundation/Shell/MainLayout.razor`, shown with `context.User.Has(<Permission>)`, its text in
+   `MainLayout.resx`.
+5. Every text in the component's resx pair (`@inject I<Component>Localizations L`). A new contract's field names and
+   pattern messages in German go into `Admin.Shared/<Model>.de.resx` (keys `<Member>`, `<Member>.pattern`).
 
-New permissions appear in the group editor by themselves, labelled from their names.
+New permissions appear in the group editor by themselves, labelled from their names. Their German labels go into
+`PermissionLabels.de.resx`, keyed by slice and by permission.
 
 ## 6. Tests
 

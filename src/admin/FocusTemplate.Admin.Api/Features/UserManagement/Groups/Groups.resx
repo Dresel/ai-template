@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="NoGroup" xml:space="preserve"><value>No group with id {0}.</value></data>
+  <data name="NoUser" xml:space="preserve"><value>No user with id {0}.</value></data>
+  <data name="ManagedCannotBeDeleted" xml:space="preserve"><value>{0} is managed by the application and cannot be deleted.</value></data>
+  <data name="LastAdministratorCannotLeave" xml:space="preserve"><value>The last active administrator cannot leave the Administrators.</value></data>
+  <data name="ManagedPermissions" xml:space="preserve"><value>The permissions of {0} come with each release.</value></data>
+  <data name="UnknownPermissions" xml:space="preserve"><value>Not a permission of this release: {0}.</value></data>
+</root>

@@ -7,6 +7,7 @@ using FocusTemplate.Admin.Web.Foundation.Diagnostics;
 using FocusTemplate.Admin.Web.Infrastructure.Authentication;
 using FocusTemplate.Admin.Web.Infrastructure.Authorization;
 using FocusTemplate.Admin.Web.Infrastructure.Configuration;
+using FocusTemplate.Admin.Web.Infrastructure.Localization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -31,6 +32,7 @@ builder.AddBlazorClientServiceDefaults("admin-web");
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress), });
 builder.Services.AddFoundation();
+builder.Services.AddWebLocalization();
 builder.Services.AddDemoProfiles(builder.HostEnvironment);
 builder.Services.AddDiagnostics(builder.HostEnvironment);
 builder.Services.AddUserManagement(builder.HostEnvironment);
@@ -41,8 +43,7 @@ builder.Services.AddSingleton<IAuthorizationHandler, PermissionClaimsHandler>();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, BffAuthenticationStateProvider>();
 builder.Services.AddScoped<CurrentUser>();
-builder.Services.AddHttpClient<AuthenticationClient>(client =>
-	client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+builder.Services.AddHttpClient<AuthenticationClient>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
 builder.Services.AddRadzenComponents();
 
@@ -55,5 +56,7 @@ host.UseAnalytics();
 // See: https://github.com/dotnet/aspire/issues/2816
 _ = host.Services.GetService<MeterProvider>();
 _ = host.Services.GetService<TracerProvider>();
+
+await host.UseStoredCultureAsync();
 
 await host.RunAsync();

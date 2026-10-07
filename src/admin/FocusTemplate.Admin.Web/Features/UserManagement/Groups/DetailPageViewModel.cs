@@ -20,6 +20,8 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 
 	private readonly AsyncCommand<GroupId> load;
 
+	private readonly ApiFailureMessages messages;
+
 	private readonly AsyncCommand<UserId> removeMember;
 
 	private readonly AsyncCommand<GroupId> savePermissions;
@@ -28,10 +30,11 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 
 	private GroupId id;
 
-	public DetailPageViewModel(GroupsClient api, BusyState busyState)
+	public DetailPageViewModel(GroupsClient api, BusyState busyState, ApiFailureMessages messages)
 	{
 		this.api = api;
 		this.busyState = busyState;
+		this.messages = messages;
 
 		this.load = new AsyncCommand<GroupId>(FetchAsync, AsyncCommandMode.ReplaceRunning);
 		this.addMember = new AsyncCommand<UserId>(AddMemberAsync, AsyncCommandMode.IgnoreWhileRunning);
@@ -47,8 +50,7 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 	}
 
 	public bool Acting =>
-		this.addMember.IsRunning || this.removeMember.IsRunning || this.savePermissions.IsRunning ||
-		this.delete.IsRunning;
+		this.addMember.IsRunning || this.removeMember.IsRunning || this.savePermissions.IsRunning || this.delete.IsRunning;
 
 	public bool Deleted { get; private set; }
 
@@ -108,7 +110,7 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 	{
 		ApiOutcome<Success> outcome = await this.api.AddMemberAsync(this.id, user, token).ToOutcome();
 
-		Failure = outcome is ApiFailure failure ? failure.Message : null;
+		Failure = outcome is ApiFailure failure ? this.messages.Of(failure) : null;
 		if (outcome is Success)
 		{
 			await LoadAsync(this.id);
@@ -119,7 +121,7 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 	{
 		ApiOutcome<Success> outcome = await this.api.DeleteAsync(group, token).ToOutcome();
 
-		Failure = outcome is ApiFailure failure ? failure.Message : null;
+		Failure = outcome is ApiFailure failure ? this.messages.Of(failure) : null;
 		Deleted = outcome is Success;
 	}
 
@@ -142,7 +144,7 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 				break;
 
 			case ApiFailure failure:
-				Failure = failure.Message;
+				Failure = this.messages.Of(failure);
 				break;
 		}
 	}
@@ -151,7 +153,7 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 	{
 		ApiOutcome<Success> outcome = await this.api.RemoveMemberAsync(this.id, user, token).ToOutcome();
 
-		Failure = outcome is ApiFailure failure ? failure.Message : null;
+		Failure = outcome is ApiFailure failure ? this.messages.Of(failure) : null;
 		if (outcome is Success)
 		{
 			await LoadAsync(this.id);
@@ -162,7 +164,7 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 	{
 		ApiOutcome<Success> outcome = await this.api.SetPermissionsAsync(group, [.. this.granted,], token).ToOutcome();
 
-		Failure = outcome is ApiFailure failure ? failure.Message : null;
+		Failure = outcome is ApiFailure failure ? this.messages.Of(failure) : null;
 		PermissionsSaved = outcome is Success;
 	}
 }

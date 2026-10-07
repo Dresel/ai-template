@@ -3,6 +3,7 @@ using FocusTemplate.Admin.Client.UserManagement.Users;
 using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Admin.Web.Features.UserManagement.Users;
 using FocusTemplate.Admin.Web.Foundation;
+using FocusTemplate.Admin.Web.Foundation.Feedback;
 using Microsoft.Extensions.Time.Testing;
 using Radzen;
 
@@ -33,7 +34,8 @@ public sealed class ListPageViewModelTests : IDisposable
 		this.list = new ListPageViewModel(
 			new UsersClient(new HttpClient(this.handler) { BaseAddress = new Uri("http://localhost/"), }),
 			this.busyState,
-			this.searchDebouncer);
+			this.searchDebouncer,
+			new ApiFailureMessages(Localizations.Get<IApiFailureMessagesLocalizations>()));
 	}
 
 	[Fact]
@@ -140,13 +142,7 @@ public sealed class ListPageViewModelTests : IDisposable
 			{
 				Skip = 0,
 				Top = 10,
-				Sorts =
-				[
-					new SortDescriptor
-					{
-						Property = nameof(UserSummaryResponse.Email), SortOrder = SortOrder.Descending,
-					},
-				],
+				Sorts = [new SortDescriptor { Property = nameof(UserSummaryResponse.Email), SortOrder = SortOrder.Descending, },],
 			});
 		this.handler.Answer(0, "Anna");
 		await load;

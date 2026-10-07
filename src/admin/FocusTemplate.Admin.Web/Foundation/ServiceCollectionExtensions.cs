@@ -1,3 +1,4 @@
+using FocusTemplate.Admin.Web.Foundation.Feedback;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace FocusTemplate.Admin.Web.Foundation;
@@ -16,10 +17,8 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddFoundation(this IServiceCollection services)
 	{
 		services.TryAddSingleton(TimeProvider.System);
-		services.AddTransient(provider => new BusyState(
-			ShowBusyAfter,
-			ShowBusyAtLeast,
-			provider.GetRequiredService<TimeProvider>()));
+		services.AddSingleton<ApiFailureMessages>();
+		services.AddTransient(provider => new BusyState(ShowBusyAfter, ShowBusyAtLeast, provider.GetRequiredService<TimeProvider>()));
 		services.AddTransient(provider => new Debouncer(SearchPause, provider.GetRequiredService<TimeProvider>()));
 
 		return services;

@@ -14,7 +14,8 @@ How a form validates, as the demo at `/demo/validation` (`Features/DemoProfiles/
 - **Validator**: derives from `ValidatorBase<TModel>` and applies the generated `{Model}Rules` to the view model's own
   members. It is registered as `IValidator<TModel>` in the slice's `Add<Slice>()` and injected by the page
   (`@inject IValidator<Form> FormValidator`), so DI supplies what its rules need. The generated rules carry the
-  contract's display names, so a member the view model names differently still reads like the contract's.
+  contract's display names, translated through the contract's resx (see [localization](localization.md)), so a member
+  the view model names differently still reads like the contract's.
 - **Rules the spec cannot state** go into a hand-written class in `Admin.Shared` (`DemoProfileCustomRules`), which the
   API's validator and the view model's both apply, so code and message are written once.
 - **Wire keys** are never written as strings: the API's validator and a handler's own failures key with the generated

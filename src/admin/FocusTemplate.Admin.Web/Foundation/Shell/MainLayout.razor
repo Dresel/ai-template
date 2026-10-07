@@ -1,8 +1,11 @@
 @using System.Security.Claims
 @using FocusTemplate.Admin.Shared
+@using FocusTemplate.Admin.Web.Infrastructure.Localization
 @using FocusTemplate.Primitives
+@using Microsoft.Extensions.Hosting
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
+@inject IMainLayoutLocalizations L
 
 <RadzenLayout Style="min-height: 100vh;">
 	<RadzenHeader data-testid="top-bar">
@@ -15,6 +18,7 @@
 				<RadzenText TextStyle="TextStyle.H6" TagName="TagName.Span">Viva la Focus</RadzenText>
 			</RadzenStack>
 			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+				<LanguageSwitch />
 				<RadzenAppearanceToggle LightTheme="software" DarkTheme="software-dark" data-testid="theme-toggle" />
 				<AuthorizeView>
 					<Authorized>
@@ -22,7 +26,7 @@
 						<RadzenButton Icon="logout"
 							ButtonStyle="ButtonStyle.Base"
 							Variant="Variant.Outlined"
-							title="Log out"
+							title="@L.LogOut"
 							Click="@(() => Logout(context.User))"
 							data-testid="logout-button" />
 					</Authorized>
@@ -30,8 +34,8 @@
 						<RadzenButton Icon="login"
 							ButtonStyle="ButtonStyle.Base"
 							Variant="Variant.Outlined"
-							title="Log in"
-							Click="@Login"
+							title="@L.LogIn"
+							Click="@Navigation.NavigateToLogin"
 							data-testid="login-button" />
 					</NotAuthorized>
 				</AuthorizeView>
@@ -40,9 +44,9 @@
 	</RadzenHeader>
 	<RadzenSidebar @bind-Expanded="sidebarExpanded" data-testid="nav-bar">
 		<RadzenPanelMenu>
-			<RadzenPanelMenuItem Text="Home" Icon="home" Path="" data-testid="nav-home" />
-			<RadzenPanelMenuItem Text="Weather" Icon="cloud" Path="weather" data-testid="nav-weather" />
-			<RadzenPanelMenuItem Text="Validation" Icon="fact_check" Path="demo/validation" data-testid="nav-validation" />
+			<RadzenPanelMenuItem Text="@L.Home" Icon="home" Path="" data-testid="nav-home" />
+			<RadzenPanelMenuItem Text="@L.Weather" Icon="cloud" Path="weather" data-testid="nav-weather" />
+			<RadzenPanelMenuItem Text="@L.Validation" Icon="fact_check" Path="demo/validation" data-testid="nav-validation" />
 			@* Shown with either of its pages' permissions, so a PermissionView, which asks for one, does not fit *@
 			<AuthorizeView>
 				@{
@@ -51,19 +55,19 @@
 				}
 				@if (users || groups)
 				{
-					<RadzenPanelMenuItem Text="User management" Icon="manage_accounts" data-testid="nav-user-management">
+					<RadzenPanelMenuItem Text="@L.UserManagement" Icon="manage_accounts" data-testid="nav-user-management">
 						@if (users)
 						{
-							<RadzenPanelMenuItem Text="Users" Icon="person" Path="@Features.UserManagement.Users.ListPage.Path" data-testid="nav-users" />
+							<RadzenPanelMenuItem Text="@L.Users" Icon="person" Path="@Features.UserManagement.Users.ListPage.Path" data-testid="nav-users" />
 						}
 						@if (groups)
 						{
-							<RadzenPanelMenuItem Text="Groups" Icon="group" Path="@Features.UserManagement.Groups.ListPage.Path" data-testid="nav-groups" />
+							<RadzenPanelMenuItem Text="@L.Groups" Icon="group" Path="@Features.UserManagement.Groups.ListPage.Path" data-testid="nav-groups" />
 						}
 					</RadzenPanelMenuItem>
 				}
 			</AuthorizeView>
-			<RadzenPanelMenuItem Text="Diagnostics" Icon="troubleshoot" Path="diagnostics" data-testid="nav-diagnostics" />
+			<RadzenPanelMenuItem Text="@L.Diagnostics" Icon="troubleshoot" Path="diagnostics" data-testid="nav-diagnostics" />
 		</RadzenPanelMenu>
 	</RadzenSidebar>
 	<RadzenBody>
@@ -81,15 +85,10 @@
 	// Without the query, so a page that keeps its filters there survives changing them
 	private string PagePath => new Uri(Navigation.Uri).AbsolutePath;
 
-	private void Login() =>
-		Navigation.NavigateTo(
-			$"bff/login?returnUrl={Uri.EscapeDataString("/" + Navigation.ToBaseRelativePath(Navigation.Uri))}",
-			true);
-
 	private void Logout(ClaimsPrincipal user)
 	{
 		string logoutUrl = user.FindFirst(BffClaimTypes.LogoutUrl)?.Value ??
-			throw new InvalidOperationException("Missing bff logout url.");
+							throw new InvalidOperationException("Missing bff logout url.");
 
 		Navigation.NavigateTo(logoutUrl, true);
 	}

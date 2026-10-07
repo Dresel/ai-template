@@ -5,23 +5,22 @@
 @using FocusTemplate.Admin.Shared
 @inject DemoProfilesClient Api
 @inject IValidator<Form> FormValidator
+@inject IPageLocalizations L
+@inject ApiFailureMessages FailureMessages
 
-<PageTitle>Validation</PageTitle>
+<PageTitle>@L.Title</PageTitle>
 
 <RadzenStack Gap="1rem">
-	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Validation</RadzenText>
+	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">@L.Title</RadzenText>
 
 	<RadzenCard>
-		<RadzenText TextStyle="TextStyle.Body1">
-			The spec's constraints check the profile while you type, and the server checks it again when you submit, with
-			rules of its own. Every message shows at its input; one that none claims shows above the form.
-		</RadzenText>
+		<RadzenText TextStyle="TextStyle.Body1">@L.Intro</RadzenText>
 		<ul>
-			<li>Code <code>TAK</code> is taken, which only the server knows: it tells while you type, and again on submit.</li>
-			<li>Name <code>Reserved</code> is refused by the handler after the validators passed.</li>
-			<li>An all upper-case nickname is a warning, an age of a hundred or more an info; neither blocks.</li>
-			<li>City <code>Atlantis</code> is refused for the address as a whole, which no input shows.</li>
-			<li>Switch off the browser's checks to see what the server reports by itself.</li>
+			<li>@Hint(L.HintCodeTaken, "TAK")</li>
+			<li>@Hint(L.HintNameReserved, "Reserved")</li>
+			<li>@L.HintSeverities</li>
+			<li>@Hint(L.HintAtlantis, "Atlantis")</li>
+			<li>@L.HintBrowserChecks</li>
 		</ul>
 	</RadzenCard>
 
@@ -33,11 +32,11 @@
 						@bind-Value:after="ClientRulesChangedAsync"
 						Name="client-rules"
 						data-testid="client-rules" />
-					<RadzenLabel Text="Check in the browser" Component="client-rules" />
+					<RadzenLabel Text="@L.CheckInBrowser" Component="client-rules" />
 				</RadzenStack>
 				<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
 					<RadzenSwitch @bind-Value="showOptional" Name="show-optional" data-testid="show-optional" />
-					<RadzenLabel Text="Show the optional fields" Component="show-optional" />
+					<RadzenLabel Text="@L.ShowOptional" Component="show-optional" />
 				</RadzenStack>
 			</RadzenStack>
 
@@ -50,35 +49,35 @@
 					@if (accepted is not null)
 					{
 						<RadzenAlert AlertStyle="AlertStyle.Success" Shade="Shade.Lighter" AllowClose="false" data-testid="accepted">
-							Accepted: @accepted.Code, @accepted.Name
+							@L.Accepted(accepted.Code, accepted.Name)
 						</RadzenAlert>
 					}
 					<AppFailure Message="@failure" data-testid="submit-failure" />
 
 					<div class="app-fields">
-						<AppTextInput Label="Code" @bind-Value="form.Code" data-testid="code" />
-						<AppTextInput Label="Name" @bind-Value="form.DisplayName" data-testid="name" />
-						<AppNumericInput Label="Age" @bind-Value="form.Age" data-testid="age" />
+						<AppTextInput Label="@L.Code" @bind-Value="form.Code" data-testid="code" />
+						<AppTextInput Label="@L.Name" @bind-Value="form.DisplayName" data-testid="name" />
+						<AppNumericInput Label="@L.Age" @bind-Value="form.Age" data-testid="age" />
 					</div>
 
 					@if (showOptional)
 					{
 						<div class="app-fields">
-							<AppTextInput Label="Nickname" @bind-Value="form.Nickname" data-testid="nickname" />
-							<AppNumericInput Label="Weight (kg)" @bind-Value="form.WeightKg" data-testid="weight" />
-							<AppNumericInput Label="Lowest temperature (°C)" @bind-Value="form.MinTemperatureC" data-testid="min-temperature" />
-							<AppNumericInput Label="Highest temperature (°C)" @bind-Value="form.MaxTemperatureC" data-testid="max-temperature" />
+							<AppTextInput Label="@L.Nickname" @bind-Value="form.Nickname" data-testid="nickname" />
+							<AppNumericInput Label="@L.Weight" @bind-Value="form.WeightKg" data-testid="weight" />
+							<AppNumericInput Label="@L.LowestTemperature" @bind-Value="form.MinTemperatureC" data-testid="min-temperature" />
+							<AppNumericInput Label="@L.HighestTemperature" @bind-Value="form.MaxTemperatureC" data-testid="max-temperature" />
 						</div>
 					}
 
 					<div class="app-fields">
-						<AppTextInput Label="Street" @bind-Value="form.Address.Street" data-testid="street" />
-						<AppTextInput Label="Postal code" @bind-Value="form.Address.PostalCode" data-testid="postal-code" />
-						<AppTextInput Label="City" @bind-Value="form.Address.City" data-testid="city" />
+						<AppTextInput Label="@L.Street" @bind-Value="form.Address.Street" data-testid="street" />
+						<AppTextInput Label="@L.PostalCode" @bind-Value="form.Address.PostalCode" data-testid="postal-code" />
+						<AppTextInput Label="@L.City" @bind-Value="form.Address.City" data-testid="city" />
 					</div>
 
 					<RadzenStack Gap="0.5rem" AlignItems="AlignItems.Start">
-						<RadzenLabel Text="Tags" />
+						<RadzenLabel Text="@L.Tags" />
 						@foreach ((TagRow tag, int index) in form.Tags.Select((tag, index) => (tag, index)))
 						{
 							<RadzenStack @key="tag"
@@ -90,13 +89,13 @@
 								<RadzenButton Icon="delete"
 									ButtonStyle="ButtonStyle.Base"
 									Variant="Variant.Outlined"
-									title="Remove the tag"
+									title="@L.RemoveTag"
 									Click="() => RemoveTagAsync(tag)"
 									data-testid="@($"remove-tag-{index}")" />
 							</RadzenStack>
 						}
 						<AppFieldMessages For="() => form.Tags" data-testid="tags" />
-						<RadzenButton Text="Add a tag"
+						<RadzenButton Text="@L.AddTag"
 							ButtonStyle="ButtonStyle.Base"
 							Variant="Variant.Outlined"
 							Click="AddTagAsync"
@@ -104,7 +103,7 @@
 					</RadzenStack>
 
 					<RadzenStack Orientation="Orientation.Horizontal">
-						<RadzenButton ButtonType="ButtonType.Submit" Text="Submit" ButtonStyle="ButtonStyle.Primary" data-testid="submit" />
+						<RadzenButton ButtonType="ButtonType.Submit" Text="@L.Submit" ButtonStyle="ButtonStyle.Primary" data-testid="submit" />
 					</RadzenStack>
 				</RadzenStack>
 			</AppForm>
@@ -123,6 +122,10 @@
 	private string? failure;
 
 	private bool showOptional = true;
+
+	// A hint with its sample value as code, which the translations place where it fits their sentence. The page's own
+	// texts count as markup, as with ASP.NET Core's IHtmlLocalizer.
+	private static MarkupString Hint(Func<object, string> text, string value) => new(text($"<code>{value}</code>"));
 
 	private async Task AddTagAsync()
 	{
@@ -156,7 +159,7 @@
 				break;
 
 			case ApiFailure failed:
-				failure = failed.Message;
+				failure = FailureMessages.Of(failed);
 				break;
 		}
 	}

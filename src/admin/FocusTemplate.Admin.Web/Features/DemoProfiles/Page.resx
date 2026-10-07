@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Title" xml:space="preserve"><value>Validation</value></data>
+  <data name="Intro" xml:space="preserve"><value>The spec's constraints check the profile while you type, and the server checks it again when you submit, with rules of its own. Every message shows at its input; one that none claims shows above the form.</value></data>
+  <data name="HintCodeTaken" xml:space="preserve"><value>Code {0} is taken, which only the server knows: it tells while you type, and again on submit.</value></data>
+  <data name="HintNameReserved" xml:space="preserve"><value>Name {0} is refused by the handler after the validators passed.</value></data>
+  <data name="HintSeverities" xml:space="preserve"><value>An all upper-case nickname is a warning, an age of a hundred or more an info; neither blocks.</value></data>
+  <data name="HintAtlantis" xml:space="preserve"><value>City {0} is refused for the address as a whole, which no input shows.</value></data>
+  <data name="HintBrowserChecks" xml:space="preserve"><value>Switch off the browser's checks to see what the server reports by itself.</value></data>
+  <data name="CheckInBrowser" xml:space="preserve"><value>Check in the browser</value></data>
+  <data name="ShowOptional" xml:space="preserve"><value>Show the optional fields</value></data>
+  <data name="Accepted" xml:space="preserve"><value>Accepted: {0}, {1}</value></data>
+  <data name="Code" xml:space="preserve"><value>Code</value></data>
+  <data name="Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Age" xml:space="preserve"><value>Age</value></data>
+  <data name="Nickname" xml:space="preserve"><value>Nickname</value></data>
+  <data name="Weight" xml:space="preserve"><value>Weight (kg)</value></data>
+  <data name="LowestTemperature" xml:space="preserve"><value>Lowest temperature (°C)</value></data>
+  <data name="HighestTemperature" xml:space="preserve"><value>Highest temperature (°C)</value></data>
+  <data name="Street" xml:space="preserve"><value>Street</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Postal code</value></data>
+  <data name="City" xml:space="preserve"><value>City</value></data>
+  <data name="Tags" xml:space="preserve"><value>Tags</value></data>
+  <data name="RemoveTag" xml:space="preserve"><value>Remove the tag</value></data>
+  <data name="AddTag" xml:space="preserve"><value>Add a tag</value></data>
+  <data name="Submit" xml:space="preserve"><value>Submit</value></data>
+</root>

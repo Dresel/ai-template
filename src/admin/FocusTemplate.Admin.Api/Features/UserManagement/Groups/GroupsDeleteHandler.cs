@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 
-public sealed class GroupsDeleteHandler(AppDbContext dbContext) : ICommandHandler<GroupsDeleteCommand, GroupsDeleteResult>
+public sealed class GroupsDeleteHandler(AppDbContext dbContext, IGroupsLocalizations localizations)
+	: ICommandHandler<GroupsDeleteCommand, GroupsDeleteResult>
 {
 	public async ValueTask<GroupsDeleteResult> Handle(GroupsDeleteCommand command, CancellationToken cancellationToken)
 	{
@@ -18,7 +19,7 @@ public sealed class GroupsDeleteHandler(AppDbContext dbContext) : ICommandHandle
 
 		if (group.IsManaged)
 		{
-			return new Conflict($"{group.Name} is managed by the application and cannot be deleted.");
+			return new Conflict(localizations.ManagedCannotBeDeleted(group.Name));
 		}
 
 		// Its memberships and grants go with it, by the cascade in the database

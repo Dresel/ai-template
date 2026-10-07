@@ -1,11 +1,10 @@
+@using Microsoft.Extensions.Hosting
 @inject NavigationManager Navigation
 
 @code
 {
 	protected override void OnInitialized()
 	{
-		Navigation.NavigateTo(
-			$"bff/login?returnUrl={Uri.EscapeDataString("/" + Navigation.ToBaseRelativePath(Navigation.Uri))}",
-			true);
+		Navigation.NavigateToLogin();
 	}
 }

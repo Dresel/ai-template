@@ -1,0 +1,26 @@
+@using System.Globalization
+@using FocusTemplate.Admin.Shared.Localization
+@inject CultureStorage CultureStorage
+@inject NavigationManager Navigation
+@inject ILanguageSwitchLocalizations L
+
+<RadzenSelectBar TValue="string"Value="@current"ValueChanged="SwitchAsync" Size="ButtonSize.Small" aria-label="@L.Language" title="@L.Language" data-testid="language-switch">
+	<Items>
+		@foreach (CultureInfo culture in Cultures.Supported)
+		{
+			<RadzenSelectBarItem Text="@culture.TwoLetterISOLanguageName.ToUpperInvariant()" Value="@culture.TwoLetterISOLanguageName" />
+		}
+	</Items>
+</RadzenSelectBar>
+
+@code
+{
+	private readonly string current = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+	// A full load, since the culture is set once per load, before the app renders
+	private async Task SwitchAsync(string language)
+	{
+		await CultureStorage.WriteAsync(CultureInfo.GetCultureInfo(language));
+		Navigation.NavigateTo(Navigation.Uri, true);
+	}
+}

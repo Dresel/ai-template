@@ -18,8 +18,8 @@ public static class DemoProfileRequestRules
 	public static IRuleBuilderOptions<T, string> Code<T>(IRuleBuilder<T, string> rule) =>
 		rule
 			.NotNull().WithErrorCode("required")
-			.Matches(CodePattern).WithErrorCode("pattern").WithMessage("Three upper-case letters.")
-			.WithName("Code");
+			.Matches(CodePattern).WithErrorCode("pattern").WithMessage(_ => AdminTexts.Message?.Invoke(typeof(DemoProfileRequest), nameof(DemoProfileRequest.Code), "pattern") ?? "Three upper-case letters.")
+			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoProfileRequest), nameof(DemoProfileRequest.Code)) ?? "Code");
 
 	/// <summary>Display name.</summary>
 	public static IRuleBuilderOptions<T, string> Name<T>(IRuleBuilder<T, string> rule) =>
@@ -27,19 +27,19 @@ public static class DemoProfileRequestRules
 			.NotNull().WithErrorCode("required")
 			.MinimumLength(1).WithErrorCode("minLength")
 			.MaximumLength(50).WithErrorCode("maxLength")
-			.WithName("Name");
+			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoProfileRequest), nameof(DemoProfileRequest.Name)) ?? "Name");
 
 	/// <summary>Nickname.</summary>
 	public static IRuleBuilderOptions<T, string> Nickname<T>(IRuleBuilder<T, string> rule) =>
 		rule
 			.MaximumLength(20).WithErrorCode("maxLength")
-			.WithName("Nickname");
+			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoProfileRequest), nameof(DemoProfileRequest.Nickname)) ?? "Nickname");
 
 	/// <summary>Postal address.</summary>
 	public static IRuleBuilderOptions<T, DemoAddressRequest> Address<T>(IRuleBuilder<T, DemoAddressRequest> rule) =>
 		rule
 			.NotNull().WithErrorCode("required")
-			.WithName("Address");
+			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoProfileRequest), nameof(DemoProfileRequest.Address)) ?? "Address");
 
 	/// <summary>Tags, at most five.</summary>
 	public static IRuleBuilderOptions<T, IReadOnlyList<string>> Tags<T>(IRuleBuilder<T, IReadOnlyList<string>> rule) =>
@@ -48,15 +48,15 @@ public static class DemoProfileRequestRules
 			{
 				context.MessageFormatter.AppendArgument("maxItems", 5);
 				return value is null || value.Count <= 5;
-			}).WithErrorCode("maxItems").WithMessage("'{PropertyName}' must contain {maxItems} items or fewer.")
-			.WithName("Tags");
+			}).WithErrorCode("maxItems").WithMessage(_ => ValidatorOptions.Global.LanguageManager.GetString("MaxItemsValidator") is { Length: > 0, } message ? message : "'{PropertyName}' must contain {maxItems} items or fewer.")
+			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoProfileRequest), nameof(DemoProfileRequest.Tags)) ?? "Tags");
 
 	/// <summary>Each item of Tags.</summary>
 	public static IRuleBuilderOptions<T, string> TagsItem<T>(IRuleBuilder<T, string> rule) =>
 		rule
 			.MinimumLength(1).WithErrorCode("minLength")
 			.MaximumLength(20).WithErrorCode("maxLength")
-			.WithName("Tags");
+			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoProfileRequest), nameof(DemoProfileRequest.Tags)) ?? "Tags");
 #nullable enable
 
 	/// <summary>Age in years.</summary>
@@ -64,7 +64,7 @@ public static class DemoProfileRequestRules
 		rule
 			.GreaterThanOrEqualTo(18).WithErrorCode("minValue")
 			.LessThanOrEqualTo(120).WithErrorCode("maxValue")
-			.WithName("Age");
+			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoProfileRequest), nameof(DemoProfileRequest.Age)) ?? "Age");
 
 	/// <summary>Age in years.</summary>
 	public static IRuleBuilderOptions<T, int?> Age<T>(IRuleBuilder<T, int?> rule) =>
@@ -72,17 +72,17 @@ public static class DemoProfileRequestRules
 			.NotNull().WithErrorCode("required")
 			.GreaterThanOrEqualTo(18).WithErrorCode("minValue")
 			.LessThanOrEqualTo(120).WithErrorCode("maxValue")
-			.WithName("Age");
+			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoProfileRequest), nameof(DemoProfileRequest.Age)) ?? "Age");
 
 	/// <summary>Weight in kilograms, above zero.</summary>
 	public static IRuleBuilderOptions<T, double> WeightKg<T>(IRuleBuilder<T, double> rule) =>
 		rule
 			.GreaterThan(0d).WithErrorCode("minValueExclusive")
-			.WithName("Weight Kg");
+			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoProfileRequest), nameof(DemoProfileRequest.WeightKg)) ?? "Weight Kg");
 
 	/// <summary>Weight in kilograms, above zero.</summary>
 	public static IRuleBuilderOptions<T, double?> WeightKg<T>(IRuleBuilder<T, double?> rule) =>
 		rule
 			.GreaterThan(0d).WithErrorCode("minValueExclusive")
-			.WithName("Weight Kg");
+			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoProfileRequest), nameof(DemoProfileRequest.WeightKg)) ?? "Weight Kg");
 }

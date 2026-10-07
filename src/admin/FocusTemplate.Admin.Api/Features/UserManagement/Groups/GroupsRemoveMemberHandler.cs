@@ -5,15 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 
-public sealed class GroupsRemoveMemberHandler(AppDbContext dbContext)
+public sealed class GroupsRemoveMemberHandler(AppDbContext dbContext, IGroupsLocalizations localizations)
 	: ICommandHandler<GroupsRemoveMemberCommand, GroupsRemoveMemberResult>
 {
-	public async ValueTask<GroupsRemoveMemberResult> Handle(
-		GroupsRemoveMemberCommand command,
-		CancellationToken cancellationToken)
+	public async ValueTask<GroupsRemoveMemberResult> Handle(GroupsRemoveMemberCommand command, CancellationToken cancellationToken)
 	{
-		Group? group = await dbContext.Groups
-			.Include(entity => entity.Members.Where(member => member.Id == command.UserId))
+		Group? group = await dbContext.Groups.Include(entity => entity.Members.Where(member => member.Id == command.UserId))
 			.SingleOrDefaultAsync(entity => entity.Id == command.Id, cancellationToken);
 
 		if (group?.Members is not [{ } existingMember,])
@@ -24,7 +21,7 @@ public sealed class GroupsRemoveMemberHandler(AppDbContext dbContext)
 		if (command.Id == WellKnownGroups.Administrators &&
 			await dbContext.WouldLoseTheLastActiveAdministratorAsync(command.UserId, cancellationToken))
 		{
-			return new Conflict("The last active administrator cannot leave the Administrators.");
+			return new Conflict(localizations.LastAdministratorCannotLeave);
 		}
 
 		group.Members.Remove(existingMember);

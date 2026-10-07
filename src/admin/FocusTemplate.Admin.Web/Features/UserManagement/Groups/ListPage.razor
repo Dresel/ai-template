@@ -1,14 +1,15 @@
 @attribute [Route("/" + Path)]
 @attribute [RequiresPermission(UserManagementPermissions.Names.ViewGroups)]
 @inherits ViewModelPage<ListPageViewModel>
+@inject IListPageLocalizations L
 
-<PageTitle>Groups</PageTitle>
+<PageTitle>@L.Title</PageTitle>
 
 <RadzenStack Gap="1rem">
 	<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-		<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Groups</RadzenText>
+		<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">@L.Title</RadzenText>
 		<PermissionView Permission="UserManagementPermissions.ManageGroups">
-			<RadzenButton Text="New group" Icon="group_add" ButtonStyle="ButtonStyle.Primary" Click="CreateAsync" data-testid="new-group" />
+			<RadzenButton Text="@L.NewGroup" Icon="group_add" ButtonStyle="ButtonStyle.Primary" Click="CreateAsync" data-testid="new-group" />
 		</PermissionView>
 	</RadzenStack>
 
@@ -21,27 +22,27 @@
 			AllowSorting="true"
 			RowRender="RenderRow"
 			RowClick="Open"
-			EmptyText="@(ViewModel.Groups is null ? string.Empty : "No groups yet.")"
+			EmptyText="@(ViewModel.Groups is null ? string.Empty : L.NoGroups)"
 			data-testid="groups-table">
 			<Columns>
-				<RadzenDataGridColumn TItem="GroupSummaryResponse" Property="@nameof(GroupSummaryResponse.Name)" Title="Name">
+				<RadzenDataGridColumn TItem="GroupSummaryResponse" Property="@nameof(GroupSummaryResponse.Name)" Title="@L.Name">
 					<Template Context="group">
 						<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
 							<span>@group.Name</span>
 							@if (group.IsManaged)
 							{
-								<RadzenBadge BadgeStyle="BadgeStyle.Info" Text="Managed" />
+								<RadzenBadge BadgeStyle="BadgeStyle.Info" Text="@L.Managed" />
 							}
 						</RadzenStack>
 					</Template>
 				</RadzenDataGridColumn>
 				<RadzenDataGridColumn TItem="GroupSummaryResponse"
 					Property="@nameof(GroupSummaryResponse.Description)"
-					Title="Description"
+					Title="@L.Description"
 					Sortable="false" />
 				<RadzenDataGridColumn TItem="GroupSummaryResponse"
 					Property="@nameof(GroupSummaryResponse.MemberCount)"
-					Title="Members"
+					Title="@L.Members"
 					TextAlign="TextAlign.Right"
 					Width="8rem" />
 			</Columns>
@@ -57,7 +58,7 @@
 
 	private async Task CreateAsync()
 	{
-		object? created = await Dialogs.OpenAsync<FormDialog>("New group");
+		object? created = await Dialogs.OpenAsync<FormDialog>(L.NewGroup);
 
 		if (created is GroupResponse group)
 		{

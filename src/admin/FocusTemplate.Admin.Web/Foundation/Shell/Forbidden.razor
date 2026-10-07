@@ -1,8 +1,8 @@
-<PageTitle>Not allowed</PageTitle>
+@inject IForbiddenLocalizations L
+
+<PageTitle>@L.Title</PageTitle>
 
 <RadzenStack Gap="1rem" data-testid="forbidden">
-	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">Not allowed</RadzenText>
-	<RadzenText TextStyle="TextStyle.Body1">
-		You are signed in, but none of your groups grants what this page needs. An administrator can add you to a group that does.
-	</RadzenText>
+	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">@L.Title</RadzenText>
+	<RadzenText TextStyle="TextStyle.Body1">@L.Text</RadzenText>
 </RadzenStack>

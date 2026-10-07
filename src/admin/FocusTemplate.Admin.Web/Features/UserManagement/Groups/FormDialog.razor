@@ -2,21 +2,23 @@
 @using FocusTemplate.Admin.Client.UserManagement.Groups
 @inject GroupsClient Api
 @inject IValidator<Form> FormValidator
+@inject IFormDialogLocalizations L
+@inject ApiFailureMessages FailureMessages
 
 <AppForm @ref="appForm" Model="form" Validator="FormValidator" OnValidSubmit="SaveAsync">
 	<RadzenStack Gap="1rem">
 		<AppFailure Message="@failure" data-testid="group-form-failure" />
 
-		<AppTextInput Label="Name" @bind-Value="form.Name" data-testid="group-name" />
-		<AppTextInput Label="Description" @bind-Value="form.Description" data-testid="group-description" />
+		<AppTextInput Label="@L.Name" @bind-Value="form.Name" data-testid="group-name" />
+		<AppTextInput Label="@L.Description" @bind-Value="form.Description" data-testid="group-description" />
 
 		<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
-			<RadzenButton Text="Cancel"
+			<RadzenButton Text="@L.Cancel"
 				ButtonStyle="ButtonStyle.Base"
 				Variant="Variant.Outlined"
 				Click="() => Dialogs.Close()"
 				data-testid="cancel-group" />
-			<RadzenButton ButtonType="ButtonType.Submit" Text="Save" ButtonStyle="ButtonStyle.Primary" data-testid="save-group" />
+			<RadzenButton ButtonType="ButtonType.Submit" Text="@L.Save" ButtonStyle="ButtonStyle.Primary" data-testid="save-group" />
 		</RadzenStack>
 	</RadzenStack>
 </AppForm>
@@ -53,7 +55,7 @@
 				break;
 
 			case ApiFailure failed:
-				failure = failed.Message;
+				failure = FailureMessages.Of(failed);
 				break;
 		}
 	}

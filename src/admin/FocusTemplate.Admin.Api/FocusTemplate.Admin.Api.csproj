@@ -5,6 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Aigamo.ResXGenerator" PrivateAssets="all" />
 		<PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" />
 		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="Mediator.Abstractions" />
@@ -26,6 +27,20 @@
 		<None Include="tspconfig.yaml" />
 
 		<Content Include="openapi.yaml" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Remove="**\*.de.resx" />
+		<EmbeddedResource Include="**\*.de.resx">
+			<DependentUpon>$([System.String]::Copy(%(Filename)).Replace('.de', '.resx'))</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="**\*.resx">
+			<GenerationType>StringLocalizer</GenerationType>
+			<ClassNamePostfix>Localizations</ClassNamePostfix>
+			<StaticClass>false</StaticClass>
+			<StaticMembers>false</StaticMembers>
+			<GenerateFormatMethods>true</GenerateFormatMethods>
+		</EmbeddedResource>
 	</ItemGroup>
 
 </Project>

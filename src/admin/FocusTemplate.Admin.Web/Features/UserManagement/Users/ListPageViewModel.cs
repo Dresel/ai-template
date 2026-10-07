@@ -16,22 +16,23 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 
 	private readonly AsyncCommand<LoadDataArgs> load;
 
+	private readonly ApiFailureMessages messages;
+
 	private readonly AsyncCommand<LoadDataArgs> reload;
 
 	private readonly Debouncer searchDebouncer;
 
 	private LoadDataArgs? lastPage;
 
-	public ListPageViewModel(UsersClient api, BusyState busyState, Debouncer searchDebouncer)
+	public ListPageViewModel(UsersClient api, BusyState busyState, Debouncer searchDebouncer, ApiFailureMessages messages)
 	{
 		this.api = api;
 		this.busyState = busyState;
 		this.searchDebouncer = searchDebouncer;
+		this.messages = messages;
 
 		this.load = new AsyncCommand<LoadDataArgs>(LoadAsync, AsyncCommandMode.ReplaceRunning);
-		this.reload = new AsyncCommand<LoadDataArgs>(
-			(page, _) => this.load.ExecuteAsync(page),
-			AsyncCommandMode.IgnoreWhileRunning);
+		this.reload = new AsyncCommand<LoadDataArgs>((page, _) => this.load.ExecuteAsync(page), AsyncCommandMode.IgnoreWhileRunning);
 	}
 
 	public event Action? Changed
@@ -95,7 +96,7 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 				break;
 
 			case ApiFailure failure:
-				Failure = failure.Message;
+				Failure = this.messages.Of(failure);
 				break;
 		}
 	}
@@ -105,11 +106,6 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 		SortDescriptor? sort = args.Sorts?.FirstOrDefault();
 		UserSearchRequest request = new(Search, Descending: sort?.SortOrder == SortOrder.Descending);
 
-		return request with
-		{
-			Sort = SortOf(sort) ?? request.Sort,
-			Skip = args.Skip ?? request.Skip,
-			Top = args.Top ?? request.Top,
-		};
+		return request with { Sort = SortOf(sort) ?? request.Sort, Skip = args.Skip ?? request.Skip, Top = args.Top ?? request.Top, };
 	}
 }

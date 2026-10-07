@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Fallback" xml:space="preserve"><value>Gruppe</value></data>
+  <data name="Missing" xml:space="preserve"><value>Diese Gruppe gibt es nicht</value></data>
+  <data name="AllGroups" xml:space="preserve"><value>Alle Gruppen</value></data>
+  <data name="Managed" xml:space="preserve"><value>Verwaltet</value></data>
+  <data name="Rename" xml:space="preserve"><value>Umbenennen</value></data>
+  <data name="Delete" xml:space="preserve"><value>Löschen</value></data>
+  <data name="ManagedStays" xml:space="preserve"><value>Eine verwaltete Gruppe kommt mit dem Release und bleibt</value></data>
+  <data name="DeleteGroup" xml:space="preserve"><value>Gruppe löschen</value></data>
+  <data name="Members" xml:space="preserve"><value>Mitglieder</value></data>
+  <data name="NoMembers" xml:space="preserve"><value>Noch keine Mitglieder.</value></data>
+  <data name="Deactivated" xml:space="preserve"><value>Deaktiviert</value></data>
+  <data name="RemoveMemberTitle" xml:space="preserve"><value>{0} aus der Gruppe entfernen</value></data>
+  <data name="Permissions" xml:space="preserve"><value>Berechtigungen</value></data>
+  <data name="ManagedNote" xml:space="preserve"><value>Verwaltet: Ihre Berechtigungen kommen mit jedem Release.</value></data>
+  <data name="SavePermissions" xml:space="preserve"><value>Berechtigungen speichern</value></data>
+  <data name="Saved" xml:space="preserve"><value>Gespeichert.</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>{0} löschen? Ihre Mitglieder verlieren, was sie gewährt.</value></data>
+  <data name="ConfirmRemove" xml:space="preserve"><value>{0} aus {1} entfernen? Damit geht verloren, was die Gruppe gewährt.</value></data>
+  <data name="RemoveMember" xml:space="preserve"><value>Mitglied entfernen</value></data>
+  <data name="Remove" xml:space="preserve"><value>Entfernen</value></data>
+  <data name="RenameGroup" xml:space="preserve"><value>Gruppe umbenennen</value></data>
+</root>

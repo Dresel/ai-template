@@ -9,13 +9,12 @@ namespace FocusTemplate.Admin.Web.Features.UserManagement;
 
 public static class ServiceCollectionExtensions
 {
-	public static IServiceCollection AddUserManagement(
-		this IServiceCollection services,
-		IWebAssemblyHostEnvironment environment)
+	public static IServiceCollection AddUserManagement(this IServiceCollection services, IWebAssemblyHostEnvironment environment)
 	{
 		services.AddProxiedHttpClient<UsersClient>(environment, "admin-api");
 		services.AddProxiedHttpClient<GroupsClient>(environment, "admin-api");
 		services.AddScoped<IValidator<Groups.Form>, Groups.FormValidator>();
+		services.AddSingleton<PermissionLabels>();
 
 		services.AddScoped<ListPageViewModel>();
 		services.AddScoped<DetailPageViewModel>();

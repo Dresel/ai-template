@@ -14,10 +14,10 @@ public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
 		// The BFF pushes the authorization request (PAR), so the browser reaches Keycloak's authorize endpoint with a
 		// request_uri handle instead of the parameters themselves. Keycloak then redirects on to its login form, so the
 		// evidence is that first request, not the page the form ends up on.
-		Task<IRequest> authorize = Page.WaitForRequestAsync(request =>
-			request.Url.Contains("/protocol/openid-connect/auth?", StringComparison.Ordinal));
-		Task<IRequest> callback = Page.WaitForRequestAsync(request =>
-			request.Url.Contains("/signin-oidc", StringComparison.Ordinal));
+		Task<IRequest> authorize = Page.WaitForRequestAsync(request => request.Url.Contains(
+			"/protocol/openid-connect/auth?",
+			StringComparison.Ordinal));
+		Task<IRequest> callback = Page.WaitForRequestAsync(request => request.Url.Contains("/signin-oidc", StringComparison.Ordinal));
 
 		await Page.GotoAsync($"{App.BaseUrl}weather");
 
@@ -97,9 +97,20 @@ public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
 		await Page.ReloadAsync();
 
 		await Expect(Page.GetByTestId("login-button")).ToBeVisibleAsync();
-		Assert.DoesNotContain(
-			await Page.Context.CookiesAsync(),
-			cookie => cookie.Name.StartsWith(SessionCookie, StringComparison.Ordinal));
+		Assert.DoesNotContain(await Page.Context.CookiesAsync(), cookie => cookie.Name.StartsWith(SessionCookie, StringComparison.Ordinal));
+	}
+
+	[Fact]
+	public async Task KeycloaksFormSpeaksTheLanguageTheVisitorChose()
+	{
+		await Page.GotoAsync(App.BaseUrl);
+		await Page.GetByTestId("language-switch").GetByText("DE", new LocatorGetByTextOptions { Exact = true, }).ClickAsync();
+		await Expect(Page.GetByTestId("login-button")).ToHaveAttributeAsync("title", "Anmelden");
+
+		await Page.GetByTestId("login-button").ClickAsync();
+
+		await Expect(Page.Locator("#kc-login")).ToBeVisibleAsync();
+		await Expect(Page.Locator("html")).ToHaveAttributeAsync("lang", "de");
 	}
 
 	[Fact]
@@ -113,9 +124,7 @@ public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
 
 		// Every chunk gone: a __Host- cookie is only deleted by a header that is itself Secure and on Path=/.
 		await Expect(Page.GetByTestId("login-button")).ToBeVisibleAsync();
-		Assert.DoesNotContain(
-			await Page.Context.CookiesAsync(),
-			cookie => cookie.Name.StartsWith(SessionCookie, StringComparison.Ordinal));
+		Assert.DoesNotContain(await Page.Context.CookiesAsync(), cookie => cookie.Name.StartsWith(SessionCookie, StringComparison.Ordinal));
 
 		// Logging in again shows the form rather than passing straight through: Keycloak's own session went with the cookie.
 		await Page.GetByTestId("login-button").ClickAsync();
@@ -136,16 +145,12 @@ public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
 		IAPIResponse withoutHeader = await Page.APIRequest.GetAsync(url);
 		Assert.Equal(403, withoutHeader.Status);
 
-		IAPIResponse withHeader = await Page.APIRequest.GetAsync(
-			url,
-			new APIRequestContextOptions { Headers = csrfHeader, });
+		IAPIResponse withHeader = await Page.APIRequest.GetAsync(url, new APIRequestContextOptions { Headers = csrfHeader, });
 		Assert.Equal(200, withHeader.Status);
 
 		// No session at all: a status, never a redirect to Keycloak, which an XHR could not follow.
 		await using IAPIRequestContext anonymous = await Playwright.APIRequest.NewContextAsync();
-		IAPIResponse anonymousCall = await anonymous.GetAsync(
-			url,
-			new APIRequestContextOptions { Headers = csrfHeader, });
+		IAPIResponse anonymousCall = await anonymous.GetAsync(url, new APIRequestContextOptions { Headers = csrfHeader, });
 		Assert.Equal(401, anonymousCall.Status);
 	}
 
@@ -160,8 +165,7 @@ public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
 		// A large ticket is split into __Host-focus.session, __Host-focus.sessionC1, ..., each a cookie of its own.
 		IReadOnlyList<BrowserContextCookiesResult> session =
 		[
-			.. (await Page.Context.CookiesAsync()).Where(cookie =>
-				cookie.Name.StartsWith(SessionCookie, StringComparison.Ordinal)),
+			.. (await Page.Context.CookiesAsync()).Where(cookie => cookie.Name.StartsWith(SessionCookie, StringComparison.Ordinal)),
 		];
 
 		Assert.NotEmpty(session);
@@ -176,8 +180,7 @@ public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
 		await BlazorAppFixture.LogInAsync(Page);
 
 		IAPIResponse user = await Page.APIRequest.GetAsync($"{App.BaseUrl}bff/user");
-		JsonElement body = await user.JsonAsync() ??
-			throw new InvalidOperationException("/bff/user answered without a body.");
+		JsonElement body = await user.JsonAsync() ?? throw new InvalidOperationException("/bff/user answered without a body.");
 
 		string?[] permissions =
 		[
@@ -200,18 +203,14 @@ public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
 		IAPIResponse user = await Page.APIRequest.GetAsync($"{App.BaseUrl}bff/user");
 
 		Assert.Equal(200, user.Status);
-		Assert.Contains(
-			"no-store",
-			user.Headers.GetValueOrDefault("cache-control") ?? string.Empty,
-			StringComparison.Ordinal);
+		Assert.Contains("no-store", user.Headers.GetValueOrDefault("cache-control") ?? string.Empty, StringComparison.Ordinal);
 	}
 
 	// Keycloak's session id, the sid claim /bff/user returns.
 	private async Task<string> SessionIdAsync()
 	{
 		IAPIResponse user = await Page.APIRequest.GetAsync($"{App.BaseUrl}bff/user");
-		JsonElement body = await user.JsonAsync() ??
-			throw new InvalidOperationException("/bff/user answered without a body.");
+		JsonElement body = await user.JsonAsync() ?? throw new InvalidOperationException("/bff/user answered without a body.");
 
 		return body.GetProperty("claims")
 			.EnumerateArray()

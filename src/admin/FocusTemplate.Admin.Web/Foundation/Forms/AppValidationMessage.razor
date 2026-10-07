@@ -1,6 +1,7 @@
 @using FluentValidation
 @inject DialogService Dialogs
 @inject TooltipService Tooltips
+@inject IAppValidationMessageLocalizations L
 
 @if (Messages.Count > 0)
 {
@@ -15,7 +16,9 @@
 		<RadzenIcon Icon="@Severities.Icon(shown.Severity)" aria-hidden="true" />
 		<span class="app-message-text"
 			role="@(shown.Severity switch { Severity.Error => "alert", Severity.Warning => "status", _ => null, })"
-			data-testid="@TestIdOf(severity)">@shown.Text</span>
+			data-testid="@TestIdOf(severity)">
+			@shown.Text
+		</span>
 		@if (ordered.Count > 1)
 		{
 			<RadzenChip Size="ChipSize.ExtraSmall"
@@ -23,7 +26,7 @@
 				Shade="Shade.Light"
 				Text="@($"+{ordered.Count - 1}")"
 				Click="OpenAllAsync"
-				aria-label="@($"Show all {ordered.Count} messages")"
+				aria-label="@L.ShowAll(ordered.Count)"
 				data-testid="@TestIdOf("more")" />
 		}
 	</div>
@@ -64,8 +67,8 @@
 	{
 		Tooltips.Close();
 		await Dialogs.OpenAsync(
-			Title ?? "Messages",
-			_ => @<AppMessageGroups Messages="Messages" Title="Please review" TestId="field-messages" />);
+			Title ?? L.Messages,
+			_ => @<AppMessageGroups Messages="Messages" Title="@L.PleaseReview" TestId="field-messages" />);
 	}
 
 	private void ShowAll() => Tooltips.Open(line, _ => All, new TooltipOptions { Position = TooltipPosition.Bottom, CssClass = "app-tooltip", });

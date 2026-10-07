@@ -16,14 +16,17 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 
 	private readonly AsyncCommand<UserId> load;
 
+	private readonly ApiFailureMessages messages;
+
 	private readonly AsyncCommand<bool> setActive;
 
 	private UserId id;
 
-	public DetailPageViewModel(UsersClient api, BusyState busyState)
+	public DetailPageViewModel(UsersClient api, BusyState busyState, ApiFailureMessages messages)
 	{
 		this.api = api;
 		this.busyState = busyState;
+		this.messages = messages;
 
 		this.load = new AsyncCommand<UserId>(FetchAsync, AsyncCommandMode.ReplaceRunning);
 		this.setActive = new AsyncCommand<bool>(SetActiveAsync, AsyncCommandMode.IgnoreWhileRunning);
@@ -78,7 +81,7 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 				break;
 
 			case ApiFailure failure:
-				Failure = failure.Message;
+				Failure = this.messages.Of(failure);
 				break;
 		}
 	}
@@ -90,7 +93,7 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 			? await this.api.ActivateAsync(this.id, token).ToOutcome()
 			: await this.api.DeactivateAsync(this.id, token).ToOutcome();
 
-		Failure = outcome is ApiFailure failure ? failure.Message : null;
+		Failure = outcome is ApiFailure failure ? this.messages.Of(failure) : null;
 
 		if (outcome is Success)
 		{

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Users;
 
-public sealed class UsersGetHandler(ReadOnlyAppDbContext dbContext, UserPermissions permissions)
+public sealed class UsersGetHandler(ReadOnlyAppDbContext dbContext, UserPermissions permissions, IUsersLocalizations localizations)
 	: IQueryHandler<UsersGetQuery, UsersGetResult>
 {
 	public async ValueTask<UsersGetResult> Handle(UsersGetQuery query, CancellationToken cancellationToken)
@@ -28,7 +28,7 @@ public sealed class UsersGetHandler(ReadOnlyAppDbContext dbContext, UserPermissi
 			.SingleOrDefaultAsync(cancellationToken);
 
 		return user is null
-			? new NotFound($"No user with id {query.Id}.")
+			? new NotFound(localizations.NoUser(query.Id))
 			: new UserResponse(
 				user.Id,
 				user.DisplayName,

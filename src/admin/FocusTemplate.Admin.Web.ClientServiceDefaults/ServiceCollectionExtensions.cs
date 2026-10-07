@@ -20,10 +20,12 @@ public static class ServiceCollectionExtensions
 	{
 		ArgumentException.ThrowIfNullOrEmpty(serviceName);
 
-		IHttpClientBuilder builder = services.AddHttpClient<TClient>(client => client.BaseAddress = new Uri(
+		IHttpClientBuilder builder = services
+			.AddHttpClient<TClient>(client => client.BaseAddress = new Uri(
 				new Uri(hostEnvironment.BaseAddress),
 				$"{apiPrefix}/{serviceName}/"))
 			.AddHttpMessageHandler(() => new CsrfHeaderHandler())
+			.AddHttpMessageHandler(() => new AcceptLanguageHandler())
 
 			// TODO: Show popup login dialog instead of redirecting to login page (use message center service & error boundary)
 			.AddHttpMessageHandler(provider => new RedirectToLoginHandler(provider.GetRequiredService<NavigationManager>()))

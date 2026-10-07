@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Title" xml:space="preserve"><value>Home</value></data>
+  <data name="Welcome" xml:space="preserve"><value>Welcome</value></data>
+  <data name="TemplateTitle" xml:space="preserve"><value>AI-first .NET template</value></data>
+  <data name="TemplateSubtitle" xml:space="preserve"><value>Where your journey begins</value></data>
+  <data name="TemplateText" xml:space="preserve"><value>Blazor WebAssembly behind a thin BFF, orchestrated by Aspire — with a TLS-offloading ingress, end-to-end OpenTelemetry, Umami analytics, and Playwright E2E tests.</value></data>
+  <data name="Playground" xml:space="preserve"><value>Playground</value></data>
+  <data name="Counter" xml:space="preserve"><value>Counter:</value></data>
+  <data name="Count" xml:space="preserve"><value>Count</value></data>
+  <data name="Log" xml:space="preserve"><value>Log</value></data>
+  <data name="Logged" xml:space="preserve"><value>Logged</value></data>
+  <data name="LoggedDetail" xml:space="preserve"><value>Logged a message — see the dashboard's structured logs.</value></data>
+</root>

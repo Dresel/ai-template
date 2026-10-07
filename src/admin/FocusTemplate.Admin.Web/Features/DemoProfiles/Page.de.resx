@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Title" xml:space="preserve"><value>Validierung</value></data>
+  <data name="Intro" xml:space="preserve"><value>Die Einschränkungen der Spezifikation prüfen das Profil schon beim Tippen, der Server prüft es beim Absenden noch einmal, mit eigenen Regeln. Jede Meldung erscheint bei ihrem Eingabefeld, eine Meldung ohne Feld über dem Formular.</value></data>
+  <data name="HintCodeTaken" xml:space="preserve"><value>Das Kürzel {0} ist vergeben, was nur der Server weiß: Er meldet es beim Tippen und beim Absenden.</value></data>
+  <data name="HintNameReserved" xml:space="preserve"><value>Den Namen {0} lehnt der Handler ab, nachdem die Validierung bestanden ist.</value></data>
+  <data name="HintSeverities" xml:space="preserve"><value>Ein Spitzname nur in Großbuchstaben ist eine Warnung, ein Alter ab hundert ein Hinweis. Beides blockiert nicht.</value></data>
+  <data name="HintAtlantis" xml:space="preserve"><value>Der Ort {0} wird für die Adresse als Ganzes abgelehnt, die kein Eingabefeld zeigt.</value></data>
+  <data name="HintBrowserChecks" xml:space="preserve"><value>Schalten Sie die Prüfung im Browser aus, um zu sehen, was der Server allein meldet.</value></data>
+  <data name="CheckInBrowser" xml:space="preserve"><value>Im Browser prüfen</value></data>
+  <data name="ShowOptional" xml:space="preserve"><value>Optionale Felder anzeigen</value></data>
+  <data name="Accepted" xml:space="preserve"><value>Angenommen: {0}, {1}</value></data>
+  <data name="Code" xml:space="preserve"><value>Kürzel</value></data>
+  <data name="Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Age" xml:space="preserve"><value>Alter</value></data>
+  <data name="Nickname" xml:space="preserve"><value>Spitzname</value></data>
+  <data name="Weight" xml:space="preserve"><value>Gewicht (kg)</value></data>
+  <data name="LowestTemperature" xml:space="preserve"><value>Tiefsttemperatur (°C)</value></data>
+  <data name="HighestTemperature" xml:space="preserve"><value>Höchsttemperatur (°C)</value></data>
+  <data name="Street" xml:space="preserve"><value>Straße</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Postleitzahl</value></data>
+  <data name="City" xml:space="preserve"><value>Ort</value></data>
+  <data name="Tags" xml:space="preserve"><value>Schlagwörter</value></data>
+  <data name="RemoveTag" xml:space="preserve"><value>Schlagwort entfernen</value></data>
+  <data name="AddTag" xml:space="preserve"><value>Schlagwort hinzufügen</value></data>
+  <data name="Submit" xml:space="preserve"><value>Absenden</value></data>
+</root>
