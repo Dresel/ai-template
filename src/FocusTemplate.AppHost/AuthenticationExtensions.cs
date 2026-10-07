@@ -11,14 +11,8 @@ internal static class AuthenticationExtensions
 	{
 		IResourceBuilder<ParameterResource> authority = builder.AddParameter("oidc-authority")
 			.WithDescription("The realm's URL, such as `https://sso.example.com/realms/focus`.", true);
-		IResourceBuilder<ParameterResource> audience = builder.AddParameter(
-			"oidc-admin-api-audience",
-			"admin-api",
-			true);
-		IResourceBuilder<ParameterResource> clientId = builder.AddParameter(
-			"oidc-admin-bff-client-id",
-			"admin-bff",
-			true);
+		IResourceBuilder<ParameterResource> audience = builder.AddParameter("oidc-admin-api-audience", "admin-api", true);
+		IResourceBuilder<ParameterResource> clientId = builder.AddParameter("oidc-admin-bff-client-id", "admin-bff", true);
 
 		return new KeycloakRealm(
 			builder.AddExternalService("keycloak", authority).WithHttpHealthCheck(),
@@ -53,14 +47,10 @@ internal static class AuthenticationExtensions
 			DeveloperLogin);
 	}
 
-	public static IResourceBuilder<ProjectResource> WithKeycloakAudience(
-		this IResourceBuilder<ProjectResource> api,
-		KeycloakRealm realm) =>
+	public static IResourceBuilder<ProjectResource> WithKeycloakAudience(this IResourceBuilder<ProjectResource> api, KeycloakRealm realm) =>
 		api.WithKeycloakAuthority(realm).WithEnvironment("Oidc__Audience", realm.AdminApiAudience);
 
-	public static IResourceBuilder<ProjectResource> WithKeycloakClient(
-		this IResourceBuilder<ProjectResource> app,
-		KeycloakRealm realm)
+	public static IResourceBuilder<ProjectResource> WithKeycloakClient(this IResourceBuilder<ProjectResource> app, KeycloakRealm realm)
 	{
 		app.WithKeycloakAuthority(realm)
 			.WithEnvironment("Oidc__ClientId", realm.AdminBffClientId)

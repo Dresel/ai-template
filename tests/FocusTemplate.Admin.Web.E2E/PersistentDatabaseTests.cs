@@ -8,8 +8,7 @@ public sealed class PersistentDatabaseTests
 	[Fact]
 	public async Task ThePersistentDatabaseStaysBehindTheProxyOnAFixedPort()
 	{
-		await using IDistributedApplicationTestingBuilder builder =
-			await CreateAsync("Features:PersistentDatabase=true");
+		await using IDistributedApplicationTestingBuilder builder = await CreateAsync("Features:PersistentDatabase=true");
 
 		EndpointAnnotation endpoint = Postgres(builder)
 			.Annotations.OfType<EndpointAnnotation>()
@@ -27,24 +26,19 @@ public sealed class PersistentDatabaseTests
 		PostgresServerResource postgres = Postgres(builder);
 
 		Assert.False(postgres.TryGetLastAnnotation(out ContainerLifetimeAnnotation? _));
-		Assert.DoesNotContain(
-			postgres.Annotations.OfType<ContainerMountAnnotation>(),
-			mount => mount.Type == ContainerMountType.Volume);
+		Assert.DoesNotContain(postgres.Annotations.OfType<ContainerMountAnnotation>(), mount => mount.Type == ContainerMountType.Volume);
 	}
 
 	[Fact]
 	public async Task TurningThePersistentDatabaseOnKeepsTheContainerAndItsDataBetweenStarts()
 	{
-		await using IDistributedApplicationTestingBuilder builder =
-			await CreateAsync("Features:PersistentDatabase=true");
+		await using IDistributedApplicationTestingBuilder builder = await CreateAsync("Features:PersistentDatabase=true");
 
 		PostgresServerResource postgres = Postgres(builder);
 
 		Assert.True(postgres.TryGetLastAnnotation(out ContainerLifetimeAnnotation? lifetime));
 		Assert.Equal(ContainerLifetime.Persistent, lifetime.Lifetime);
-		Assert.Contains(
-			postgres.Annotations.OfType<ContainerMountAnnotation>(),
-			mount => mount.Type == ContainerMountType.Volume);
+		Assert.Contains(postgres.Annotations.OfType<ContainerMountAnnotation>(), mount => mount.Type == ContainerMountType.Volume);
 	}
 
 	private static Task<IDistributedApplicationTestingBuilder> CreateAsync(params string[] args) =>

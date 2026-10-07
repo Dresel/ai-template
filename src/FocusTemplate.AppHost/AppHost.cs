@@ -17,9 +17,7 @@ bool persistentLocalKeycloak = builder.Configuration.GetValue("Features:Persiste
 bool persistentDatabase = builder.Configuration.GetValue("Features:PersistentDatabase", false);
 bool addChaos = builder.ExecutionContext.IsRunMode && builder.Configuration.GetValue("Features:Chaos", false);
 
-IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres("postgres")
-	.WithImage("postgis/postgis")
-	.WithImageTag("17-3.5");
+IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres("postgres").WithImage("postgis/postgis").WithImageTag("17-3.5");
 
 if (persistentDatabase)
 {
@@ -130,8 +128,7 @@ if (addTlsOffloadingIngress)
 
 if (addAnalytics)
 {
-	IResourceBuilder<PostgresDatabaseResource> umamiDb =
-		builder.AddPostgres("umami-postgres").WithDataVolume().AddDatabase("umami-db");
+	IResourceBuilder<PostgresDatabaseResource> umamiDb = builder.AddPostgres("umami-postgres").WithDataVolume().AddDatabase("umami-db");
 	IResourceBuilder<UmamiResource> umami = builder.AddUmami("umami").WithPostgreSQL(umamiDb).WaitFor(umamiDb);
 
 	web.WithUmamiAnalytics(umami, "FocusTemplate Web", "localhost");

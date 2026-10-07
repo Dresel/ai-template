@@ -7,13 +7,13 @@ indent_style = tab
 charset = utf-8
 end_of_line = crlf
 insert_final_newline = false
+max_line_length = 140
 
 # ReSharper properties
 resharper_allow_far_alignment = false
 resharper_alignment_tab_fill_style = use_tabs_only
 resharper_attribute_indent = single_indent
 resharper_space_before_self_closing = true
-resharper_max_line_length = 140
 resharper_place_accessorholder_attribute_on_same_line = false
 resharper_place_field_attribute_on_same_line = false
 

@@ -32,9 +32,7 @@ public sealed class KeycloakRealmTests
 		KeycloakResource keycloak = Assert.Single(builder.Resources.OfType<KeycloakResource>());
 
 		Assert.False(keycloak.TryGetLastAnnotation(out ContainerLifetimeAnnotation? _));
-		Assert.DoesNotContain(
-			keycloak.Annotations.OfType<ContainerMountAnnotation>(),
-			mount => mount.Type == ContainerMountType.Volume);
+		Assert.DoesNotContain(keycloak.Annotations.OfType<ContainerMountAnnotation>(), mount => mount.Type == ContainerMountType.Volume);
 	}
 
 	[Fact]
@@ -56,8 +54,7 @@ public sealed class KeycloakRealmTests
 			"Features:PersistentLocalKeycloak=true");
 
 		KeycloakResource keycloak = Assert.Single(builder.Resources.OfType<KeycloakResource>());
-		EndpointAnnotation endpoint = keycloak.Annotations.OfType<EndpointAnnotation>()
-			.Single(annotation => annotation.Name == "http");
+		EndpointAnnotation endpoint = keycloak.Annotations.OfType<EndpointAnnotation>().Single(annotation => annotation.Name == "http");
 
 		Assert.True(endpoint.IsExplicitlyProxied);
 		Assert.Equal(8080, endpoint.Port);
@@ -82,17 +79,13 @@ public sealed class KeycloakRealmTests
 
 		Assert.True(keycloak.TryGetLastAnnotation(out ContainerLifetimeAnnotation? lifetime));
 		Assert.Equal(ContainerLifetime.Persistent, lifetime.Lifetime);
-		Assert.Contains(
-			keycloak.Annotations.OfType<ContainerMountAnnotation>(),
-			mount => mount.Type == ContainerMountType.Volume);
+		Assert.Contains(keycloak.Annotations.OfType<ContainerMountAnnotation>(), mount => mount.Type == ContainerMountType.Volume);
 	}
 
 	private static async Task AssertRealmFromParametersAsync(IDistributedApplicationTestingBuilder builder)
 	{
 		Assert.Empty(builder.Resources.OfType<KeycloakResource>());
-		Assert.Equal(
-			"oidc-authority",
-			Assert.Single(builder.Resources.OfType<ExternalServiceResource>()).UrlParameter?.Name);
+		Assert.Equal("oidc-authority", Assert.Single(builder.Resources.OfType<ExternalServiceResource>()).UrlParameter?.Name);
 
 		await using DistributedApplication app = await builder.BuildAsync(TestContext.Current.CancellationToken);
 		DistributedApplicationExecutionContext publishing = Publishing(app);
@@ -100,8 +93,7 @@ public sealed class KeycloakRealmTests
 		Assert.Equal(
 			new Dictionary<string, string>
 			{
-				["Oidc__Audience"] = "{oidc-admin-api-audience.value}",
-				["Oidc__Authority"] = "{oidc-authority.value}",
+				["Oidc__Audience"] = "{oidc-admin-api-audience.value}", ["Oidc__Authority"] = "{oidc-authority.value}",
 			},
 			await OidcEnvironmentAsync(publishing, builder, "admin-api"));
 
@@ -139,17 +131,12 @@ public sealed class KeycloakRealmTests
 
 		Assert.Null(configuration.Exception);
 
-		return configuration.EnvironmentVariables
-			.Where(variable => variable.Key.StartsWith("Oidc__", StringComparison.Ordinal))
+		return configuration.EnvironmentVariables.Where(variable => variable.Key.StartsWith("Oidc__", StringComparison.Ordinal))
 			.ToDictionary();
 	}
 
 	// Built, not started. Evaluated as for publishing, each value is the expression naming its source, so no parameter
 	// needs a value.
 	private static DistributedApplicationExecutionContext Publishing(DistributedApplication app) =>
-		new(
-			new DistributedApplicationExecutionContextOptions(DistributedApplicationOperation.Publish)
-			{
-				Services = app.Services,
-			});
+		new(new DistributedApplicationExecutionContextOptions(DistributedApplicationOperation.Publish) { Services = app.Services, });
 }
