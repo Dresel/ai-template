@@ -25,6 +25,19 @@ public sealed class KeycloakRealmTests
 	}
 
 	[Fact]
+	public async Task TheLocalKeycloakIsRecreatedOnEveryStartByDefault()
+	{
+		await using IDistributedApplicationTestingBuilder builder = await CreateAsync("Features:LocalKeycloak=true");
+
+		KeycloakResource keycloak = Assert.Single(builder.Resources.OfType<KeycloakResource>());
+
+		Assert.False(keycloak.TryGetLastAnnotation(out ContainerLifetimeAnnotation? _));
+		Assert.DoesNotContain(
+			keycloak.Annotations.OfType<ContainerMountAnnotation>(),
+			mount => mount.Type == ContainerMountType.Volume);
+	}
+
+	[Fact]
 	public async Task TheLocalRealmHintsItsDeveloperLoginToTheBff()
 	{
 		await using IDistributedApplicationTestingBuilder builder = await CreateAsync("Features:LocalKeycloak=true");
@@ -36,16 +49,18 @@ public sealed class KeycloakRealmTests
 	}
 
 	[Fact]
-	public async Task TheLocalKeycloakIsRecreatedOnEveryStartByDefault()
+	public async Task ThePersistentLocalKeycloakStaysBehindTheProxy()
 	{
-		await using IDistributedApplicationTestingBuilder builder = await CreateAsync("Features:LocalKeycloak=true");
+		await using IDistributedApplicationTestingBuilder builder = await CreateAsync(
+			"Features:LocalKeycloak=true",
+			"Features:PersistentLocalKeycloak=true");
 
 		KeycloakResource keycloak = Assert.Single(builder.Resources.OfType<KeycloakResource>());
+		EndpointAnnotation endpoint = keycloak.Annotations.OfType<EndpointAnnotation>()
+			.Single(annotation => annotation.Name == "http");
 
-		Assert.False(keycloak.TryGetLastAnnotation(out ContainerLifetimeAnnotation? _));
-		Assert.DoesNotContain(
-			keycloak.Annotations.OfType<ContainerMountAnnotation>(),
-			mount => mount.Type == ContainerMountType.Volume);
+		Assert.True(endpoint.IsExplicitlyProxied);
+		Assert.Equal(8080, endpoint.Port);
 	}
 
 	[Fact]
@@ -112,11 +127,6 @@ public sealed class KeycloakRealmTests
 			],
 			TestContext.Current.CancellationToken);
 
-	// Built, not started. Evaluated as for publishing, each value is the expression naming its source, so no parameter
-	// needs a value.
-	private static DistributedApplicationExecutionContext Publishing(DistributedApplication app) =>
-		new(new DistributedApplicationExecutionContextOptions(DistributedApplicationOperation.Publish) { Services = app.Services, });
-
 	private static async Task<Dictionary<string, string>> OidcEnvironmentAsync(
 		DistributedApplicationExecutionContext executionContext,
 		IDistributedApplicationTestingBuilder builder,
@@ -133,4 +143,13 @@ public sealed class KeycloakRealmTests
 			.Where(variable => variable.Key.StartsWith("Oidc__", StringComparison.Ordinal))
 			.ToDictionary();
 	}
+
+	// Built, not started. Evaluated as for publishing, each value is the expression naming its source, so no parameter
+	// needs a value.
+	private static DistributedApplicationExecutionContext Publishing(DistributedApplication app) =>
+		new(
+			new DistributedApplicationExecutionContextOptions(DistributedApplicationOperation.Publish)
+			{
+				Services = app.Services,
+			});
 }

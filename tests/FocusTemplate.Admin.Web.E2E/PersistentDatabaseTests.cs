@@ -6,6 +6,20 @@ namespace FocusTemplate.Admin.Web.E2E;
 public sealed class PersistentDatabaseTests
 {
 	[Fact]
+	public async Task ThePersistentDatabaseStaysBehindTheProxyOnAFixedPort()
+	{
+		await using IDistributedApplicationTestingBuilder builder =
+			await CreateAsync("Features:PersistentDatabase=true");
+
+		EndpointAnnotation endpoint = Postgres(builder)
+			.Annotations.OfType<EndpointAnnotation>()
+			.Single(annotation => annotation.Name == "tcp");
+
+		Assert.True(endpoint.IsExplicitlyProxied);
+		Assert.Equal(15432, endpoint.Port);
+	}
+
+	[Fact]
 	public async Task ThePostgresIsRecreatedOnEveryStartByDefault()
 	{
 		await using IDistributedApplicationTestingBuilder builder = await CreateAsync();
@@ -21,7 +35,8 @@ public sealed class PersistentDatabaseTests
 	[Fact]
 	public async Task TurningThePersistentDatabaseOnKeepsTheContainerAndItsDataBetweenStarts()
 	{
-		await using IDistributedApplicationTestingBuilder builder = await CreateAsync("Features:PersistentDatabase=true");
+		await using IDistributedApplicationTestingBuilder builder =
+			await CreateAsync("Features:PersistentDatabase=true");
 
 		PostgresServerResource postgres = Postgres(builder);
 
@@ -31,10 +46,6 @@ public sealed class PersistentDatabaseTests
 			postgres.Annotations.OfType<ContainerMountAnnotation>(),
 			mount => mount.Type == ContainerMountType.Volume);
 	}
-
-	// Umami has its own Postgres with a volume of its own, so the name picks the application's.
-	private static PostgresServerResource Postgres(IDistributedApplicationTestingBuilder builder) =>
-		builder.Resources.OfType<PostgresServerResource>().Single(postgres => postgres.Name == "postgres");
 
 	private static Task<IDistributedApplicationTestingBuilder> CreateAsync(params string[] args) =>
 		DistributedApplicationTestingBuilder.CreateAsync<FocusTemplate_AppHost>(
@@ -48,4 +59,8 @@ public sealed class PersistentDatabaseTests
 				.. args,
 			],
 			TestContext.Current.CancellationToken);
+
+	// Umami has its own Postgres with a volume of its own, so the name picks the application's.
+	private static PostgresServerResource Postgres(IDistributedApplicationTestingBuilder builder) =>
+		builder.Resources.OfType<PostgresServerResource>().Single(postgres => postgres.Name == "postgres");
 }

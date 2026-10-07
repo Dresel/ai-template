@@ -26,8 +26,22 @@ fixtures pin all of them as arguments. Authentication is always on and has no fl
 | `Features:Mobile` | off | the MAUI device resources and the Dev Tunnel, which need the devtunnel CLI and an emulator |
 | `Features:LocalKeycloak` | on | a Keycloak container with the imported realm. Off takes an existing realm from parameters |
 | `Features:PersistentLocalKeycloak` | off | that container and its data survive between starts |
-| `Features:PersistentDatabase` | off | the dev Postgres and its data survive between starts |
+| `Features:PersistentDatabase` | off | the dev Postgres and its data survive between starts, on `localhost:15432` |
 | `Features:Chaos` | off | run mode only: the Admin API gets the AppHost's `Chaos` section, and `ChaosFilter` on the route group every slice maps onto delays and fails a share of the requests through Polly's chaos strategies, never the health probes |
+
+## Persistent containers
+
+Aspire leaves the endpoints of a persistent resource without its proxy (`DcpExecutor.GetEffectiveIsProxied`, unchanged
+up to 13.6.1, although the networking docs say persistent containers are proxied). Docker then publishes the
+container's port on `127.0.0.1` alone. `localhost` resolves to `::1` first, .NET's `HttpClient` and Npgsql try the
+addresses one after the other, and Windows reports a refused connection only after about 2 seconds. So every new
+connection to Keycloak or Postgres cost 2 seconds, and the first `/bff/user` after a start took 5.5.
+
+Both persistent containers therefore set `IsProxied = true` on their endpoint: the AppHost's proxy listens on `::1` and
+`127.0.0.1` and forwards to the port Docker picks. A proxied endpoint without a port of its own gets a new one on every
+start, so the persistent Postgres is pinned to `localhost:15432`, and Keycloak keeps its 8080. Both answer there only
+while the AppHost runs. An existing persistent container is recreated once when its endpoint changes, and its volume
+keeps the data.
 
 ## Updating Aspire
 

@@ -11,6 +11,8 @@ paths:
   behaves (persistent containers, chaos), defaults to off.
 - The E2E fixtures pin every flag as an argument, and a new flag gets pinned there too.
 - Authentication has no flag.
+- A persistent container sets `IsProxied = true` on the endpoints the projects use, with a fixed port, so `localhost`
+  also answers on `::1` (see **Persistent containers** in the doc).
 - The preview integrations (`Aspire.Hosting.Blazor`, `Aspire.Hosting.Keycloak`, `Aspire.Hosting.Maui`,
   `Aspire.Hosting.EntityFrameworkCore`) move in lockstep with the AppHost SDK.
 - After an Aspire update, rerun `aspire agent init` for both skill locations, as **Updating Aspire** in the doc

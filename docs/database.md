@@ -126,8 +126,8 @@ are implemented, since the EF CLI calls the synchronous one.
 ## Data between starts
 
 By default the dev Postgres has no data volume: each `aspire start` and each E2E run gets a fresh, re-seeded database.
-`Features:PersistentDatabase` gives the container a persistent lifetime and a data volume, so the migrations find
-themselves applied and the seed finds its rows. A migration edited after it was applied, or one removed, is then out of
+`Features:PersistentDatabase` gives the container a persistent lifetime, a data volume and the fixed port 15432 (see
+[apphost](apphost.md#persistent-containers)), so the migrations find themselves applied and the seed finds its rows. A migration edited after it was applied, or one removed, is then out of
 step with `__EFMigrationsHistory` until `aspire stop --force --volumes` drops container and volume (see
 [authentication](authentication.md) for the CLI's version caveat). The E2E fixtures pin the flag off.
 

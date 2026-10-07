@@ -24,8 +24,17 @@ IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres("postgre
 if (persistentDatabase)
 {
 	// No wait for Postgres and the migrations on the next start, and the data survives it. A migration edited after it
-	// was applied needs `aspire stop --force --volumes`.
-	postgres.WithLifetime(ContainerLifetime.Persistent).WithDataVolume();
+	// was applied needs `aspire stop --force --volumes`. The proxy keeps `localhost` answering on ::1 as well (see
+	// docs/apphost.md), and the fixed port keeps a database tool's connection valid between starts.
+	postgres.WithLifetime(ContainerLifetime.Persistent)
+		.WithDataVolume()
+		.WithEndpoint(
+			"tcp",
+			endpoint =>
+			{
+				endpoint.IsProxied = true;
+				endpoint.Port = 15432;
+			});
 }
 
 IResourceBuilder<PostgresDatabaseResource> focusDb = postgres.AddDatabase("focusdb");

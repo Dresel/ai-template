@@ -38,7 +38,10 @@ internal static class AuthenticationExtensions
 		{
 			// No wait for the JVM and the realm import on the next start, and the developer's session survives it. Keycloak
 			// skips importing a realm that already exists, so a changed focus-realm.json needs `aspire stop --force --volumes`.
-			keycloak.WithLifetime(ContainerLifetime.Persistent).WithDataVolume();
+			// The proxy keeps `localhost` answering on ::1 as well, see docs/apphost.md.
+			keycloak.WithLifetime(ContainerLifetime.Persistent)
+				.WithDataVolume()
+				.WithEndpoint("http", endpoint => endpoint.IsProxied = true);
 		}
 
 		return new KeycloakRealm(

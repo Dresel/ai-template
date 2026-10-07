@@ -40,7 +40,8 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
   cookie signs in again without a login. Keycloak then skips importing a realm that exists: a change to
   `focus-realm.json` arrives only after `aspire stop --force --volumes` (before Aspire.Hosting 13.6 the CLI warns it
   cannot verify volume ownership and still tries, with `docker volume rm` of the volume named after the resource as the
-  fallback). The E2E fixtures pin it off, since `KeycloakAdmin` edits the realm.
+  fallback). Its endpoint stays behind the AppHost's proxy, see [apphost](apphost.md#persistent-containers). The E2E
+  fixtures pin it off, since `KeycloakAdmin` edits the realm.
 
 ## BFF
 
