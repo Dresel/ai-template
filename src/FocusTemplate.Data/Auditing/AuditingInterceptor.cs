@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 namespace FocusTemplate.Data.Auditing;
 
 // An interceptor rather than a database trigger, because only the application knows who is acting. The price is that
-// ExecuteUpdate and raw SQL bypass it - see the auditing convention in AGENTS.md.
+// ExecuteUpdate and raw SQL bypass it - see the auditing convention in docs/database.md.
 public sealed class AuditingInterceptor(TimeProvider timeProvider, ICurrentUser currentUser) : SaveChangesInterceptor
 {
 	public const string CreatedAt = nameof(CreatedAt);
