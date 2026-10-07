@@ -97,10 +97,11 @@ For any other package's API, ask `dotnet-inspect` instead of guessing.
 | A .NET package's API (Radzen, YARP, OTel, …) | `dotnet-inspect` skill (`dnx dotnet-inspect -y -- skill` prints the guide of the installed tool) |
 | Browser reproduction, UI checks, screenshots | `playwright-cli` skill |
 | Drive the Android emulator | `appium` MCP, enabled per session (see [mobile](docs/mobile.md)) |
-| Change an API (route, wire model, status code, operation) | the spec in `src/<vertical>/spec/` (a new slice is a kebab-case folder imported in `api.tsp`, new permissions go to `src/spec/permissions/`) → `npm run gen` → the handler in the Api project's `Features/` → the consumers → tests, see [spec-first](docs/spec-first.md) |
+| Change an API (route, wire model, status code, operation) | the spec in `src/<vertical>/spec/` (a new slice is a kebab-case folder imported in `api.tsp`, new permissions go to `src/spec/permissions/`) → `npm run gen` → the handler in the Api project's `Features/` → the consumers → tests, see [spec-first](docs/spec-first.md). A whole slice: the `feature-slice` skill |
 
 The skills in `.claude/skills/` and `.agents/skills/` are written by `aspire agent init`, see **Updating Aspire** in
-[apphost](docs/apphost.md).
+[apphost](docs/apphost.md). The project's own procedures are skills too:
+[feature-slice](.claude/skills/feature-slice/SKILL.md) takes a new slice or operation from the spec to the tests.
 
 ## Development loop
 

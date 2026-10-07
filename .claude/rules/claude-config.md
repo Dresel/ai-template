@@ -15,5 +15,6 @@ paths:
 - Settings load at session start: restart the session after editing a settings file.
 - Rules under `.claude/rules/` load when a file matching their `paths:` is read, edited or written, and `/context` lists
   the ones loaded.
-- The skills in `.claude/skills/` and `.agents/skills/` are written by `aspire agent init` and change only through it
-  (**Updating Aspire** in [docs/apphost.md](../../docs/apphost.md)).
+- The Aspire skills, `dotnet-inspect` and `playwright-cli` in `.claude/skills/` and `.agents/skills/` are written by
+  `aspire agent init` and change only through it (**Updating Aspire** in [docs/apphost.md](../../docs/apphost.md)).
+  The project's own skills (`feature-slice`) live in `.claude/skills/` alone and are maintained by hand.
