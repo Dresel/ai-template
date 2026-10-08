@@ -31,7 +31,7 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 		this.searchDebouncer = searchDebouncer;
 		this.messages = messages;
 
-		this.load = new AsyncCommand<LoadDataArgs>(LoadAsync, AsyncCommandMode.ReplaceRunning);
+		this.load = new AsyncCommand<LoadDataArgs>(FetchAsync, AsyncCommandMode.ReplaceRunning);
 		this.reload = new AsyncCommand<LoadDataArgs>((page, _) => this.load.ExecuteAsync(page), AsyncCommandMode.IgnoreWhileRunning);
 	}
 
@@ -83,7 +83,7 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 			_ => null,
 		};
 
-	private async Task LoadAsync(LoadDataArgs args, CancellationToken cancellationToken)
+	private async Task FetchAsync(LoadDataArgs args, CancellationToken cancellationToken)
 	{
 		this.lastPage = args;
 		Failure = null;

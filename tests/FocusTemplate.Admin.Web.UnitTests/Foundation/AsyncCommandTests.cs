@@ -20,6 +20,19 @@ public sealed class AsyncCommandTests
 	}
 
 	[Fact]
+	public async Task DisposingCancelsTheRunningExecution()
+	{
+		AsyncCommand<int> command = Command(AsyncCommandMode.ReplaceRunning);
+
+		Task execution = command.ExecuteAsync(1);
+		command.Dispose();
+
+		Assert.True(this.runs[0].Token.IsCancellationRequested);
+		await execution;
+		Assert.False(command.IsRunning);
+	}
+
+	[Fact]
 	public async Task IgnoringWhileRunningDropsASecondExecution()
 	{
 		using AsyncCommand<int> command = Command(AsyncCommandMode.IgnoreWhileRunning);
