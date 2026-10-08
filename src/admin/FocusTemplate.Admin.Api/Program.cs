@@ -7,7 +7,9 @@ using FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 using FocusTemplate.Admin.Api.Features.UserManagement.Users;
 using FocusTemplate.Admin.Api.Features.WeatherForecasts;
 using FocusTemplate.Admin.Api.Localization;
+using FocusTemplate.Admin.Api.Streams;
 using FocusTemplate.Admin.Shared;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
 using FocusTemplate.Primitives;
 
@@ -38,6 +40,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
 builder.Services.AddAdminValidators();
 builder.Services.AddDemoProfiles();
+builder.Services.AddSingleton<SignalHub<GroupChanged>>();
 
 WebApplication app = builder.Build();
 
@@ -69,6 +72,7 @@ RouteGroupBuilder endpoints = app.MapGroup(string.Empty).AddChaosFilter(app.Conf
 
 endpoints.MapDemoProfilesEndpoints();
 endpoints.MapGroupsEndpoints();
+endpoints.MapGroupsWatchEndpoint();
 endpoints.MapUsersEndpoints();
 endpoints.MapWeatherForecastsEndpoints();
 

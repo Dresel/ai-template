@@ -19,6 +19,13 @@ imports (`namespace SpatialFocus.Http`).
 - `Mediator.Abstractions` with `Mediator.SourceGenerator` (martinothamar, MIT): the generated endpoints dispatch
   `IQuery<T>` and `ICommand<T>` records to hand-written handlers.
 - The OpenAPI document is emitted from the spec, and each API serves the file in Development (`/openapi/v1.yaml`).
+- **Server-sent events** the emitter does not generate yet. `GET /groups:watch` is a draft by hand, missing from
+  `openapi.yaml`: the endpoint (`GroupsWatchEndpoint`), a Mediator stream query and its handler, an in-memory
+  `SignalHub<T>` (one API process) the command handlers publish to, the event record `GroupChanged` with a partial of
+  `AdminJsonContext`, `GroupsClient.WatchAsync` as a partial of the generated client, and on the page side a
+  `ChangeFeed<T>`, one stream per tab, open only while a page listens, that reconnects and makes the groups list read
+  everything again. Over plain HTTP/1.1 (`http://localhost:5770`) every open stream holds one of the six connections a
+  browser allows a host, across its tabs. The ingress (`https://localhost:7770`) multiplexes them over HTTP/2.
 
 ## Layout
 

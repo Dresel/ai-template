@@ -34,7 +34,9 @@
     <Project Path="src/public/FocusTemplate.Public.Api/FocusTemplate.Public.Api.csproj" />
     <Project Path="src/public/FocusTemplate.Public.Client/FocusTemplate.Public.Client.csproj" />
     <Project Path="src/public/FocusTemplate.Public.Mobile.ServiceDefaults/FocusTemplate.Public.Mobile.ServiceDefaults.csproj" />
-    <Project Path="src/public/FocusTemplate.Public.Mobile/FocusTemplate.Public.Mobile.csproj" />
+    <Project Path="src/public/FocusTemplate.Public.Mobile/FocusTemplate.Public.Mobile.csproj">
+      <Deploy Solution="Debug|*" />
+    </Project>
     <Project Path="src/public/FocusTemplate.Public.Shared/FocusTemplate.Public.Shared.csproj" />
   </Folder>
   <Project Path="src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj" Id="3dbf55d3-63b4-4f1b-a28b-c7313289b89f" />

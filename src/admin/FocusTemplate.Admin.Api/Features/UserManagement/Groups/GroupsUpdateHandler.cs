@@ -1,3 +1,5 @@
+using FocusTemplate.Admin.Api.Streams;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using Mediator;
@@ -6,7 +8,7 @@ using Npgsql;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 
-public sealed class GroupsUpdateHandler(AppDbContext dbContext, IGroupsLocalizations localizations)
+public sealed class GroupsUpdateHandler(AppDbContext dbContext, SignalHub<GroupChanged> signals, IGroupsLocalizations localizations)
 	: ICommandHandler<GroupsUpdateCommand, GroupsUpdateResult>
 {
 	public async ValueTask<GroupsUpdateResult> Handle(GroupsUpdateCommand command, CancellationToken cancellationToken)
@@ -37,6 +39,8 @@ public sealed class GroupsUpdateHandler(AppDbContext dbContext, IGroupsLocalizat
 			// Another request took the name between the check and the update
 			return Taken(command.Body.Name);
 		}
+
+		signals.Publish(new GroupChanged(command.Id, GroupChange.Updated));
 
 		return (await dbContext.GetGroupByIdAsync(command.Id, cancellationToken))!;
 	}

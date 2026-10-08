@@ -13,23 +13,39 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 
 	private readonly BusyState busyState;
 
+	private readonly IDisposable listening;
+
 	private readonly AsyncCommand<ValueTuple> load;
 
 	private readonly ApiFailureMessages messages;
 
-	public ListPageViewModel(GroupsClient api, BusyState busyState, ApiFailureMessages messages)
+	private Action? reloaded;
+
+	public ListPageViewModel(GroupsClient api, BusyState busyState, ChangeFeed<GroupChanged> changes, ApiFailureMessages messages)
 	{
 		this.api = api;
 		this.busyState = busyState;
 		this.messages = messages;
 
 		this.load = new AsyncCommand<ValueTuple>((_, cancellationToken) => FetchAsync(cancellationToken), AsyncCommandMode.ReplaceRunning);
+
+		// Any change can touch the list (a name, a member count, a group added or deleted), and so can a gap in the stream
+		this.listening = changes.Listen(OnChanged, ReloadInBackground);
 	}
 
 	public event Action? Changed
 	{
-		add => this.busyState.BusyChanged += value;
-		remove => this.busyState.BusyChanged -= value;
+		add
+		{
+			this.busyState.BusyChanged += value;
+			this.reloaded += value;
+		}
+
+		remove
+		{
+			this.busyState.BusyChanged -= value;
+			this.reloaded -= value;
+		}
 	}
 
 	public string? Failure { get; private set; }
@@ -38,7 +54,11 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 
 	public bool Loading => this.busyState.IsBusy;
 
-	public void Dispose() => this.load.Dispose();
+	public void Dispose()
+	{
+		this.listening.Dispose();
+		this.load.Dispose();
+	}
 
 	public Task LoadAsync() => this.load.ExecuteAsync(default);
 
@@ -55,4 +75,16 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 				break;
 		}
 	}
+
+	private void OnChanged(GroupChanged change) => ReloadInBackground();
+
+	// A reload the stream started is no event the page handles, and a quick one never shows the busy state, so the view
+	// model reports it itself
+	private async Task ReloadAsync()
+	{
+		await this.load.ExecuteAsync(default);
+		this.reloaded?.Invoke();
+	}
+
+	private void ReloadInBackground() => _ = ReloadAsync();
 }

@@ -1,3 +1,4 @@
+using FocusTemplate.Admin.Api.Streams;
 using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
@@ -8,7 +9,8 @@ using Npgsql;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 
-public sealed class GroupsCreateHandler(AppDbContext dbContext) : ICommandHandler<GroupsCreateCommand, GroupsCreateResult>
+public sealed class GroupsCreateHandler(AppDbContext dbContext, SignalHub<GroupChanged> signals)
+	: ICommandHandler<GroupsCreateCommand, GroupsCreateResult>
 {
 	public async ValueTask<GroupsCreateResult> Handle(GroupsCreateCommand command, CancellationToken cancellationToken)
 	{
@@ -32,6 +34,8 @@ public sealed class GroupsCreateHandler(AppDbContext dbContext) : ICommandHandle
 			// Another request took the name between the check and the insert
 			return Taken(command.Body.Name);
 		}
+
+		signals.Publish(new GroupChanged(group.Id, GroupChange.Created));
 
 		return new GroupResponse(group.Id, group.Name, group.IsManaged, 0, [], [], group.Description);
 	}

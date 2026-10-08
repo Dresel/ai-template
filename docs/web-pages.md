@@ -51,8 +51,9 @@ As the user management pages (`Features/UserManagement/`) do it.
   `CanViewUsers`, plus `Self`). A confirmation asks in the page and calls the view model's action on a yes, so the view
   model stays free of Radzen's UI services and its tests need no fake dialogs.
 - **Lifetime**: `@inherits ViewModelPage<TViewModel>` resolves the view model from a DI scope of the page's own
-  (`OwningComponentBase`), disposed with the page, and renders on `IViewModel.Changed`, the one change outside an event
-  handler (the delayed busy state). The slice registers its view models `AddScoped`. A view model takes nothing scoped
+  (`OwningComponentBase`), disposed with the page, and renders on `IViewModel.Changed`, for the changes outside an event
+  handler: the delayed busy state, and a reload a `ChangeFeed<T>` started (the groups list). The slice registers its view
+  models `AddScoped`. A view model takes nothing scoped
   from the app (`DialogService`, `AuthenticationStateProvider`): the page's scope would hand it a second, unconnected
   instance.
 - **One page per address**: Blazor would reuse a page when only its route values change (`/groups/A` → `/groups/B`),

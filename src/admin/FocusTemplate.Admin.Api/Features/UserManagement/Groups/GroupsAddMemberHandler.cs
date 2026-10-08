@@ -1,3 +1,5 @@
+using FocusTemplate.Admin.Api.Streams;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using Mediator;
@@ -5,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 
-public sealed class GroupsAddMemberHandler(AppDbContext dbContext, IGroupsLocalizations localizations)
+public sealed class GroupsAddMemberHandler(AppDbContext dbContext, SignalHub<GroupChanged> signals, IGroupsLocalizations localizations)
 	: ICommandHandler<GroupsAddMemberCommand, GroupsAddMemberResult>
 {
 	public async ValueTask<GroupsAddMemberResult> Handle(GroupsAddMemberCommand command, CancellationToken cancellationToken)
@@ -32,6 +34,7 @@ public sealed class GroupsAddMemberHandler(AppDbContext dbContext, IGroupsLocali
 
 		group.Members.Add(user);
 		await dbContext.SaveChangesAsync(cancellationToken);
+		signals.Publish(new GroupChanged(command.Id, GroupChange.Updated));
 
 		return Unit.Value;
 	}

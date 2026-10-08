@@ -137,7 +137,8 @@ new files. The summary names root cause, test, fix, commands run and remaining r
 
 - An API change goes spec → `npm run gen` → handler → consumers.
 - Consumers call API operations through the generated clients and never hand-write those calls. The BFF's own endpoints
-  (`/bff/user`, the diagnostics) are not in a spec and have small hand-written clients.
+  (`/bff/user`, the diagnostics) are not in a spec and have small hand-written clients. `GET /groups:watch`, a
+  server-sent event stream, is written by hand until the emitter generates them, see [spec-first](docs/spec-first.md).
 - Nothing under `generated/` or `Migrations/` is edited by hand.
 - Comments, AOT readiness and the names of extension classes apply to all C# code, see [csharp](.claude/rules/csharp.md).
 - A change that makes a statement in AGENTS.md, `docs/` or `.claude/rules/` wrong corrects it in the same commit.
