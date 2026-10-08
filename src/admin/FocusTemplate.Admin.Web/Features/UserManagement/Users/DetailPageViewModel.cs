@@ -64,11 +64,11 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 		return this.load.ExecuteAsync(id);
 	}
 
-	private async Task FetchAsync(UserId id, CancellationToken token)
+	private async Task FetchAsync(UserId id, CancellationToken cancellationToken)
 	{
 		Failure = null;
 
-		switch (await this.api.GetAsync(id, token).ToOutcome<NotFoundProblem>().WithBusy(this.busyState, token))
+		switch (await this.api.GetAsync(id, cancellationToken).ToOutcome<NotFoundProblem>().WithBusy(this.busyState, cancellationToken))
 		{
 			case UserResponse found:
 				User = found;
@@ -87,11 +87,11 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 	}
 
 	// Loaded again after the change, so the page shows what the server stored
-	private async Task SetActiveAsync(bool active, CancellationToken token)
+	private async Task SetActiveAsync(bool active, CancellationToken cancellationToken)
 	{
 		ApiOutcome<Success> outcome = active
-			? await this.api.ActivateAsync(this.id, token).ToOutcome()
-			: await this.api.DeactivateAsync(this.id, token).ToOutcome();
+			? await this.api.ActivateAsync(this.id, cancellationToken).ToOutcome()
+			: await this.api.DeactivateAsync(this.id, cancellationToken).ToOutcome();
 
 		Failure = outcome is ApiFailure failure ? this.messages.Of(failure) : null;
 

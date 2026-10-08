@@ -6,7 +6,7 @@ internal static class TaskExtensions
 	{
 		// Stops on every exit. For a replaced run the stop throws, which replaces whatever the work ended with, so nothing
 		// it fetched gets shown
-		public async Task<T> WithBusy(BusyState busy, CancellationToken token)
+		public async Task<T> WithBusy(BusyState busy, CancellationToken cancellationToken)
 		{
 			busy.Start();
 
@@ -16,7 +16,7 @@ internal static class TaskExtensions
 			}
 			finally
 			{
-				await busy.StopAsync(token);
+				await busy.StopAsync(cancellationToken);
 			}
 		}
 	}

@@ -67,11 +67,11 @@ public sealed class BusyState(TimeSpan showAfter, TimeSpan showAtLeast, TimeProv
 		BusyChanged?.Invoke();
 	}
 
-	private async Task ShowAfterDelayAsync(CancellationToken token)
+	private async Task ShowAfterDelayAsync(CancellationToken cancellationToken)
 	{
 		try
 		{
-			await Task.Delay(showAfter, clock, token);
+			await Task.Delay(showAfter, clock, cancellationToken);
 		}
 		catch (OperationCanceledException)
 		{
@@ -79,7 +79,7 @@ public sealed class BusyState(TimeSpan showAfter, TimeSpan showAtLeast, TimeProv
 		}
 
 		// The delay may have ended just before the newest run stopped it
-		if (token.IsCancellationRequested)
+		if (cancellationToken.IsCancellationRequested)
 		{
 			return;
 		}

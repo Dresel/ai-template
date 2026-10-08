@@ -16,7 +16,7 @@ paths:
   permission checks.
 - A page `@inherits ViewModelPage<TViewModel>`. Its view model is registered `AddScoped` and takes nothing scoped from the
   app, such as `DialogService` or `AuthenticationStateProvider`.
-- A load is an `AsyncCommand<T>` with `ReplaceRunning` through `.WithBusy(busyState, token)`, an action one with
+- A load is an `AsyncCommand<T>` with `ReplaceRunning` through `.WithBusy(busyState, cancellationToken)`, an action one with
   `IgnoreWhileRunning`, its button disabled through `IsRunning`. A private fetch method behind a command has a name of its
   own (`FetchAsync`).
 - A call's result becomes an outcome through `ToOutcome()` or `ToOutcome<TProblem>()`, and no view model catches.

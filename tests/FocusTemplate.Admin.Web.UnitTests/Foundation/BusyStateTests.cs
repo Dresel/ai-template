@@ -155,10 +155,10 @@ public sealed class BusyStateTests : IDisposable
 		work;
 
 	// A fetch that never answers, ending cancelled with its run as a real one does
-	private static Task<int> Pending(CancellationToken token)
+	private static Task<int> Pending(CancellationToken cancellationToken)
 	{
 		TaskCompletionSource<int> answer = Answer();
-		token.Register(() => answer.TrySetCanceled(token));
+		cancellationToken.Register(() => answer.TrySetCanceled(cancellationToken));
 
 		return answer.Task;
 	}

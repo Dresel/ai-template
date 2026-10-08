@@ -68,11 +68,11 @@ public sealed class AsyncCommandTests
 	// Each run waits for its answer, or ends cancelled once its token is
 	private AsyncCommand<int> Command(AsyncCommandMode mode) =>
 		new(
-			(argument, token) =>
+			(argument, cancellationToken) =>
 			{
 				TaskCompletionSource answer = new(TaskCreationOptions.RunContinuationsAsynchronously);
-				token.Register(() => answer.TrySetCanceled(token));
-				this.runs.Add((argument, token));
+				cancellationToken.Register(() => answer.TrySetCanceled(cancellationToken));
+				this.runs.Add((argument, cancellationToken));
 				this.answers[argument] = answer;
 
 				return answer.Task;

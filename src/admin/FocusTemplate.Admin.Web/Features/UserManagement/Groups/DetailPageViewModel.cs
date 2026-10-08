@@ -106,9 +106,9 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 
 	public Task SavePermissionsAsync() => this.savePermissions.ExecuteAsync(this.id);
 
-	private async Task AddMemberAsync(UserId user, CancellationToken token)
+	private async Task AddMemberAsync(UserId user, CancellationToken cancellationToken)
 	{
-		ApiOutcome<Success> outcome = await this.api.AddMemberAsync(this.id, user, token).ToOutcome();
+		ApiOutcome<Success> outcome = await this.api.AddMemberAsync(this.id, user, cancellationToken).ToOutcome();
 
 		Failure = outcome is ApiFailure failure ? this.messages.Of(failure) : null;
 		if (outcome is Success)
@@ -117,19 +117,19 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 		}
 	}
 
-	private async Task DeleteAsync(GroupId group, CancellationToken token)
+	private async Task DeleteAsync(GroupId group, CancellationToken cancellationToken)
 	{
-		ApiOutcome<Success> outcome = await this.api.DeleteAsync(group, token).ToOutcome();
+		ApiOutcome<Success> outcome = await this.api.DeleteAsync(group, cancellationToken).ToOutcome();
 
 		Failure = outcome is ApiFailure failure ? this.messages.Of(failure) : null;
 		Deleted = outcome is Success;
 	}
 
-	private async Task FetchAsync(GroupId group, CancellationToken token)
+	private async Task FetchAsync(GroupId group, CancellationToken cancellationToken)
 	{
 		Failure = null;
 
-		switch (await this.api.GetAsync(group, token).ToOutcome<NotFoundProblem>().WithBusy(this.busyState, token))
+		switch (await this.api.GetAsync(group, cancellationToken).ToOutcome<NotFoundProblem>().WithBusy(this.busyState, cancellationToken))
 		{
 			case GroupResponse found:
 				Group = found;
@@ -149,9 +149,9 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 		}
 	}
 
-	private async Task RemoveMemberAsync(UserId user, CancellationToken token)
+	private async Task RemoveMemberAsync(UserId user, CancellationToken cancellationToken)
 	{
-		ApiOutcome<Success> outcome = await this.api.RemoveMemberAsync(this.id, user, token).ToOutcome();
+		ApiOutcome<Success> outcome = await this.api.RemoveMemberAsync(this.id, user, cancellationToken).ToOutcome();
 
 		Failure = outcome is ApiFailure failure ? this.messages.Of(failure) : null;
 		if (outcome is Success)
@@ -160,9 +160,9 @@ public sealed class DetailPageViewModel : IViewModel, IDisposable
 		}
 	}
 
-	private async Task SavePermissionsAsync(GroupId group, CancellationToken token)
+	private async Task SavePermissionsAsync(GroupId group, CancellationToken cancellationToken)
 	{
-		ApiOutcome<Success> outcome = await this.api.SetPermissionsAsync(group, [.. this.granted,], token).ToOutcome();
+		ApiOutcome<Success> outcome = await this.api.SetPermissionsAsync(group, [.. this.granted,], cancellationToken).ToOutcome();
 
 		Failure = outcome is ApiFailure failure ? this.messages.Of(failure) : null;
 		PermissionsSaved = outcome is Success;

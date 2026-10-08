@@ -83,12 +83,12 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 			_ => null,
 		};
 
-	private async Task LoadAsync(LoadDataArgs args, CancellationToken token)
+	private async Task LoadAsync(LoadDataArgs args, CancellationToken cancellationToken)
 	{
 		this.lastPage = args;
 		Failure = null;
 
-		switch (await this.api.SearchAsync(RequestOf(args), token).ToOutcome().WithBusy(this.busyState, token))
+		switch (await this.api.SearchAsync(RequestOf(args), cancellationToken).ToOutcome().WithBusy(this.busyState, cancellationToken))
 		{
 			case UserPageResponse page:
 				Users = page.Items;

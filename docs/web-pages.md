@@ -27,8 +27,8 @@ dialogs, and `AddRadzenComponents()` registers their services.
   - `Diagnostics/`: the request diagnostics page
   - directly in it, the async helpers a view model composes: `Debouncer` (one per input), `AsyncCommand<T>`
     (`IgnoreWhileRunning` for a button, `ReplaceRunning` for a list's loads, where a replaced run's cancellation ends quietly)
-    and `BusyState` through `task.WithBusy(busyState, token)` (a mask only after a delay and then for a minimum, with a stop that
-    throws for a replaced run, so nothing it fetched is shown). `AddFoundation()` registers `Debouncer` and `BusyState`
+    and `BusyState` through `task.WithBusy(busyState, cancellationToken)` (a mask only after a delay and then for a minimum, with a stop
+    that throws for a replaced run, so nothing it fetched is shown). `AddFoundation()` registers `Debouncer` and `BusyState`
     transient with their timings, so a view model takes them in its constructor and the page's scope disposes them. A
     view model disposes only the commands it creates. They run on the renderer's dispatcher and take no locks.
     `Users/ListPageViewModel` uses all of them.
@@ -60,7 +60,7 @@ As the user management pages (`Features/UserManagement/`) do it.
   new page with a new view model and new child components, and the old one is disposed with its running calls. So a
   page loads once, `OnInitializedAsync` passing its parameters to `LoadAsync(id)`.
 - **Loads and actions**: a load is an `AsyncCommand<T>` with `ReplaceRunning` (another page or a reload replaces the
-  one still loading) through `.WithBusy(busyState, token)`. An action is one with `IgnoreWhileRunning`, its button
+  one still loading) through `.WithBusy(busyState, cancellationToken)`. An action is one with `IgnoreWhileRunning`, its button
   `Disabled` through `IsRunning`. A replaced load's answer never lands, so a view model shows it without checking.
   Loading shows only while the busy state is on, so a quick answer never flashes it.
 - **Loading on screen**: before the first answer it is `<AppLoading Busy="…">`, a thin indeterminate bar in a slot that

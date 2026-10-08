@@ -12,14 +12,14 @@ public sealed class Debouncer(TimeSpan pause, TimeProvider clock) : IDisposable
 		CancelAndDispose(ref this.waiting);
 
 		this.waiting = new CancellationTokenSource();
-		CancellationToken token = this.waiting.Token;
+		CancellationToken cancellationToken = this.waiting.Token;
 
 		try
 		{
-			await Task.Delay(pause, clock, token);
+			await Task.Delay(pause, clock, cancellationToken);
 			return true;
 		}
-		catch (OperationCanceledException) when (token.IsCancellationRequested)
+		catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
 		{
 			return false;
 		}
