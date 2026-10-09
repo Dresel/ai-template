@@ -53,8 +53,11 @@ emitter error.
 - `contracts-namespace: FocusTemplate.<V>.Shared.{feature}`, in all three of the vertical's `tspconfig.yaml`, gives a
   feature's models a namespace of their own (`FocusTemplate.Admin.Shared.UserManagement`).
 - What every slice shares (`NotFound`, `ApiClientSupport`, the `{Status}Problem` cases, the outcomes, the JSON context,
-  the paths) lands in the namespace without the placeholders. OpenAPI names a feature's schemas after it
-  (`UserManagement.GroupResponse`).
+  the paths) lands in the namespace without the placeholders.
+- OpenAPI names a schema of the service namespace bare and every other one after the last segment of its namespace: a
+  feature's by itself (`UserManagement.GroupResponse`), the typed ids through `@friendlyName("Primitives.<Name>")`
+  (`Primitives.GroupId`), the emitter's library types through its own friendly names (`Http.ValidationProblemDetails`,
+  `Http.uuid`). The emitter keeps a friendly name's prefix out of the C# names.
 
 ## Server
 
