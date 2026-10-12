@@ -19,8 +19,8 @@
     <PackageVersion Include="Microsoft.AspNetCore.Components.Authorization" Version="11.0.0-rc.1.26425.128" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="11.0.0-rc.1.26425.128" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="11.0.0-preview.7.26381.103" />
-    <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.5.4" />
-    <PackageVersion Include="Aspire.StackExchange.Redis" Version="13.5.4" />
+    <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.6.1" />
+    <PackageVersion Include="Aspire.StackExchange.Redis" Version="13.6.1" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0-preview.7.26381.103" />
     <!-- Pinned above Aspire's transitive 10.0.8 so the whole EF Core stack unifies on one version -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
@@ -54,13 +54,13 @@
     <PackageVersion Include="AndroidSdk" Version="0.35.1" />
     <!-- Appium .NET client (mobile E2E); requires an Appium 2/3 server with the uiautomator2 driver -->
     <PackageVersion Include="Appium.WebDriver" Version="9.0.0" />
-    <PackageVersion Include="Aspire.Hosting.Blazor" Version="13.5.4-preview.1.26464.4" />
-    <PackageVersion Include="Aspire.Hosting.DevTunnels" Version="13.5.4" />
-    <PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="13.5.4-preview.1.26464.4" />
-    <PackageVersion Include="Aspire.Hosting.Keycloak" Version="13.5.4-preview.1.26464.4" />
-    <PackageVersion Include="Aspire.Hosting.Maui" Version="13.5.4-preview.1.26464.4" />
-    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.5.4" />
-    <PackageVersion Include="Aspire.Hosting.Redis" Version="13.5.4" />
+    <PackageVersion Include="Aspire.Hosting.Blazor" Version="13.6.1-preview.1.26506.6" />
+    <PackageVersion Include="Aspire.Hosting.DevTunnels" Version="13.6.1" />
+    <PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="13.6.1-preview.1.26506.6" />
+    <PackageVersion Include="Aspire.Hosting.Keycloak" Version="13.6.1-preview.1.26506.6" />
+    <PackageVersion Include="Aspire.Hosting.Maui" Version="13.6.1-preview.1.26506.6" />
+    <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.6.1" />
+    <PackageVersion Include="Aspire.Hosting.Redis" Version="13.6.1" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="13.5.4" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.Umami" Version="13.5.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="11.0.0-rc.1.26425.128" />
