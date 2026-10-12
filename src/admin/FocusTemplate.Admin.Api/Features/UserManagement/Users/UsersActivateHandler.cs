@@ -1,4 +1,4 @@
-using FocusTemplate.Admin.Api.Realtime.Backplane;
+using FocusTemplate.Api.Foundation.Realtime.Backplane;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using Mediator;

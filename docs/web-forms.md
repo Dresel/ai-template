@@ -52,7 +52,7 @@ How a form validates, as the demo at `/demo/validation` (`Features/DemoProfiles/
 - A value changed in code, not through an input, calls `appForm.NotifyFieldChangedAsync(field)`.
 - **Messages at a field**: one line, the most severe with its icon, and a pill counting the rest. Hovering the line
   lists them all, clicking the pill opens them grouped by severity, as the summary groups its own. The store only says
-  which messages a field has (`For(field)`). `Foundation/Forms/` decides how they show, and the input takes its state
+  which messages a field has (`For(field)`). `Forms/` of `Admin.Web.Foundation` decides how they show, and the input takes its state
   from the most severe.
 
 ## Submit
@@ -72,7 +72,7 @@ the line below) and renders its messages through `AppValidationMessage`, the too
 `RadzenNumeric` wraps its input in a span, so its attributes go to `InputAttributes`. Both run with `Immediate` (a value
 on every keystroke) and focus with `FocusAsync()`.
 
-Another UI library rewrites `Foundation/Forms/`: its form derives from `FormHostBase<TModel>`, which owns the form's
+Another UI library rewrites `Forms/` of `Admin.Web.Foundation`: its form derives from `FormHostBase<TModel>`, which owns the form's
 messages and validation, the submit and the `IFormHost` its inputs call, and overrides `RefreshAsync` only where the
 library keeps a validation state of its own to trigger again. Its inputs derive from `AppInputBase`. No folder is named
 after the library (`Radzen`, `MudBlazor`): that namespace segment would hide the library's own namespace from the Razor

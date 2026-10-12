@@ -2,6 +2,8 @@
 
 #nullable enable
 
+using FocusTemplate.Http;
+
 namespace FocusTemplate.Admin.Client.UserManagement.Groups;
 
 /// <summary>Outcome of Groups.removeMember: the response, or one of the errors the contract models for it. Match exhaustively; a response the contract does not model throws HttpRequestException.</summary>

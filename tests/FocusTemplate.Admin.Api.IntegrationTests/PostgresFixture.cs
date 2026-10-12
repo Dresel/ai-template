@@ -16,6 +16,7 @@ public sealed class PostgresFixture : IAsyncLifetime
 	private readonly SemaphoreSlim createLock = new(1, 1);
 
 	// GRANT ON ALL TABLES reaches only the tables that exist, so this runs after the migrations, not on CREATE DATABASE.
+	// Every schema of the database: the spine's public and one per feature
 	public static async Task GrantReadAccessAsync(string connectionString)
 	{
 		CancellationToken cancellationToken = TestContext.Current.CancellationToken;
@@ -25,16 +26,23 @@ public sealed class PostgresFixture : IAsyncLifetime
 
 		await using NpgsqlCommand command = connection.CreateCommand();
 		command.CommandText = $"""
-			GRANT USAGE ON SCHEMA public TO {ReaderRole};
-			GRANT SELECT ON ALL TABLES IN SCHEMA public TO {ReaderRole};
+			DO $$
+			DECLARE schema_name text;
+			BEGIN
+				FOR schema_name IN
+					SELECT nspname FROM pg_namespace WHERE nspname NOT LIKE 'pg\_%' AND nspname <> 'information_schema'
+				LOOP
+					EXECUTE format('GRANT USAGE ON SCHEMA %I TO {ReaderRole}', schema_name);
+					EXECUTE format('GRANT SELECT ON ALL TABLES IN SCHEMA %I TO {ReaderRole}', schema_name);
+				END LOOP;
+			END $$;
 			""";
 
 		await command.ExecuteNonQueryAsync(cancellationToken);
 	}
 
 	public static string ReadOnlyConnectionString(string connectionString) =>
-		new NpgsqlConnectionStringBuilder(connectionString) { Username = ReaderRole, Password = ReaderPassword, }
-			.ConnectionString;
+		new NpgsqlConnectionStringBuilder(connectionString) { Username = ReaderRole, Password = ReaderPassword, }.ConnectionString;
 
 	public async Task<string> CreateDatabaseAsync(string name)
 	{
@@ -58,8 +66,7 @@ public sealed class PostgresFixture : IAsyncLifetime
 			this.createLock.Release();
 		}
 
-		return new NpgsqlConnectionStringBuilder(this.container.GetConnectionString()) { Database = name, }
-			.ConnectionString;
+		return new NpgsqlConnectionStringBuilder(this.container.GetConnectionString()) { Database = name, }.ConnectionString;
 	}
 
 	public async ValueTask DisposeAsync()

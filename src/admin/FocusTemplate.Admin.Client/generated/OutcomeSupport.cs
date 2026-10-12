@@ -5,7 +5,7 @@
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Http;
 
 namespace FocusTemplate.Admin.Client;
 

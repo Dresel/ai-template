@@ -18,6 +18,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\admin\FocusTemplate.Admin.Api\FocusTemplate.Admin.Api.csproj" />
 		<ProjectReference Include="..\..\src\public\FocusTemplate.Public.Api\FocusTemplate.Public.Api.csproj" />
+		<ProjectReference Include="..\..\src\features\weather\FocusTemplate.Weather.Client\FocusTemplate.Weather.Client.csproj" />
+		<ProjectReference Include="..\..\src\features\weather\FocusTemplate.Weather.Web\FocusTemplate.Weather.Web.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

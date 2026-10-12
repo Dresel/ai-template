@@ -12,7 +12,6 @@ import "../../spec/paging.tsp";
 import "./demo-profiles/demo-profiles.tsp";
 import "./user-management/groups.tsp";
 import "./user-management/users.tsp";
-import "./weather-forecasts/weather-forecasts.tsp";
 
 using Http;
 using OpenAPI;

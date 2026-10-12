@@ -8,11 +8,16 @@ description: "Add a feature slice to the Admin vertical end to end, or a new ope
 The order of the work and every place it touches. The reasoning lives in the docs each step links, and the rules
 that load with the files apply as usual.
 
+A slice lives inside the Admin vertical's projects. Something meant to move between hosts is a feature package of its
+own under `src/features/<name>/` instead, built like `src/features/weather/`, see
+[architecture](../../../docs/architecture.md).
+
 ## Copy from
 
 | What the slice needs | Reference |
 |---|---|
-| A read-only list | `WeatherForecasts` (spec, `Features/WeatherForecasts/` in Api and Web) |
+| A read-only list | `WeatherForecasts` in the weather feature (`spec/weather-forecasts.tsp`, `WeatherForecasts/` in its Api and Web) |
+| An action only the owner, or a permission, may take | `Stations` in the weather feature: `StationsRenameHandler`, and `MayRename` in `Stations/ListPage.razor` |
 | A list that searches, sorts and pages | `Users`: `UsersSearchHandler`, `Users/ListPage.razor`, `Users/ListPageViewModel` |
 | Create and update through a form in a dialog | `Groups`: `GroupsCreateHandler`, `GroupsUpdateHandler`, `Groups/FormDialog.razor`, `Form`, `FormValidator`, `Mapper` |
 | A detail page with actions | `Groups/DetailPage.razor`, `Groups/DetailPageViewModel` |
@@ -47,7 +52,7 @@ that load with the files apply as usual.
    `ApplyEntityConfigurations` (`ModelBuilderExtensions`), a `DbSet` in `AppDbContextBase`, `IAuditable` when its
    changes are audited.
 2. A new id: `[EfCoreConverter<X>]` in `VogenEfCoreConverters` and `HaveSentinel(X.Unspecified)` in
-   `AppDbContextBase.ConfigureConventions`.
+   `AppDbContextBase.ConfigureIds`.
 3. The migration, with the AppHost stopped:
    `dotnet dotnet-ef migrations add <Name> --project src/FocusTemplate.Data --startup-project src/FocusTemplate.Data --context AppDbContext`.
    With new permissions, check that it inserts their rows and grants them to `Administrators`.
@@ -76,7 +81,7 @@ that load with the files apply as usual.
    view models on `ViewModelPage<T>` with `AsyncCommand` loads and `ToOutcome()`, a `data-testid` on everything a test
    touches.
 3. A form: `Form`, `FormValidator` applying the generated `{Model}Rules`, `Mapper`, `<AppForm>`.
-4. The menu entry in `Foundation/Shell/MainLayout.razor`, shown with `context.User.Has(<Permission>)`, its text in
+4. The menu entry in `Shell/MainLayout.razor`, shown with `context.User.Has(<Permission>)`, its text in
    `MainLayout.resx`.
 5. Every text in the component's resx pair (`@inject I<Component>Localizations L`). A new contract's field names and
    pattern messages in German go into `Admin.Shared/<Model>.de.resx` (keys `<Member>`, `<Member>.pattern`).

@@ -2,6 +2,8 @@ using Aspire.Hosting.DevTunnels;
 using Aspire.Hosting.EntityFrameworkCore;
 using Aspire.Hosting.Maui;
 using FocusTemplate.AppHost;
+using FocusTemplate.Data;
+using FocusTemplate.Weather.Data;
 using Microsoft.Extensions.Configuration;
 using Projects;
 
@@ -44,7 +46,7 @@ KeycloakRealm realm = addLocalKeycloak ? builder.AddLocalKeycloakRealm(persisten
 
 IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api")
 	.WithReference(focusDb)
-	.WithReference(focusDb, connectionName: "focusdb-readonly")
+	.WithReference(focusDb, "focusdb-readonly")
 	.WithReference(redis)
 	.WithKeycloakAudience(realm)
 	.WaitFor(focusDb)
@@ -59,39 +61,25 @@ if (addChaos)
 		.WithEnvironment("Chaos__FaultRate", chaos["FaultRate"]);
 }
 
-// See https://aspire.dev/integrations/databases/efcore/migrations/
-IResourceBuilder<EFMigrationResource> migrations = api.AddEFMigrations(
-		"migrations",
-		"FocusTemplate.Data.AppDbContext",
-		tool =>
-		{
-			// Workaround for https://github.com/dotnet/sdk/issues/54386: the .NET 11 CLI exports its own telemetry to the inherited OTEL_* endpoint and
-			// blocks each `dotnet` command's exit for ~1 min when nothing listens (e.g. E2E runs without the dashboard).
-			tool.WithEnvironment("DOTNET_CLI_TELEMETRY_OPTOUT", "true");
+IResourceBuilder<EFMigrationResource> migrations = api.AddMigrations<AppDbContext>(
+	"migrations",
+	"../FocusTemplate.Data/FocusTemplate.Data.csproj",
+	focusDb);
 
-			// Seed only in run mode: the published migration bundle runs against real databases.
-			if (builder.ExecutionContext.IsRunMode)
-			{
-				tool.WithEnvironment("Database__SeedTestData", bool.TrueString);
-			}
-		})
+// The weather feature's schema, after the spine's, whose users its stations point at
+IResourceBuilder<EFMigrationResource> weatherMigrations = api.AddMigrations<WeatherDbContext>(
+		"weather-migrations",
+		"../features/weather/FocusTemplate.Weather.Data/FocusTemplate.Weather.Data.csproj",
+		focusDb)
+	.WaitForCompletion(migrations);
 
-	// A path because the Data reference keeps ASPIRE004 quiet with IsAspireProjectResource="false", which also means no
-	// Projects type for the typed overload. Switch once ASPIRE004 can be disabled per reference:
-	// https://github.com/microsoft/aspire/issues/16876
-	.WithMigrationsProject("../FocusTemplate.Data/FocusTemplate.Data.csproj")
-	.WithReference(focusDb)
-	.WaitFor(focusDb)
-	.RunDatabaseUpdateOnStart()
-	.PublishAsMigrationBundle(publishContainer: true);
-
-api.WaitForCompletion(migrations);
+api.WaitForCompletion(migrations).WaitForCompletion(weatherMigrations);
 
 IResourceBuilder<ProjectResource> publicApi = builder.AddProject<FocusTemplate_Public_Api>("public-api")
-	.WithReference(focusDb, connectionName: "focusdb-readonly")
+	.WithReference(focusDb, "focusdb-readonly")
 	.WaitFor(focusDb);
 
-publicApi.WaitForCompletion(migrations);
+publicApi.WaitForCompletion(weatherMigrations);
 
 if (addMobile)
 {

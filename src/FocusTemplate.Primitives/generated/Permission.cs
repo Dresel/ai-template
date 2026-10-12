@@ -19,5 +19,6 @@ public readonly partial struct Permission
 		From("UserManagement.ManageUsers"),
 		From("UserManagement.ViewGroups"),
 		From("UserManagement.ManageGroups"),
+		From("Weather.ManageStations"),
 	];
 }

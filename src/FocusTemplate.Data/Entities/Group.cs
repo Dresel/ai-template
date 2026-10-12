@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using FocusTemplate.Data.Auditing;
+using FocusTemplate.Data.Foundation.Auditing;
 using FocusTemplate.Primitives;
 
 namespace FocusTemplate.Data.Entities;

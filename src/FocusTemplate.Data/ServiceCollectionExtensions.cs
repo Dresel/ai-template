@@ -1,5 +1,5 @@
-using FocusTemplate.Data.Auditing;
-using Microsoft.Extensions.Configuration;
+using FocusTemplate.Data.Foundation;
+using FocusTemplate.Data.Foundation.Auditing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -12,7 +12,7 @@ public static class ServiceCollectionExtensions
 		services.TryAddSingleton<AuditingInterceptor>();
 
 		services.AddDbContextPool<AppDbContext>((provider, options) => options.ConfigureAppDbContext(
-			GetRequiredConnectionString(provider, connectionName),
+			provider.GetRequiredConnectionString(connectionName),
 			provider.GetRequiredService<AuditingInterceptor>()));
 
 		return services;
@@ -21,12 +21,8 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddReadOnlyAppDbContextPool(this IServiceCollection services, string connectionName)
 	{
 		services.AddDbContextPool<ReadOnlyAppDbContext>((provider, options) =>
-			options.ConfigureReadOnlyAppDbContext(GetRequiredConnectionString(provider, connectionName)));
+			options.ConfigureReadOnlyAppDbContext(provider.GetRequiredConnectionString(connectionName)));
 
 		return services;
 	}
-
-	private static string GetRequiredConnectionString(IServiceProvider provider, string connectionName) =>
-		provider.GetRequiredService<IConfiguration>().GetConnectionString(connectionName) ??
-		throw new InvalidOperationException($"Connection string '{connectionName}' not found.");
 }

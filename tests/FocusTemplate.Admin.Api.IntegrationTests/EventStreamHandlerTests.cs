@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using FocusTemplate.Admin.Api.Realtime;
+using FocusTemplate.Api.Foundation.Realtime;
 using FocusTemplate.Primitives;
 using Mediator;
 using Microsoft.AspNetCore.Http;

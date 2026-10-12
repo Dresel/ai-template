@@ -2,6 +2,7 @@ using FocusTemplate.Admin.Client;
 using FocusTemplate.Admin.Client.UserManagement.Users;
 using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data.Entities;
+using FocusTemplate.Http;
 using FocusTemplate.Primitives;
 using Xunit.Sdk;
 

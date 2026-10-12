@@ -2,7 +2,7 @@
 
 #nullable enable
 
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Http;
 
 namespace FocusTemplate.Admin.Api.Features;
 

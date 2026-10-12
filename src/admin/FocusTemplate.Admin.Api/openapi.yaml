@@ -7,7 +7,6 @@ tags:
   - name: Groups
   - name: Users
   - name: DemoProfiles
-  - name: WeatherForecasts
 paths:
   /demo-profiles:
     post:
@@ -424,47 +423,6 @@ paths:
                 $ref: '#/components/schemas/Http.ProblemDetails'
       tags:
         - Users
-  /weather-forecasts:
-    get:
-      operationId: WeatherForecasts_list
-      description: Lists all forecasts, ordered by date.
-      parameters: []
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WeatherForecastResponse'
-      tags:
-        - WeatherForecasts
-  /weather-forecasts/{id}:
-    get:
-      operationId: WeatherForecasts_get
-      description: Gets one forecast by id.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            $ref: '#/components/schemas/Primitives.WeatherForecastId'
-      responses:
-        '200':
-          description: The request has succeeded.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WeatherForecastResponse'
-        '404':
-          description: The server cannot find the requested resource.
-          content:
-            application/problem+json:
-              schema:
-                $ref: '#/components/schemas/Http.ProblemDetails'
-      tags:
-        - WeatherForecasts
 security:
   - BearerAuth: []
 components:
@@ -678,10 +636,6 @@ components:
       type: string
       format: uuid
       description: Identifier of a user, the owner of stations and the author of audited changes.
-    Primitives.WeatherForecastId:
-      type: integer
-      format: int32
-      description: Identifier of a weather forecast.
     UserManagement.CurrentUserResponse:
       type: object
       required:
@@ -949,28 +903,6 @@ components:
           format: date-time
           description: Last request the user made, to a quarter of an hour.
       description: A user in a list.
-    WeatherForecastResponse:
-      type: object
-      required:
-        - id
-        - date
-        - temperatureC
-      properties:
-        id:
-          $ref: '#/components/schemas/Primitives.WeatherForecastId'
-          description: Identifier.
-        date:
-          type: string
-          format: date
-          description: Day the forecast applies to.
-        temperatureC:
-          type: integer
-          format: int32
-          description: Temperature in degrees Celsius.
-        summary:
-          type: string
-          description: Free-text summary.
-      description: A weather forecast for one day.
   securitySchemes:
     BearerAuth:
       type: http

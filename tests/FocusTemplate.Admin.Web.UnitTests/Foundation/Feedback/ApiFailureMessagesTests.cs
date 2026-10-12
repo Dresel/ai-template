@@ -1,6 +1,5 @@
-using FocusTemplate.Admin.Client;
-using FocusTemplate.Admin.Shared;
 using FocusTemplate.Admin.Web.Foundation.Feedback;
+using FocusTemplate.Http;
 
 namespace FocusTemplate.Admin.Web.UnitTests.Foundation.Feedback;
 

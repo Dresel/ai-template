@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using FluentValidation;
-using FocusTemplate.Admin.Shared;
 using FocusTemplate.Admin.Web.Foundation.Validation.Core;
+using FocusTemplate.Http;
 using Microsoft.AspNetCore.Components.Forms;
 using static FocusTemplate.Admin.Web.UnitTests.Foundation.Validation.Core.FormTestSupport;
 
@@ -17,9 +17,7 @@ public sealed class FormMessagesTests
 	[Fact]
 	public void AMessageFollowsItsInputOffScreenAndBack()
 	{
-		FieldRegistration street = this.messages.Register(
-			"Address.Street",
-			FieldIdentifier.Create(() => this.form.Address.Street));
+		FieldRegistration street = this.messages.Register("Address.Street", FieldIdentifier.Create(() => this.form.Address.Street));
 		this.messages.SetServerErrors(Problem(("address.street", "maxLength", ViolationSeverity.Error)));
 
 		street.Dispose();
@@ -73,25 +71,19 @@ public sealed class FormMessagesTests
 		FieldIdentifier tag = Input(() => second.Value, "Tags[1]");
 
 		this.messages.SetServerErrors(
-			Problem(
-				("address.street", "maxLength", ViolationSeverity.Error),
-				("tags[1]", "minLength", ViolationSeverity.Error)));
+			Problem(("address.street", "maxLength", ViolationSeverity.Error), ("tags[1]", "minLength", ViolationSeverity.Error)));
 
 		Assert.Equal(["maxLength",], Codes(this.messages.For(street)));
 		Assert.Equal(["minLength",], Codes(this.messages.For(tag)));
 		Assert.Empty(this.messages.Unmapped);
 	}
 
-	private static FieldIdentifier Input<TValue>(
-		FormMessages store,
-		Expression<Func<TValue>> value,
-		string? path = null)
+	private static FieldIdentifier Input<TValue>(FormMessages store, Expression<Func<TValue>> value, string? path = null)
 	{
 		FieldIdentifier field = FieldIdentifier.Create(value);
 		store.Register(path ?? FieldPath.Of(value), field);
 		return field;
 	}
 
-	private FieldIdentifier Input<TValue>(Expression<Func<TValue>> value, string? path = null) =>
-		Input(this.messages, value, path);
+	private FieldIdentifier Input<TValue>(Expression<Func<TValue>> value, string? path = null) => Input(this.messages, value, path);
 }

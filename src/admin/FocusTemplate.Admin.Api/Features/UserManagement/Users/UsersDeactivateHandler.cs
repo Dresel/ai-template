@@ -1,8 +1,8 @@
 using FocusTemplate.Admin.Api.Features.UserManagement.Groups;
-using FocusTemplate.Admin.Api.Realtime.Backplane;
+using FocusTemplate.Api.Foundation.Realtime.Backplane;
 using FocusTemplate.Data;
-using FocusTemplate.Data.Auditing;
 using FocusTemplate.Data.Entities;
+using FocusTemplate.Data.Foundation.Auditing;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 

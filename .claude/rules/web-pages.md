@@ -1,8 +1,9 @@
 ---
 paths:
   - "src/admin/*.Admin.Web/Features/**"
-  - "src/admin/*.Admin.Web/Foundation/{Pages,Feedback,Shell}/**"
-  - "src/admin/*.Admin.Web/Foundation/*.cs"
+  - "src/admin/*.Admin.Web.Foundation/{Pages,Feedback}/**"
+  - "src/admin/*.Admin.Web/Shell/**"
+  - "src/admin/*.Admin.Web.Foundation/*.cs"
   - "tests/*.Admin.Web.UnitTests/Features/**"
 ---
 # Web pages

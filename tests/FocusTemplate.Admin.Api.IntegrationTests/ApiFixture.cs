@@ -1,7 +1,8 @@
 using System.Net.Http.Headers;
 using FocusTemplate.Data;
-using FocusTemplate.Data.Auditing;
+using FocusTemplate.Data.Foundation.Auditing;
 using FocusTemplate.Primitives;
+using FocusTemplate.Weather.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -39,12 +40,19 @@ public sealed class ApiFixture(PostgresFixture postgres, RedisFixture redis) : W
 
 	public HttpClient CreateAuthenticatedClient(UserId? user = null) => Authenticate(CreateClient(), user);
 
-	// Another API process on the same database and Redis channels, as a second replica behind the ingress would be
-	public WebApplicationFactory<Program> CreateReplica() => WithWebHostBuilder(_ => { });
-
 	public AppDbContext CreateDbContext(UserId? user = null) =>
 		new(
 			new DbContextOptionsBuilder<AppDbContext>().ConfigureAppDbContext(
+					this.connectionString,
+					new AuditingInterceptor(Clock, new FixedCurrentUser(user ?? TestUser)))
+				.Options);
+
+	// Another API process on the same database and Redis channels, as a second replica behind the ingress would be
+	public WebApplicationFactory<Program> CreateReplica() => WithWebHostBuilder(_ => { });
+
+	public WeatherDbContext CreateWeatherDbContext(UserId? user = null) =>
+		new(
+			new DbContextOptionsBuilder<WeatherDbContext>().ConfigureWeatherDbContext(
 					this.connectionString,
 					new AuditingInterceptor(Clock, new FixedCurrentUser(user ?? TestUser)))
 				.Options);
@@ -56,7 +64,13 @@ public sealed class ApiFixture(PostgresFixture postgres, RedisFixture redis) : W
 		this.connectionString = await postgres.CreateDatabaseAsync($"test_{Guid.NewGuid():N}");
 		this.readOnlyConnectionString = PostgresFixture.ReadOnlyConnectionString(this.connectionString);
 
+		// In the AppHost's order: the feature's stations point at the spine's users
 		await using (AppDbContext dbContext = CreateDbContext())
+		{
+			await dbContext.Database.MigrateAsync(cancellationToken);
+		}
+
+		await using (WeatherDbContext dbContext = CreateWeatherDbContext())
 		{
 			await dbContext.Database.MigrateAsync(cancellationToken);
 		}
@@ -67,10 +81,7 @@ public sealed class ApiFixture(PostgresFixture postgres, RedisFixture redis) : W
 		await connection.OpenAsync(cancellationToken);
 		this.respawner = await Respawner.CreateAsync(
 			connection,
-			new RespawnerOptions
-			{
-				DbAdapter = DbAdapter.Postgres, TablesToIgnore = ["__EFMigrationsHistory", "permissions",],
-			});
+			new RespawnerOptions { DbAdapter = DbAdapter.Postgres, TablesToIgnore = ["__EFMigrationsHistory", "permissions",], });
 	}
 
 	public async Task ResetAsync()
@@ -95,9 +106,7 @@ public sealed class ApiFixture(PostgresFixture postgres, RedisFixture redis) : W
 			services.AddSingleton<TimeProvider>(Clock);
 
 			services.AddAuthentication(TestAuthenticationHandler.SchemeName)
-				.AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(
-					TestAuthenticationHandler.SchemeName,
-					null);
+				.AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(TestAuthenticationHandler.SchemeName, null);
 		});
 	}
 }

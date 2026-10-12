@@ -4,7 +4,7 @@ paths:
   - "src/admin/*.Admin.Api/Authentication/**"
   - "src/admin/*.Admin.Web/{App.razor,_Imports.razor}"
   - "src/admin/*.Admin.Web/Infrastructure/Authentication/**"
-  - "src/admin/*.Admin.Web/Foundation/Shell/MainLayout.razor"
+  - "src/admin/*.Admin.Web/Shell/MainLayout.razor"
   - "src/admin/*.Admin.Web.ClientServiceDefaults/{CsrfHeaderHandler,RedirectToLoginHandler,ServiceCollectionExtensions}.cs"
   - "src/admin/*.Admin.Shared/{BffClaimTypes,UserClaim,UserInfoResponse}.cs"
   - "src/*.AppHost/{AuthenticationExtensions.cs,keycloak/**}"

@@ -2,12 +2,16 @@
 paths:
   - "src/spec/**"
   - "src/*/spec/**"
+  - "src/features/*/spec/**"
+  - "src/features/*/*.{Api,Client,Shared}/**"
   - "**/tspconfig.yaml"
   - "**/generated/**"
   - "**/openapi.yaml"
   - "src/*.Primitives/**"
+  - "src/*.Http/**"
   - "src/*/*.{Client,Shared}/**"
   - "src/*/*.Api/Features/**"
+  - "src/*.Api.Foundation/Realtime/**"
   - "package.json"
   - "scripts/gen.mjs"
   - ".npm/**"
@@ -15,7 +19,9 @@ paths:
 # Spec-first APIs
 
 - Change an API in `src/<vertical>/spec/`, one kebab-case folder per slice. A slice with several interfaces declares a
-  namespace below the service namespace.
+  namespace below the service namespace. A feature's API is a service of its own in `src/features/<name>/spec/api.tsp`.
+- Every contracts, api and client `tspconfig.yaml` of the Admin vertical and the features sets
+  `library-namespace: FocusTemplate.Http`. Code shared across APIs takes the library types from there.
 - Run `npm run gen` at the repository root after every spec change and every emitter bump. `generated/` and
   `openapi.yaml` go into the same commit as the spec change.
 - Never edit a file under `generated/`. `tsp-output/` is disposable.

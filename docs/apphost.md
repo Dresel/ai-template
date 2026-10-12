@@ -4,8 +4,9 @@ What to follow when changing these files: [the rule](../.claude/rules/apphost.md
 
 ## What the AppHost wires
 
-Postgres with the database and its `migrations` resource (see [database](database.md)), Redis for the Admin API's
-server-sent event signals (see [spec-first](spec-first.md)), both APIs, the BFF, Keycloak (its own container or an
+Postgres with the database, its `migrations` resource for the spine and `weather-migrations` for the weather feature,
+which waits for the spine's, both added with `AddMigrations<TContext>` (see [database](database.md)), Redis for the
+Admin API's server-sent event signals (see [spec-first](spec-first.md)), both APIs, the BFF, Keycloak (its own container or an
 existing realm, see [authentication](authentication.md)), and behind flags an nginx TLS ingress, Umami analytics, and
 the MAUI device resources with a Dev Tunnel. `FocusTemplate.ServiceDefaults` gives every server OTel, service
 discovery, health checks and the standard resilience handler.

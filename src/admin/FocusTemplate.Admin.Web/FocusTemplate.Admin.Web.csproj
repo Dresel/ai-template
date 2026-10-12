@@ -36,6 +36,8 @@
 		<ProjectReference Include="..\FocusTemplate.Admin.Client\FocusTemplate.Admin.Client.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Shared\FocusTemplate.Admin.Shared.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Web.ClientServiceDefaults\FocusTemplate.Admin.Web.ClientServiceDefaults.csproj" />
+		<ProjectReference Include="..\FocusTemplate.Admin.Web.Foundation\FocusTemplate.Admin.Web.Foundation.csproj" />
+		<ProjectReference Include="..\..\features\weather\FocusTemplate.Weather.Web\FocusTemplate.Weather.Web.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -2,10 +2,10 @@ using System.Net;
 using System.Net.ServerSentEvents;
 using System.Runtime.CompilerServices;
 using FocusTemplate.Admin.Api.Features;
-using FocusTemplate.Admin.Client;
 using FocusTemplate.Admin.Client.UserManagement.Groups;
 using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data.Entities;
+using FocusTemplate.Http;
 using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit.Sdk;
@@ -101,8 +101,10 @@ public sealed class GroupsWatchTests(ApiFixture factory) : ApiTestBase(factory)
 		await using ServerEventReader<GroupChanged> changes =
 			await new GroupsClient(Factory.CreateAuthenticatedClient(subscriber.Id)).WatchAsync(patience.Token);
 		await using IAsyncEnumerator<GroupChanged> next = changes.GetAsyncEnumerator(patience.Token);
-		GroupsRemoveMemberResult result = await new GroupsClient(Factory.CreateAuthenticatedClient(admin.Id))
-			.RemoveMemberAsync(grant.Id, subscriber.Id, TestContext.Current.CancellationToken);
+		GroupsRemoveMemberResult result = await new GroupsClient(Factory.CreateAuthenticatedClient(admin.Id)).RemoveMemberAsync(
+			grant.Id,
+			subscriber.Id,
+			TestContext.Current.CancellationToken);
 
 		// The removal's own signal travels on a Redis channel of its own and may arrive before the close request
 		int signals = 0;
@@ -142,6 +144,9 @@ public sealed class GroupsWatchTests(ApiFixture factory) : ApiTestBase(factory)
 		Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
 	}
 
+	private static GroupsClient GroupsOn(WebApplicationFactory<Program> host, User user) =>
+		new(ApiFixture.Authenticate(host.CreateClient(), user.Id));
+
 	// Ends a while after its token is cancelled, as a subscription's channel read can when the request goes
 	private static async IAsyncEnumerable<GroupChanged> SlowToEndAsync([EnumeratorCancellation] CancellationToken cancellationToken)
 	{
@@ -157,9 +162,6 @@ public sealed class GroupsWatchTests(ApiFixture factory) : ApiTestBase(factory)
 
 		yield break;
 	}
-
-	private static GroupsClient GroupsOn(WebApplicationFactory<Program> host, User user) =>
-		new(ApiFixture.Authenticate(host.CreateClient(), user.Id));
 
 	private async Task<User> AdminAsync()
 	{

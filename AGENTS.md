@@ -15,8 +15,14 @@ Shared spine:
 - **FocusTemplate.ServiceDefaults** - server-side Aspire defaults (OTel, service discovery, health), see
   [apphost](docs/apphost.md).
 - **FocusTemplate.Primitives** - the typed ids and permissions every vertical shares, see [spec-first](docs/spec-first.md).
-- **FocusTemplate.Data** - the entities, their EF Core mapping, the migrations and the dev seed, see
-  [database](docs/database.md).
+- **FocusTemplate.Http** - the generated problem, permission, outcome and stream types the Admin projects share, see
+  [spec-first](docs/spec-first.md).
+- **FocusTemplate.Data.Foundation** - what every context builds on: provider conventions, auditing, the current user,
+  see [database](docs/database.md).
+- **FocusTemplate.Api.Foundation** - what every API builds on: event streams with the Redis backplane, the access
+  token's claims, see [spec-first](docs/spec-first.md).
+- **FocusTemplate.Data** - the spine's entities (identity and permissions), their EF Core mapping, the migrations and
+  the dev seed, see [database](docs/database.md).
 - **`@spatialfocus/typespec-http-csharp-slim`** - the TypeSpec emitter, consumed as the tgz under `.npm/`, see
   [spec-first](docs/spec-first.md).
 
@@ -25,6 +31,8 @@ Admin vertical (`src/admin/`):
 - **FocusTemplate.Admin.Api** - the internal minimal API, see [architecture](docs/architecture.md).
 - **FocusTemplate.Admin.Client** - the generated typed HTTP clients of the vertical.
 - **FocusTemplate.Admin.Web** - the Blazor WASM client on Radzen, see [web pages](docs/web-pages.md).
+- **FocusTemplate.Admin.Web.Foundation** - the Razor class library its pages and a feature's build on: view model pages,
+  forms, feedback, client permissions, see [web pages](docs/web-pages.md).
 - **FocusTemplate.Admin.Web.Bff** - the YARP BFF that serves the client and holds the session, see
   [authentication](docs/authentication.md).
 - **FocusTemplate.Admin.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
@@ -37,6 +45,12 @@ Public vertical (`src/public/`):
 - **FocusTemplate.Public.Mobile**, **FocusTemplate.Public.Mobile.ServiceDefaults** - the native MAUI app, see
   [mobile](docs/mobile.md).
 - **FocusTemplate.Public.Shared** - the mobile wire contract.
+
+Features (`src/features/<name>/`), packages a host adds with a few lines of composition, see
+[architecture](docs/architecture.md):
+
+- **FocusTemplate.Weather.*** - forecasts and stations: `spec/`, `Shared`, `Client`, `Data` (schema `weather`), `Api`,
+  `Web`.
 
 ## Tech stack
 
@@ -139,6 +153,8 @@ new files. The summary names root cause, test, fix, commands run and remaining r
 - Consumers call API operations through the generated clients and never hand-write those calls. The BFF's own endpoints
   (`/bff/user`, the diagnostics) are not in a spec and have small hand-written clients.
 - Nothing under `generated/` or `Migrations/` is edited by hand.
+- A feature under `src/features/` references the spine (`Primitives`, `Http`, `Data.Foundation`, `Api.Foundation`,
+  `Admin.Web.Foundation`, `Admin.Web.ClientServiceDefaults`), never the host's projects. `FeatureTests` checks it.
 - Comments, AOT readiness and the names of extension classes apply to all C# code, see [csharp](.claude/rules/csharp.md).
 - A change that makes a statement in AGENTS.md, `docs/` or `.claude/rules/` wrong corrects it in the same commit.
 

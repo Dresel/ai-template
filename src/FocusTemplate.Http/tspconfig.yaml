@@ -1,0 +1,8 @@
+emit:
+  - "@spatialfocus/typespec-http-csharp-slim"
+options:
+  "@spatialfocus/typespec-http-csharp-slim":
+    emitter-output-dir: "{output-dir}"
+    output-type: library
+    library-namespace: FocusTemplate.Http
+    generated-dir: "generated"

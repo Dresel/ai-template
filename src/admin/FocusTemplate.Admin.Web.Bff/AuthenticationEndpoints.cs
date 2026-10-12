@@ -4,6 +4,7 @@ using FocusTemplate.Admin.Client.UserManagement.Users;
 using FocusTemplate.Admin.Shared;
 using FocusTemplate.Admin.Shared.Localization;
 using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -70,7 +71,7 @@ internal static class AuthenticationEndpoints
 						[
 							.. context.User.Claims.Select(claim => new UserClaim(claim.Type, claim.Value)),
 							new UserClaim(BffClaimTypes.LogoutUrl, LogoutUrl(context.User)),
-							.. me.Permissions.Select(permission => new UserClaim(BffClaimTypes.Permission, permission.Value)),
+							.. me.Permissions.Select(permission => new UserClaim(Permission.ClaimType, permission.Value)),
 						]));
 				}
 				catch (HttpRequestException)

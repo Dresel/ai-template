@@ -8,7 +8,6 @@
 	<ItemGroup>
 		<PackageReference Include="Aigamo.ResXGenerator" PrivateAssets="all" />
 		<PackageReference Include="FluentValidation" />
-		<PackageReference Include="Microsoft.AspNetCore.Authorization" />
 		<PackageReference Include="Microsoft.Extensions.Localization" />
 	</ItemGroup>
 
@@ -32,6 +31,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="../../FocusTemplate.Http/FocusTemplate.Http.csproj" />
 		<ProjectReference Include="../../FocusTemplate.Primitives/FocusTemplate.Primitives.csproj" />
 	</ItemGroup>
 

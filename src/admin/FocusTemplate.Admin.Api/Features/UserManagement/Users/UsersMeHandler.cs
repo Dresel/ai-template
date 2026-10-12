@@ -1,7 +1,7 @@
 using FocusTemplate.Admin.Api.Authorization;
 using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
-using FocusTemplate.Data.Auditing;
+using FocusTemplate.Data.Foundation.Auditing;
 using FocusTemplate.Primitives;
 using Mediator;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Http;
 using Microsoft.AspNetCore.Authorization;
 
 namespace FocusTemplate.Admin.Api.Authorization;

@@ -17,14 +17,23 @@ dialogs, and `AddRadzenComponents()` registers their services.
   area (`Features/UserManagement/Users/`, `Groups/`) with its registration and an `_Imports.razor` one level up, which
   imports the slice's contracts (`FocusTemplate.Admin.Shared.UserManagement`). The validation demo is
   `Features/DemoProfiles/` at `/demo/validation`.
-- **`Foundation/`**, domain-neutral:
+- **A feature's pages** sit in a Razor class library of their own (`FocusTemplate.Weather.Web`: the forecasts at
+  `/weather`, the stations with their owners and a rename dialog at `/weather/stations`) with their resx, built on the
+  foundation below. `AddWeatherPages(environment, "admin-api")` registers its clients through the BFF route of the API
+  that maps the feature, its view models, validators and texts. The host routes to them by listing the assembly in the
+  `Router`'s `AdditionalAssemblies` (`App.razor`) and keeps the menu entries in `MainLayout`.
+- **`FocusTemplate.Admin.Web.Foundation`**, a Razor class library of what is domain-neutral, so the pages of a feature
+  in a project of its own build on it as the host's do. It references `FocusTemplate.Http` and `Primitives`, never the
+  host's projects, and its `_Imports.razor` carries the usings a page needs:
   - `Validation/Core/` (`FormMessages` with its field registrations, `FormValidation`, `ValidatorBase`) and
     `Validation/App/` (`FormHostBase`, `AppInputBase`, `IFormHost`), see [web forms](web-forms.md)
   - `Forms/`: the Radzen wrappers (`AppForm`, the inputs, `AppValidationMessage`)
   - `Pages/`: `ViewModelPage<TViewModel>`, `IViewModel`
   - `Feedback/`: `AppFailure`, `AppItemView`, `AppLoading`, `DialogService.ConfirmAsync`, `ApiFailureMessages`
-  - `Shell/`: `MainLayout`, `Home`, `NotFound`, `Forbidden`
-  - `Diagnostics/`: the request diagnostics page
+  - `Authorization/`: `PermissionView`, `CurrentUser`, `user.Has(…)` and the handler that answers a
+    `PermissionRequirement` from the claims of type `Permission.ClaimType`; `AddFoundation()` registers handler and
+    `CurrentUser`, the host the `AuthenticationStateProvider` they read
+  - its texts, registered by `AddFoundationLocalization()`, which the host's `AddWebLocalization()` calls
   - directly in it, the async helpers a view model composes: `Debouncer` (one per input), `AsyncCommand<T>`
     (`IgnoreWhileRunning` for a button, `ReplaceRunning` for a list's loads, where a replaced run's cancellation ends quietly)
     and `BusyState` through `task.WithBusy(busyState, cancellationToken)` (a mask only after a delay and then for a minimum, with a stop
@@ -32,8 +41,10 @@ dialogs, and `AddRadzenComponents()` registers their services.
     transient with their timings, so a view model takes them in its constructor and the page's scope disposes them. A
     view model disposes only the commands it creates. They run on the renderer's dispatcher and take no locks.
     `Users/ListPageViewModel` uses all of them.
-- **`Infrastructure/`**: `Authentication/`, `Authorization/`, `Configuration/`, `Localization/` (the culture's storage,
-  its setting at startup and the header's `LanguageSwitch`, see [localization](localization.md)).
+- **`Shell/`**: `MainLayout`, `Home`, `NotFound`, `Forbidden`. **`Diagnostics/`**: the request diagnostics page.
+- **`Infrastructure/`**: `Authentication/` (the BFF's session as the client's authentication state), `Configuration/`,
+  `Localization/` (the culture's storage, its setting at startup and the header's `LanguageSwitch`, see
+  [localization](localization.md)).
 - **Texts** a page shows come from its resx pair through `@inject I{Page}Localizations L`, as do a confirmation's
   message and title. Radzen's own texts, such as a confirmation's cancel button, come in its own German.
 - `Riok.Mapperly` maps between a form's view model and the contract.

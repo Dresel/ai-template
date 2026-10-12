@@ -1,4 +1,5 @@
-using FocusTemplate.Data.Auditing;
+using FocusTemplate.Data.Foundation;
+using FocusTemplate.Data.Foundation.Auditing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -9,16 +10,11 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
 {
 	public AppDbContext CreateDbContext(string[] args)
 	{
-		string connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__focusdb") ??
-			"Host=localhost;Database=focusdb";
+		DbContextOptionsBuilder<AppDbContext> optionsBuilder = new DbContextOptionsBuilder<AppDbContext>().ConfigureAppDbContext(
+			DesignTime.ConnectionString,
+			new AuditingInterceptor(TimeProvider.System, new FixedCurrentUser(WellKnownUsers.System)));
 
-		DbContextOptionsBuilder<AppDbContext> optionsBuilder = new DbContextOptionsBuilder<AppDbContext>()
-			.ConfigureAppDbContext(
-				connectionString,
-				new AuditingInterceptor(TimeProvider.System, new FixedCurrentUser(WellKnownUsers.System)));
-
-		if (bool.TryParse(Environment.GetEnvironmentVariable("Database__SeedTestData"), out bool seedTestData) &&
-			seedTestData)
+		if (DesignTime.SeedTestData)
 		{
 			optionsBuilder.UseDevelopmentSeeding();
 		}

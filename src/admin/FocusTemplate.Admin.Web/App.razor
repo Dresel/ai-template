@@ -1,7 +1,8 @@
+@using System.Reflection
 @using FocusTemplate.Admin.Web.Infrastructure.Authentication
 @inject IAppLocalizations L
 
-<Router AppAssembly="@typeof(App).Assembly" NotFoundPage="typeof(NotFound)">
+<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="FeatureAssemblies" NotFoundPage="typeof(NotFound)">
 	<Found Context="routeData">
 		<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
 			<NotAuthorized>
@@ -26,3 +27,9 @@
 	<RadzenTheme Theme="software" />
 </HeadContent>
 <RadzenComponents />
+
+@code
+{
+	// The pages of the features this host includes
+	private static readonly Assembly[] FeatureAssemblies = [typeof(Weather.Web.ServiceCollectionExtensions).Assembly,];
+}

@@ -11,6 +11,8 @@ paths:
   behaves (persistent containers, chaos), defaults to off.
 - The E2E fixtures pin every flag as an argument, and a new flag gets pinned there too.
 - Authentication has no flag.
+- A migrations resource is added with `AddMigrations<TContext>` (`MigrationExtensions`), and an API waits for the
+  completion of each one whose tables it reads.
 - A persistent container sets `IsProxied = true` on the endpoints the projects use, with a fixed port, so `localhost`
   also answers on `::1` (see **Persistent containers** in the doc).
 - The preview integrations (`Aspire.Hosting.Blazor`, `Aspire.Hosting.Keycloak`, `Aspire.Hosting.Maui`,

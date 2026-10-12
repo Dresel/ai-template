@@ -886,17 +886,35 @@
         "type": "Project",
         "dependencies": {
           "Bogus": "[35.6.5, )",
+          "FocusTemplate.Data.Foundation": "[1.0.0, )",
+          "FocusTemplate.Primitives": "[1.0.0, )",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
+          "Vogen": "[8.0.7, )"
+        }
+      },
+      "focustemplate.data.foundation": {
+        "type": "Project",
+        "dependencies": {
           "EFCore.CheckConstraints": "[10.0.0, )",
           "EFCore.NamingConventions": "[10.0.1, )",
           "FocusTemplate.Primitives": "[1.0.0, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
-          "Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite": "[10.0.3, )",
           "Vogen": "[8.0.7, )"
         }
       },
       "focustemplate.primitives": {
         "type": "Project",
         "dependencies": {
+          "Vogen": "[8.0.7, )"
+        }
+      },
+      "focustemplate.weather.data": {
+        "type": "Project",
+        "dependencies": {
+          "FocusTemplate.Data.Foundation": "[1.0.0, )",
+          "FocusTemplate.Primitives": "[1.0.0, )",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
+          "Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite": "[10.0.3, )",
           "Vogen": "[8.0.7, )"
         }
       },

@@ -1,11 +1,11 @@
-using FocusTemplate.Data;
 using FocusTemplate.Public.Shared;
+using FocusTemplate.Weather.Data;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Public.Api.Features.WeatherForecasts;
 
-public sealed class WeatherForecastsListHandler(ReadOnlyAppDbContext dbContext)
+public sealed class WeatherForecastsListHandler(ReadOnlyWeatherDbContext dbContext)
 	: IQueryHandler<WeatherForecastsListQuery, IReadOnlyList<WeatherForecastResponse>>
 {
 	public async ValueTask<IReadOnlyList<WeatherForecastResponse>> Handle(

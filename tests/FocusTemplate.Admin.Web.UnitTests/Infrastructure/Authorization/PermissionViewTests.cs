@@ -1,4 +1,4 @@
-using FocusTemplate.Admin.Web.Infrastructure.Authorization;
+using FocusTemplate.Admin.Web.Foundation.Authorization;
 using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -32,8 +32,7 @@ public sealed class PermissionViewTests
 			{
 				[nameof(PermissionView.Permission)] = required,
 				[nameof(PermissionView.Authorized)] =
-					(RenderFragment<AuthenticationState>)(_ =>
-						builder => builder.AddContent(0, "the guarded part")),
+					(RenderFragment<AuthenticationState>)(_ => builder => builder.AddContent(0, "the guarded part")),
 				[nameof(PermissionView.NotAuthorized)] =
 					(RenderFragment<AuthenticationState>)(_ => builder => builder.AddContent(0, "not authorized")),
 			},

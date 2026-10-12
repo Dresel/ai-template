@@ -3,7 +3,7 @@ paths:
   - "src/admin/*.Admin.Api/Authorization/**"
   - "src/spec/permissions/**"
   - "src/*.Data/Entities/{Group,GroupMember,GroupPermission,PermissionDefinition,User,UserActivity}*.cs"
-  - "src/admin/*.Admin.Web/Infrastructure/Authorization/**"
+  - "src/admin/*.Admin.Web.Foundation/Authorization/**"
 ---
 # Authorization
 

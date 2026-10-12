@@ -14,10 +14,12 @@ One container, one database per test class, fresh state per test.
 - `PostgresFixture` (assembly fixture) starts the one container, creates the `focusdb_reader` login once (it is
   cluster-level) and hands out databases (`CreateDatabaseAsync`). Only `CREATE DATABASE` is serialized, since
   concurrent creations contend on the template database.
-- `ApiFixture` (class fixture, one per test class) creates its own GUID-named database, migrates it, grants
-  `focusdb_reader` `SELECT` on it (`PostgresFixture.GrantReadAccessAsync`) and points the API at it under both keys:
-  `focusdb` as the owner, `focusdb-readonly` as `focusdb_reader`, so the API's queries run on the real role.
-  `Factory.CreateDbContext()` stays on the owner. Migrations therefore run once per class, in parallel.
+- `ApiFixture` (class fixture, one per test class) creates its own GUID-named database, migrates it, the spine's
+  context first and the weather feature's after it, as the AppHost orders them, grants `focusdb_reader` `SELECT` on
+  every schema (`PostgresFixture.GrantReadAccessAsync`) and points the API at it under both keys: `focusdb` as the
+  owner, `focusdb-readonly` as `focusdb_reader`, so the API's queries run on the real role.
+  `Factory.CreateDbContext()` and `Factory.CreateWeatherDbContext()` stay on the owner. Migrations therefore run once
+  per class, in parallel.
 - `RedisFixture` (assembly fixture) starts one Redis, and each `ApiFixture` connects with a GUID as its `channelPrefix`,
   so a class's streams receive only the signals its own API publishes.
 - `ApiTestBase` resets the class database before every test (`ApiFixture.ResetAsync()`,
@@ -31,7 +33,8 @@ One container, one database per test class, fresh state per test.
 `ApiFixture.TestUser` is one fixed id, the default of `Factory.CreateAuthenticatedClient()`. The provisioning
 middleware remembers each user it has seen for the life of the class, while the reset removes their rows. So a test
 whose assertions need the acting user's row (`users`, `user_activities`, a group membership) creates its own `UserId`.
-`TestUser` suits tests that do not.
+`TestUser` suits tests that do not. A station's owner is a foreign key to `users`, so `AddTestStationAsync` inserts its
+owner's row before the station.
 
 ## Later
 

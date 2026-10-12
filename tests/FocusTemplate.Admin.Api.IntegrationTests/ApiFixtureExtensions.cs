@@ -1,27 +1,48 @@
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Primitives;
+using FocusTemplate.Weather.Data;
+using FocusTemplate.Weather.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 
 public static class ApiFixtureExtensions
 {
-	public static async Task<Station> AddTestStationAsync(this ApiFixture factory)
+	// The owner's row first, since the station's foreign key points at the spine's users
+	public static async Task<Station> AddTestStationAsync(this ApiFixture factory, UserId? owner = null, string code = "TST")
 	{
+		UserId ownerId = owner ?? ApiFixture.TestUser;
+		await factory.AddOwnerAsync(ownerId);
+
 		Station station = new()
 		{
 			Id = StationId.New(),
-			OwnerId = ApiFixture.TestUser,
-			Code = "TST",
+			OwnerId = ownerId,
+			Code = code,
 			Name = "Test station",
 			Location = new Point(16.4, 48.2) { SRID = 4326, },
 		};
 
-		await using AppDbContext dbContext = factory.CreateDbContext();
+		await using WeatherDbContext dbContext = factory.CreateWeatherDbContext();
 		dbContext.Stations.Add(station);
 		await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
 		return station;
+	}
+
+	private static async Task AddOwnerAsync(this ApiFixture factory, UserId owner)
+	{
+		CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+
+		await using AppDbContext dbContext = factory.CreateDbContext();
+		if (await dbContext.Users.AnyAsync(user => user.Id == owner, cancellationToken))
+		{
+			return;
+		}
+
+		dbContext.Users.Add(new User { Id = owner, DisplayName = "Station owner", FirstSeenAt = factory.Clock.GetUtcNow(), });
+		await dbContext.SaveChangesAsync(cancellationToken);
 	}
 }

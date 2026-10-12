@@ -1,6 +1,6 @@
 using System.Security.Claims;
-using FocusTemplate.Admin.Shared;
-using FocusTemplate.Admin.Web.Infrastructure.Authorization;
+using FocusTemplate.Admin.Web.Foundation.Authorization;
+using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -13,15 +13,11 @@ namespace FocusTemplate.Admin.Web.UnitTests.Infrastructure.Authorization;
 // With the authorization the client registers, for a signed-in user holding the permissions of these names
 internal static class AuthorizationRenderer
 {
-	public static async Task<string> RenderAsync<TComponent>(
-		IDictionary<string, object?> parameters,
-		params string[] permissions)
+	public static async Task<string> RenderAsync<TComponent>(IDictionary<string, object?> parameters, params string[] permissions)
 		where TComponent : IComponent
 	{
 		ClaimsPrincipal user = new(
-			new ClaimsIdentity(
-				[.. permissions.Select(permission => new Claim(BffClaimTypes.Permission, permission)),],
-				"test"));
+			new ClaimsIdentity([.. permissions.Select(permission => new Claim(Permission.ClaimType, permission)),], "test"));
 
 		ServiceCollection services = new();
 		services.AddLogging();
@@ -39,7 +35,6 @@ internal static class AuthorizationRenderer
 
 	private sealed class FixedAuthenticationStateProvider(ClaimsPrincipal user) : AuthenticationStateProvider
 	{
-		public override Task<AuthenticationState> GetAuthenticationStateAsync() =>
-			Task.FromResult(new AuthenticationState(user));
+		public override Task<AuthenticationState> GetAuthenticationStateAsync() => Task.FromResult(new AuthenticationState(user));
 	}
 }

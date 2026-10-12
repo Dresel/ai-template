@@ -4,7 +4,7 @@
 
 using System.Text.Json;
 using System.Threading.Tasks;
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;

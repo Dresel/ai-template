@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Http;
 using FocusTemplate.Primitives;
 
 namespace FocusTemplate.Admin.Shared;
@@ -22,7 +23,6 @@ namespace FocusTemplate.Admin.Shared;
 [JsonSerializable(typeof(Guid))]
 [JsonSerializable(typeof(IReadOnlyList<GroupSummaryResponse>))]
 [JsonSerializable(typeof(IReadOnlyList<Permission>))]
-[JsonSerializable(typeof(IReadOnlyList<WeatherForecastResponse>))]
 [JsonSerializable(typeof(Permission))]
 [JsonSerializable(typeof(ProblemDetails))]
 [JsonSerializable(typeof(UserId))]
@@ -30,8 +30,5 @@ namespace FocusTemplate.Admin.Shared;
 [JsonSerializable(typeof(UserResponse))]
 [JsonSerializable(typeof(UserSearchRequest))]
 [JsonSerializable(typeof(ValidationProblemDetails))]
-[JsonSerializable(typeof(WeatherForecastId))]
-[JsonSerializable(typeof(WeatherForecastResponse))]
-[JsonSerializable(typeof(int))]
 [JsonSerializable(typeof(string))]
 public sealed partial class AdminJsonContext : JsonSerializerContext;

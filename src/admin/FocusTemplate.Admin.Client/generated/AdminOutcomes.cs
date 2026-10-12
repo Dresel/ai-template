@@ -4,8 +4,8 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FocusTemplate.Admin.Shared;
 using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Http;
 
 namespace FocusTemplate.Admin.Client;
 
@@ -24,13 +24,6 @@ public static class AdminOutcomes
 		/// <summary>The answer, or an ApiFailure: a status the contract does not model, or no answer.</summary>
 		public Task<ApiOutcome<IReadOnlyList<GroupSummaryResponse>>> ToOutcome() =>
 			OutcomeSupport.CatchAsync(call, ApiOutcome<IReadOnlyList<GroupSummaryResponse>> (answer) => answer);
-	}
-
-	extension(Task<IReadOnlyList<WeatherForecastResponse>> call)
-	{
-		/// <summary>The answer, or an ApiFailure: a status the contract does not model, or no answer.</summary>
-		public Task<ApiOutcome<IReadOnlyList<WeatherForecastResponse>>> ToOutcome() =>
-			OutcomeSupport.CatchAsync(call, ApiOutcome<IReadOnlyList<WeatherForecastResponse>> (answer) => answer);
 	}
 
 	extension(Task<ServerEventReader<GroupChanged>> call)

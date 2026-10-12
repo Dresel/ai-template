@@ -1,15 +1,12 @@
-using FocusTemplate.Data.Auditing;
-using FocusTemplate.Data.Entities;
+using FocusTemplate.Data.Foundation;
+using FocusTemplate.Data.Foundation.Auditing;
 using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Data;
 
 public static class DbContextOptionsBuilderExtensions
 {
-	public static TBuilder ConfigureAppDbContext<TBuilder>(
-		this TBuilder options,
-		string connectionString,
-		AuditingInterceptor auditing)
+	public static TBuilder ConfigureAppDbContext<TBuilder>(this TBuilder options, string connectionString, AuditingInterceptor auditing)
 		where TBuilder : DbContextOptionsBuilder
 	{
 		options.UseAppDbContextProvider(connectionString);
@@ -29,15 +26,6 @@ public static class DbContextOptionsBuilderExtensions
 		return options;
 	}
 
-	private static void UseAppDbContextProvider(this DbContextOptionsBuilder options, string connectionString)
-	{
-		options.UseNpgsql(
-			connectionString,
-			npgsql => npgsql.UseNetTopologySuite()
-				.MapEnum<StationStatus>("station_status")
-				.MapEnum<AlertKind>("alert_kind"));
-
-		options.UseSnakeCaseNamingConvention();
-		options.UseValidationCheckConstraints();
-	}
+	private static void UseAppDbContextProvider(this DbContextOptionsBuilder options, string connectionString) =>
+		options.UseNpgsqlWithConventions(connectionString);
 }

@@ -1,7 +1,8 @@
 import "@spatialfocus/typespec-http-csharp-slim";
 
-// The permissions of the verticals, one file per feature slice
+// The permissions of the verticals, one file per feature slice, and of the features the host includes
 import "./permissions/user-management.tsp";
+import "../features/weather/spec/permissions.tsp";
 
 using SpatialFocus.Http;
 

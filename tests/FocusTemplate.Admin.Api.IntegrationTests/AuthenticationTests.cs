@@ -1,6 +1,6 @@
 using System.Net;
 using System.Security.Claims;
-using FocusTemplate.Data.Auditing;
+using FocusTemplate.Data.Foundation.Auditing;
 using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -45,9 +45,7 @@ public sealed class AuthenticationTests(ApiFixture factory) : ApiTestBase(factor
 	{
 		using HttpClient client = Factory.CreateClient();
 
-		using HttpResponseMessage response = await client.GetAsync(
-			"/weather-forecasts",
-			TestContext.Current.CancellationToken);
+		using HttpResponseMessage response = await client.GetAsync("/weather-forecasts", TestContext.Current.CancellationToken);
 
 		Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
 	}

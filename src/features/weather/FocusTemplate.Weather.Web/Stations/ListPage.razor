@@ -1,0 +1,65 @@
+@attribute [Route("/" + Path)]
+@inherits ViewModelPage<ListPageViewModel>
+@inject IListPageLocalizations L
+
+<PageTitle>@L.Title</PageTitle>
+
+<RadzenStack Gap="1rem">
+	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">@L.Title</RadzenText>
+
+	<AppFailure Message="@ViewModel.Failure" data-testid="stations-failure" />
+
+	<RadzenCard>
+		<AppLoading Busy="ViewModel is { Stations: null, Loading: true }" data-testid="stations-loading" />
+		<RadzenDataGrid TItem="StationResponse"
+			Data="ViewModel.Stations"
+			AllowSorting="true"
+			RowRender="RenderRow"
+			EmptyText="@(ViewModel.Stations is null ? string.Empty : L.NoStations)"
+			data-testid="stations-table">
+			<Columns>
+				<RadzenDataGridColumn TItem="StationResponse" Property="@nameof(StationResponse.Code)" Title="@L.Code" Width="8rem" />
+				<RadzenDataGridColumn TItem="StationResponse" Property="@nameof(StationResponse.Name)" Title="@L.Name" />
+				<RadzenDataGridColumn TItem="StationResponse" Property="@nameof(StationResponse.OwnerName)" Title="@L.Owner" />
+				<RadzenDataGridColumn TItem="StationResponse" Sortable="false" Width="10rem" TextAlign="TextAlign.Right">
+					<Template Context="station">
+						@if (MayRename(station))
+						{
+							<RadzenButton Text="@L.Rename"
+								Icon="edit"
+								ButtonStyle="ButtonStyle.Base"
+								Variant="Variant.Outlined"
+								Size="ButtonSize.Small"
+								Click="() => RenameAsync(station)"
+								data-testid="rename-station" />
+						}
+					</Template>
+				</RadzenDataGridColumn>
+			</Columns>
+		</RadzenDataGrid>
+	</RadzenCard>
+</RadzenStack>
+
+@code
+{
+	public const string Path = "weather/stations";
+
+	protected override Task OnInitializedAsync() => ViewModel.LoadAsync();
+
+	private bool MayRename(StationResponse station) => station.OwnerId == CurrentUser.Id || CurrentUser.Has(WeatherPermissions.ManageStations);
+
+	private async Task RenameAsync(StationResponse station)
+	{
+		object? renamed = await Dialogs.OpenAsync<RenameDialog>(
+			L.RenameStation(station.Code),
+			new Dictionary<string, object?> { [nameof(RenameDialog.Station)] = station });
+
+		if (renamed is StationResponse saved)
+		{
+			ViewModel.Replace(saved);
+		}
+	}
+
+	private static void RenderRow(RowRenderEventArgs<StationResponse> args) =>
+		args.Attributes.Add("data-testid", "station-row");
+}

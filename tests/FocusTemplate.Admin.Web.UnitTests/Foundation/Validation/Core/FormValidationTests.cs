@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using FluentValidation;
-using FocusTemplate.Admin.Shared;
 using FocusTemplate.Admin.Web.Foundation.Validation.Core;
+using FocusTemplate.Http;
 using Microsoft.AspNetCore.Components.Forms;
 using static FocusTemplate.Admin.Web.UnitTests.Foundation.Validation.Core.FormTestSupport;
 
@@ -158,9 +158,7 @@ public sealed class FormValidationTests : IDisposable
 
 		this.form.Nickname = "ADALOVELACE";
 		await this.validation.FieldChangedAsync(nickname);
-		Assert.Equal(
-			["famous", "maxLength", "shouting",],
-			Codes(this.messages.For(nickname)).Order(StringComparer.Ordinal));
+		Assert.Equal(["famous", "maxLength", "shouting",], Codes(this.messages.For(nickname)).Order(StringComparer.Ordinal));
 
 		this.form.Nickname = "ADA";
 		await this.validation.FieldChangedAsync(nickname);
@@ -272,8 +270,7 @@ public sealed class FormValidationTests : IDisposable
 	{
 		TaskCompletionSource<bool> older = new();
 		TaskCompletionSource<bool> newer = new();
-		using FormUnderTest checking =
-			Form(new TestFormValidator((name, _) => name == "Ann" ? older.Task : newer.Task));
+		using FormUnderTest checking = Form(new TestFormValidator((name, _) => name == "Ann" ? older.Task : newer.Task));
 		FieldIdentifier displayName = Input(checking.Messages, () => this.form.DisplayName);
 
 		this.form.DisplayName = "Ann";
@@ -331,9 +328,7 @@ public sealed class FormValidationTests : IDisposable
 		FieldIdentifier nickname = Input(() => this.form.Nickname);
 		(this.form.Name, this.form.Nickname) = ("Bob", "Bobby");
 		this.messages.SetServerErrors(
-			Problem(
-				("name", "name.taken", ViolationSeverity.Error),
-				("nickname", "nickname.taken", ViolationSeverity.Error)));
+			Problem(("name", "name.taken", ViolationSeverity.Error), ("nickname", "nickname.taken", ViolationSeverity.Error)));
 
 		this.form.Name = "Ann";
 		await this.validation.FieldChangedAsync(name);
@@ -360,14 +355,8 @@ public sealed class FormValidationTests : IDisposable
 	{
 		List<string> focused = [];
 		this.messages.Register("Name", FieldIdentifier.Create(() => this.form.Name), Focus("name", focused));
-		this.messages.Register(
-			"Nickname",
-			FieldIdentifier.Create(() => this.form.Nickname),
-			Focus("nickname", focused));
-		this.messages.Register(
-			"Address.Street",
-			FieldIdentifier.Create(() => this.form.Address.Street),
-			Focus("street", focused));
+		this.messages.Register("Nickname", FieldIdentifier.Create(() => this.form.Nickname), Focus("nickname", focused));
+		this.messages.Register("Address.Street", FieldIdentifier.Create(() => this.form.Address.Street), Focus("street", focused));
 		(this.form.Name, this.form.Nickname, this.form.Address.Street) = ("Bob", "Bobby Tables", "Long Street");
 
 		await this.validation.ValidateAllAsync();
@@ -465,10 +454,7 @@ public sealed class FormValidationTests : IDisposable
 			return Task.CompletedTask;
 		};
 
-	private static FieldIdentifier Input<TValue>(
-		FormMessages store,
-		Expression<Func<TValue>> value,
-		string? path = null)
+	private static FieldIdentifier Input<TValue>(FormMessages store, Expression<Func<TValue>> value, string? path = null)
 	{
 		FieldIdentifier field = FieldIdentifier.Create(value);
 		store.Register(path ?? FieldPath.Of(value), field);
@@ -486,17 +472,13 @@ public sealed class FormValidationTests : IDisposable
 				this.validated.Add(paths?.ToArray());
 				return paths is null
 					? validator.ValidateAsync(this.form, cancellationToken)
-					: validator.ValidateAsync(
-						this.form,
-						options => options.IncludeProperties([.. paths,]),
-						cancellationToken);
+					: validator.ValidateAsync(this.form, options => options.IncludeProperties([.. paths,]), cancellationToken);
 			},
 			validator.Dependencies);
 		return new FormUnderTest(store, runs);
 	}
 
-	private FieldIdentifier Input<TValue>(Expression<Func<TValue>> value, string? path = null) =>
-		Input(this.messages, value, path);
+	private FieldIdentifier Input<TValue>(Expression<Func<TValue>> value, string? path = null) => Input(this.messages, value, path);
 
 	private sealed record FormUnderTest(FormMessages Messages, FormValidation Validation) : IDisposable
 	{

@@ -4,8 +4,8 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using FocusTemplate.Admin.Shared;
 using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Http;
 using FocusTemplate.Primitives;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using ValidationProblemDetails = FocusTemplate.Admin.Shared.ValidationProblemDetails;
+using ValidationProblemDetails = FocusTemplate.Http.ValidationProblemDetails;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Users;
 

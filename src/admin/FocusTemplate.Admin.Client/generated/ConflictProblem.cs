@@ -4,7 +4,7 @@
 
 using FocusTemplate.Admin.Client.UserManagement.Groups;
 using FocusTemplate.Admin.Client.UserManagement.Users;
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Http;
 
 namespace FocusTemplate.Admin.Client;
 

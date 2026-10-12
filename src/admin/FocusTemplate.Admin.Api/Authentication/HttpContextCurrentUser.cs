@@ -1,4 +1,5 @@
-using FocusTemplate.Data.Auditing;
+using FocusTemplate.Api.Foundation.Authentication;
+using FocusTemplate.Data.Foundation.Auditing;
 using FocusTemplate.Primitives;
 
 namespace FocusTemplate.Admin.Api.Authentication;

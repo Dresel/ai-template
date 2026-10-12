@@ -1,5 +1,5 @@
 using FocusTemplate.Data;
-using FocusTemplate.Data.Auditing;
+using FocusTemplate.Data.Foundation.Auditing;
 using FocusTemplate.Primitives;
 using Microsoft.EntityFrameworkCore;
 

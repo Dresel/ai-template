@@ -1,4 +1,3 @@
-using FocusTemplate.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -7,11 +6,13 @@ namespace FocusTemplate.ArchitectureTests;
 // Converts each sentinel as dbcontext optimize does, so a typed id without one fails here rather than at publish
 public sealed class ModelSentinelTests
 {
-	[Fact]
-	public void EverySentinelConvertsToItsProviderValue()
+	public static TheoryData<string> Models => ["spine", "weather",];
+
+	[Theory]
+	[MemberData(nameof(Models))]
+	public void EverySentinelConvertsToItsProviderValue(string model)
 	{
-		using ReadOnlyAppDbContext context = new(
-			new DbContextOptionsBuilder<ReadOnlyAppDbContext>().ConfigureReadOnlyAppDbContext("Host=localhost").Options);
+		using DbContext context = Contexts.ReadOnly(model);
 
 		IEnumerable<string> refused = context.Model.GetEntityTypes()
 			.SelectMany(entityType => entityType.GetProperties())

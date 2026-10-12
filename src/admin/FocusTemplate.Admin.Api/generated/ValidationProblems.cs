@@ -11,7 +11,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using FocusTemplate.Api.Foundation.Authentication;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Primitives;

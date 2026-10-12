@@ -1,6 +1,6 @@
 ---
 paths:
-  - "src/admin/*.Admin.Web/Foundation/{Forms,Validation}/**"
+  - "src/admin/*.Admin.Web.Foundation/{Forms,Validation}/**"
   - "src/admin/*.Admin.Web/Features/**/{Form,FormValidator,Mapper}*.cs"
   - "src/admin/*.Admin.Shared/*Rules.cs"
   - "tests/*.Admin.Web.UnitTests/Foundation/**"
@@ -21,7 +21,7 @@ paths:
 - Submit with `.ToOutcome<ValidationProblem>()` and switch over the answer, `appForm.ShowServerErrorsAsync(…)` for the
   validation problem, and an alert for an `ApiFailure`.
 - A wrapper puts the field's state on the input element (`aria-invalid`, `data-severity`, `aria-describedby`).
-- Another UI library rewrites `Foundation/Forms/` on `FormHostBase` and `AppInputBase`, in a folder not named after the
+- Another UI library rewrites `Forms/` of `Admin.Web.Foundation` on `FormHostBase` and `AppInputBase`, in a folder not named after the
   library.
 
 Background: [docs/web-forms.md](../../docs/web-forms.md).

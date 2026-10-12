@@ -1,5 +1,5 @@
-using FocusTemplate.Admin.Api.Realtime;
 using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Api.Foundation.Realtime;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 

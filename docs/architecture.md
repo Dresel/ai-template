@@ -9,11 +9,40 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   `/_analytics/*` to Umami. The browser only ever talks to the BFF, which holds the session (see
   [authentication](authentication.md)). The API is never exposed to the browser.
 - **Public**: the MAUI app (`FocusTemplate.Public.Mobile`) → `FocusTemplate.Public.Api` → Postgres, read-only through
-  `ReadOnlyAppDbContext`, with a contract of its own shaped for the mobile client. The API is anonymous until the
-  mobile client's PKCE leg.
+  the weather feature's `ReadOnlyWeatherDbContext`, with a contract of its own shaped for the mobile client. The API
+  is anonymous until the mobile client's PKCE leg.
 - **Telemetry**: every server reports OpenTelemetry through ServiceDefaults, the WASM client through
   `FocusTemplate.Admin.Web.ClientServiceDefaults` and the BFF's `/_otlp`, the MAUI app through
   `FocusTemplate.Public.Mobile.ServiceDefaults` (the MAUI counterpart of ServiceDefaults, without ASP.NET Core).
+
+## Spine, verticals and features
+
+- **The spine** is what every host has: `Primitives`, `Http` (the generated library types), `Data.Foundation`,
+  `Data` (identity: users, groups, permissions), `Api.Foundation`, `Admin.Web.Foundation`, the service defaults and
+  the AppHost.
+- **A vertical** is an audience with its own API, contract and client: Admin, Public. Its slices live inside its
+  projects (`Features/<Slice>/`).
+- **A feature** is a package of projects under `src/features/<name>/` that a host adds without touching its own
+  code beyond composition. Weather is the first:
+
+  | Project | Holds | References |
+  |---|---|---|
+  | `spec/` | `api.tsp`, a `@service` of its own, and `permissions.tsp` | the spine's `primitives.tsp` |
+  | `FocusTemplate.Weather.Shared` | the generated wire contract and its partials | `Http`, `Primitives` |
+  | `FocusTemplate.Weather.Client` | the generated typed clients | `Weather.Shared` |
+  | `FocusTemplate.Weather.Data` | entities, `WeatherDbContext` and its read-only twin in schema `weather`, migrations, the dev seed | `Data.Foundation`, `Primitives` |
+  | `FocusTemplate.Weather.Api` | handlers, the generated endpoints, `AddWeather()`, `MapWeatherEndpoints()` | `Api.Foundation`, `Weather.Data`, `Weather.Shared` |
+  | `FocusTemplate.Weather.Web` | the pages, a Razor class library, `AddWeatherPages()` | `Admin.Web.Foundation`, `Admin.Web.ClientServiceDefaults`, `Weather.Client` |
+
+  A feature never references the host's projects (`Data`, `Admin.Api`, `Admin.Shared`, `Admin.Client`,
+  `Admin.Web`, `Public.Api`); `FeatureTests` checks it. What it needs of identity comes from the spine: `ICurrentUser`,
+  `UserReference` for a foreign key to the users, `PermissionRequirement` answered by the host's handler.
+
+- **Composition** in the host, one line each: `builder.AddWeather("focusdb", "focusdb-readonly")` and
+  `endpoints.MapWeatherEndpoints()` in `Admin.Api`, `AddWeatherPages(environment, "admin-api")` and the assembly in
+  the `Router`'s `AdditionalAssemblies` in `Admin.Web`, `AddMigrations<WeatherDbContext>(…)` with
+  `.WaitForCompletion(migrations)` in the AppHost (see [database](database.md)), the feature's `permissions.tsp` imported by `src/spec/primitives.tsp`, and the menu entry
+  in `MainLayout`. A host without the feature leaves out these lines and the project references.
 
 ## Projects not covered by an area doc
 

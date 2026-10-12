@@ -1,4 +1,4 @@
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Http;
 using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -30,8 +30,7 @@ public sealed class RequiresPermissionTests
 		AuthorizationRenderer.RenderAsync<AuthorizeRouteView>(
 			new Dictionary<string, object?>
 			{
-				[nameof(AuthorizeRouteView.RouteData)] =
-					new RouteData(typeof(ProtectedPage), new Dictionary<string, object?>()),
+				[nameof(AuthorizeRouteView.RouteData)] = new RouteData(typeof(ProtectedPage), new Dictionary<string, object?>()),
 				[nameof(AuthorizeRouteView.NotAuthorized)] =
 					(RenderFragment<AuthenticationState>)(_ => builder => builder.AddContent(0, "not authorized")),
 			},
@@ -40,7 +39,6 @@ public sealed class RequiresPermissionTests
 	[RequiresPermission(UserManagementPermissions.Names.ViewUsers)]
 	private sealed class ProtectedPage : ComponentBase
 	{
-		protected override void BuildRenderTree(RenderTreeBuilder builder) =>
-			builder.AddContent(0, "the protected page");
+		protected override void BuildRenderTree(RenderTreeBuilder builder) => builder.AddContent(0, "the protected page");
 	}
 }

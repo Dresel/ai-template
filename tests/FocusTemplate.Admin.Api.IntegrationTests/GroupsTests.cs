@@ -2,8 +2,9 @@ using FocusTemplate.Admin.Client;
 using FocusTemplate.Admin.Client.UserManagement.Groups;
 using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
-using FocusTemplate.Data.Auditing;
 using FocusTemplate.Data.Entities;
+using FocusTemplate.Data.Foundation.Auditing;
+using FocusTemplate.Http;
 using FocusTemplate.Primitives;
 using Microsoft.EntityFrameworkCore;
 using Xunit.Sdk;
@@ -36,8 +37,7 @@ public sealed class GroupsTests(ApiFixture factory) : ApiTestBase(factory)
 		User caller = await AdminAsync();
 		await Factory.AddAdministratorsAsync();
 
-		GroupsDeleteResult result = await Client(caller)
-			.DeleteAsync(WellKnownGroups.Administrators, TestContext.Current.CancellationToken);
+		GroupsDeleteResult result = await Client(caller).DeleteAsync(WellKnownGroups.Administrators, TestContext.Current.CancellationToken);
 
 		Assert.True(result is ConflictProblem, $"Expected ConflictProblem, got {result}");
 	}
@@ -50,8 +50,7 @@ public sealed class GroupsTests(ApiFixture factory) : ApiTestBase(factory)
 		Group group = await Factory.GrantAsync(caller.Id);
 
 		await Client(caller).AddMemberAsync(group.Id, member.Id, TestContext.Current.CancellationToken);
-		GroupsAddMemberResult again =
-			await Client(caller).AddMemberAsync(group.Id, member.Id, TestContext.Current.CancellationToken);
+		GroupsAddMemberResult again = await Client(caller).AddMemberAsync(group.Id, member.Id, TestContext.Current.CancellationToken);
 
 		Assert.True(again is Success, $"Expected Success, got {again}");
 		GroupsGetResult result = await Client(caller).GetAsync(group.Id, TestContext.Current.CancellationToken);
@@ -108,10 +107,7 @@ public sealed class GroupsTests(ApiFixture factory) : ApiTestBase(factory)
 		Assert.True(result is Success, $"Expected Success, got {result}");
 		Assert.Empty(await GrantsOfAsync(group.Id));
 		await using AppDbContext dbContext = Factory.CreateDbContext();
-		Assert.False(
-			await dbContext.GroupMembers.AnyAsync(
-				entry => entry.GroupId == group.Id,
-				TestContext.Current.CancellationToken));
+		Assert.False(await dbContext.GroupMembers.AnyAsync(entry => entry.GroupId == group.Id, TestContext.Current.CancellationToken));
 	}
 
 	[Fact]
@@ -139,10 +135,7 @@ public sealed class GroupsTests(ApiFixture factory) : ApiTestBase(factory)
 		Group group = await Factory.GrantAsync(caller.Id);
 
 		GroupsSetPermissionsResult result = await Client(caller)
-			.SetPermissionsAsync(
-				group.Id,
-				[Permission.From("Retired.Permission"),],
-				TestContext.Current.CancellationToken);
+			.SetPermissionsAsync(group.Id, [Permission.From("Retired.Permission"),], TestContext.Current.CancellationToken);
 
 		Assert.True(result is ConflictProblem, $"Expected ConflictProblem, got {result}");
 	}
@@ -179,8 +172,7 @@ public sealed class GroupsTests(ApiFixture factory) : ApiTestBase(factory)
 		User caller = await AdminAsync();
 		await Client(caller).CreateAsync(new GroupRequest("Editors"), TestContext.Current.CancellationToken);
 
-		GroupsCreateResult result = await Client(caller)
-			.CreateAsync(new GroupRequest("Editors"), TestContext.Current.CancellationToken);
+		GroupsCreateResult result = await Client(caller).CreateAsync(new GroupRequest("Editors"), TestContext.Current.CancellationToken);
 
 		Assert.True(result is ConflictProblem, $"Expected ConflictProblem, got {result}");
 	}
@@ -196,8 +188,7 @@ public sealed class GroupsTests(ApiFixture factory) : ApiTestBase(factory)
 		await Client(caller).AddMemberAsync(group.Id, member.Id, TestContext.Current.CancellationToken);
 
 		await using AppDbContext dbContext = Factory.CreateDbContext();
-		UserId addedBy = await dbContext.GroupMembers
-			.Where(entry => entry.GroupId == group.Id && entry.UserId == member.Id)
+		UserId addedBy = await dbContext.GroupMembers.Where(entry => entry.GroupId == group.Id && entry.UserId == member.Id)
 			.Select(entry => EF.Property<UserId>(entry, AuditingInterceptor.CreatedBy))
 			.SingleAsync(TestContext.Current.CancellationToken);
 		Assert.Equal(caller.Id, addedBy);
@@ -221,9 +212,7 @@ public sealed class GroupsTests(ApiFixture factory) : ApiTestBase(factory)
 		[
 			.. (await dbContext.GroupPermissions.Where(grant => grant.GroupId == group)
 				.Select(grant => grant.Permission)
-				.ToListAsync(TestContext.Current.CancellationToken)).OrderBy(
-				permission => permission.Value,
-				StringComparer.Ordinal),
+				.ToListAsync(TestContext.Current.CancellationToken)).OrderBy(permission => permission.Value, StringComparer.Ordinal),
 		];
 	}
 }

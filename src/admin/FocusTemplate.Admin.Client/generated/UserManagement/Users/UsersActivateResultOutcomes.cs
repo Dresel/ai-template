@@ -3,6 +3,7 @@
 #nullable enable
 
 using System.Threading.Tasks;
+using FocusTemplate.Http;
 
 namespace FocusTemplate.Admin.Client.UserManagement.Users;
 

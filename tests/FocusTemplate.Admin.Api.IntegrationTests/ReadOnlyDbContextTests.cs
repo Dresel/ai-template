@@ -1,6 +1,7 @@
 using FocusTemplate.Data;
-using FocusTemplate.Data.Entities;
 using FocusTemplate.Primitives;
+using FocusTemplate.Weather.Data;
+using FocusTemplate.Weather.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NetTopologySuite.Geometries;
@@ -20,12 +21,12 @@ public sealed class ReadOnlyDbContextTests(ApiFixture factory) : ApiTestBase(fac
 
 		await using (AsyncServiceScope first = Factory.Services.CreateAsyncScope())
 		{
-			_ = await first.ServiceProvider.GetRequiredService<ReadOnlyAppDbContext>()
+			_ = await first.ServiceProvider.GetRequiredService<ReadOnlyWeatherDbContext>()
 				.Stations.SingleAsync(s => s.Id == station.Id, TestContext.Current.CancellationToken);
 		}
 
 		await using AsyncServiceScope second = Factory.Services.CreateAsyncScope();
-		ReadOnlyAppDbContext dbContext = second.ServiceProvider.GetRequiredService<ReadOnlyAppDbContext>();
+		ReadOnlyWeatherDbContext dbContext = second.ServiceProvider.GetRequiredService<ReadOnlyWeatherDbContext>();
 		_ = await dbContext.Stations.SingleAsync(s => s.Id == station.Id, TestContext.Current.CancellationToken);
 
 		Assert.Empty(dbContext.ChangeTracker.Entries());
@@ -35,7 +36,7 @@ public sealed class ReadOnlyDbContextTests(ApiFixture factory) : ApiTestBase(fac
 	public async Task SaveChangesIsRefusedBeforeReachingTheDatabase()
 	{
 		await using AsyncServiceScope scope = Factory.Services.CreateAsyncScope();
-		ReadOnlyAppDbContext dbContext = scope.ServiceProvider.GetRequiredService<ReadOnlyAppDbContext>();
+		ReadOnlyWeatherDbContext dbContext = scope.ServiceProvider.GetRequiredService<ReadOnlyWeatherDbContext>();
 
 		dbContext.Stations.Add(
 			new Station
@@ -47,8 +48,7 @@ public sealed class ReadOnlyDbContextTests(ApiFixture factory) : ApiTestBase(fac
 				Location = new Point(16.4, 48.2) { SRID = 4326, },
 			});
 
-		await Assert.ThrowsAsync<InvalidOperationException>(() =>
-			dbContext.SaveChangesAsync(TestContext.Current.CancellationToken));
+		await Assert.ThrowsAsync<InvalidOperationException>(() => dbContext.SaveChangesAsync(TestContext.Current.CancellationToken));
 	}
 
 	// ExecuteDelete never passes SaveChanges, so only the database role stands between it and the rows.
@@ -59,7 +59,7 @@ public sealed class ReadOnlyDbContextTests(ApiFixture factory) : ApiTestBase(fac
 
 		await using (AsyncServiceScope scope = Factory.Services.CreateAsyncScope())
 		{
-			ReadOnlyAppDbContext dbContext = scope.ServiceProvider.GetRequiredService<ReadOnlyAppDbContext>();
+			ReadOnlyWeatherDbContext dbContext = scope.ServiceProvider.GetRequiredService<ReadOnlyWeatherDbContext>();
 
 			PostgresException exception = await Assert.ThrowsAsync<PostgresException>(() =>
 				dbContext.Stations.ExecuteDeleteAsync(TestContext.Current.CancellationToken));
@@ -67,7 +67,22 @@ public sealed class ReadOnlyDbContextTests(ApiFixture factory) : ApiTestBase(fac
 			Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, exception.SqlState);
 		}
 
-		await using AppDbContext owner = Factory.CreateDbContext();
+		await using WeatherDbContext owner = Factory.CreateWeatherDbContext();
 		Assert.True(await owner.Stations.AnyAsync(s => s.Id == station.Id, TestContext.Current.CancellationToken));
+	}
+
+	// The feature's schema above, the spine's here: the reader role reads both and writes neither
+	[Fact]
+	public async Task TheReaderRoleRejectsWritesToTheSpineToo()
+	{
+		await using AsyncServiceScope scope = Factory.Services.CreateAsyncScope();
+		ReadOnlyAppDbContext dbContext = scope.ServiceProvider.GetRequiredService<ReadOnlyAppDbContext>();
+
+		_ = await dbContext.Groups.CountAsync(TestContext.Current.CancellationToken);
+
+		PostgresException exception = await Assert.ThrowsAsync<PostgresException>(() =>
+			dbContext.Groups.ExecuteDeleteAsync(TestContext.Current.CancellationToken));
+
+		Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, exception.SqlState);
 	}
 }

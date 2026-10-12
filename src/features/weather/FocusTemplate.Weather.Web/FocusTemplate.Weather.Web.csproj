@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<ResXGenerator_InternalRegistration>true</ResXGenerator_InternalRegistration>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Radzen.Blazor" />
+		<PackageReference Include="Aigamo.ResXGenerator" PrivateAssets="all" />
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="Microsoft.Extensions.Localization" />
+		<PackageReference Include="Riok.Mapperly" ExcludeAssets="runtime" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference
+			Include="..\..\..\admin\FocusTemplate.Admin.Web.ClientServiceDefaults\FocusTemplate.Admin.Web.ClientServiceDefaults.csproj" />
+		<ProjectReference Include="..\..\..\admin\FocusTemplate.Admin.Web.Foundation\FocusTemplate.Admin.Web.Foundation.csproj" />
+		<ProjectReference Include="..\FocusTemplate.Weather.Client\FocusTemplate.Weather.Client.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Remove="**\*.de.resx" />
+		<EmbeddedResource Include="**\*.de.resx">
+			<DependentUpon>$([System.String]::Copy(%(Filename)).Replace('.de', '.resx'))</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="**\*.resx">
+			<GenerationType>StringLocalizer</GenerationType>
+			<ClassNamePostfix>Localizations</ClassNamePostfix>
+			<StaticClass>false</StaticClass>
+			<StaticMembers>false</StaticMembers>
+			<GenerateFormatMethods>true</GenerateFormatMethods>
+		</EmbeddedResource>
+	</ItemGroup>
+
+</Project>

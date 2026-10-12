@@ -5,13 +5,13 @@ using FocusTemplate.Admin.Api.Features;
 using FocusTemplate.Admin.Api.Features.DemoProfiles;
 using FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 using FocusTemplate.Admin.Api.Features.UserManagement.Users;
-using FocusTemplate.Admin.Api.Features.WeatherForecasts;
 using FocusTemplate.Admin.Api.Localization;
-using FocusTemplate.Admin.Api.Realtime;
 using FocusTemplate.Admin.Shared;
 using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Api.Foundation.Realtime;
 using FocusTemplate.Data;
 using FocusTemplate.Primitives;
+using FocusTemplate.Weather.Api;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +40,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
 builder.Services.AddAdminValidators();
 builder.Services.AddDemoProfiles();
+
+builder.AddWeather("focusdb", "focusdb-readonly");
 
 builder.AddRedisClient("redis");
 builder.Services.AddSignalBackplane().AddSignal<GroupChanged>();
@@ -77,6 +79,7 @@ RouteGroupBuilder endpoints = app.MapGroup(string.Empty).AddChaosFilter(app.Conf
 endpoints.MapDemoProfilesEndpoints();
 endpoints.MapGroupsEndpoints();
 endpoints.MapUsersEndpoints();
-endpoints.MapWeatherForecastsEndpoints();
+
+endpoints.MapWeatherEndpoints();
 
 app.Run();

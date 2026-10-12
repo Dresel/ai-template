@@ -1,0 +1,281 @@
+openapi: 3.2.0
+info:
+  title: FocusTemplate Weather API
+  version: 0.1.0
+  description: "The weather feature: forecasts and the stations they come from. Reached through the BFF of the host's Admin API."
+tags:
+  - name: WeatherForecasts
+  - name: Stations
+paths:
+  /stations:
+    get:
+      operationId: Stations_list
+      description: Lists the stations by code, each with its owner.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StationResponse'
+      tags:
+        - Stations
+  /stations/{id}:rename:
+    post:
+      operationId: Stations_rename
+      description: Renames a station. Its owner may, and so may whoever holds Weather.ManageStations.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.StationId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StationResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ValidationProblemDetails'
+        '403':
+          description: Access is forbidden.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - Stations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StationRenameRequest'
+  /weather-forecasts:
+    get:
+      operationId: WeatherForecasts_list
+      description: Lists all forecasts, ordered by date.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WeatherForecastResponse'
+      tags:
+        - WeatherForecasts
+  /weather-forecasts/{id}:
+    get:
+      operationId: WeatherForecasts_get
+      description: Gets one forecast by id.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.WeatherForecastId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeatherForecastResponse'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - WeatherForecasts
+security:
+  - BearerAuth: []
+components:
+  schemas:
+    Http.ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          description: URI reference identifying the problem type.
+        title:
+          type: string
+          description: Short summary of the problem type.
+        status:
+          type: integer
+          format: int32
+          description: HTTP status code.
+        detail:
+          type: string
+          description: Explanation specific to this occurrence.
+        instance:
+          type: string
+          description: URI reference identifying this occurrence.
+      unevaluatedProperties: {}
+      description: |-
+        Problem details for an HTTP API response, as defined by RFC 9457
+        (https://www.rfc-editor.org/rfc/rfc9457). Extension members are allowed and carry information
+        specific to the problem type, such as a trace id or the fields of a validation failure.
+    Http.ValidationProblemDetails:
+      type: object
+      required:
+        - errors
+        - violations
+      properties:
+        type:
+          type: string
+          description: URI reference identifying the problem type.
+        title:
+          type: string
+          description: Short summary of the problem type.
+        status:
+          type: integer
+          format: int32
+          description: HTTP status code.
+        detail:
+          type: string
+          description: Explanation specific to this occurrence.
+        instance:
+          type: string
+          description: URI reference identifying this occurrence.
+        errors:
+          type: object
+          unevaluatedProperties:
+            type: array
+            items:
+              type: string
+          description: Error messages by wire path (name, address.street, lines[2].quantity), errors only; the shape of ASP.NET Core's HttpValidationProblemDetails.
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Http.Violation'
+          description: Every failed rule, warnings and infos included.
+      unevaluatedProperties: {}
+      description: |-
+        Problem details (RFC 9457) of a request that failed validation: the errors by the wire path of the member or parameter
+        they concern, and every failed rule with its code, severity and the constraint's values.
+    Http.Violation:
+      type: object
+      required:
+        - key
+        - code
+        - severity
+        - message
+      properties:
+        key:
+          type: string
+          description: Wire path of the member or parameter, as in the errors of the problem.
+        code:
+          type: string
+          description: "What failed: for a rule of the contract the constraint's name (required, minLength, maxLength, pattern, minValue, maxValue, minValueExclusive, maxValueExclusive, minItems, maxItems), otherwise the code the rule sets."
+        severity:
+          $ref: '#/components/schemas/Http.ViolationSeverity'
+          description: Only an error blocks the request.
+        message:
+          type: string
+          description: The message, in the language of the server.
+        args:
+          type: object
+          unevaluatedProperties: {}
+          description: The constraint's values by name, maxLength for example, for a client that phrases its own message.
+      description: One failed rule of a validation.
+    Http.ViolationSeverity:
+      type: string
+      enum:
+        - error
+        - warning
+        - info
+      description: 'How much a failed rule weighs: only an error blocks the request.'
+    Primitives.StationId:
+      type: string
+      format: uuid
+      description: Identifier of a weather station.
+    Primitives.UserId:
+      type: string
+      format: uuid
+      description: Identifier of a user, the owner of stations and the author of audited changes.
+    Primitives.WeatherForecastId:
+      type: integer
+      format: int32
+      description: Identifier of a weather forecast.
+    StationRenameRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+          description: Display name.
+      description: A new name for a station.
+    StationResponse:
+      type: object
+      required:
+        - id
+        - code
+        - name
+        - ownerId
+        - ownerName
+      properties:
+        id:
+          $ref: '#/components/schemas/Primitives.StationId'
+          description: Identifier.
+        code:
+          type: string
+          description: Short code, unique among the stations of one owner.
+        name:
+          type: string
+          description: Display name.
+        ownerId:
+          $ref: '#/components/schemas/Primitives.UserId'
+          description: The user who owns the station.
+        ownerName:
+          type: string
+          description: The owner's display name.
+      description: A weather station with its owner.
+    WeatherForecastResponse:
+      type: object
+      required:
+        - id
+        - date
+        - temperatureC
+      properties:
+        id:
+          $ref: '#/components/schemas/Primitives.WeatherForecastId'
+          description: Identifier.
+        date:
+          type: string
+          format: date
+          description: Day the forecast applies to.
+        temperatureC:
+          type: integer
+          format: int32
+          description: Temperature in degrees Celsius.
+        summary:
+          type: string
+          description: Free-text summary.
+      description: A weather forecast for one day.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: Bearer

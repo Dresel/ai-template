@@ -8,13 +8,15 @@ Keycloak says who the user is, the database says what they may do. No roles in t
 
 - **In the spec**: one enum per slice in `src/spec/permissions/<slice>.tsp`, in namespace
   `FocusTemplate.Primitives.Permissions`, marked `@permissions(FocusTemplate.Primitives.Permission)`
-  (`enum UserManagement { ViewUsers, ManageUsers, ViewGroups, ManageGroups }`).
+  (`enum UserManagement { ViewUsers, ManageUsers, ViewGroups, ManageGroups }`). A feature declares its own the same
+  way in `src/features/<name>/spec/permissions.tsp` (`enum Weather { ManageStations }`), and the host's
+  `src/spec/primitives.tsp` imports it, so it joins `Permission.All` and the groups can grant it.
 - **Generated** into Primitives as `UserManagementPermissions.ViewUsers` (the `Permission` "UserManagement.ViewUsers"),
   beside `Permission` in `FocusTemplate.Primitives`, plus `Permission.All` and the constants in
   `UserManagementPermissions.Names` for attribute arguments.
 - **Required** by an operation or interface with `@requiresPermission(Permissions.UserManagement.ViewUsers)`, qualified
   because the enum lives outside the service namespace. The generated endpoint carries it as
-  `RequiresPermissionAttribute` metadata (generated into `Admin.Shared`) and answers 403 without it. An operation
+  `RequiresPermissionAttribute` metadata (generated into `FocusTemplate.Http`) and answers 403 without it. An operation
   without one only needs a signed-in user.
 - **Stored** by name: groups grant permissions by name, so renaming or removing one is a migration.
   `PermissionDefinition` is the table of the release's permissions, seeded by `HasData` from `Permission.All`, so a new
@@ -26,7 +28,11 @@ No policies and no roles: the attribute yields a `PermissionRequirement`, and ea
 
 - **API**: `PermissionRequirementHandler` asks the scoped `UserPermissions`, one query per request over the groups of
   an active user, so a deactivated user holds nothing, whatever their token.
-- **WASM**: `PermissionClaimsHandler` reads the `permission` claims (`BffClaimTypes.Permission`) of `/bff/user`, which
+- **A feature's handler** that decides per resource (who owns the station) asks
+  `IAuthorizationService.HasPermissionAsync(user, permission)` from `Api.Foundation`, which wraps a
+  `PermissionRequirement` that the host's handler above answers, and answers 403 with its result union's case
+  (`StationsRenameHandler`: the owner, or whoever holds `Weather.ManageStations`).
+- **WASM**: `PermissionClaimsHandler` reads the `permission` claims (`Permission.ClaimType`) of `/bff/user`, which
   the BFF adds from the API's `GET /users/me` with the session's token, so a page load costs one request. Without an
   answer from the API, `/bff/user` fails (see [authentication](authentication.md)) and never hands out a user without
   permissions.

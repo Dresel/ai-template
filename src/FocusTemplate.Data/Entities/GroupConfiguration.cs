@@ -1,4 +1,5 @@
 using FocusTemplate.Data.Auditing;
+using FocusTemplate.Data.Foundation.Auditing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,5 +1,6 @@
 using FocusTemplate.Admin.Api.Authorization;
-using FocusTemplate.Data.Auditing;
+using FocusTemplate.Api.Foundation.Authentication;
+using FocusTemplate.Data.Foundation.Auditing;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;

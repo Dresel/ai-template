@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\FocusTemplate.Http\FocusTemplate.Http.csproj" />
+		<ProjectReference Include="..\..\..\FocusTemplate.Primitives\FocusTemplate.Primitives.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="tspconfig.yaml" />
+	</ItemGroup>
+
+</Project>

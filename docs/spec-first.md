@@ -14,6 +14,13 @@ imports (`namespace SpatialFocus.Http`).
   old contents while the version stays the same, hence the bump order below.
 - `npm run gen` (`scripts/gen.mjs`) runs one `tsp compile` per project `tspconfig.yaml`, and the parent emitter's
   scaffolding lands in the disposable `tsp-output/`.
+- `FocusTemplate.Http` holds the types every Admin project generates alike, written once from `src/spec/http.tsp`
+  with `output-type: library`: `ProblemDetails`, the validation problem with `Violation` and `ViolationSeverity`,
+  `PermissionRequirement` with `RequiresPermissionAttribute`, and the client's `ApiFailure`, `ApiOutcome`,
+  `IProblemOf`, `Success` and `ServerEventReader`. The Admin vertical's `tspconfig.yaml` files set
+  `library-namespace: FocusTemplate.Http`, so their output references these and writes none, and code shared across
+  the projects of several APIs (the Web foundation, the permission handlers) accepts one type for each. The Public
+  vertical keeps its own copies, so its mobile app carries no ASP.NET authorization package.
 - The emitter wraps `@typespec/http-client-csharp` (alpha, daily builds) and ships its .NET plugin inside the package,
   so nothing in this solution compiles against those assemblies.
 - `Mediator.Abstractions` with `Mediator.SourceGenerator` (martinothamar, MIT): the generated endpoints dispatch
@@ -24,7 +31,8 @@ imports (`namespace SpatialFocus.Http`).
   reads the item again. Generated: the stream query (`IStreamQuery<GroupChanged>`), the endpoint over
   `TypedResults.ServerSentEvents` with a keepalive event every 15 s (`ServerEventSupport`), and a client method that
   returns a `ServerEventReader<T>` once the stream is open, which ends after 30 s of silence and owns the connection.
-  By hand, in `Realtime/`. Its root is the local SSE side: the handler on `EventStreamHandler<TQuery, TSignal>`,
+  By hand, in `Realtime/` of `FocusTemplate.Api.Foundation`, so a feature's API uses it too. Its root is the local SSE
+  side: the handler on `EventStreamHandler<TQuery, TSignal>`,
   authorized when the stream opens, subscribes to the process's `EventStreams<T>` of its signal type, then loads its
   filter once through `MatchesAsync`, which may query, and applies it to each signal in the stream's own request.
   Subscribing comes first, so nothing published while the filter loads is lost. `Realtime/Backplane/` is Redis Pub/Sub
@@ -55,6 +63,12 @@ imports (`namespace SpatialFocus.Http`).
 - Three projects per vertical generate, each with its own `tspconfig.yaml` and `generated/` folder: the Api project
   (`output-type: api`), the Shared project (`contracts`) and the Client project (`client`). Everything else consumes
   them by project reference, and generated files are never linked across projects.
+- A feature has a contract of its own in `src/features/<name>/spec/`: `api.tsp` is a `@service` with `@useAuth`
+  (`FocusTemplate.Weather`), imports the spine's `primitives.tsp` and one file per interface, and its three projects
+  generate as a vertical's do (`FocusTemplate.Weather.Api.{interface}`, `FocusTemplate.Weather.Shared`,
+  `FocusTemplate.Weather.Client.{interface}`). Its own JSON context, validators, paths and texts carry the service's
+  name (`WeatherJsonContext`, `AddWeatherValidators()`), and its `openapi.yaml` sits in its Api project. Its
+  permissions sit beside it in `permissions.tsp`, which the host's `primitives.tsp` imports.
 
 ## Typed ids
 

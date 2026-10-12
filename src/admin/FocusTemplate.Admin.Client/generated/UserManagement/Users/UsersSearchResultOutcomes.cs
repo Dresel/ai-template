@@ -4,6 +4,7 @@
 
 using System.Threading.Tasks;
 using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Http;
 
 namespace FocusTemplate.Admin.Client.UserManagement.Users;
 

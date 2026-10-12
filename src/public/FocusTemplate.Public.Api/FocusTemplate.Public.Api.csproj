@@ -13,8 +13,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\FocusTemplate.Data\FocusTemplate.Data.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.ServiceDefaults\FocusTemplate.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\..\features\weather\FocusTemplate.Weather.Data\FocusTemplate.Weather.Data.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Public.Shared\FocusTemplate.Public.Shared.csproj" />
 	</ItemGroup>
 
