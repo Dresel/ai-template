@@ -15,5 +15,7 @@ paths:
 - Users, grants and the managed groups are arranged through `UserManagementArrangements` (`GrantAsync`,
   `AddAdministratorsAsync`, `AddManagedGroupAsync`).
 - Test classes share nothing, so they need no xUnit collection.
+- A test of one type alone, without the API host, constructs the type itself and needs no `ApiTestBase`
+  (`EventStreamsTests`).
 
 Background: [docs/integration-tests.md](../../docs/integration-tests.md).

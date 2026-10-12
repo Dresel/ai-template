@@ -1,11 +1,14 @@
+using FocusTemplate.Admin.Api.Realtime.Backplane;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
+using FocusTemplate.Primitives;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 
-public sealed class GroupsDeleteHandler(AppDbContext dbContext, IGroupsLocalizations localizations)
+public sealed class GroupsDeleteHandler(AppDbContext dbContext, SignalBackplane backplane, IGroupsLocalizations localizations)
 	: ICommandHandler<GroupsDeleteCommand, GroupsDeleteResult>
 {
 	public async ValueTask<GroupsDeleteResult> Handle(GroupsDeleteCommand command, CancellationToken cancellationToken)
@@ -22,9 +25,13 @@ public sealed class GroupsDeleteHandler(AppDbContext dbContext, IGroupsLocalizat
 			return new Conflict(localizations.ManagedCannotBeDeleted(group.Name));
 		}
 
-		// Its memberships and grants go with it, by the cascade in the database
+		// Read before the cascade in the database removes its memberships and grants with it
+		UserId[] members = await dbContext.GetMemberIdsByGroupIdAsync(command.Id, cancellationToken);
 		dbContext.Groups.Remove(group);
 		await dbContext.SaveChangesAsync(cancellationToken);
+
+		backplane.CloseStreamsFor(members);
+		backplane.Publish(new GroupChanged(command.Id, GroupChange.Deleted));
 
 		return Unit.Value;
 	}

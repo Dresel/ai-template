@@ -1,9 +1,13 @@
 import "@typespec/http";
 import "@typespec/openapi";
+import "@typespec/sse";
+import "@typespec/events";
 import "@spatialfocus/typespec-http-csharp-slim";
 
 using Http;
 using OpenAPI;
+using TypeSpec.SSE;
+using TypeSpec.Events;
 using SpatialFocus.Http;
 using FocusTemplate.Primitives;
 
@@ -62,6 +66,35 @@ model GroupRequest {
   description?: string;
 }
 
+/** What happened to a group. */
+enum GroupChange {
+  /** The group was created. */
+  created,
+
+  /** Its name, description, members or permissions changed. */
+  updated,
+
+  /** The group was deleted. */
+  deleted,
+}
+
+/** A group changed. Read it again to see how. */
+model GroupChanged {
+  /** The group. */
+  id: GroupId;
+
+  /** What happened. */
+  change: GroupChange;
+}
+
+// SSEStream takes an @events union, even for one event. The variant's name is the event's type on the wire, and the
+// generated code gives the stream the type of its one variant
+/** The events of a watch on the groups. */
+@events
+union GroupEvents {
+  groupChanged: GroupChanged,
+}
+
 @route("/groups")
 @tag("Groups")
 interface Groups {
@@ -110,4 +143,10 @@ interface Groups {
   @route("/{id}/members/{userId}")
   @delete
   removeMember(@path id: GroupId, @path userId: UserId): NoContentResponse | Problem<409>;
+
+  /** Signals when a group changes, so a list stays current. The stream ends with the access token, after 15 minutes at the latest, and when the caller's permissions change: reconnect, then read the groups again. */
+  @requiresPermission(Permissions.UserManagement.ViewGroups)
+  @route(":watch")
+  @get
+  watch(): SSEStream<GroupEvents>;
 }

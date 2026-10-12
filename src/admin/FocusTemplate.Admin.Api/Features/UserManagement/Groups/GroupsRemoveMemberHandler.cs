@@ -1,3 +1,5 @@
+using FocusTemplate.Admin.Api.Realtime.Backplane;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using Mediator;
@@ -5,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 
-public sealed class GroupsRemoveMemberHandler(AppDbContext dbContext, IGroupsLocalizations localizations)
+public sealed class GroupsRemoveMemberHandler(AppDbContext dbContext, SignalBackplane backplane, IGroupsLocalizations localizations)
 	: ICommandHandler<GroupsRemoveMemberCommand, GroupsRemoveMemberResult>
 {
 	public async ValueTask<GroupsRemoveMemberResult> Handle(GroupsRemoveMemberCommand command, CancellationToken cancellationToken)
@@ -26,6 +28,9 @@ public sealed class GroupsRemoveMemberHandler(AppDbContext dbContext, IGroupsLoc
 
 		group.Members.Remove(existingMember);
 		await dbContext.SaveChangesAsync(cancellationToken);
+
+		backplane.CloseStreamsFor(command.UserId);
+		backplane.Publish(new GroupChanged(command.Id, GroupChange.Updated));
 
 		return Unit.Value;
 	}

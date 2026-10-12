@@ -4,10 +4,11 @@ What to follow when changing these files: [the rule](../.claude/rules/apphost.md
 
 ## What the AppHost wires
 
-Postgres with the database and its `migrations` resource (see [database](database.md)), both APIs, the BFF, Keycloak
-(its own container or an existing realm, see [authentication](authentication.md)), and behind flags an nginx TLS
-ingress, Umami analytics, and the MAUI device resources with a Dev Tunnel. `FocusTemplate.ServiceDefaults` gives every
-server OTel, service discovery, health checks and the standard resilience handler.
+Postgres with the database and its `migrations` resource (see [database](database.md)), Redis for the Admin API's
+server-sent event signals (see [spec-first](spec-first.md)), both APIs, the BFF, Keycloak (its own container or an
+existing realm, see [authentication](authentication.md)), and behind flags an nginx TLS ingress, Umami analytics, and
+the MAUI device resources with a Dev Tunnel. `FocusTemplate.ServiceDefaults` gives every server OTel, service
+discovery, health checks and the standard resilience handler.
 
 Packages: `Aspire.Hosting.PostgreSQL`, `Aspire.Hosting.EntityFrameworkCore` (`AddEFMigrations`),
 `Aspire.Hosting.Blazor` (the WASM client's service and telemetry proxying), `Aspire.Hosting.Keycloak`,

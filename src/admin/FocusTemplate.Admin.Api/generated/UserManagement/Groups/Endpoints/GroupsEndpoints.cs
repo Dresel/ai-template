@@ -28,32 +28,35 @@ public static partial class GroupsEndpoints
 	{
 		ValidationProblems.EnsureRegistered<GroupsCreateCommand>(app.ServiceProvider);
 
-		RouteGroupBuilder group = app.MapGroup("/groups").WithTags("Groups");
+		RouteGroupBuilder group = app.MapGroup("").WithTags("Groups");
 		ConfigureGroup(group);
 
-		RouteHandlerBuilder listEndpoint = group.MapGet("", ListHandler).WithName("UserManagement.Groups_list").Produces<IReadOnlyList<GroupSummaryResponse>>(200).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ViewGroups));
+		RouteHandlerBuilder listEndpoint = group.MapGet("/groups", ListHandler).WithName("UserManagement.Groups_list").Produces<IReadOnlyList<GroupSummaryResponse>>(200).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ViewGroups));
 		ConfigureList(listEndpoint);
 
-		RouteHandlerBuilder getEndpoint = group.MapGet("/{id:guid}", GetHandler).WithName("UserManagement.Groups_get").Produces<GroupResponse>(200).ProducesProblem(404).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ViewGroups));
+		RouteHandlerBuilder getEndpoint = group.MapGet("/groups/{id:guid}", GetHandler).WithName("UserManagement.Groups_get").Produces<GroupResponse>(200).ProducesProblem(404).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ViewGroups));
 		ConfigureGet(getEndpoint);
 
-		RouteHandlerBuilder createEndpoint = group.MapPost("", CreateHandler).WithName("UserManagement.Groups_create").Produces<GroupResponse>(200).Produces<ValidationProblemDetails>(400, "application/problem+json").ProducesProblem(409).Produces(401).Produces(403).AddEndpointFilter(ValidateCreate).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
+		RouteHandlerBuilder createEndpoint = group.MapPost("/groups", CreateHandler).WithName("UserManagement.Groups_create").Produces<GroupResponse>(200).Produces<ValidationProblemDetails>(400, "application/problem+json").ProducesProblem(409).Produces(401).Produces(403).AddEndpointFilter(ValidateCreate).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
 		ConfigureCreate(createEndpoint);
 
-		RouteHandlerBuilder updateEndpoint = group.MapPut("/{id:guid}", UpdateHandler).WithName("UserManagement.Groups_update").Produces<GroupResponse>(200).Produces<ValidationProblemDetails>(400, "application/problem+json").ProducesProblem(404).ProducesProblem(409).Produces(401).Produces(403).AddEndpointFilter(ValidateUpdate).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
+		RouteHandlerBuilder updateEndpoint = group.MapPut("/groups/{id:guid}", UpdateHandler).WithName("UserManagement.Groups_update").Produces<GroupResponse>(200).Produces<ValidationProblemDetails>(400, "application/problem+json").ProducesProblem(404).ProducesProblem(409).Produces(401).Produces(403).AddEndpointFilter(ValidateUpdate).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
 		ConfigureUpdate(updateEndpoint);
 
-		RouteHandlerBuilder deleteEndpoint = group.MapDelete("/{id:guid}", DeleteHandler).WithName("UserManagement.Groups_delete").Produces(204).ProducesProblem(409).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
+		RouteHandlerBuilder deleteEndpoint = group.MapDelete("/groups/{id:guid}", DeleteHandler).WithName("UserManagement.Groups_delete").Produces(204).ProducesProblem(409).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
 		ConfigureDelete(deleteEndpoint);
 
-		RouteHandlerBuilder setPermissionsEndpoint = group.MapPut("/{id:guid}/permissions", SetPermissionsHandler).WithName("UserManagement.Groups_setPermissions").Produces(204).ProducesProblem(404).ProducesProblem(409).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
+		RouteHandlerBuilder setPermissionsEndpoint = group.MapPut("/groups/{id:guid}/permissions", SetPermissionsHandler).WithName("UserManagement.Groups_setPermissions").Produces(204).ProducesProblem(404).ProducesProblem(409).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
 		ConfigureSetPermissions(setPermissionsEndpoint);
 
-		RouteHandlerBuilder addMemberEndpoint = group.MapPut("/{id:guid}/members/{userId:guid}", AddMemberHandler).WithName("UserManagement.Groups_addMember").Produces(204).ProducesProblem(404).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
+		RouteHandlerBuilder addMemberEndpoint = group.MapPut("/groups/{id:guid}/members/{userId:guid}", AddMemberHandler).WithName("UserManagement.Groups_addMember").Produces(204).ProducesProblem(404).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
 		ConfigureAddMember(addMemberEndpoint);
 
-		RouteHandlerBuilder removeMemberEndpoint = group.MapDelete("/{id:guid}/members/{userId:guid}", RemoveMemberHandler).WithName("UserManagement.Groups_removeMember").Produces(204).ProducesProblem(409).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
+		RouteHandlerBuilder removeMemberEndpoint = group.MapDelete("/groups/{id:guid}/members/{userId:guid}", RemoveMemberHandler).WithName("UserManagement.Groups_removeMember").Produces(204).ProducesProblem(409).Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ManageGroups));
 		ConfigureRemoveMember(removeMemberEndpoint);
+
+		RouteHandlerBuilder watchEndpoint = group.MapGet("/groups:watch", WatchHandler).WithName("UserManagement.Groups_watch").Produces<GroupChanged>(200, "text/event-stream").Produces(401).Produces(403).RequireAuthorization().WithMetadata(new RequiresPermissionAttribute(global::FocusTemplate.Primitives.UserManagementPermissions.ViewGroups));
+		ConfigureWatch(watchEndpoint);
 
 		return group;
 	}
@@ -138,6 +141,11 @@ public static partial class GroupsEndpoints
 		return result.ToHttpResult();
 	}
 
+	/// <param name="mediator">The Mediator instance.</param>
+	/// <param name="cancellationToken">Cancellation token.</param>
+	private static ServerSentEventsResult<GroupChanged?> WatchHandler(IMediator mediator, CancellationToken cancellationToken = default) =>
+		TypedResults.ServerSentEvents(ServerEventSupport.WithKeepAlive(mediator.CreateStream(new GroupsWatchQuery(), cancellationToken), "groupChanged", cancellationToken));
+
 	/// <summary>Implement in a hand-written partial to attach policies (authorization, rate limiting, caching) to every Groups endpoint at once; the Configure{Op} hooks refine single endpoints.</summary>
 	/// <param name="group">The route group of the Groups endpoints.</param>
 	static partial void ConfigureGroup(RouteGroupBuilder group);
@@ -173,4 +181,8 @@ public static partial class GroupsEndpoints
 	/// <summary>Implement in a hand-written partial to attach policies (authorization, rate limiting, caching) to the removeMember endpoint.</summary>
 	/// <param name="builder">The route handler builder of the endpoint.</param>
 	static partial void ConfigureRemoveMember(RouteHandlerBuilder builder);
+
+	/// <summary>Implement in a hand-written partial to attach policies (authorization, rate limiting, caching) to the watch endpoint.</summary>
+	/// <param name="builder">The route handler builder of the endpoint.</param>
+	static partial void ConfigureWatch(RouteHandlerBuilder builder);
 }

@@ -37,13 +37,18 @@ if (persistentDatabase)
 
 IResourceBuilder<PostgresDatabaseResource> focusDb = postgres.AddDatabase("focusdb");
 
+// Backplane (pub/sub) for server-sent event signals between the API's processes
+IResourceBuilder<RedisResource> redis = builder.AddRedis("redis");
+
 KeycloakRealm realm = addLocalKeycloak ? builder.AddLocalKeycloakRealm(persistentLocalKeycloak) : builder.AddExternalKeycloakRealm();
 
 IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api")
 	.WithReference(focusDb)
 	.WithReference(focusDb, connectionName: "focusdb-readonly")
+	.WithReference(redis)
 	.WithKeycloakAudience(realm)
-	.WaitFor(focusDb);
+	.WaitFor(focusDb)
+	.WaitFor(redis);
 
 if (addChaos)
 {

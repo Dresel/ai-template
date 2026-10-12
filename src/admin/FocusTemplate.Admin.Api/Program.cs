@@ -7,7 +7,9 @@ using FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 using FocusTemplate.Admin.Api.Features.UserManagement.Users;
 using FocusTemplate.Admin.Api.Features.WeatherForecasts;
 using FocusTemplate.Admin.Api.Localization;
+using FocusTemplate.Admin.Api.Realtime;
 using FocusTemplate.Admin.Shared;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
 using FocusTemplate.Primitives;
 
@@ -39,6 +41,9 @@ builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetim
 builder.Services.AddAdminValidators();
 builder.Services.AddDemoProfiles();
 
+builder.AddRedisClient("redis");
+builder.Services.AddSignalBackplane().AddSignal<GroupChanged>();
+
 WebApplication app = builder.Build();
 
 if (args is [AdministratorBootstrap.Command, "--subject", { } subject,])
@@ -52,6 +57,8 @@ app.MapDefaultEndpoints();
 app.UseExceptionHandler();
 
 app.UseRequestLocalization();
+
+app.UseUnbufferedEventStreams();
 
 app.UseAuthentication();
 

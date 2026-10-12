@@ -13,8 +13,11 @@ using Respawn;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 
-public sealed class ApiFixture(PostgresFixture postgres) : WebApplicationFactory<Program>, IAsyncLifetime
+public sealed class ApiFixture(PostgresFixture postgres, RedisFixture redis) : WebApplicationFactory<Program>, IAsyncLifetime
 {
+	// One for the host and its replicas, so they share their Redis channels with each other and with no other class
+	private readonly string channelPrefix = $"{Guid.NewGuid():N}:";
+
 	private string connectionString = string.Empty;
 
 	private string readOnlyConnectionString = string.Empty;
@@ -25,15 +28,19 @@ public sealed class ApiFixture(PostgresFixture postgres) : WebApplicationFactory
 
 	public FakeTimeProvider Clock { get; } = new(new DateTimeOffset(2026, 1, 1, 8, 0, 0, TimeSpan.Zero));
 
-	public HttpClient CreateAuthenticatedClient(UserId? user = null)
+	public static HttpClient Authenticate(HttpClient client, UserId? user = null)
 	{
-		HttpClient client = CreateClient();
 		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
 			TestAuthenticationHandler.SchemeName,
 			(user ?? TestUser).Value.ToString());
 
 		return client;
 	}
+
+	public HttpClient CreateAuthenticatedClient(UserId? user = null) => Authenticate(CreateClient(), user);
+
+	// Another API process on the same database and Redis channels, as a second replica behind the ingress would be
+	public WebApplicationFactory<Program> CreateReplica() => WithWebHostBuilder(_ => { });
 
 	public AppDbContext CreateDbContext(UserId? user = null) =>
 		new(
@@ -77,6 +84,7 @@ public sealed class ApiFixture(PostgresFixture postgres) : WebApplicationFactory
 	{
 		builder.UseSetting("ConnectionStrings:focusdb", this.connectionString);
 		builder.UseSetting("ConnectionStrings:focusdb-readonly", this.readOnlyConnectionString);
+		builder.UseSetting("ConnectionStrings:redis", redis.ConnectionStringFor(this.channelPrefix));
 
 		// The values only have to pass validation: JwtBearer is registered but never asked, the test scheme is the default.
 		builder.UseSetting("Oidc:Authority", "https://keycloak.test/realms/focus");

@@ -17,19 +17,35 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 
 	private readonly ApiFailureMessages messages;
 
-	public ListPageViewModel(GroupsClient api, BusyState busyState, ApiFailureMessages messages)
+	private Action? fetched;
+
+	public ListPageViewModel(GroupsClient api, BusyState busyState, LiveUpdates<GroupChanged> updates, ApiFailureMessages messages)
 	{
 		this.api = api;
 		this.busyState = busyState;
 		this.messages = messages;
 
 		this.load = new AsyncCommand<ValueTuple>((_, cancellationToken) => FetchAsync(cancellationToken), AsyncCommandMode.ReplaceRunning);
+
+		// Any change can touch the list (a name, a member count, a group added or deleted), and every connect reads it
+		// again to cover what happened before the stream was there
+		updates.Received += _ => Reload();
+		updates.Connected += Reload;
 	}
 
 	public event Action? Changed
 	{
-		add => this.busyState.BusyChanged += value;
-		remove => this.busyState.BusyChanged -= value;
+		add
+		{
+			this.busyState.BusyChanged += value;
+			this.fetched += value;
+		}
+
+		remove
+		{
+			this.busyState.BusyChanged -= value;
+			this.fetched -= value;
+		}
 	}
 
 	public string? Failure { get; private set; }
@@ -41,6 +57,8 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 	public void Dispose() => this.load.Dispose();
 
 	public Task LoadAsync() => this.load.ExecuteAsync(default);
+
+	private void Reload() => _ = this.load.ExecuteAsync(default);
 
 	private async Task FetchAsync(CancellationToken cancellationToken)
 	{
@@ -54,5 +72,9 @@ public sealed class ListPageViewModel : IViewModel, IDisposable
 				Failure = this.messages.Of(failure);
 				break;
 		}
+
+		// A reload the stream started is no event the page handles, and a quick one shows no busy state, so the view
+		// model reports every fetch itself
+		this.fetched?.Invoke();
 	}
 }

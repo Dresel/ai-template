@@ -3,7 +3,8 @@
 What to follow when changing these files: [the rule](../.claude/rules/integration-tests.md).
 
 `FocusTemplate.Admin.Api.IntegrationTests` covers one service: DI, middleware, serialization, auth, EF Core and SQL,
-against a real Postgres from Testcontainers (`postgis/postgis:17-3.5`, the AppHost's image).
+against a real Postgres from Testcontainers (`postgis/postgis:17-3.5`, the AppHost's image) and a real Redis
+(`redis:8.6`, the image of the AppHost's Aspire version).
 [Authentication](authentication.md) describes the test scheme that stands in for Keycloak.
 
 ## The test database
@@ -17,6 +18,8 @@ One container, one database per test class, fresh state per test.
   `focusdb_reader` `SELECT` on it (`PostgresFixture.GrantReadAccessAsync`) and points the API at it under both keys:
   `focusdb` as the owner, `focusdb-readonly` as `focusdb_reader`, so the API's queries run on the real role.
   `Factory.CreateDbContext()` stays on the owner. Migrations therefore run once per class, in parallel.
+- `RedisFixture` (assembly fixture) starts one Redis, and each `ApiFixture` connects with a GUID as its `channelPrefix`,
+  so a class's streams receive only the signals its own API publishes.
 - `ApiTestBase` resets the class database before every test (`ApiFixture.ResetAsync()`,
   [Respawn](https://github.com/jbogard/Respawn), FK-safe). It keeps `__EFMigrationsHistory`, so migrations never
   re-run, and `permissions`, whose rows the migration seeds from `Permission.All`. Everything else is empty, the seeded

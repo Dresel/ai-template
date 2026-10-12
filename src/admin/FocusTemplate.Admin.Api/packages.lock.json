@@ -21,6 +21,19 @@
           "OpenTelemetry.Extensions.Hosting": "1.15.3"
         }
       },
+      "Aspire.StackExchange.Redis": {
+        "type": "Direct",
+        "requested": "[13.5.4, )",
+        "resolved": "13.5.4",
+        "contentHash": "pDghhwQYWWbIJ0XKE33v5rZGL6GoaoBdk8c9g7/S6KYFQarWM7gxSC7F/QLXxNQnYl2gQOoLG6njMclMRPmTrw==",
+        "dependencies": {
+          "AspNetCore.HealthChecks.Redis": "9.0.0",
+          "Microsoft.Extensions.DependencyInjection.AutoActivation": "10.8.0",
+          "OpenTelemetry.Extensions.Hosting": "1.15.3",
+          "StackExchange.Redis": "2.13.1",
+          "System.IO.Hashing": "10.0.8"
+        }
+      },
       "FluentValidation": {
         "type": "Direct",
         "requested": "[12.1.1, )",
@@ -72,6 +85,14 @@
         "contentHash": "llRPgmA1fhC0I0QyFLEcjvtM2239QzKr/tcnbsjArLMJxJlu0AA5G7Fft0OI30pHF3MW63Gf4aSSsjc5m82J1Q==",
         "dependencies": {
           "StyleCop.Analyzers.Unstable": "1.2.0.556"
+        }
+      },
+      "AspNetCore.HealthChecks.Redis": {
+        "type": "Transitive",
+        "resolved": "9.0.0",
+        "contentHash": "yNH0h8GLRbAf+PU5HNVLZ5hNeyq9mDVmRKO9xuZsme/znUYoBJlQvI0gq45gaZNlLncCHkMhR4o90MuT+gxxPw==",
+        "dependencies": {
+          "StackExchange.Redis": "2.7.4"
         }
       },
       "Humanizer.Core": {
@@ -365,6 +386,11 @@
           "OpenTelemetry.Api": "1.19.0"
         }
       },
+      "Pipelines.Sockets.Unofficial": {
+        "type": "Transitive",
+        "resolved": "2.2.16",
+        "contentHash": "nonu9l0YrZH6krVYbskBjE7uG0VMAnvOQ9PU+RmzUsy+++vHkqzzCkHRoP877OiA3iRTxJyNDLfpcU8hrJ3/YQ=="
+      },
       "Polly.Core": {
         "type": "Transitive",
         "resolved": "8.4.2",
@@ -384,6 +410,15 @@
         "contentHash": "ehTImQ/eUyO07VYW2WvwSmU9rRH200SKJ/3jku9rOkyWE0A2JxNFmAVms8dSn49QLSjmjFRRSgfNyOgr/2PSmA==",
         "dependencies": {
           "Polly.Core": "8.4.2"
+        }
+      },
+      "StackExchange.Redis": {
+        "type": "Transitive",
+        "resolved": "2.13.1",
+        "contentHash": "jC5wkRe8K6HPoDENUws+fl2d7+GKz+ky8SWEDzYzPx6hHt2EwxWm01gmYPWLzlT49jfYYap0guB5bExtyX9aIQ==",
+        "dependencies": {
+          "Pipelines.Sockets.Unofficial": "2.2.16",
+          "System.IO.Hashing": "10.0.2"
         }
       },
       "StyleCop.Analyzers.Unstable": {
@@ -452,6 +487,11 @@
           "Microsoft.IdentityModel.JsonWebTokens": "8.19.2",
           "Microsoft.IdentityModel.Tokens": "8.19.2"
         }
+      },
+      "System.IO.Hashing": {
+        "type": "Transitive",
+        "resolved": "10.0.8",
+        "contentHash": "+dJsbPJ3FyUbTZNplFj0RCKePFizmv6ewDV46JE9q/IVH4c3xTCftHfHelLsAKf0jryIPqgMb5GpS0x7TAY3mg=="
       },
       "focustemplate.admin.shared": {
         "type": "Project",

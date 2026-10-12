@@ -19,6 +19,27 @@ imports (`namespace SpatialFocus.Http`).
 - `Mediator.Abstractions` with `Mediator.SourceGenerator` (martinothamar, MIT): the generated endpoints dispatch
   `IQuery<T>` and `ICommand<T>` records to hand-written handlers.
 - The OpenAPI document is emitted from the spec, and each API serves the file in Development (`/openapi/v1.yaml`).
+- **Server-sent events** come from the spec: an operation answering `SSEStream<…>` over an `@events` union of one
+  variant (`watch(): SSEStream<GroupEvents>`, `GET /groups:watch`). The events are signals of what changed, and a page
+  reads the item again. Generated: the stream query (`IStreamQuery<GroupChanged>`), the endpoint over
+  `TypedResults.ServerSentEvents` with a keepalive event every 15 s (`ServerEventSupport`), and a client method that
+  returns a `ServerEventReader<T>` once the stream is open, which ends after 30 s of silence and owns the connection.
+  By hand, in `Realtime/`. Its root is the local SSE side: the handler on `EventStreamHandler<TQuery, TSignal>`,
+  authorized when the stream opens, subscribes to the process's `EventStreams<T>` of its signal type, then loads its
+  filter once through `MatchesAsync`, which may query, and applies it to each signal in the stream's own request.
+  Subscribing comes first, so nothing published while the filter loads is lost. `Realtime/Backplane/` is Redis Pub/Sub
+  between the API processes (the AppHost's `redis`): command handlers publish through `SignalBackplane` to every
+  process, its own included, where a `BackplaneSubscription<T>` hands each signal to `EventStreams<T>`. It publishes
+  fire and forget, so a command neither waits for Redis nor fails with it. `AddSignal<T>()` registers both parts of a
+  signal type. The stream ends with the access token, after 15 minutes at the latest, when a handler changes the
+  subscriber's permissions or what `MatchesAsync` read (`SignalBackplane.CloseStreamsFor`), and when the Redis
+  subscription reconnects, so the reconnect is authorized again and the page reloads what it missed. On the page side
+  `LiveUpdates<T>`, scoped, gives each page's view model a stream of its own, which closes with the page and reconnects
+  after any end. It raises `Connected` after every connect, the first included, and the groups list reads everything
+  again then: the server subscribed before it answered, so a change misses neither that read nor the stream.
+  `UseUnbufferedEventStreams` sends `X-Accel-Buffering: no`, so nginx passes each event on. Over plain HTTP/1.1
+  (`http://localhost:5770`) every open stream holds one of the six connections a browser allows a host, across its
+  tabs. The ingress (`https://localhost:7770`) multiplexes them over HTTP/2.
 
 ## Layout
 

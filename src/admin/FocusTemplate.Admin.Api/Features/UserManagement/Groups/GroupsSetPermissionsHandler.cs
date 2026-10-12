@@ -1,3 +1,5 @@
+using FocusTemplate.Admin.Api.Realtime.Backplane;
+using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Primitives;
@@ -6,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Groups;
 
-public sealed class GroupsSetPermissionsHandler(AppDbContext dbContext, IGroupsLocalizations localizations)
+public sealed class GroupsSetPermissionsHandler(AppDbContext dbContext, SignalBackplane backplane, IGroupsLocalizations localizations)
 	: ICommandHandler<GroupsSetPermissionsCommand, GroupsSetPermissionsResult>
 {
 	public async ValueTask<GroupsSetPermissionsResult> Handle(GroupsSetPermissionsCommand command, CancellationToken cancellationToken)
@@ -41,6 +43,9 @@ public sealed class GroupsSetPermissionsHandler(AppDbContext dbContext, IGroupsL
 		}
 
 		await dbContext.SaveChangesAsync(cancellationToken);
+
+		backplane.CloseStreamsFor(await dbContext.GetMemberIdsByGroupIdAsync(command.Id, cancellationToken));
+		backplane.Publish(new GroupChanged(command.Id, GroupChange.Updated));
 
 		return Unit.Value;
 	}

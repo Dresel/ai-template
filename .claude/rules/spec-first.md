@@ -26,6 +26,13 @@ paths:
 - Rules the spec cannot state go into the handler, or into a validator registered as `IValidator<T>` that includes the
   generated one. Keys come from the generated paths (`AdminPaths.…`).
 - An operation behind a form declares the `ValidationProblem` alias.
+- A stream of change signals is `watch(): SSEStream<…Events>` on a `:watch` route, over an `@events` union of one
+  variant. Its handler derives from `EventStreamHandler<TQuery, TSignal>`. A filter overrides `MatchesAsync`, which
+  runs once per stream and may query, and the lambda it returns runs per signal without querying.
+- A handler that changes a user's permissions, or what a `MatchesAsync` reads, calls `SignalBackplane.CloseStreamsFor`
+  with the affected users after `SaveChangesAsync`.
+- A command handler publishes a signal through `SignalBackplane.Publish` after `SaveChangesAsync`, and a new signal
+  type is registered with `AddSignal<T>()`.
 - Routes are kebab-case plural nouns, and an action that is no CRUD is a custom method after a colon. A list that searches,
   sorts or pages is `@httpQuery` over a request spreading `PageQuery`, sorted by an enum.
 - DTOs carry a `Request` or `Response` suffix. DELETE of a missing resource answers 204.

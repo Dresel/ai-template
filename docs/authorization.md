@@ -36,6 +36,10 @@ No policies and no roles: the attribute yields a `PermissionRequirement`, and ea
   (`PermissionViewTests`). Code that weighs several permissions, such as the menu, reads `user.Has(permission)`. A
   page's code asks the injected `CurrentUser` (`Has(permission)`, `Id`), which reads the state the router authorized
   the page with: `BffAuthenticationStateProvider` loads it once, and a page renders only after that.
+- **Streams**: a server-sent event stream is authorized when it opens. The handlers that change a user's permissions
+  (members, grants, deleting a group, activation) close the user's streams in every API process through
+  `SignalBackplane.CloseStreamsFor`, and the reconnect is authorized again. A change made outside them reaches a stream
+  at the token's expiry, after 15 minutes at the latest.
 
 The client only hides, the API decides.
 

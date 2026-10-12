@@ -1,3 +1,4 @@
+using FocusTemplate.Admin.Client;
 using FocusTemplate.Admin.Web.Foundation.Feedback;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -23,4 +24,14 @@ public static class ServiceCollectionExtensions
 
 		return services;
 	}
+
+	// The client comes fresh for every connect, as typed clients of the HttpClientFactory are meant to
+	public static IServiceCollection AddLiveUpdates<TClient, T>(
+		this IServiceCollection services,
+		Func<TClient, CancellationToken, Task<ServerEventReader<T>>> watch)
+		where TClient : notnull =>
+		services.AddScoped(provider => new LiveUpdates<T>(
+			async cancellationToken => await watch(provider.GetRequiredService<TClient>(), cancellationToken),
+			provider.GetRequiredService<TimeProvider>(),
+			provider.GetRequiredService<ILogger<LiveUpdates<T>>>()));
 }

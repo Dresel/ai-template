@@ -282,6 +282,35 @@ paths:
               type: array
               items:
                 $ref: '#/components/schemas/Primitives.Permission'
+  /groups:watch:
+    get:
+      operationId: Groups_watch
+      description: "Signals when a group changes, so a list stays current. The stream ends with the access token, after 15 minutes at the latest, and when the caller's permissions change: reconnect, then read the groups again."
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            text/event-stream:
+              itemSchema:
+                type: object
+                properties:
+                  event:
+                    type: string
+                  data:
+                    type: string
+                required:
+                  - event
+                oneOf:
+                  - properties:
+                      data:
+                        contentMediaType: application/json
+                        contentSchema:
+                          $ref: '#/components/schemas/UserManagement.GroupChanged'
+                      event:
+                        const: groupChanged
+      tags:
+        - Groups
   /users:
     post:
       operationId: Users_search
@@ -672,6 +701,29 @@ components:
             $ref: '#/components/schemas/Primitives.Permission'
           description: Every permission the user's groups grant, so the UI can hide what the user may not do.
       description: The signed-in user and what they may do.
+    UserManagement.GroupChange:
+      type: string
+      enum:
+        - created
+        - updated
+        - deleted
+      description: What happened to a group.
+    UserManagement.GroupChanged:
+      type: object
+      required:
+        - id
+        - change
+      properties:
+        id:
+          $ref: '#/components/schemas/Primitives.GroupId'
+          description: The group.
+        change:
+          $ref: '#/components/schemas/UserManagement.GroupChange'
+          description: What happened.
+      description: A group changed. Read it again to see how.
+    UserManagement.GroupEvents:
+      $ref: '#/components/schemas/UserManagement.GroupChanged'
+      description: The events of a watch on the groups.
     UserManagement.GroupMemberResponse:
       type: object
       required:

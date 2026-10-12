@@ -32,4 +32,11 @@ public static class AdminOutcomes
 		public Task<ApiOutcome<IReadOnlyList<WeatherForecastResponse>>> ToOutcome() =>
 			OutcomeSupport.CatchAsync(call, ApiOutcome<IReadOnlyList<WeatherForecastResponse>> (answer) => answer);
 	}
+
+	extension(Task<ServerEventReader<GroupChanged>> call)
+	{
+		/// <summary>The answer, or an ApiFailure: a status the contract does not model, or no answer.</summary>
+		public Task<ApiOutcome<ServerEventReader<GroupChanged>>> ToOutcome() =>
+			OutcomeSupport.CatchAsync(call, ApiOutcome<ServerEventReader<GroupChanged>> (answer) => answer);
+	}
 }

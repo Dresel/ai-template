@@ -157,4 +157,9 @@ public sealed partial class GroupsClient
 			_ => throw await ApiClientSupport.UnexpectedResponseAsync(response, cancellationToken).ConfigureAwait(false),
 		};
 	}
+
+	/// <summary>Signals when a group changes, so a list stays current. The stream ends with the access token, after 15 minutes at the latest, and when the caller's permissions change: reconnect, then read the groups again.</summary>
+	/// <param name="cancellationToken">Cancellation token.</param>
+	public Task<ServerEventReader<GroupChanged>> WatchAsync(CancellationToken cancellationToken = default) =>
+		ServerEventReader<GroupChanged>.OpenAsync(httpClient, new(HttpMethod.Get, ApiClientSupport.RelativeUri("./groups:watch")), "groupChanged", jsonOptions.GetTypeInfo<GroupChanged>(), cancellationToken);
 }

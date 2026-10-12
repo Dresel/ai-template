@@ -1,4 +1,5 @@
 using FocusTemplate.Admin.Api.Features.UserManagement.Groups;
+using FocusTemplate.Admin.Api.Realtime.Backplane;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Auditing;
 using FocusTemplate.Data.Entities;
@@ -7,8 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Users;
 
-public sealed class UsersDeactivateHandler(AppDbContext dbContext, ICurrentUser currentUser, IUsersLocalizations localizations)
-	: ICommandHandler<UsersDeactivateCommand, UsersDeactivateResult>
+public sealed class UsersDeactivateHandler(
+	AppDbContext dbContext,
+	ICurrentUser currentUser,
+	SignalBackplane backplane,
+	IUsersLocalizations localizations) : ICommandHandler<UsersDeactivateCommand, UsersDeactivateResult>
 {
 	public async ValueTask<UsersDeactivateResult> Handle(UsersDeactivateCommand command, CancellationToken cancellationToken)
 	{
@@ -31,6 +35,8 @@ public sealed class UsersDeactivateHandler(AppDbContext dbContext, ICurrentUser 
 
 		user.IsActive = false;
 		await dbContext.SaveChangesAsync(cancellationToken);
+
+		backplane.CloseStreamsFor(user.Id);
 
 		return Unit.Value;
 	}

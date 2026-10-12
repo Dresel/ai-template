@@ -18,5 +18,7 @@ paths:
   `Include` of what they touch.
 - A managed group cannot be deleted or have its grants changed, and the last active administrator can neither leave
   `Administrators` nor be deactivated.
+- A handler that changes a user's permissions (members, grants, deleting a group, activation) closes the user's open
+  streams with `SignalBackplane.CloseStreamsFor` after `SaveChangesAsync`.
 
 Background: [docs/authorization.md](../../docs/authorization.md).

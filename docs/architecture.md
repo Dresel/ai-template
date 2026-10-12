@@ -29,7 +29,7 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 
 | Project | What it runs on |
 |---|---|
-| `FocusTemplate.Admin.Api.IntegrationTests` | `Microsoft.AspNetCore.Mvc.Testing`, Testcontainers Postgres, Respawn, `FakeTimeProvider`, see [integration tests](integration-tests.md) |
+| `FocusTemplate.Admin.Api.IntegrationTests` | `Microsoft.AspNetCore.Mvc.Testing`, Testcontainers Postgres and Redis, Respawn, `FakeTimeProvider`, see [integration tests](integration-tests.md) |
 | `FocusTemplate.Admin.Web.E2E` | `Aspire.Hosting.Testing` booting the AppHost, Playwright, see [web E2E](web-e2e.md) |
 | `FocusTemplate.Admin.Web.UnitTests` | plain xUnit, components rendered with `HtmlRenderer`, see [web forms](web-forms.md) |
 | `FocusTemplate.ArchitectureTests` | reflection over the API assemblies and the EF model, see [database](database.md) |

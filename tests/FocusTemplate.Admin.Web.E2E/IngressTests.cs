@@ -8,6 +8,26 @@ public sealed class IngressTests(IngressAppFixture app) : PageTest
 {
 	public override BrowserNewContextOptions ContextOptions() => new() { IgnoreHTTPSErrors = true, };
 
+	// Through nginx with TLS and HTTP/2, the way the cluster's ingress serves the streams
+	[Fact]
+	public async Task AGroupCreatedInOneTabAppearsInTheOtherThroughTheIngress()
+	{
+		string name = $"E2E {Guid.NewGuid():N}";
+		await Page.GotoAsync($"{app.BaseUrl}user-management/groups");
+		await BlazorAppFixture.LogInAsync(Page);
+		IPage watching = await Context.NewPageAsync();
+		await LiveGroupsList.OpenAsync(watching, $"{app.BaseUrl}user-management/groups");
+
+		await Expect(Page.GetByTestId("new-group")).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 30_000, });
+		await Page.GetByTestId("new-group").ClickAsync();
+		await Page.GetByTestId("group-name").FillAsync(name);
+		await Page.GetByTestId("save-group").ClickAsync();
+		await Expect(Page.GetByTestId("group-title")).ToHaveTextAsync(name);
+
+		await Expect(watching.GetByTestId("group-row").Filter(new LocatorFilterOptions { HasText = name, }))
+			.ToHaveCountAsync(1);
+	}
+
 	[Fact]
 	public async Task LoginThroughTheIngressLandsBackOnTheIngress()
 	{

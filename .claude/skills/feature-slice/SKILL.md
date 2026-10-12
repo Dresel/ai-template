@@ -16,6 +16,7 @@ that load with the files apply as usual.
 | A list that searches, sorts and pages | `Users`: `UsersSearchHandler`, `Users/ListPage.razor`, `Users/ListPageViewModel` |
 | Create and update through a form in a dialog | `Groups`: `GroupsCreateHandler`, `GroupsUpdateHandler`, `Groups/FormDialog.razor`, `Form`, `FormValidator`, `Mapper` |
 | A detail page with actions | `Groups/DetailPage.razor`, `Groups/DetailPageViewModel` |
+| A list that stays current when others change it | `Groups`: `watch()` in `groups.tsp`, `GroupsWatchHandler`, the `Publish` calls in the command handlers, `Groups/ListPageViewModel` |
 | Rules the spec cannot state, async server checks | `DemoProfiles` (`DemoProfileCustomRules`, `DemoProfileRequestValidator`) |
 | Several interfaces in one feature | `UserManagement` (spec namespace, `Features/UserManagement/_Imports.razor`) |
 
@@ -35,7 +36,9 @@ that load with the files apply as usual.
    `src/spec/primitives.tsp`.
 3. The slice's file in `src/admin/spec/<slice>/`, imported in `src/admin/spec/api.tsp`: `@requiresPermission` per
    operation or interface, `Problem<404 | 409>` for what the handler refuses, the `ValidationProblem` alias behind a
-   form, `@httpQuery` over a request spreading `PageQuery` for a searchable list, defaults in the spec.
+   form, `@httpQuery` over a request spreading `PageQuery` for a searchable list, defaults in the spec. A list that
+   stays current gets `watch(): SSEStream<…Events>` on a `:watch` route, over an `@events` union of one variant whose
+   model names what changed (`GroupChanged`: the id and `created`, `updated` or `deleted`).
 4. `npm run gen` at the repository root.
 
 ## 3. Data ([database](../../../docs/database.md))
@@ -60,6 +63,10 @@ that load with the files apply as usual.
 3. Messages a user reads (`NotFound`, `Conflict`, a handler's validation failure) come from the interface's resx pair,
    `Features/<Slice>/<Interface>.resx` and `.de.resx`, through `I<Interface>Localizations localizations`
    ([localization](../../../docs/localization.md)).
+4. A watch: its handler derives from `EventStreamHandler<TQuery, TSignal>`, `builder.Services.AddSignal<T>()` in
+   `Program.cs` registers the signal type, and every command handler that changes what the list shows calls
+   `backplane.Publish(…)` after `SaveChangesAsync` (`SignalBackplane`). A handler that changes a user's permissions
+   calls `backplane.CloseStreamsFor(…)` with the users it affects.
 
 ## 5. Web ([web pages](../../../docs/web-pages.md), [web forms](../../../docs/web-forms.md))
 
@@ -73,6 +80,8 @@ that load with the files apply as usual.
    `MainLayout.resx`.
 5. Every text in the component's resx pair (`@inject I<Component>Localizations L`). A new contract's field names and
    pattern messages in German go into `Admin.Shared/<Model>.de.resx` (keys `<Member>`, `<Member>.pattern`).
+6. A list that stays current: `services.AddLiveUpdates(…)` in `Add<Slice>()` with the client's `WatchAsync`, and the
+   view model takes the `LiveUpdates<T>` and reloads on `Received` and on `Connected`.
 
 New permissions appear in the group editor by themselves, labelled from their names. Their German labels go into
 `PermissionLabels.de.resx`, keyed by slice and by permission.
@@ -84,6 +93,8 @@ New permissions appear in the group editor by themselves, labelled from their na
 - **Unit**: a view model against a fake HTTP handler (`ListPageViewModelTests`), the form's validator.
 - **E2E**: one flow through the BFF on `BffPageTest`, selected by `data-testid`, including the menu entry.
 - `AuthenticationTests.EveryApiEndpointRequiresAuthorization` covers the new endpoints by itself.
+- **A watch** (`GroupsWatchTests`): a change reaches an open stream, the 403 without the permission, and a stream that
+  closes when its subscriber loses the permission.
 
 ## 7. Finish
 

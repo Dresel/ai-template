@@ -28,6 +28,9 @@ public static class Queries
 					entity.Description))
 				.SingleOrDefaultAsync(cancellationToken);
 
+		public Task<UserId[]> GetMemberIdsByGroupIdAsync(GroupId id, CancellationToken cancellationToken) =>
+			dbContext.GroupMembers.Where(member => member.GroupId == id).Select(member => member.UserId).ToArrayAsync(cancellationToken);
+
 		public Task<bool> WouldLoseTheLastActiveAdministratorAsync(UserId user, CancellationToken cancellationToken) =>
 			dbContext.Groups.AnyAsync(
 				entity => entity.Id == WellKnownGroups.Administrators &&

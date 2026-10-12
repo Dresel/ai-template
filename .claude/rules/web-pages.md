@@ -25,6 +25,9 @@ paths:
   `<AppItemView TItem="…">`, a grid's reload through its `IsLoading` mask.
 - Text a user reads comes from the component's resx through `@inject I{Component}Localizations L`.
 - Services a slice's pages share come from `@inject` in the slice's `_Imports.razor`.
+- A page that stays current has its view model listen on a `LiveUpdates<T>`, one per view model, which the slice
+  registers with
+  `services.AddLiveUpdates((GroupsClient groups, CancellationToken cancellationToken) => groups.WatchAsync(cancellationToken))`.
 - A list page declares `public const string Path`, a detail page `PathOf(id)`, and routes, links, `NavigateTo` and the menu
   build on them.
 

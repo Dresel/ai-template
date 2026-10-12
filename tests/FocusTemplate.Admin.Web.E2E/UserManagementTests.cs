@@ -52,6 +52,23 @@ public sealed class UserManagementTests(BlazorAppFixture app) : BffPageTest(app)
 			.ToHaveCountAsync(0);
 	}
 
+	[Fact]
+	public async Task AGroupCreatedInOneTabAppearsInTheOther()
+	{
+		string name = $"E2E {Guid.NewGuid():N}";
+		IPage watching = await Context.NewPageAsync();
+		await LiveGroupsList.OpenAsync(watching, $"{App.BaseUrl}user-management/groups");
+
+		await OpenAsync("user-management/groups", "new-group");
+		await Page.GetByTestId("new-group").ClickAsync();
+		await Page.GetByTestId("group-name").FillAsync(name);
+		await Page.GetByTestId("save-group").ClickAsync();
+		await Expect(Page.GetByTestId("group-title")).ToHaveTextAsync(name);
+
+		await Expect(watching.GetByTestId("group-row").Filter(new LocatorFilterOptions { HasText = name, }))
+			.ToHaveCountAsync(1);
+	}
+
 	// A signed-in user the page refuses would otherwise go to Keycloak, come straight back with the same session, and loop
 	[Fact]
 	public async Task AUserWithoutPermissionsIsTurnedAwayRatherThanSentToLogInAgain()

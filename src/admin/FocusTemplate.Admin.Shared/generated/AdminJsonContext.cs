@@ -15,6 +15,7 @@ namespace FocusTemplate.Admin.Shared;
 [JsonSerializable(typeof(DemoCodeResponse))]
 [JsonSerializable(typeof(DemoProfileRequest))]
 [JsonSerializable(typeof(DemoProfileResponse))]
+[JsonSerializable(typeof(GroupChanged))]
 [JsonSerializable(typeof(GroupId))]
 [JsonSerializable(typeof(GroupRequest))]
 [JsonSerializable(typeof(GroupResponse))]

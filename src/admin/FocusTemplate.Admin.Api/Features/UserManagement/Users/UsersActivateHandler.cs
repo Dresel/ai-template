@@ -1,3 +1,4 @@
+using FocusTemplate.Admin.Api.Realtime.Backplane;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using Mediator;
@@ -5,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FocusTemplate.Admin.Api.Features.UserManagement.Users;
 
-public sealed class UsersActivateHandler(AppDbContext dbContext, IUsersLocalizations localizations)
+public sealed class UsersActivateHandler(AppDbContext dbContext, SignalBackplane backplane, IUsersLocalizations localizations)
 	: ICommandHandler<UsersActivateCommand, UsersActivateResult>
 {
 	public async ValueTask<UsersActivateResult> Handle(UsersActivateCommand command, CancellationToken cancellationToken)
@@ -19,6 +20,8 @@ public sealed class UsersActivateHandler(AppDbContext dbContext, IUsersLocalizat
 
 		user.IsActive = true;
 		await dbContext.SaveChangesAsync(cancellationToken);
+
+		backplane.CloseStreamsFor(user.Id);
 
 		return Unit.Value;
 	}
