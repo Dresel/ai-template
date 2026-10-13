@@ -9,7 +9,7 @@
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Radzen.Blazor" Version="11.5.1" />
+    <PackageVersion Include="Radzen.Blazor" Version="12.1.2" />
     <PackageVersion Include="Aigamo.ResXGenerator" Version="4.4.1-local.2" />
     <PackageVersion Include="Microsoft.Extensions.Localization" Version="11.0.0-rc.1.26425.128" />
     <PackageVersion Include="Duende.AccessTokenManagement.OpenIdConnect" Version="4.2.0" />

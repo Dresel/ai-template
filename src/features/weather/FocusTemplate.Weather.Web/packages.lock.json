@@ -25,12 +25,13 @@
       },
       "Radzen.Blazor": {
         "type": "Direct",
-        "requested": "[11.5.1, )",
-        "resolved": "11.5.1",
-        "contentHash": "1grwHjm04KGvp9bwE+0ZPa/cCGepxi058eGza+NRMZxuTJeEc+PuQge7gvxxzjWk/VtkxrUxuaYVF8igEpHMSQ==",
+        "requested": "[12.1.2, )",
+        "resolved": "12.1.2",
+        "contentHash": "BpUzCdWrPL+n1YoqDaabBS+gnElTYWCb8RQoOMw7bgoTL2B5ZZAd/Zm899/dmqbK+yuzwy7M6Z44QoT/YkMSGw==",
         "dependencies": {
           "Microsoft.AspNetCore.Components": "10.0.12",
-          "Microsoft.AspNetCore.Components.Web": "10.0.12"
+          "Microsoft.AspNetCore.Components.Web": "10.0.12",
+          "Microsoft.Extensions.AI": "10.10.0"
         }
       },
       "Riok.Mapperly": {
@@ -86,6 +87,20 @@
         "type": "Transitive",
         "resolved": "11.0.0-rc.1.26425.128",
         "contentHash": "WaXd7xvRDuXxrGQZRQFNkWNPcfBvd5O5v7PxDDNii1JgLmlrvhBJBl0JLWcP8fPQ9pyv4cVXYDpC1+7HFnelSw=="
+      },
+      "Microsoft.Extensions.AI": {
+        "type": "Transitive",
+        "resolved": "10.10.0",
+        "contentHash": "XKvtDUD3KySkvA5UpS+UF67M5rcqiXjAQchTZZ26WnavVKXxwlUTVdK/Ju0tc/25+16AVUdNl8cnVVGX/tx03A==",
+        "dependencies": {
+          "Microsoft.Extensions.AI.Abstractions": "10.10.0",
+          "System.Numerics.Tensors": "10.0.12"
+        }
+      },
+      "Microsoft.Extensions.AI.Abstractions": {
+        "type": "Transitive",
+        "resolved": "10.10.0",
+        "contentHash": "frBHj2ckpevA+KdDLikxv8oxGPrJiyTvaiblYp+vtVEt0q6J73XP5m2SICm86nFK6rl+L1GCKxIy4S5Lb3p2kQ=="
       },
       "Microsoft.Extensions.AmbientMetadata.Application": {
         "type": "Transitive",
@@ -340,6 +355,11 @@
         "resolved": "1.2.0.556",
         "contentHash": "zvn9Mqs/ox/83cpYPignI8hJEM2A93s2HkHs8HYMOAQW0PkampyoErAiIyKxgTLqbbad29HX/shv/6LGSjPJNQ=="
       },
+      "System.Numerics.Tensors": {
+        "type": "Transitive",
+        "resolved": "10.0.12",
+        "contentHash": "17brFrnQHV/XMMazXNqFq4GkvzWy8yzDPo5Gb8TT8zJtMFbUqDycOCyPCp9F+eMc4L75kcCKRZqaeBHMwLCL9Q=="
+      },
       "System.Threading.RateLimiting": {
         "type": "Transitive",
         "resolved": "8.0.0",
@@ -363,7 +383,7 @@
           "FocusTemplate.Primitives": "[1.0.0, )",
           "Microsoft.AspNetCore.Components.Authorization": "[11.0.0-rc.1.26425.128, )",
           "Microsoft.Extensions.Localization": "[11.0.0-rc.1.26425.128, )",
-          "Radzen.Blazor": "[11.5.1, )"
+          "Radzen.Blazor": "[12.1.2, )"
         }
       },
       "focustemplate.http": {
