@@ -905,6 +905,9 @@
           "Vogen": "[8.0.7, )"
         }
       },
+      "focustemplate.names": {
+        "type": "Project"
+      },
       "focustemplate.primitives": {
         "type": "Project",
         "dependencies": {

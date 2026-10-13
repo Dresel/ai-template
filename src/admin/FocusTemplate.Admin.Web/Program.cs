@@ -6,6 +6,7 @@ using FocusTemplate.Admin.Web.Foundation;
 using FocusTemplate.Admin.Web.Infrastructure.Authentication;
 using FocusTemplate.Admin.Web.Infrastructure.Configuration;
 using FocusTemplate.Admin.Web.Infrastructure.Localization;
+using FocusTemplate.Names;
 using FocusTemplate.Weather.Web;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -32,7 +33,7 @@ builder.Services.AddDemoProfiles(builder.HostEnvironment);
 builder.Services.AddDiagnostics(builder.HostEnvironment);
 builder.Services.AddUserManagement(builder.HostEnvironment);
 
-builder.Services.AddWeatherPages(builder.HostEnvironment, "admin-api");
+builder.Services.AddWeatherPages(builder.HostEnvironment, ResourceNames.AdminApi);
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();

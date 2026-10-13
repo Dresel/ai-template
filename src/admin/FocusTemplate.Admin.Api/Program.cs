@@ -8,6 +8,7 @@ using FocusTemplate.Admin.Api.Localization;
 using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Api.Foundation.Realtime;
 using FocusTemplate.Data;
+using FocusTemplate.Names;
 using FocusTemplate.Primitives;
 using FocusTemplate.Weather.Api;
 
@@ -21,10 +22,10 @@ builder.AddApiAuthentication();
 
 builder.AddApiLocalization();
 
-builder.Services.AddAppDbContextPool("focusdb");
+builder.Services.AddAppDbContextPool(ConnectionNames.Database);
 builder.EnrichNpgsqlDbContext<AppDbContext>();
 
-builder.Services.AddReadOnlyAppDbContextPool("focusdb-readonly");
+builder.Services.AddReadOnlyAppDbContextPool(ConnectionNames.ReadOnlyDatabase);
 builder.EnrichNpgsqlDbContext<ReadOnlyAppDbContext>();
 
 builder.Services.AddProblemDetails();
@@ -35,9 +36,9 @@ builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetim
 builder.Services.AddAdminEndpoints();
 builder.Services.AddDemoProfiles();
 
-builder.AddWeather("focusdb", "focusdb-readonly");
+builder.AddWeather(ConnectionNames.Database, ConnectionNames.ReadOnlyDatabase);
 
-builder.AddRedisClient("redis");
+builder.AddRedisClient(ConnectionNames.Redis);
 builder.Services.AddSignalBackplane().AddSignal<GroupChanged>();
 
 WebApplication app = builder.Build();

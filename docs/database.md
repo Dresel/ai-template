@@ -37,10 +37,11 @@ read-only twin of its own, its migrations and its seed, see **Feature contexts**
   provider through `UseNpgsqlWithConventions`, a feature's contexts get theirs through `ConfigureFeatureDbContext` and
   `ConfigureReadOnlyFeatureDbContext`, with the feature's own types (`UseWeatherTypes`: the PostGIS plugin and the
   enums). A bare `UseNpgsql` would miss them.
-- **Registration**: the Admin API registers both spine pools, `AddAppDbContextPool("focusdb")` and
-  `AddReadOnlyAppDbContextPool("focusdb-readonly")`, each followed by Aspire's `EnrichNpgsqlDbContext<TContext>()`
-  (retries, health checks, OTel). `AddWeather()` does the same for the feature's two, on the same connections. The
-  Public API registers only `AddReadOnlyWeatherDbContextPool("focusdb-readonly")`.
+- **Registration**: the Admin API registers both spine pools, `AddAppDbContextPool(ConnectionNames.Database)` and
+  `AddReadOnlyAppDbContextPool(ConnectionNames.ReadOnlyDatabase)`, each followed by Aspire's
+  `EnrichNpgsqlDbContext<TContext>()` (retries, health checks, OTel). `AddWeather()` does the same for the feature's two,
+  on the same connections. The Public API registers only
+  `AddReadOnlyWeatherDbContextPool(ConnectionNames.ReadOnlyDatabase)`.
 
 ## Packages
 

@@ -1,3 +1,4 @@
+using FocusTemplate.Names;
 using OpenQA.Selenium.Appium;
 using Projects;
 
@@ -90,7 +91,7 @@ public sealed class AppiumFixture : IAsyncLifetime
 
 		this.app = await StartAppHostAsync();
 
-		int apiPort = this.app.GetEndpoint("public-api", "http").Port;
+		int apiPort = this.app.GetEndpoint(ResourceNames.PublicApi, "http").Port;
 		this.environment.ConfigureBackendAccess(DeviceApiPort, apiPort);
 		await this.environment.InstallAppAsync();
 
@@ -116,7 +117,7 @@ public sealed class AppiumFixture : IAsyncLifetime
 
 		DistributedApplication app = await builder.BuildAsync(cancellationTokenSource.Token);
 		await app.StartAsync(cancellationTokenSource.Token);
-		await app.ResourceNotifications.WaitForResourceHealthyAsync("public-api", cancellationTokenSource.Token);
+		await app.ResourceNotifications.WaitForResourceHealthyAsync(ResourceNames.PublicApi, cancellationTokenSource.Token);
 		return app;
 	}
 }

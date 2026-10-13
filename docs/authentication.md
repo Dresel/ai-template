@@ -14,9 +14,9 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
 ## AppHost
 
 - **Local realm** (`Features:LocalKeycloak` on, the default, run mode only): `AddLocalKeycloakRealm` adds
-  `AddKeycloak("keycloak", 8080)` with `keycloak/focus-realm.json`: realm `focus`, the confidential client `admin-bff`
-  with an audience mapper that stamps `admin-api` into the access token, and the login `developer` / `developer`, whose
-  user id is `WellKnownUsers.Developer`. Sessions last 7 days idle and 30 days at most, and survive browser restarts
+  `AddKeycloak(ResourceNames.Keycloak, 8080)` with `keycloak/focus-realm.json`: realm `focus`, the confidential client
+  `admin-bff` with an audience mapper that stamps `admin-api` into the access token, and the login `developer` /
+  `developer`, whose user id is `WellKnownUsers.Developer`. Sessions last 7 days idle and 30 days at most, and survive browser restarts
   when "Remember me" is ticked. `WithKeycloakClient` hands the BFF that login as `Oidc__LoginHint`, sent as
   `login_hint` inside the pushed request, so the form asks only for the password. The realm has internationalization on
   (en, de) for the form's language, see [localization](localization.md). The realm file and the values in

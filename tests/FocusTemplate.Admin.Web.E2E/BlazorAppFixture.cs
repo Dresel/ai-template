@@ -1,3 +1,4 @@
+using FocusTemplate.Names;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Playwright;
 using Projects;
@@ -65,9 +66,9 @@ public sealed class BlazorAppFixture : IAsyncLifetime
 
 		this.app = await builder.BuildAsync(cancellationTokenSource.Token);
 		await this.app.StartAsync(cancellationTokenSource.Token);
-		await this.app.ResourceNotifications.WaitForResourceHealthyAsync("admin-bff", cancellationTokenSource.Token);
+		await this.app.ResourceNotifications.WaitForResourceHealthyAsync(ResourceNames.AdminBff, cancellationTokenSource.Token);
 
-		BaseUrl = this.app.GetEndpoint("admin-bff", "http").ToString();
+		BaseUrl = this.app.GetEndpoint(ResourceNames.AdminBff, "http").ToString();
 		StorageState = await CaptureSessionAsync();
 	}
 
@@ -89,7 +90,7 @@ public sealed class BlazorAppFixture : IAsyncLifetime
 		// "admin" is the integration's default when the AppHost names no admin user.
 		return await KeycloakAdmin.SignInAsync(
 			playwright,
-			started.GetEndpoint("keycloak", "http"),
+			started.GetEndpoint(ResourceNames.Keycloak, "http"),
 			userName ?? "admin",
 			password);
 	}

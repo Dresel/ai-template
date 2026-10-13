@@ -1,3 +1,4 @@
+using FocusTemplate.Names;
 using Projects;
 
 namespace FocusTemplate.Admin.Web.E2E;
@@ -41,7 +42,7 @@ public sealed class KeycloakRealmTests
 		await using IDistributedApplicationTestingBuilder builder = await CreateAsync("Features:LocalKeycloak=true");
 		await using DistributedApplication app = await builder.BuildAsync(TestContext.Current.CancellationToken);
 
-		Dictionary<string, string> environment = await OidcEnvironmentAsync(Publishing(app), builder, "admin-bff");
+		Dictionary<string, string> environment = await OidcEnvironmentAsync(Publishing(app), builder, ResourceNames.AdminBff);
 
 		Assert.Equal(BlazorAppFixture.Username, environment["Oidc__LoginHint"]);
 	}
@@ -95,7 +96,7 @@ public sealed class KeycloakRealmTests
 			{
 				["Oidc__Audience"] = "{oidc-admin-api-audience.value}", ["Oidc__Authority"] = "{oidc-authority.value}",
 			},
-			await OidcEnvironmentAsync(publishing, builder, "admin-api"));
+			await OidcEnvironmentAsync(publishing, builder, ResourceNames.AdminApi));
 
 		Assert.Equal(
 			new Dictionary<string, string>
@@ -104,7 +105,7 @@ public sealed class KeycloakRealmTests
 				["Oidc__ClientId"] = "{oidc-admin-bff-client-id.value}",
 				["Oidc__ClientSecret"] = "{oidc-admin-bff-secret.value}",
 			},
-			await OidcEnvironmentAsync(publishing, builder, "admin-bff"));
+			await OidcEnvironmentAsync(publishing, builder, ResourceNames.AdminBff));
 	}
 
 	private static Task<IDistributedApplicationTestingBuilder> CreateAsync(params string[] args) =>

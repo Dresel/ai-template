@@ -13,6 +13,9 @@ paths:
 - Authentication has no flag.
 - A migrations resource is added with `AddMigrations<TContext>` (`MigrationExtensions`), and an API waits for the
   completion of each one whose tables it reads.
+- A resource or connection reference is named through `ResourceNames` or `ConnectionNames` in `FocusTemplate.Names`,
+  and its consumers use the same constant. A feature takes names as arguments. Keycloak client ids follow the realm
+  file.
 - A persistent container sets `IsProxied = true` on the endpoints the projects use, with a fixed port, so `localhost`
   also answers on `::1` (see **Persistent containers** in the doc).
 - The preview integrations (`Aspire.Hosting.Blazor`, `Aspire.Hosting.Keycloak`, `Aspire.Hosting.Maui`,

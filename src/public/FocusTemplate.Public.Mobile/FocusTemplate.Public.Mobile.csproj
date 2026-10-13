@@ -55,6 +55,7 @@
 			Include="..\FocusTemplate.Public.Mobile.ServiceDefaults\FocusTemplate.Public.Mobile.ServiceDefaults.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Public.Client\FocusTemplate.Public.Client.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Public.Shared\FocusTemplate.Public.Shared.csproj" />
+		<ProjectReference Include="..\..\FocusTemplate.Names\FocusTemplate.Names.csproj" />
 	</ItemGroup>
 
 </Project>

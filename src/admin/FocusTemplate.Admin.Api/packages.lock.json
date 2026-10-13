@@ -537,6 +537,9 @@
           "FocusTemplate.Primitives": "[1.0.0, )"
         }
       },
+      "focustemplate.names": {
+        "type": "Project"
+      },
       "focustemplate.primitives": {
         "type": "Project",
         "dependencies": {

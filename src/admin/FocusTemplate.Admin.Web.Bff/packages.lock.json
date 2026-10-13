@@ -283,6 +283,7 @@
           "FocusTemplate.Admin.Shared": "[1.0.0, )",
           "FocusTemplate.Admin.Web.ClientServiceDefaults": "[1.0.0, )",
           "FocusTemplate.Admin.Web.Foundation": "[1.0.0, )",
+          "FocusTemplate.Names": "[1.0.0, )",
           "FocusTemplate.Weather.Web": "[1.0.0, )",
           "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.1.26425.128, )",
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.19.0, )",
@@ -315,6 +316,9 @@
         "dependencies": {
           "FocusTemplate.Primitives": "[1.0.0, )"
         }
+      },
+      "focustemplate.names": {
+        "type": "Project"
       },
       "focustemplate.primitives": {
         "type": "Project",

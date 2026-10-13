@@ -670,6 +670,7 @@
           "FocusTemplate.Admin.Shared": "[1.0.0, )",
           "FocusTemplate.Api.Foundation": "[1.0.0, )",
           "FocusTemplate.Data": "[1.0.0, )",
+          "FocusTemplate.Names": "[1.0.0, )",
           "FocusTemplate.ServiceDefaults": "[1.0.0, )",
           "FocusTemplate.Weather.Api": "[1.0.0, )",
           "Mediator.Abstractions": "[3.1.0-rc.1, )",
@@ -743,6 +744,9 @@
           "Microsoft.AspNetCore.Authorization": "[11.0.0-rc.1.26425.128, )"
         }
       },
+      "focustemplate.names": {
+        "type": "Project"
+      },
       "focustemplate.primitives": {
         "type": "Project",
         "dependencies": {
@@ -753,6 +757,7 @@
         "type": "Project",
         "dependencies": {
           "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": "[13.6.1, )",
+          "FocusTemplate.Names": "[1.0.0, )",
           "FocusTemplate.Public.Shared": "[1.0.0, )",
           "FocusTemplate.ServiceDefaults": "[1.0.0, )",
           "FocusTemplate.Weather.Data": "[1.0.0, )",

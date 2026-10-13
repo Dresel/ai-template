@@ -23,6 +23,7 @@
 		<ProjectReference Include="..\features\weather\FocusTemplate.Weather.Data\FocusTemplate.Weather.Data.csproj"
 			IsAspireProjectResource="false" />
 		<ProjectReference Include="..\FocusTemplate.Data\FocusTemplate.Data.csproj" IsAspireProjectResource="false" />
+		<ProjectReference Include="..\FocusTemplate.Names\FocusTemplate.Names.csproj" IsAspireProjectResource="false" />
 		<ProjectReference Include="..\public\FocusTemplate.Public.Api\FocusTemplate.Public.Api.csproj" />
 	</ItemGroup>
 

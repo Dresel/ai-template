@@ -1000,6 +1000,7 @@
           "Aspire.Hosting.Redis": "[13.6.1, )",
           "CommunityToolkit.Aspire.Hosting.Umami": "[13.5.0, )",
           "FocusTemplate.Data": "[1.0.0, )",
+          "FocusTemplate.Names": "[1.0.0, )",
           "FocusTemplate.Weather.Data": "[1.0.0, )"
         }
       },
@@ -1022,6 +1023,9 @@
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
           "Vogen": "[8.0.7, )"
         }
+      },
+      "focustemplate.names": {
+        "type": "Project"
       },
       "focustemplate.primitives": {
         "type": "Project",

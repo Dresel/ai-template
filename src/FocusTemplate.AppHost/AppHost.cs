@@ -3,6 +3,7 @@ using Aspire.Hosting.EntityFrameworkCore;
 using Aspire.Hosting.Maui;
 using FocusTemplate.AppHost;
 using FocusTemplate.Data;
+using FocusTemplate.Names;
 using FocusTemplate.Weather.Data;
 using Microsoft.Extensions.Configuration;
 using Projects;
@@ -19,7 +20,7 @@ bool persistentLocalKeycloak = builder.Configuration.GetValue("Features:Persiste
 bool persistentDatabase = builder.Configuration.GetValue("Features:PersistentDatabase", false);
 bool addChaos = builder.ExecutionContext.IsRunMode && builder.Configuration.GetValue("Features:Chaos", false);
 
-IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres("postgres").WithImage("postgis/postgis").WithImageTag("17-3.5");
+IResourceBuilder<PostgresServerResource> postgres = builder.AddPostgres(ResourceNames.Postgres).WithImage("postgis/postgis").WithImageTag("17-3.5");
 
 if (persistentDatabase)
 {
@@ -37,16 +38,16 @@ if (persistentDatabase)
 			});
 }
 
-IResourceBuilder<PostgresDatabaseResource> focusDb = postgres.AddDatabase("focusdb");
+IResourceBuilder<PostgresDatabaseResource> focusDb = postgres.AddDatabase(ConnectionNames.Database);
 
 // Backplane (pub/sub) for server-sent event signals between the API's processes
-IResourceBuilder<RedisResource> redis = builder.AddRedis("redis");
+IResourceBuilder<RedisResource> redis = builder.AddRedis(ConnectionNames.Redis);
 
 KeycloakRealm realm = addLocalKeycloak ? builder.AddLocalKeycloakRealm(persistentLocalKeycloak) : builder.AddExternalKeycloakRealm();
 
-IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>("admin-api")
+IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>(ResourceNames.AdminApi)
 	.WithReference(focusDb)
-	.WithReference(focusDb, "focusdb-readonly")
+	.WithReference(focusDb, ConnectionNames.ReadOnlyDatabase)
 	.WithReference(redis)
 	.WithKeycloakAudience(realm)
 	.WaitFor(focusDb)
@@ -77,8 +78,8 @@ IResourceBuilder<EFMigrationResource> weatherMigrations = api.AddMigrations<Weat
 
 api.WaitForCompletion(migrations).WaitForCompletion(weatherMigrations);
 
-IResourceBuilder<ProjectResource> publicApi = builder.AddProject<FocusTemplate_Public_Api>("public-api")
-	.WithReference(focusDb, "focusdb-readonly")
+IResourceBuilder<ProjectResource> publicApi = builder.AddProject<FocusTemplate_Public_Api>(ResourceNames.PublicApi)
+	.WithReference(focusDb, ConnectionNames.ReadOnlyDatabase)
 	.WaitFor(focusDb);
 
 publicApi.WaitForCompletion(weatherMigrations);
@@ -109,7 +110,7 @@ if (addMobile)
 	iosSimulator.WithArgs(context => context.Args.Add("-p:NoBuild=false"));
 }
 
-IResourceBuilder<ProjectResource> web = builder.AddProject<FocusTemplate_Admin_Web_Bff>("admin-bff")
+IResourceBuilder<ProjectResource> web = builder.AddProject<FocusTemplate_Admin_Web_Bff>(ResourceNames.AdminBff)
 	.ProxyBlazorService(api)
 	.ProxyBlazorTelemetry()
 	.WithKeycloakClient(realm)

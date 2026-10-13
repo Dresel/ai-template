@@ -453,6 +453,9 @@
           "Microsoft.AspNetCore.Authorization": "[11.0.0-rc.1.26425.128, )"
         }
       },
+      "focustemplate.names": {
+        "type": "Project"
+      },
       "focustemplate.primitives": {
         "type": "Project",
         "dependencies": {

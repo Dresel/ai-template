@@ -75,7 +75,7 @@ own under `src/features/<name>/` instead, built like `src/features/weather/`, se
 
 ## 5. Web ([web pages](../../../docs/web-pages.md), [web forms](../../../docs/web-forms.md))
 
-1. `Features/<Slice>/ServiceCollectionExtensions.cs` with `Add<Slice>()`: `AddProxiedHttpClient<<Interface>Client>(environment, "admin-api")`,
+1. `Features/<Slice>/ServiceCollectionExtensions.cs` with `Add<Slice>()`: `AddProxiedHttpClient<<Interface>Client>(environment, ResourceNames.AdminApi)`,
    the view models `AddScoped`, form validators as `IValidator<Form>`. `Program.cs` of the Web project calls it.
 2. Pages with `public const string Path` / `PathOf(id)`, `@attribute [RequiresPermission(…Permissions.Names.…)]`,
    view models on `ViewModelPage<T>` with `AsyncCommand` loads and `ToOutcome()`, a `data-testid` on everything a test

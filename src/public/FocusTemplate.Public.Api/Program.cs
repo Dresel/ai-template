@@ -1,3 +1,4 @@
+using FocusTemplate.Names;
 using FocusTemplate.Public.Api.Features.WeatherForecasts;
 using FocusTemplate.Public.Shared;
 using FocusTemplate.Weather.Data;
@@ -9,7 +10,7 @@ builder.AddServiceDefaults();
 builder.Services.AddSingleton(TimeProvider.System);
 
 // At the moment only read-only access is required for the public API
-builder.Services.AddReadOnlyWeatherDbContextPool("focusdb-readonly");
+builder.Services.AddReadOnlyWeatherDbContextPool(ConnectionNames.ReadOnlyDatabase);
 builder.EnrichNpgsqlDbContext<ReadOnlyWeatherDbContext>();
 
 builder.Services.AddProblemDetails();

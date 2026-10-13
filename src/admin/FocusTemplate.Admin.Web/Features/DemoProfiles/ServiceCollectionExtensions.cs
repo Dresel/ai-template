@@ -1,5 +1,6 @@
 using FluentValidation;
 using FocusTemplate.Admin.Client.DemoProfiles;
+using FocusTemplate.Names;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -11,7 +12,7 @@ public static class ServiceCollectionExtensions
 		this IServiceCollection services,
 		IWebAssemblyHostEnvironment environment)
 	{
-		services.AddProxiedHttpClient<DemoProfilesClient>(environment, "admin-api");
+		services.AddProxiedHttpClient<DemoProfilesClient>(environment, ResourceNames.AdminApi);
 		services.AddScoped<IValidator<Form>, FormValidator>();
 
 		return services;

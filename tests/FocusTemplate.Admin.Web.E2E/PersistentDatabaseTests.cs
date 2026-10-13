@@ -1,3 +1,4 @@
+using FocusTemplate.Names;
 using Projects;
 
 namespace FocusTemplate.Admin.Web.E2E;
@@ -56,5 +57,5 @@ public sealed class PersistentDatabaseTests
 
 	// Umami has its own Postgres with a volume of its own, so the name picks the application's.
 	private static PostgresServerResource Postgres(IDistributedApplicationTestingBuilder builder) =>
-		builder.Resources.OfType<PostgresServerResource>().Single(postgres => postgres.Name == "postgres");
+		builder.Resources.OfType<PostgresServerResource>().Single(postgres => postgres.Name == ResourceNames.Postgres);
 }

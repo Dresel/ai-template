@@ -12,6 +12,13 @@ the MAUI device resources with a Dev Tunnel. `FocusTemplate.ServiceDefaults` giv
 discovery, health checks and the standard resilience handler, and an API its OpenAPI documents and the Scalar page
 (see [spec-first](spec-first.md)), which the dashboard links as `admin-api`'s "API reference".
 
+The AppHost names its resources and connection references through `FocusTemplate.Names`: `ResourceNames`
+(`admin-api`, `admin-bff`, `public-api`, `keycloak`, `postgres`) and `ConnectionNames` (`focusdb`, `focusdb-readonly`,
+`redis`). The APIs, the WASM client (`_api/admin-api/` is the BFF's route to that resource), the MAUI app and the E2E
+fixtures address them by the same constants. A feature takes the names as arguments and references none of them.
+Keycloak's client ids and audience come from `keycloak/focus-realm.json`, so they stay literals there and in the
+AppHost.
+
 Packages: `Aspire.Hosting.PostgreSQL`, `Aspire.Hosting.EntityFrameworkCore` (`AddEFMigrations`),
 `Aspire.Hosting.Blazor` (the WASM client's service and telemetry proxying), `Aspire.Hosting.Keycloak`,
 `Aspire.Hosting.Maui` with `Aspire.Hosting.DevTunnels`, and `CommunityToolkit.Aspire.Hosting.Umami`. Blazor, Keycloak,

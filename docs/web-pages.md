@@ -19,10 +19,10 @@ dialogs, and `AddRadzenComponents()` registers their services.
   `Features/DemoProfiles/` at `/demo/validation`.
 - **A feature's pages** sit in a Razor class library of their own (`FocusTemplate.Weather.Web`: the forecasts at
   `/weather`, the stations with their owners and a rename dialog at `/weather/stations`) with their resx, built on the
-  foundation below. `AddWeatherPages(environment, "admin-api")` registers its clients through the BFF route of the API
-  that maps the feature, its view models, validators and texts, and its `PageAssembly`. `App.razor` hands every
-  registered `PageAssembly` to the `Router`'s `AdditionalAssemblies`, so the host routes to the feature's pages without
-  naming them. The host keeps the menu entries in `MainLayout`.
+  foundation below. `AddWeatherPages(environment, ResourceNames.AdminApi)` registers its clients through the BFF route
+  of the API that maps the feature, its view models, validators and texts, and its `PageAssembly`. `App.razor` hands
+  every registered `PageAssembly` to the `Router`'s `AdditionalAssemblies`, so the host routes to the feature's pages
+  without naming them. The host keeps the menu entries in `MainLayout`.
 - **`FocusTemplate.Admin.Web.Foundation`**, a Razor class library of what is domain-neutral, so the pages of a feature
   in a project of its own build on it as the host's do. It references `FocusTemplate.Http` and `Primitives`, never the
   host's projects, and its `_Imports.razor` carries the usings a page needs:

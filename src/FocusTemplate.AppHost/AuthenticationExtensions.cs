@@ -1,3 +1,5 @@
+using FocusTemplate.Names;
+
 namespace FocusTemplate.AppHost;
 
 internal static class AuthenticationExtensions
@@ -15,7 +17,7 @@ internal static class AuthenticationExtensions
 		IResourceBuilder<ParameterResource> clientId = builder.AddParameter("oidc-admin-bff-client-id", "admin-bff", true);
 
 		return new KeycloakRealm(
-			builder.AddExternalService("keycloak", authority).WithHttpHealthCheck(),
+			builder.AddExternalService(ResourceNames.Keycloak, authority).WithHttpHealthCheck(),
 			ReferenceExpression.Create($"{authority}"),
 			ReferenceExpression.Create($"{audience}"),
 			ReferenceExpression.Create($"{clientId}"),
@@ -24,7 +26,7 @@ internal static class AuthenticationExtensions
 
 	public static KeycloakRealm AddLocalKeycloakRealm(this IDistributedApplicationBuilder builder, bool persistent)
 	{
-		IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak("keycloak", 8080)
+		IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak(ResourceNames.Keycloak, 8080)
 			.WithOtlpExporter()
 			.WithRealmImport("./keycloak");
 

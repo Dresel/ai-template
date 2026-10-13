@@ -14,6 +14,8 @@ Shared spine:
 - **FocusTemplate.AppHost** - the Aspire orchestrator, see [apphost](docs/apphost.md).
 - **FocusTemplate.ServiceDefaults** - server-side Aspire defaults (OTel, service discovery, health), see
   [apphost](docs/apphost.md).
+- **FocusTemplate.Names** - the names of the AppHost's resources and connections, which the services, the clients and
+  the tests address them by, see [apphost](docs/apphost.md).
 - **FocusTemplate.Primitives** - the typed ids and permissions every vertical shares, see [spec-first](docs/spec-first.md).
 - **FocusTemplate.Http** - the generated problem, permission, outcome and stream types the Admin projects share, see
   [spec-first](docs/spec-first.md).

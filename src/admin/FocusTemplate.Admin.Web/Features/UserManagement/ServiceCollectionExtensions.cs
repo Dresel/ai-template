@@ -3,6 +3,7 @@ using FocusTemplate.Admin.Client.UserManagement.Groups;
 using FocusTemplate.Admin.Client.UserManagement.Users;
 using FocusTemplate.Admin.Web.Features.UserManagement.Users;
 using FocusTemplate.Admin.Web.Foundation;
+using FocusTemplate.Names;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -12,8 +13,8 @@ public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddUserManagement(this IServiceCollection services, IWebAssemblyHostEnvironment environment)
 	{
-		services.AddProxiedHttpClient<UsersClient>(environment, "admin-api");
-		services.AddProxiedHttpClient<GroupsClient>(environment, "admin-api");
+		services.AddProxiedHttpClient<UsersClient>(environment, ResourceNames.AdminApi);
+		services.AddProxiedHttpClient<GroupsClient>(environment, ResourceNames.AdminApi);
 
 		services.AddLiveUpdates((GroupsClient groups, CancellationToken cancellationToken) => groups.WatchAsync(cancellationToken));
 

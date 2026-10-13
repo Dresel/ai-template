@@ -18,6 +18,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\FocusTemplate.AppHost\FocusTemplate.AppHost.csproj" />
+		<ProjectReference Include="..\..\src\FocusTemplate.Names\FocusTemplate.Names.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

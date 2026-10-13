@@ -42,11 +42,14 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   `Admin.Web`, `Public.Api`); `FeatureTests` checks it. What it needs of identity comes from the spine: `ICurrentUser`,
   `UserReference` for a foreign key to the users, `PermissionRequirement` answered by the host's handler.
 
-- **Composition** in the host, one line each: `builder.AddWeather("focusdb", "focusdb-readonly")` and
-  `endpoints.MapWeatherEndpoints()` in `Admin.Api`, `AddWeatherPages(environment, "admin-api")` in `Admin.Web`, which
-  also hands the feature's pages to the `Router`, `AddMigrations<WeatherDbContext>(…)` with
-  `.WaitForCompletion(migrations)` in the AppHost (see [database](database.md)), the feature's `primitives.tsp` imported
-  by `src/spec/primitives.tsp`, and the menu entry in `MainLayout`. A host without the feature leaves out these lines and the project references.
+- **Composition** in the host, one line each:
+  `builder.AddWeather(ConnectionNames.Database, ConnectionNames.ReadOnlyDatabase)` and
+  `endpoints.MapWeatherEndpoints()` in `Admin.Api`, `AddWeatherPages(environment, ResourceNames.AdminApi)` in
+  `Admin.Web`, which also hands the feature's pages to the `Router`, `AddMigrations<WeatherDbContext>(…)` with
+  `.WaitForCompletion(migrations)` in the AppHost (see [database](database.md)), the feature's `primitives.tsp`
+  imported by `src/spec/primitives.tsp`, and the menu entry in `MainLayout`. A host without the feature leaves out
+  these lines and the project references. The feature takes the host's names as arguments, so it never references
+  `FocusTemplate.Names`.
 
 ## Projects not covered by an area doc
 

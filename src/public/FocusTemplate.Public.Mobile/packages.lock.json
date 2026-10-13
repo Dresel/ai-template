@@ -1468,6 +1468,9 @@
           "Xamarin.Kotlin.StdLib": "2.4.0.1"
         }
       },
+      "focustemplate.names": {
+        "type": "Project"
+      },
       "focustemplate.public.client": {
         "type": "Project",
         "dependencies": {
@@ -1862,6 +1865,9 @@
         "type": "Transitive",
         "resolved": "8.0.0",
         "contentHash": "7mu9v0QDv66ar3DpGSZHg9NuNcxDaaAcnMULuZlaTpP9+hwXhrxNGsF5GmLkSHxFdb5bBc1TzeujsRgTrPWi+Q=="
+      },
+      "focustemplate.names": {
+        "type": "Project"
       },
       "focustemplate.public.client": {
         "type": "Project",

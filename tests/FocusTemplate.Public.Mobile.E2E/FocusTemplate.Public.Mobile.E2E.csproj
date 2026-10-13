@@ -20,6 +20,7 @@
 	<ItemGroup>
 		<!-- The MAUI app is a build/install artifact here, never a ProjectReference (net11.0 vs net11.0-android TFM clash - same trap as in the AppHost). -->
 		<ProjectReference Include="..\..\src\FocusTemplate.AppHost\FocusTemplate.AppHost.csproj" />
+		<ProjectReference Include="..\..\src\FocusTemplate.Names\FocusTemplate.Names.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
