@@ -1,4 +1,5 @@
 using FluentValidation;
+using FocusTemplate.Admin.Web.Foundation.Pages;
 using FocusTemplate.Weather.Client.Stations;
 using FocusTemplate.Weather.Client.WeatherForecasts;
 using FocusTemplate.Weather.Web.Stations;
@@ -21,6 +22,8 @@ public static class ServiceCollectionExtensions
 
 		services.AddScoped<IValidator<Form>, FormValidator>();
 		services.AddScoped<ListPageViewModel>();
+
+		services.AddSingleton(new PageAssembly(typeof(ServiceCollectionExtensions).Assembly));
 
 		// This assembly's own registration, internal beside the host's
 		return services.UsingResXGenerator();

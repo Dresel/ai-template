@@ -1,8 +1,10 @@
 @using System.Reflection
+@using FocusTemplate.Admin.Web.Foundation.Pages
 @using FocusTemplate.Admin.Web.Infrastructure.Authentication
 @inject IAppLocalizations L
+@inject IEnumerable<PageAssembly> PageAssemblies
 
-<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="FeatureAssemblies" NotFoundPage="typeof(NotFound)">
+<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="additionalAssemblies" NotFoundPage="typeof(NotFound)">
 	<Found Context="routeData">
 		<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
 			<NotAuthorized>
@@ -30,6 +32,9 @@
 
 @code
 {
-	// The pages of the features this host includes
-	private static readonly Assembly[] FeatureAssemblies = [typeof(Weather.Web.ServiceCollectionExtensions).Assembly,];
+	// The pages of the features this host includes, which each feature registers along with its other services
+	private Assembly[] additionalAssemblies = [];
+
+	protected override void OnInitialized() =>
+		additionalAssemblies = [.. PageAssemblies.Select(pages => pages.Assembly).Distinct(),];
 }

@@ -1,6 +1,7 @@
 ---
 paths:
   - "src/admin/*.Admin.Web/Features/**"
+  - "src/features/*/*.Web/**"
   - "src/admin/*.Admin.Web.Foundation/{Pages,Feedback}/**"
   - "src/admin/*.Admin.Web/Shell/**"
   - "src/admin/*.Admin.Web.Foundation/*.cs"
@@ -13,6 +14,8 @@ paths:
 - A slice's files are named without the slice's prefix (`Form`, `Mapper`). Form, validator and mapper are `internal`.
   Pages, view models and the registration class are `public`. The slice registers its services by hand in
   `Add<Slice>()`.
+- A feature's `Add<Feature>Pages()` registers its `PageAssembly`, which `App.razor` hands to the `Router`. The host
+  names no feature assembly itself.
 - The view model holds the page's state and server calls. The page keeps markup, confirmations, dialogs, navigation and
   permission checks.
 - A page `@inherits ViewModelPage<TViewModel>`. Its view model is registered `AddScoped` and takes nothing scoped from the

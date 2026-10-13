@@ -43,8 +43,8 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   `UserReference` for a foreign key to the users, `PermissionRequirement` answered by the host's handler.
 
 - **Composition** in the host, one line each: `builder.AddWeather("focusdb", "focusdb-readonly")` and
-  `endpoints.MapWeatherEndpoints()` in `Admin.Api`, `AddWeatherPages(environment, "admin-api")` and the assembly in
-  the `Router`'s `AdditionalAssemblies` in `Admin.Web`, `AddMigrations<WeatherDbContext>(…)` with
+  `endpoints.MapWeatherEndpoints()` in `Admin.Api`, `AddWeatherPages(environment, "admin-api")` in `Admin.Web`, which
+  also hands the feature's pages to the `Router`, `AddMigrations<WeatherDbContext>(…)` with
   `.WaitForCompletion(migrations)` in the AppHost (see [database](database.md)), the feature's `primitives.tsp` imported
   by `src/spec/primitives.tsp`, and the menu entry in `MainLayout`. A host without the feature leaves out these lines and the project references.
 
