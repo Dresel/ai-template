@@ -550,7 +550,7 @@ components:
         instance:
           type: string
           description: URI reference identifying this occurrence.
-      unevaluatedProperties: {}
+      additionalProperties: {}
       description: |-
         Problem details for an HTTP API response, as defined by RFC 9457
         (https://www.rfc-editor.org/rfc/rfc9457). Extension members are allowed and carry information
@@ -579,7 +579,7 @@ components:
           description: URI reference identifying this occurrence.
         errors:
           type: object
-          unevaluatedProperties:
+          additionalProperties:
             type: array
             items:
               type: string
@@ -589,7 +589,7 @@ components:
           items:
             $ref: '#/components/schemas/Http.Violation'
           description: Every failed rule, warnings and infos included.
-      unevaluatedProperties: {}
+      additionalProperties: {}
       description: |-
         Problem details (RFC 9457) of a request that failed validation: the errors by the wire path of the member or parameter
         they concern, and every failed rule with its code, severity and the constraint's values.
@@ -615,7 +615,7 @@ components:
           description: The message, in the language of the server.
         args:
           type: object
-          unevaluatedProperties: {}
+          additionalProperties: {}
           description: The constraint's values by name, maxLength for example, for a client that phrases its own message.
       description: One failed rule of a validation.
     Http.ViolationSeverity:
