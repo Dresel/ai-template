@@ -1,0 +1,48 @@
+@inject AppearanceStorage Appearance
+@inject ThemeService Themes
+@inject IAppearanceSwitchLocalizations L
+
+<RadzenButton Icon="@IconOf(mode)"
+	ButtonStyle="ButtonStyle.Base"
+	Variant="Variant.Outlined"
+	title="@Label"
+	aria-label="@Label"
+	Click="NextAsync"
+	data-testid="theme-toggle" />
+
+@code
+{
+	private AppearanceMode mode;
+
+	private string Label => L.Current(NameOf(mode));
+
+	protected override void OnInitialized() => mode = Appearance.ReadMode();
+
+	private static string IconOf(AppearanceMode mode) =>
+		mode switch
+		{
+			AppearanceMode.Light => "light_mode",
+			AppearanceMode.Dark => "dark_mode",
+			_ => "brightness_auto",
+		};
+
+	private async Task NextAsync()
+	{
+		mode = mode switch
+		{
+			AppearanceMode.System => AppearanceMode.Light,
+			AppearanceMode.Light => AppearanceMode.Dark,
+			_ => AppearanceMode.System,
+		};
+
+		Themes.SetTheme(await Appearance.ChooseAsync(mode));
+	}
+
+	private string NameOf(AppearanceMode mode) =>
+		mode switch
+		{
+			AppearanceMode.Light => L.Light,
+			AppearanceMode.Dark => L.Dark,
+			_ => L.System,
+		};
+}

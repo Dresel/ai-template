@@ -1,5 +1,6 @@
 @using System.Security.Claims
 @using FocusTemplate.Admin.Shared
+@using FocusTemplate.Admin.Web.Foundation.Appearance
 @using FocusTemplate.Admin.Web.Infrastructure.Localization
 @using FocusTemplate.Primitives
 @using Microsoft.Extensions.Hosting
@@ -19,7 +20,7 @@
 			</RadzenStack>
 			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
 				<LanguageSwitch />
-				<RadzenAppearanceToggle LightTheme="software" DarkTheme="software-dark" data-testid="theme-toggle" />
+				<AppearanceSwitch />
 				<AuthorizeView>
 					<Authorized>
 						<RadzenText TagName="TagName.Span" data-testid="user-name">@context.User.Identity?.Name</RadzenText>

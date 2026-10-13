@@ -1,5 +1,5 @@
 @using System.Reflection
-@using FocusTemplate.Admin.Web.Foundation.Pages
+@using FocusTemplate.Admin.Web.Foundation.Appearance
 @using FocusTemplate.Admin.Web.Infrastructure.Authentication
 @inject IAppLocalizations L
 @inject IEnumerable<PageAssembly> PageAssemblies
@@ -26,7 +26,7 @@
 </Router>
 
 <HeadContent>
-	<RadzenTheme Theme="software" />
+	<AppearanceTheme />
 </HeadContent>
 <RadzenComponents />
 
@@ -36,5 +36,5 @@
 	private Assembly[] additionalAssemblies = [];
 
 	protected override void OnInitialized() =>
-		additionalAssemblies = [.. PageAssemblies.Select(pages => pages.Assembly).Distinct(),];
+		additionalAssemblies = [.. PageAssemblies.Select(pages => pages.Assembly).Distinct()];
 }

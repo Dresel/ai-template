@@ -9,6 +9,8 @@
 	<link rel="preload" id="webassembly" />
 	<link rel="preload" href="_content/Radzen.Blazor/fonts/SourceSans3VF-Upright.ttf.woff2" as="font" type="font/woff2" crossorigin />
 
+	<!-- Before the first paint: it sets <html data-theme> from the stored appearance or the system's scheme -->
+	<script src="_content/FocusTemplate.Admin.Web.Foundation/appearance#[.{fingerprint}].js"></script>
 	<link rel="stylesheet" href="css/app#[.{fingerprint}].css" />
 	<!-- If you add any scoped CSS files, uncomment the following to load them
 	<link href="FocusTemplate.Admin.Web.styles.css" rel="stylesheet" /> -->
@@ -19,7 +21,10 @@
 <div id="app">
 	<div class="app-startup">
 		<div class="app-startup-shell" role="status" aria-label="Loading the application" data-label="loading">
-			<img src="images/logo.png" class="app-startup-logo" alt="" />
+			<!-- The symbol scales into this box, so its viewBox holds the logo's proportions only -->
+			<svg class="app-startup-logo" viewBox="0 0 428.85 94.76" aria-hidden="true" focusable="false">
+				<use href="images/logo#[.{fingerprint}].svg#logo" />
+			</svg>
 			<p class="app-startup-label" data-text="preparing" data-testid="startup-label">Preparing your workspace…</p>
 			<div class="loading-progress"></div>
 			<div class="app-startup-meta">

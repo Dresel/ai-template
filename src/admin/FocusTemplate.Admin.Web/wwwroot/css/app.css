@@ -46,9 +46,9 @@ h1:focus {
 	font-size: var(--rz-text-caption-font-size);
 }
 
-.app-message .rzi {
-	font-size: 1.25em;
-}
+	.app-message .rzi {
+		font-size: 1.25em;
+	}
 
 .app-message-text {
 	overflow: hidden;
@@ -61,9 +61,9 @@ h1:focus {
 	--rz-tooltip-color: var(--rz-text-color);
 }
 
-.app-tooltip .rz-tooltip-content {
-	border: 1px solid var(--rz-base-200);
-}
+	.app-tooltip .rz-tooltip-content {
+		border: 1px solid var(--rz-base-200);
+	}
 
 .app-message-list {
 	display: flex;
@@ -153,6 +153,31 @@ h1:focus {
 		content: "An error has occurred."
 	}
 
+:root {
+	--app-startup-background: #fff;
+	--app-startup-text: #0f172a;
+	--app-startup-muted: #64748b;
+	--app-startup-track: rgba(15, 23, 42, 0.1);
+	--app-startup-bar: rgb(35 100 136);
+	--app-logo-blue: #0070a0;
+	--app-logo-grey: #444;
+	--app-logo-white: #fff;
+	background: var(--app-startup-background);
+}
+
+	:root[data-theme="dark"] {
+		color-scheme: dark;
+		--app-startup-background: #28363c;
+		--app-startup-text: #f5f8f9;
+		--app-startup-muted: #dae0e2;
+		--app-startup-track: rgba(255, 255, 255, 0.15);
+		--app-startup-bar: #f5f8f9;
+		--app-logo-blue: #fff;
+		--app-logo-grey: #fff;
+		/* The letters in the mark take the background, so the all-white logo shows them cut out */
+		--app-logo-white: var(--app-startup-background);
+	}
+
 .app-startup {
 	position: fixed;
 	inset: 0;
@@ -160,7 +185,7 @@ h1:focus {
 	align-items: center;
 	justify-content: center;
 	padding: clamp(1rem, 4vw, 2rem);
-	background: #fff;
+	background: var(--app-startup-background);
 }
 
 .app-startup-shell {
@@ -179,7 +204,7 @@ h1:focus {
 
 .app-startup-label {
 	margin: 0;
-	color: #0f172a;
+	color: var(--app-startup-text);
 	font-size: 0.9375rem;
 	font-weight: 600;
 	text-align: center;
@@ -192,7 +217,7 @@ h1:focus {
 	height: 0.25rem;
 	overflow: hidden;
 	border-radius: 999px;
-	background: rgba(15, 23, 42, 0.1);
+	background: var(--app-startup-track);
 }
 
 	.loading-progress::before {
@@ -201,7 +226,7 @@ h1:focus {
 		inset: 0;
 		width: var(--blazor-load-percentage, 0%);
 		border-radius: inherit;
-		background: rgb(35 100 136);
+		background: var(--app-startup-bar);
 		transition: width 0.18s ease-out;
 	}
 
@@ -214,7 +239,7 @@ h1:focus {
 
 .loading-progress-text {
 	min-width: 3ch;
-	color: #64748b;
+	color: var(--app-startup-muted);
 	font-size: 0.75rem;
 	font-weight: 600;
 	line-height: 1.2;
@@ -253,9 +278,9 @@ code {
 	--rz-progressbar-height: 0.25rem;
 }
 
-.rz-progressbar:has(.rz-progressbar-label) {
-	--rz-progressbar-height: 1.25rem;
-}
+	.rz-progressbar:has(.rz-progressbar-label) {
+		--rz-progressbar-height: 1.25rem;
+	}
 
 /* AppLoading: the slot keeps the bar's height while none shows, so nothing below it moves */
 .app-loading {

@@ -3,6 +3,7 @@ using FocusTemplate.Admin.Web.Diagnostics;
 using FocusTemplate.Admin.Web.Features.DemoProfiles;
 using FocusTemplate.Admin.Web.Features.UserManagement;
 using FocusTemplate.Admin.Web.Foundation;
+using FocusTemplate.Admin.Web.Foundation.Appearance;
 using FocusTemplate.Admin.Web.Infrastructure.Authentication;
 using FocusTemplate.Admin.Web.Infrastructure.Configuration;
 using FocusTemplate.Admin.Web.Infrastructure.Localization;
@@ -28,6 +29,7 @@ builder.AddBlazorClientServiceDefaults("admin-web");
 
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress), });
 builder.Services.AddFoundation();
+builder.Services.AddAppearance("software", "software-dark");
 builder.Services.AddWebLocalization();
 builder.Services.AddDemoProfiles(builder.HostEnvironment);
 builder.Services.AddDiagnostics(builder.HostEnvironment);

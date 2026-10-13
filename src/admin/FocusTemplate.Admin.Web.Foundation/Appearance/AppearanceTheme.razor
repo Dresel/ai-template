@@ -1,0 +1,30 @@
+@implements IDisposable
+@inject AppearanceStorage Appearance
+@inject ThemeService Themes
+
+<RadzenTheme Theme="@initial" />
+
+@code
+{
+	private string? initial;
+
+	private DotNetObjectReference<AppearanceTheme>? reference;
+
+	public void Dispose() => reference?.Dispose();
+
+	// The system's scheme changed while the choice follows it
+	[JSInvokable]
+	public void OnSystemChanged(AppearanceMode resolved) => Themes.SetTheme(Appearance.ThemeOf(resolved));
+
+	// Before the first render, so the page loads the stylesheet of the theme the head script set
+	protected override void OnInitialized() => initial = Appearance.ReadTheme();
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			reference = DotNetObjectReference.Create(this);
+			await Appearance.WatchAsync(reference);
+		}
+	}
+}

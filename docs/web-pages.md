@@ -34,6 +34,7 @@ dialogs, and `AddRadzenComponents()` registers their services.
   - `Authorization/`: `PermissionView`, `CurrentUser`, `user.Has(…)` and the handler that answers a
     `PermissionRequirement` from the claims of type `Permission.ClaimType`; `AddFoundation()` registers handler and
     `CurrentUser`, the host the `AuthenticationStateProvider` they read
+  - `Appearance/`: light, dark or the system's scheme, see **Appearance** below
   - its texts, registered by `AddFoundationLocalization()`, which the host's `AddWebLocalization()` calls
   - directly in it, the async helpers a view model composes: `Debouncer` (one per input), `AsyncCommand<T>`
     (`IgnoreWhileRunning` for a button, `ReplaceRunning` for a list's loads, where a replaced run's cancellation ends quietly)
@@ -49,6 +50,27 @@ dialogs, and `AddRadzenComponents()` registers their services.
 - **Texts** a page shows come from its resx pair through `@inject I{Page}Localizations L`, as do a confirmation's
   message and title. Radzen's own texts, such as a confirmation's cancel button, come in its own German.
 - `Riok.Mapperly` maps between a form's view model and the contract.
+
+## Appearance
+
+The user picks light, dark or the system's scheme with one button in the header (`AppearanceSwitch`, test id
+`theme-toggle`), which steps from System to Light to Dark and back, its icon and label naming the current choice. The
+choice lives in the browser's local storage under `appearance`, and without one the system's scheme applies, followed
+live while the page is open.
+
+- **Before .NET runs**: Foundation's `wwwroot/appearance.js` is a classic script in the head of `index.html`. It
+  resolves the theme and sets `<html data-theme="light|dark">` before the first paint, so the loading screen, styled
+  by the host's `app.css` on that attribute, is dark from the first frame. Its dark colours are those of Radzen's
+  `software-dark`, so the app takes over without a jump.
+- **After**: `AppearanceTheme` in `App.razor`'s `HeadContent` renders `RadzenTheme` with the theme the script chose and
+  switches it when the system's scheme changes. `AppearanceSwitch` stores a new choice through the script and switches
+  Radzen's `ThemeService`. `AppearanceStorage` holds the calls into the script.
+- **The host** names its Radzen themes with `AddAppearance("software", "software-dark")`, loads the script in its
+  page's head and brings its own loading screen. Its logo is the symbol in `images/logo.svg`, drawn through a
+  `<use>` whose parts take their colours from the `--app-logo-*` variables of `app.css`: the original colours in light,
+  all white in dark with the letters in the mark cut out. The page's CSS variables reach the symbol through the
+  `<use>`. The outer `<svg>` carries only the logo's proportions (`0 0 428.85 94.76`), since the symbol maps its own
+  viewBox into that box.
 
 ## Pages and view models
 

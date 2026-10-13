@@ -2,7 +2,8 @@
 paths:
   - "src/admin/*.Admin.Web/Features/**"
   - "src/features/*/*.Web/**"
-  - "src/admin/*.Admin.Web.Foundation/{Pages,Feedback}/**"
+  - "src/admin/*.Admin.Web.Foundation/{Pages,Feedback,Appearance}/**"
+  - "src/admin/*.Admin.Web/wwwroot/**"
   - "src/admin/*.Admin.Web/Shell/**"
   - "src/admin/*.Admin.Web.Foundation/*.cs"
   - "tests/*.Admin.Web.UnitTests/Features/**"
@@ -34,5 +35,7 @@ paths:
   `services.AddLiveUpdates((GroupsClient groups, CancellationToken cancellationToken) => groups.WatchAsync(cancellationToken))`.
 - A list page declares `public const string Path`, a detail page `PathOf(id)`, and routes, links, `NavigateTo` and the menu
   build on them.
+- Styles that differ between light and dark key on `html[data-theme="dark"]`, which `appearance.js` sets before the
+  first paint. The theme changes through `AppearanceStorage` and Radzen's `ThemeService` alone.
 
 Background: [docs/web-pages.md](../../docs/web-pages.md).
