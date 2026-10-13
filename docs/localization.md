@@ -13,12 +13,16 @@ FluentValidation and Radzen ship their own German texts.
 
 ## Cultures
 
-- `Cultures` in `Admin.Shared/Localization/` lists what the app speaks: `Default` (en) and `Supported` (en, de).
-  `ResolveOrDefault` keeps a supported culture as it is, so `de-AT` keeps its formats, and turns any other into
-  `Default`. A fork with another default language changes `Default`.
-- **Web**: `CultureStorage` reads the user's choice from local storage (key `culture`), and without one the browser's
-  language. `UseStoredCultureAsync()` sets it as the default thread culture and as the page's `lang` before
-  `RunAsync`, which loads the satellite assemblies of the culture set by then. The header's `LanguageSwitch` stores a
+- `Cultures` in `Admin.Shared/Localization/` lists what the app speaks: `Default` (en) and `Supported` (en, de),
+  default first. A fork with another default language changes `Default`.
+- **Web**: `Admin.Web.Foundation/Localization/`, which the host's `AddWebLocalization()` registers with
+  `AddCultures(Cultures.Supported)`. `wwwroot/culture.js`, a classic script in the head of `index.html`, keeps the
+  user's choice in local storage (key `culture`), so the loading screen's texts read it before .NET runs.
+  `CultureStorage` reads it through the script, and without one the browser's language. `SupportedCultures.Resolve`
+  keeps a supported culture as it is, so `de-AT` keeps its formats, and turns any other into the default.
+  `UseStoredCultureAsync()` sets the result as the default thread culture and as the page's `lang` before `RunAsync`,
+  which loads the satellite assemblies of the culture set by then. The header's `LanguageSwitch` is one button that
+  names the current language (`EN`, labelled "Language: English") and steps to the next supported one. It stores the
   choice and reloads, since the culture is set once per load.
 - **API**: request localization from `Accept-Language` alone, with the cultures of `Cultures`. Proxied clients send the
   app's culture through `AcceptLanguageHandler` (`AddProxiedHttpClient`), since the browser's own header does not know
@@ -99,5 +103,6 @@ A message has a sentence and a field name in it, `'Kürzel' darf nicht leer sein
 
 ## Another language
 
-Add it to `Cultures.Supported` and the realm's `supportedLocales`, and add its resx beside every neutral file. The
+Add it to `Cultures.Supported`, the realm's `supportedLocales` and the loading screen's texts in `index.html`, and add
+its resx beside every neutral file. The
 `.de.resx` patterns in the Web, API and Shared project files (`EmbeddedResource` nesting) need the new suffix too.

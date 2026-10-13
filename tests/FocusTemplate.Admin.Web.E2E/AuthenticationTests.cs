@@ -104,7 +104,9 @@ public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
 	public async Task KeycloaksFormSpeaksTheLanguageTheVisitorChose()
 	{
 		await Page.GotoAsync(App.BaseUrl);
-		await Page.GetByTestId("language-switch").GetByText("DE", new LocatorGetByTextOptions { Exact = true, }).ClickAsync();
+
+		// The test browser speaks English, so the button switches to German
+		await Page.GetByTestId("language-switch").ClickAsync();
 		await Expect(Page.GetByTestId("login-button")).ToHaveAttributeAsync("title", "Anmelden");
 
 		await Page.GetByTestId("login-button").ClickAsync();

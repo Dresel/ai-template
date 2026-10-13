@@ -23,6 +23,7 @@ paths:
 - A contract's field names and pattern messages go into the resx named after the contract type in the contract's
   project: `Admin.Shared` (`DemoProfileRequest.de.resx`, keys `Code` and `Code.pattern`) or a feature's `Shared`.
 - Data, logs and exception messages stay untranslated.
-- A new language goes into `Cultures.Supported`, the realm's `supportedLocales` and the projects' resx patterns.
+- A new language goes into `Cultures.Supported`, the realm's `supportedLocales`, the loading screen's texts in
+  `index.html` and the projects' resx patterns.
 
 Background: [docs/localization.md](../../docs/localization.md).

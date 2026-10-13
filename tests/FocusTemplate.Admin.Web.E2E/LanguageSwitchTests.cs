@@ -6,6 +6,21 @@ namespace FocusTemplate.Admin.Web.E2E;
 [Collection(AspireCollection.Name)]
 public sealed class LanguageSwitchTests(BlazorAppFixture app) : ValidationDemoTest(app)
 {
+	private ILocator Switch => Page.GetByTestId("language-switch");
+
+	[Fact]
+	public async Task TheButtonNamesTheLanguageAndSwitchesToTheNext()
+	{
+		await Page.GotoAsync(App.BaseUrl);
+		await Expect(Switch).ToHaveTextAsync("EN");
+		await Expect(Switch).ToHaveAttributeAsync("aria-label", "Language: English");
+
+		await ChooseGermanAsync();
+
+		await Expect(Switch).ToHaveTextAsync("DE");
+		await Expect(Switch).ToHaveAttributeAsync("aria-label", "Sprache: Deutsch");
+	}
+
 	[Fact]
 	public async Task TheChoiceHoldsAcrossLoads()
 	{
@@ -48,7 +63,7 @@ public sealed class LanguageSwitchTests(BlazorAppFixture app) : ValidationDemoTe
 
 	private async Task ChooseGermanAsync()
 	{
-		await Page.GetByTestId("language-switch").GetByText("DE", new LocatorGetByTextOptions { Exact = true, }).ClickAsync();
+		await Switch.ClickAsync();
 		await Expect(Heading("Willkommen")).ToBeVisibleAsync();
 	}
 

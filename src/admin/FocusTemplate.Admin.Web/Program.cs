@@ -4,6 +4,7 @@ using FocusTemplate.Admin.Web.Features.DemoProfiles;
 using FocusTemplate.Admin.Web.Features.UserManagement;
 using FocusTemplate.Admin.Web.Foundation;
 using FocusTemplate.Admin.Web.Foundation.Appearance;
+using FocusTemplate.Admin.Web.Foundation.Localization;
 using FocusTemplate.Admin.Web.Infrastructure.Authentication;
 using FocusTemplate.Admin.Web.Infrastructure.Configuration;
 using FocusTemplate.Admin.Web.Infrastructure.Localization;

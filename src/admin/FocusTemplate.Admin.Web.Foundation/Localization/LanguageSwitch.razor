@@ -1,0 +1,28 @@
+@using System.Globalization
+@inject CultureStorage Storage
+@inject SupportedCultures Cultures
+@inject NavigationManager Navigation
+@inject ILanguageSwitchLocalizations L
+
+<RadzenButton Text="@current.TwoLetterISOLanguageName.ToUpperInvariant()"
+	ButtonStyle="ButtonStyle.Base"
+	Variant="Variant.Outlined"
+	title="@Label"
+	aria-label="@Label"
+	Click="NextAsync"
+	data-testid="language-switch" />
+
+@code
+{
+	private readonly CultureInfo current = CultureInfo.CurrentUICulture;
+
+	// The language in its own words, without the region of a culture such as de-AT
+	private string Label => L.Current(CultureInfo.GetCultureInfo(current.TwoLetterISOLanguageName).NativeName);
+
+	// A full load, since the culture is set once per load, before the app renders
+	private async Task NextAsync()
+	{
+		await Storage.ChooseAsync(Cultures.Next(current));
+		Navigation.NavigateTo(Navigation.Uri, true);
+	}
+}

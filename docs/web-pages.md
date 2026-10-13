@@ -35,6 +35,8 @@ dialogs, and `AddRadzenComponents()` registers their services.
     `PermissionRequirement` from the claims of type `Permission.ClaimType`; `AddFoundation()` registers handler and
     `CurrentUser`, the host the `AuthenticationStateProvider` they read
   - `Appearance/`: light, dark or the system's scheme, see **Appearance** below
+  - `Localization/`: the culture's storage, its setting at startup and the header's `LanguageSwitch`, see
+    [localization](localization.md)
   - its texts, registered by `AddFoundationLocalization()`, which the host's `AddWebLocalization()` calls
   - directly in it, the async helpers a view model composes: `Debouncer` (one per input), `AsyncCommand<T>`
     (`IgnoreWhileRunning` for a button, `ReplaceRunning` for a list's loads, where a replaced run's cancellation ends quietly)
@@ -45,7 +47,7 @@ dialogs, and `AddRadzenComponents()` registers their services.
     `Users/ListPageViewModel` uses all of them.
 - **`Shell/`**: `MainLayout`, `Home`, `NotFound`, `Forbidden`. **`Diagnostics/`**: the request diagnostics page.
 - **`Infrastructure/`**: `Authentication/` (the BFF's session as the client's authentication state), `Configuration/`,
-  `Localization/` (the culture's storage, its setting at startup and the header's `LanguageSwitch`, see
+  `Localization/` (`AddWebLocalization()`, which registers the texts and the cultures, see
   [localization](localization.md)).
 - **Texts** a page shows come from its resx pair through `@inject I{Page}Localizations L`, as do a confirmation's
   message and title. Radzen's own texts, such as a confirmation's cancel button, come in its own German.

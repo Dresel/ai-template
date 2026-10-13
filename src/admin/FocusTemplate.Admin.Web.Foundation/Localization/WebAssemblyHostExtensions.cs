@@ -1,8 +1,9 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 
-namespace FocusTemplate.Admin.Web.Infrastructure.Localization;
+namespace FocusTemplate.Admin.Web.Foundation.Localization;
 
 public static class WebAssemblyHostExtensions
 {

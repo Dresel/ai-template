@@ -462,6 +462,7 @@
           "FocusTemplate.Http": "[1.0.0, )",
           "FocusTemplate.Primitives": "[1.0.0, )",
           "Microsoft.AspNetCore.Components.Authorization": "[11.0.0-rc.1.26425.128, )",
+          "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.1.26425.128, )",
           "Microsoft.Extensions.Localization": "[11.0.0-rc.1.26425.128, )",
           "Radzen.Blazor": "[12.1.2, )"
         }
