@@ -20,6 +20,10 @@ imports (`namespace SpatialFocus.Http`).
   reports every type its `api.tsp` imports as unknown. A file the entrypoint does not import (`paging.tsp`) the server
   compiles on its own. `npm run gen` leaves these configs out, and `tsp compile <spec folder>` checks a spec without
   emitting.
+- Each spec folder is also a project that builds nothing (`FocusTemplate.Spec`, `FocusTemplate.<Vertical>.Spec`,
+  `FocusTemplate.<Feature>.Spec`) on the `Microsoft.Build.NoTargets` SDK, pinned in `global.json`. Visual Studio shows
+  the folder as it is on disk, next to the vertical's projects, and a file created outside it appears without an edit to
+  a project or the solution. It restores without a lock file, since its only package is the global analyzer.
 - `FocusTemplate.Http` holds the types every Admin project generates alike, written once from `src/spec/http.tsp`
   with `output-type: library`: `ProblemDetails`, the validation problem with `Violation` and `ViolationSeverity`,
   `PermissionRequirement` with `RequiresPermissionAttribute`, and the client's `ApiFailure`, `ApiOutcome`,

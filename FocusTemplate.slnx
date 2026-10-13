@@ -20,6 +20,7 @@
     <Project Path="src/admin/FocusTemplate.Admin.Web.Bff/FocusTemplate.Admin.Web.Bff.csproj" />
     <Project Path="src/admin/FocusTemplate.Admin.Client/FocusTemplate.Admin.Client.csproj" />
     <Project Path="src/admin/FocusTemplate.Admin.Shared/FocusTemplate.Admin.Shared.csproj" />
+    <Project Path="src/admin/spec/FocusTemplate.Admin.Spec.csproj" />
     <Project Path="src/admin/FocusTemplate.Admin.Web.ClientServiceDefaults/FocusTemplate.Admin.Web.ClientServiceDefaults.csproj" />
     <Project Path="src/admin/FocusTemplate.Admin.Web.Foundation/FocusTemplate.Admin.Web.Foundation.csproj" />
     <Project Path="src/admin/FocusTemplate.Admin.Web/FocusTemplate.Admin.Web.csproj" />
@@ -37,6 +38,7 @@
     <Project Path="src/features/weather/FocusTemplate.Weather.Client/FocusTemplate.Weather.Client.csproj" />
     <Project Path="src/features/weather/FocusTemplate.Weather.Data/FocusTemplate.Weather.Data.csproj" />
     <Project Path="src/features/weather/FocusTemplate.Weather.Shared/FocusTemplate.Weather.Shared.csproj" />
+    <Project Path="src/features/weather/spec/FocusTemplate.Weather.Spec.csproj" />
     <Project Path="src/features/weather/FocusTemplate.Weather.Web/FocusTemplate.Weather.Web.csproj" />
   </Folder>
   <Folder Name="/public/">
@@ -45,6 +47,7 @@
     <Project Path="src/public/FocusTemplate.Public.Mobile.ServiceDefaults/FocusTemplate.Public.Mobile.ServiceDefaults.csproj" />
     <Project Path="src/public/FocusTemplate.Public.Mobile/FocusTemplate.Public.Mobile.csproj" />
     <Project Path="src/public/FocusTemplate.Public.Shared/FocusTemplate.Public.Shared.csproj" />
+    <Project Path="src/public/spec/FocusTemplate.Public.Spec.csproj" />
   </Folder>
   <Project Path="src/FocusTemplate.Api.Foundation/FocusTemplate.Api.Foundation.csproj" />
   <Project Path="src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj" Id="3dbf55d3-63b4-4f1b-a28b-c7313289b89f" />
@@ -53,4 +56,5 @@
   <Project Path="src/FocusTemplate.Http/FocusTemplate.Http.csproj" />
   <Project Path="src/FocusTemplate.Primitives/FocusTemplate.Primitives.csproj" />
   <Project Path="src/FocusTemplate.ServiceDefaults/FocusTemplate.ServiceDefaults.csproj" Id="b487fad3-efd6-44f0-ad27-6e19ecab0715" />
+  <Project Path="src/spec/FocusTemplate.Spec.csproj" />
 </Solution>

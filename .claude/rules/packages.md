@@ -18,6 +18,7 @@ paths:
 - `Microsoft.Maui.Core` matches the installed workload band (`dotnet workload list`).
 - The preview Aspire integrations move in lockstep with the AppHost SDK.
 - Every project restores with a lock file, and `packages.lock.json` changes go into the same commit as the package change.
+  The spec projects, which build nothing, are the exception.
 - After a package leaves a referenced project, the consumers' lock files may still list it. Run
   `dotnet restore <consumer>.csproj --force-evaluate` on the AppHost and each test project, then check that the lock
   files only lose lines.

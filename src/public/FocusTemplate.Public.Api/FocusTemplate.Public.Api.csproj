@@ -19,7 +19,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="../spec/**/*.tsp" LinkBase="spec" />
 		<None Include="tspconfig.yaml" />
 
 		<Content Include="openapi.yaml" Link="openapi/public.yaml" CopyToOutputDirectory="PreserveNewest" />

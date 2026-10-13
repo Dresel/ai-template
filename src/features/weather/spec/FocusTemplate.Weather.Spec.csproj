@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+
+	<PropertyGroup>
+		<RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+	</PropertyGroup>
+
+</Project>

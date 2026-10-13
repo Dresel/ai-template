@@ -9,7 +9,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="../spec/http.tsp" LinkBase="spec" />
 		<None Include="tspconfig.yaml" />
 	</ItemGroup>
 

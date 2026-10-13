@@ -8,7 +8,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="../spec/primitives.tsp" LinkBase="spec" />
 		<None Include="tspconfig.yaml" />
 	</ItemGroup>
 

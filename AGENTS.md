@@ -25,6 +25,8 @@ Shared spine:
   the dev seed, see [database](docs/database.md).
 - **`@spatialfocus/typespec-http-csharp-slim`** - the TypeSpec emitter, consumed as the tgz under `.npm/`, see
   [spec-first](docs/spec-first.md).
+- **FocusTemplate.Spec** and one **FocusTemplate.\<Name>.Spec** per vertical and feature - the spec folders as
+  projects that build nothing, so Visual Studio shows them, see [spec-first](docs/spec-first.md).
 
 Admin vertical (`src/admin/`):
 
