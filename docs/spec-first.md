@@ -79,8 +79,9 @@ imports (`namespace SpatialFocus.Http`).
 - A slice with one interface stays in the service namespace (`FocusTemplate.Admin`), a slice with several declares a
   namespace below it (`FocusTemplate.Admin.UserManagement`), its feature.
 - `src/spec/` holds what verticals can share: `primitives.tsp` (the typed ids, namespace `FocusTemplate.Primitives`,
-  no service), `paging.tsp` (`PageQuery`, spread into a search request) and `permissions/`. Today only the Admin
-  contract imports them.
+  no service) and `paging.tsp` (`PageQuery`, spread into a search request). `primitives.tsp` also imports each slice's
+  `permissions.tsp` and each feature's `primitives.tsp`, so adding or removing a feature in the spine is one import line.
+  Today only the Admin contract and the weather feature import it.
 - Three projects per vertical generate, each with its own `tspconfig.yaml` and `generated/` folder: the Api project
   (`output-type: api`), the Shared project (`contracts`) and the Client project (`client`). Everything else consumes
   them by project reference, and generated files are never linked across projects.
@@ -88,8 +89,9 @@ imports (`namespace SpatialFocus.Http`).
   (`FocusTemplate.Weather`), imports the spine's `primitives.tsp` and one file per interface, and its three projects
   generate as a vertical's do (`FocusTemplate.Weather.Api.{interface}`, `FocusTemplate.Weather.Shared`,
   `FocusTemplate.Weather.Client.{interface}`). Its own JSON context, validators and paths carry the service's name
-  (`WeatherJsonContext`, `AddWeatherValidators()`), and its `openapi.yaml` sits in its Api project. Its permissions
-  sit beside it in `permissions.tsp`, which the host's `primitives.tsp` imports.
+  (`WeatherJsonContext`, `AddWeatherValidators()`), and its `openapi.yaml` sits in its Api project. Its typed ids sit
+  beside it in a `primitives.tsp` of its own, in namespace `FocusTemplate.Primitives`, which imports its
+  `permissions.tsp` and which the host's `primitives.tsp` imports.
 - **Registering and mapping** an API is generated per service: `{Service}Endpoints` in the Api namespace without the
   placeholders, with `Add{Service}Endpoints()` (the JSON context first in the minimal API's resolver chain, and the
   validators) and `Map{Service}Endpoints()` (every interface). A feature namespace with `{feature}` in the pattern gets
@@ -99,12 +101,12 @@ imports (`namespace SpatialFocus.Http`).
 
 ## Typed ids
 
-`FocusTemplate.Primitives` compiles `src/spec/primitives.tsp` (`output-type: primitives`) into Vogen value objects:
-`[ValueObject<T>] [Instance("Unspecified", …)] public readonly partial struct` per `@typedId` scalar, plus `Permission`
-(a string id) with one `{Enum}Permissions` class per permissions enum (see [authorization](authorization.md)). `Data`
-and `Admin.Shared` reference it, so one `GroupId` serves the domain and every contract. `Data` also runs Vogen itself,
-for the EF Core converters it marks with `[EfCoreConverter<T>]`. A `@typedId` declared inside a service namespace is an
-emitter error.
+`FocusTemplate.Primitives` compiles `src/spec/primitives.tsp` and what it imports (`output-type: primitives`) into
+Vogen value objects: `[ValueObject<T>] [Instance("Unspecified", …)] public readonly partial struct` per `@typedId`
+scalar, plus `Permission` (a string id) with one `{Enum}Permissions` class per permissions enum (see
+[authorization](authorization.md)). `Data` and `Admin.Shared` reference it, so one `GroupId` serves the domain and every
+contract. `Data` also runs Vogen itself, for the EF Core converters it marks with `[EfCoreConverter<T>]`. A `@typedId`
+declared inside a service namespace is an emitter error.
 
 ## Namespaces
 

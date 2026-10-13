@@ -2,8 +2,8 @@ import "@spatialfocus/typespec-http-csharp-slim";
 
 using SpatialFocus.Http;
 
-// The permissions of the user management slice. Beside the typed ids, outside any service: FocusTemplate.Primitives
-// writes them, and the database seeds its permissions table from the Permission.All they make up.
+// The permissions of the user management slice, outside the Admin service. The spine's primitives.tsp imports this
+// file, so FocusTemplate.Primitives writes them, and the database seeds its permissions table from Permission.All.
 namespace FocusTemplate.Primitives.Permissions;
 
 /** What a user may do in the user management. */

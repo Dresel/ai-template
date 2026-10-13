@@ -37,8 +37,8 @@ own under `src/features/<name>/` instead, built like `src/features/weather/`, se
 ## 2. Contract ([spec-first](../../../docs/spec-first.md))
 
 1. A new id: `@typedId scalar <X>Id extends uuid;` with a doc comment in `src/spec/primitives.tsp`.
-2. New permissions: an enum in `src/spec/permissions/<slice>.tsp` (copy `user-management.tsp`), imported in
-   `src/spec/primitives.tsp`.
+2. New permissions: an enum in `src/admin/spec/<slice>/permissions.tsp` (copy the one of `user-management/`),
+   imported in `src/spec/primitives.tsp`.
 3. The slice's file in `src/admin/spec/<slice>/`, imported in `src/admin/spec/api.tsp`: `@requiresPermission` per
    operation or interface, `Problem<404 | 409>` for what the handler refuses, the `ValidationProblem` alias behind a
    form, `@httpQuery` over a request spreading `PageQuery` for a searchable list, defaults in the spec. A list that

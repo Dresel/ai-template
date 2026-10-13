@@ -27,7 +27,7 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 
   | Project | Holds | References |
   |---|---|---|
-  | `spec/` | `api.tsp`, a `@service` of its own, `permissions.tsp`, and the editor's `tspconfig.yaml` | the spine's `primitives.tsp` |
+  | `spec/` | `api.tsp`, a `@service` of its own, `primitives.tsp` with its typed ids, `permissions.tsp`, and the editor's `tspconfig.yaml` | the spine's `primitives.tsp` |
   | `FocusTemplate.Weather.Shared` | the generated wire contract and its partials | `Http`, `Primitives` |
   | `FocusTemplate.Weather.Client` | the generated typed clients | `Weather.Shared` |
   | `FocusTemplate.Weather.Data` | entities, `WeatherDbContext` and its read-only twin in schema `weather`, migrations, the dev seed | `Data.Foundation`, `Primitives` |
@@ -41,8 +41,8 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 - **Composition** in the host, one line each: `builder.AddWeather("focusdb", "focusdb-readonly")` and
   `endpoints.MapWeatherEndpoints()` in `Admin.Api`, `AddWeatherPages(environment, "admin-api")` and the assembly in
   the `Router`'s `AdditionalAssemblies` in `Admin.Web`, `AddMigrations<WeatherDbContext>(…)` with
-  `.WaitForCompletion(migrations)` in the AppHost (see [database](database.md)), the feature's `permissions.tsp` imported by `src/spec/primitives.tsp`, and the menu entry
-  in `MainLayout`. A host without the feature leaves out these lines and the project references.
+  `.WaitForCompletion(migrations)` in the AppHost (see [database](database.md)), the feature's `primitives.tsp` imported
+  by `src/spec/primitives.tsp`, and the menu entry in `MainLayout`. A host without the feature leaves out these lines and the project references.
 
 ## Projects not covered by an area doc
 

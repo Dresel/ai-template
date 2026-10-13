@@ -27,8 +27,9 @@ paths:
 - Run `npm run gen` at the repository root after every spec change and every emitter bump. `generated/` and
   `openapi.yaml` go into the same commit as the spec change.
 - Never edit a file under `generated/`. `tsp-output/` is disposable.
-- Typed ids are `@typedId` scalars in `src/spec/primitives.tsp`, each with `@friendlyName("Primitives.<Name>")`, and
-  permissions are `@permissions` enums in `src/spec/permissions/`.
+- Typed ids are `@typedId` scalars in `src/spec/primitives.tsp`, a feature's in its `spec/primitives.tsp`, each with
+  `@friendlyName("Primitives.<Name>")`. Permissions are `@permissions` enums in the slice's or the feature's
+  `permissions.tsp`. The spine's `primitives.tsp` imports each slice's permissions and each feature's `primitives.tsp`.
 - Identifiers use the `uuid` scalar. Error responses are `Problem<Status>`.
 - A handler answers a modeled status with the case record of its result union and throws only for what is unhandled.
 - Rules the spec cannot state go into the handler, or into a validator registered as `IValidator<T>` that includes the

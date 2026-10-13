@@ -1,14 +1,15 @@
 ---
 paths:
   - "src/admin/*.Admin.Api/Authorization/**"
-  - "src/spec/permissions/**"
+  - "src/**/spec/**/permissions.tsp"
   - "src/*.Data/Entities/{Group,GroupMember,GroupPermission,PermissionDefinition,User,UserActivity}*.cs"
   - "src/admin/*.Admin.Web.Foundation/Authorization/**"
 ---
 # Authorization
 
-- A permission is a member of the slice's `@permissions` enum in `src/spec/permissions/<slice>.tsp`. An operation or
-  interface requires it with `@requiresPermission(Permissions.<Slice>.<Name>)`.
+- A permission is a member of the slice's `@permissions` enum in the slice's `permissions.tsp`
+  (`src/admin/spec/<slice>/`, a feature's `src/features/<name>/spec/`), which the spine's `primitives.tsp` reaches. An
+  operation or interface requires it with `@requiresPermission(Permissions.<Slice>.<Name>)`.
 - A new permission is a migration (`dotnet ef migrations add`), and so is renaming or removing one, since groups grant
   it by name.
 - A page requires a permission with `@attribute [RequiresPermission(<Slice>Permissions.Names.<Name>)]`, a part of a page

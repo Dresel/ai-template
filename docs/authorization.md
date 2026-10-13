@@ -6,11 +6,13 @@ Keycloak says who the user is, the database says what they may do. No roles in t
 
 ## Permissions
 
-- **In the spec**: one enum per slice in `src/spec/permissions/<slice>.tsp`, in namespace
-  `FocusTemplate.Primitives.Permissions`, marked `@permissions(FocusTemplate.Primitives.Permission)`
-  (`enum UserManagement { ViewUsers, ManageUsers, ViewGroups, ManageGroups }`). A feature declares its own the same
-  way in `src/features/<name>/spec/permissions.tsp` (`enum Weather { ManageStations }`), and the host's
-  `src/spec/primitives.tsp` imports it, so it joins `Permission.All` and the groups can grant it.
+- **In the spec**: one enum per slice in the slice's `permissions.tsp` (`src/admin/spec/user-management/`), in
+  namespace `FocusTemplate.Primitives.Permissions` outside the service, marked
+  `@permissions(FocusTemplate.Primitives.Permission)`
+  (`enum UserManagement { ViewUsers, ManageUsers, ViewGroups, ManageGroups }`). The spine's `src/spec/primitives.tsp`
+  imports it, so it joins `Permission.All` and the groups can grant it. A feature declares its own the same way in
+  `src/features/<name>/spec/permissions.tsp` (`enum Weather { ManageStations }`), which the feature's `primitives.tsp`
+  imports.
 - **Generated** into Primitives as `UserManagementPermissions.ViewUsers` (the `Permission` "UserManagement.ViewUsers"),
   beside `Permission` in `FocusTemplate.Primitives`, plus `Permission.All` and the constants in
   `UserManagementPermissions.Names` for attribute arguments.
