@@ -31,7 +31,7 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   | `FocusTemplate.Weather.Shared` | the generated wire contract and its partials | `Http`, `Primitives` |
   | `FocusTemplate.Weather.Client` | the generated typed clients | `Weather.Shared` |
   | `FocusTemplate.Weather.Data` | entities, `WeatherDbContext` and its read-only twin in schema `weather`, migrations, the dev seed | `Data.Foundation`, `Primitives` |
-  | `FocusTemplate.Weather.Api` | handlers, the generated endpoints, `AddWeather()`, `MapWeatherEndpoints()` | `Api.Foundation`, `Weather.Data`, `Weather.Shared` |
+  | `FocusTemplate.Weather.Api` | handlers, the generated endpoints with `MapWeatherEndpoints()`, `AddWeather()` | `Api.Foundation`, `Weather.Data`, `Weather.Shared` |
   | `FocusTemplate.Weather.Web` | the pages, a Razor class library, `AddWeatherPages()` | `Admin.Web.Foundation`, `Admin.Web.ClientServiceDefaults`, `Weather.Client` |
 
   A feature never references the host's projects (`Data`, `Admin.Api`, `Admin.Shared`, `Admin.Client`,

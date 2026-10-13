@@ -3,10 +3,8 @@ using FocusTemplate.Admin.Api.Authorization;
 using FocusTemplate.Admin.Api.Chaos;
 using FocusTemplate.Admin.Api.Features;
 using FocusTemplate.Admin.Api.Features.DemoProfiles;
-using FocusTemplate.Admin.Api.Features.UserManagement.Groups;
-using FocusTemplate.Admin.Api.Features.UserManagement.Users;
+using FocusTemplate.Admin.Api.Features.UserManagement;
 using FocusTemplate.Admin.Api.Localization;
-using FocusTemplate.Admin.Shared;
 using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Api.Foundation.Realtime;
 using FocusTemplate.Data;
@@ -31,14 +29,10 @@ builder.EnrichNpgsqlDbContext<ReadOnlyAppDbContext>();
 
 builder.Services.AddProblemDetails();
 
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-	options.SerializerOptions.TypeInfoResolverChain.Insert(0, AdminJsonContext.Default);
-	options.SerializerOptions.RespectRequiredConstructorParameters = true;
-});
+builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.RespectRequiredConstructorParameters = true);
 
 builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
-builder.Services.AddAdminValidators();
+builder.Services.AddAdminEndpoints();
 builder.Services.AddDemoProfiles();
 
 builder.AddWeather("focusdb", "focusdb-readonly");
@@ -77,8 +71,7 @@ if (app.Environment.IsDevelopment())
 RouteGroupBuilder endpoints = app.MapGroup(string.Empty).AddChaosFilter(app.Configuration);
 
 endpoints.MapDemoProfilesEndpoints();
-endpoints.MapGroupsEndpoints();
-endpoints.MapUsersEndpoints();
+endpoints.MapUserManagementEndpoints();
 
 endpoints.MapWeatherEndpoints();
 

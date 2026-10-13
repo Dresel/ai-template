@@ -4,6 +4,7 @@
 
 using System.Text.RegularExpressions;
 using FluentValidation;
+using FocusTemplate.Http;
 
 namespace FocusTemplate.Admin.Shared;
 
@@ -18,20 +19,20 @@ public static class DemoAddressRequestRules
 		rule
 			.NotNull().WithErrorCode("required")
 			.MaximumLength(100).WithErrorCode("maxLength")
-			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoAddressRequest), nameof(DemoAddressRequest.Street)) ?? "Street");
+			.WithName(_ => ContractTexts.DisplayName?.Invoke(typeof(DemoAddressRequest), nameof(DemoAddressRequest.Street)) ?? "Street");
 
 	/// <summary>Postal code: four digits.</summary>
 	public static IRuleBuilderOptions<T, string> PostalCode<T>(IRuleBuilder<T, string> rule) =>
 		rule
 			.NotNull().WithErrorCode("required")
-			.Matches(PostalCodePattern).WithErrorCode("pattern").WithMessage(_ => AdminTexts.Message?.Invoke(typeof(DemoAddressRequest), nameof(DemoAddressRequest.PostalCode), "pattern") ?? "Four digits.")
-			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoAddressRequest), nameof(DemoAddressRequest.PostalCode)) ?? "Postal Code");
+			.Matches(PostalCodePattern).WithErrorCode("pattern").WithMessage(_ => ContractTexts.Message?.Invoke(typeof(DemoAddressRequest), nameof(DemoAddressRequest.PostalCode), "pattern") ?? "Four digits.")
+			.WithName(_ => ContractTexts.DisplayName?.Invoke(typeof(DemoAddressRequest), nameof(DemoAddressRequest.PostalCode)) ?? "Postal Code");
 
 	/// <summary>City.</summary>
 	public static IRuleBuilderOptions<T, string> City<T>(IRuleBuilder<T, string> rule) =>
 		rule
 			.NotNull().WithErrorCode("required")
 			.MaximumLength(50).WithErrorCode("maxLength")
-			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(DemoAddressRequest), nameof(DemoAddressRequest.City)) ?? "City");
+			.WithName(_ => ContractTexts.DisplayName?.Invoke(typeof(DemoAddressRequest), nameof(DemoAddressRequest.City)) ?? "City");
 #nullable enable
 }

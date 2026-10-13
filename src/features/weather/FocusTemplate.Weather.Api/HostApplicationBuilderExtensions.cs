@@ -1,5 +1,4 @@
 using FocusTemplate.Weather.Data;
-using FocusTemplate.Weather.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ResXGenerator.Registration;
@@ -19,9 +18,7 @@ public static class HostApplicationBuilderExtensions
 		builder.Services.AddReadOnlyWeatherDbContextPool(readOnlyConnectionName);
 		builder.EnrichNpgsqlDbContext<ReadOnlyWeatherDbContext>();
 
-		builder.Services.ConfigureHttpJsonOptions(options =>
-			options.SerializerOptions.TypeInfoResolverChain.Insert(0, WeatherJsonContext.Default));
-		builder.Services.AddWeatherValidators();
+		builder.Services.AddWeatherEndpoints();
 		builder.Services.AddHttpContextAccessor();
 
 		builder.Services.UsingResXGenerator();

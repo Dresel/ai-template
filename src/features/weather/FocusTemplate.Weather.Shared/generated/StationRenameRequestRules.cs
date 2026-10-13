@@ -3,6 +3,7 @@
 #nullable enable
 
 using FluentValidation;
+using FocusTemplate.Http;
 
 namespace FocusTemplate.Weather.Shared;
 
@@ -16,6 +17,6 @@ public static class StationRenameRequestRules
 			.NotNull().WithErrorCode("required")
 			.MinimumLength(1).WithErrorCode("minLength")
 			.MaximumLength(200).WithErrorCode("maxLength")
-			.WithName(_ => WeatherTexts.DisplayName?.Invoke(typeof(StationRenameRequest), nameof(StationRenameRequest.Name)) ?? "Name");
+			.WithName(_ => ContractTexts.DisplayName?.Invoke(typeof(StationRenameRequest), nameof(StationRenameRequest.Name)) ?? "Name");
 #nullable enable
 }

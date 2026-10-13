@@ -66,9 +66,15 @@ imports (`namespace SpatialFocus.Http`).
 - A feature has a contract of its own in `src/features/<name>/spec/`: `api.tsp` is a `@service` with `@useAuth`
   (`FocusTemplate.Weather`), imports the spine's `primitives.tsp` and one file per interface, and its three projects
   generate as a vertical's do (`FocusTemplate.Weather.Api.{interface}`, `FocusTemplate.Weather.Shared`,
-  `FocusTemplate.Weather.Client.{interface}`). Its own JSON context, validators, paths and texts carry the service's
-  name (`WeatherJsonContext`, `AddWeatherValidators()`), and its `openapi.yaml` sits in its Api project. Its
-  permissions sit beside it in `permissions.tsp`, which the host's `primitives.tsp` imports.
+  `FocusTemplate.Weather.Client.{interface}`). Its own JSON context, validators and paths carry the service's name
+  (`WeatherJsonContext`, `AddWeatherValidators()`), and its `openapi.yaml` sits in its Api project. Its permissions
+  sit beside it in `permissions.tsp`, which the host's `primitives.tsp` imports.
+- **Registering and mapping** an API is generated per service: `{Service}Endpoints` in the Api namespace without the
+  placeholders, with `Add{Service}Endpoints()` (the JSON context first in the minimal API's resolver chain, and the
+  validators) and `Map{Service}Endpoints()` (every interface). A feature namespace with `{feature}` in the pattern gets
+  `{Feature}Endpoints` with `Map{Feature}Endpoints()`. The Admin API calls `AddAdminEndpoints()`,
+  `MapDemoProfilesEndpoints()` and `MapUserManagementEndpoints()`, and the weather feature `AddWeatherEndpoints()` in
+  `AddWeather()` and `MapWeatherEndpoints()` in the host.
 
 ## Typed ids
 
@@ -104,12 +110,12 @@ emitter error.
   record (`new NotFound("…")`). Anything unhandled becomes a 500 problem response through `AddProblemDetails()`.
 - **Validation**: the Admin Api and Shared projects generate with `validation: fluentvalidation`, so constraint
   decorators (`@maxLength`, `@minValue`, …) become FluentValidation validators, and a filter on each validated endpoint
-  answers a violation with a 400 before the handler runs. `AddAdminValidators()` in `Program.cs` registers them, and
-  mapping the endpoints without it fails at startup. Rules the spec cannot state stay in the handler, or go into a
-  validator registered as `IValidator<T>` that includes the generated one. Those that need no server data can live in
-  `Admin.Shared`, so the forms run them too (see [web forms](web-forms.md)). The generated rules ask the generated
-  `AdminTexts` hook for the names of their members and for the messages of their patterns, see
-  [localization](localization.md).
+  answers a violation with a 400 before the handler runs. `AddAdminEndpoints()` in `Program.cs` registers them through
+  `AddAdminValidators()`, and mapping the endpoints without them fails at startup. Rules the spec cannot state stay in
+  the handler, or go into a validator registered as `IValidator<T>` that includes the generated one. Those that need no
+  server data can live in `Admin.Shared`, so the forms run them too (see [web forms](web-forms.md)). The generated rules
+  ask `ContractTexts` in `FocusTemplate.Http`, one hook for every service that shares the library, for the names of
+  their members and for the messages of their patterns, see [localization](localization.md).
 - The 400 carries `errors` by wire path and `violations` (key, code, severity, message, args), a typed
   `ValidationProblem` case on the client. An operation behind a form declares the `ValidationProblem` alias, since under
   `Problem<400>` the same members would arrive as untyped extensions. With `RespectRequiredConstructorParameters` on, a

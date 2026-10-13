@@ -1,4 +1,5 @@
 using FluentValidation;
+using FocusTemplate.Http;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -16,8 +17,8 @@ public static class ValidationTexts
 	// Both hosts call it at startup, since the forms run the same rules in the browser
 	public static void UseResources()
 	{
-		AdminTexts.DisplayName = Lookup;
-		AdminTexts.Message = (type, member, code) => Lookup(type, $"{member}.{code}");
+		ContractTexts.DisplayName = Lookup;
+		ContractTexts.Message = (type, member, code) => Lookup(type, $"{member}.{code}");
 		ValidatorOptions.Global.LanguageManager = new CustomLanguageManager(new StringLocalizer<CustomLanguageManager>(Localizers));
 	}
 

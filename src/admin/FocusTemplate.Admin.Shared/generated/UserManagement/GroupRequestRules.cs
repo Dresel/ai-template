@@ -3,6 +3,7 @@
 #nullable enable
 
 using FluentValidation;
+using FocusTemplate.Http;
 
 namespace FocusTemplate.Admin.Shared.UserManagement;
 
@@ -16,12 +17,12 @@ public static class GroupRequestRules
 			.NotNull().WithErrorCode("required")
 			.MinimumLength(1).WithErrorCode("minLength")
 			.MaximumLength(100).WithErrorCode("maxLength")
-			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(GroupRequest), nameof(GroupRequest.Name)) ?? "Name");
+			.WithName(_ => ContractTexts.DisplayName?.Invoke(typeof(GroupRequest), nameof(GroupRequest.Name)) ?? "Name");
 
 	/// <summary>What the group is for.</summary>
 	public static IRuleBuilderOptions<T, string> Description<T>(IRuleBuilder<T, string> rule) =>
 		rule
 			.MaximumLength(500).WithErrorCode("maxLength")
-			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(GroupRequest), nameof(GroupRequest.Description)) ?? "Description");
+			.WithName(_ => ContractTexts.DisplayName?.Invoke(typeof(GroupRequest), nameof(GroupRequest.Description)) ?? "Description");
 #nullable enable
 }

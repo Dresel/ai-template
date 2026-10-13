@@ -71,10 +71,12 @@ A message has a sentence and a field name in it, `'Kürzel' darf nicht leer sein
   `IStringLocalizer<CustomLanguageManager>`, the item counts the generated rules ask
   for (`MinItemsValidator`, `MaxItemsValidator`), and can reword a built-in one. It looks up on every message, in the
   culture of the moment.
-- **Field names and pattern messages** of the generated rules come from the emitter's `AdminTexts` hook.
-  `ValidationTexts.UseResources()` (`Admin.Shared/Localization/`), which both hosts call at startup, answers from the
-  resx named after the contract type in its namespace's folder: `DemoProfileRequest.de.resx` in `Admin.Shared`, keys
-  `Code` and `Code.pattern`, and `UserManagement/GroupRequest.de.resx` for a feature's contract. The neutral file keeps
+- **Field names and pattern messages** of the generated rules come from the emitter's `ContractTexts` hook in
+  `FocusTemplate.Http`, one for the Admin contracts and every feature's. `ValidationTexts.UseResources()`
+  (`Admin.Shared/Localization/`), which both hosts call at startup, answers from the resx named after the contract type
+  in its namespace's folder of the contract's own project: `DemoProfileRequest.de.resx` in `Admin.Shared`, keys `Code`
+  and `Code.pattern`, `UserManagement/GroupRequest.de.resx` for a contract of the UserManagement namespace, and a
+  feature's beside its contracts in its `Shared` project. The neutral file keeps
   the generated readable names, so English messages read as before.
 - The hook and FluentValidation's language manager are process-wide and outlive a host, so they read through a localizer
   factory of their own, which no host disposes with its container. Integration tests start a host per test class in one

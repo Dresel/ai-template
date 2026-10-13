@@ -4,10 +4,10 @@
 
 using System;
 
-namespace FocusTemplate.Weather.Shared;
+namespace FocusTemplate.Http;
 
-/// <summary>Where the validation rules of Weather ask for the texts their messages show, so an application can translate them. Set the functions once at startup. Unset, or answering null, a rule shows the text of the contract.</summary>
-public static class WeatherTexts
+/// <summary>Where the validation rules of the services that share this library ask for the texts their messages show, so an application can translate them. Set the functions once at startup. Unset, or answering null, a rule shows the text of the contract.</summary>
+public static class ContractTexts
 {
 	/// <summary>The display name of a member, asked on every validation with the contract model or request record and the C# member name. Null keeps the member's readable name.</summary>
 	public static Func<Type, string, string?>? DisplayName { get; set; }

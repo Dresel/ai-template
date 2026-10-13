@@ -3,6 +3,7 @@
 #nullable enable
 
 using FluentValidation;
+using FocusTemplate.Http;
 
 namespace FocusTemplate.Admin.Shared.UserManagement;
 
@@ -14,32 +15,32 @@ public static class UserSearchRequestRules
 	public static IRuleBuilderOptions<T, string> Search<T>(IRuleBuilder<T, string> rule) =>
 		rule
 			.MaximumLength(100).WithErrorCode("maxLength")
-			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(UserSearchRequest), nameof(UserSearchRequest.Search)) ?? "Search");
+			.WithName(_ => ContractTexts.DisplayName?.Invoke(typeof(UserSearchRequest), nameof(UserSearchRequest.Search)) ?? "Search");
 #nullable enable
 
 	/// <summary>Items to skip.</summary>
 	public static IRuleBuilderOptions<T, int> Skip<T>(IRuleBuilder<T, int> rule) =>
 		rule
 			.GreaterThanOrEqualTo(0).WithErrorCode("minValue")
-			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(UserSearchRequest), nameof(UserSearchRequest.Skip)) ?? "Skip");
+			.WithName(_ => ContractTexts.DisplayName?.Invoke(typeof(UserSearchRequest), nameof(UserSearchRequest.Skip)) ?? "Skip");
 
 	/// <summary>Items to skip.</summary>
 	public static IRuleBuilderOptions<T, int?> Skip<T>(IRuleBuilder<T, int?> rule) =>
 		rule
 			.GreaterThanOrEqualTo(0).WithErrorCode("minValue")
-			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(UserSearchRequest), nameof(UserSearchRequest.Skip)) ?? "Skip");
+			.WithName(_ => ContractTexts.DisplayName?.Invoke(typeof(UserSearchRequest), nameof(UserSearchRequest.Skip)) ?? "Skip");
 
 	/// <summary>Items per page, at most 100.</summary>
 	public static IRuleBuilderOptions<T, int> Top<T>(IRuleBuilder<T, int> rule) =>
 		rule
 			.GreaterThanOrEqualTo(1).WithErrorCode("minValue")
 			.LessThanOrEqualTo(100).WithErrorCode("maxValue")
-			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(UserSearchRequest), nameof(UserSearchRequest.Top)) ?? "Top");
+			.WithName(_ => ContractTexts.DisplayName?.Invoke(typeof(UserSearchRequest), nameof(UserSearchRequest.Top)) ?? "Top");
 
 	/// <summary>Items per page, at most 100.</summary>
 	public static IRuleBuilderOptions<T, int?> Top<T>(IRuleBuilder<T, int?> rule) =>
 		rule
 			.GreaterThanOrEqualTo(1).WithErrorCode("minValue")
 			.LessThanOrEqualTo(100).WithErrorCode("maxValue")
-			.WithName(_ => AdminTexts.DisplayName?.Invoke(typeof(UserSearchRequest), nameof(UserSearchRequest.Top)) ?? "Top");
+			.WithName(_ => ContractTexts.DisplayName?.Invoke(typeof(UserSearchRequest), nameof(UserSearchRequest.Top)) ?? "Top");
 }
