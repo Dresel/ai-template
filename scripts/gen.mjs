@@ -3,7 +3,8 @@
 // src/<vertical>/spec/api.tsp. A project of a feature, src/features/<feature>/*, compiles the feature's spec at
 // src/features/<feature>/spec/api.tsp. A project of the shared spine, src/FocusTemplate.<Name>, compiles
 // src/spec/<name>.tsp: FocusTemplate.Primitives over primitives.tsp, the typed ids every vertical imports, and
-// FocusTemplate.Http over http.tsp, the library types.
+// FocusTemplate.Http over http.tsp, the library types. The tspconfig.yaml in a spec/ folder is the editor's project
+// (kind: project), which names the file the language server compiles, and generates nothing.
 // Temporary TypeSpec output goes to tsp-output/, generated C# to each project's generated/ folder.
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync } from "node:fs";
@@ -12,7 +13,7 @@ import { join } from "node:path";
 const projectDirectories = (parent) =>
   existsSync(parent)
     ? readdirSync(parent, { withFileTypes: true })
-        .filter((d) => d.isDirectory() && existsSync(join(parent, d.name, "tspconfig.yaml")))
+        .filter((d) => d.isDirectory() && d.name !== "spec" && existsSync(join(parent, d.name, "tspconfig.yaml")))
         .map((d) => join(parent, d.name))
     : [];
 

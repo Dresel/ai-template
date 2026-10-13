@@ -12,8 +12,14 @@ imports (`namespace SpatialFocus.Http`).
 - The root `package.json` pins `@typespec/compiler`, `@typespec/http`, `@typespec/openapi`, `@typespec/openapi3`
   (OpenAPI 3.2) and the emitter as a `file:` dependency on `.npm/<name>-<version>.tgz`. A plain `npm install` keeps the
   old contents while the version stays the same, hence the bump order below.
-- `npm run gen` (`scripts/gen.mjs`) runs one `tsp compile` per project `tspconfig.yaml`, and the parent emitter's
-  scaffolding lands in the disposable `tsp-output/`.
+- `npm run gen` (`scripts/gen.mjs`) runs one `tsp compile` per C# project's `tspconfig.yaml`, and the parent
+  emitter's scaffolding lands in the disposable `tsp-output/`.
+- Each spec folder (`src/spec/`, `src/<vertical>/spec/`, `src/features/<name>/spec/`) holds the editor's
+  `tspconfig.yaml`: `kind: project` with the `entrypoint` the TypeSpec language server compiles for every file below it
+  (`api.tsp`, and `http.tsp` in `src/spec/`). Without it the server compiles an open file on its own, and a slice's file
+  reports every type its `api.tsp` imports as unknown. A file the entrypoint does not import (`paging.tsp`) the server
+  compiles on its own. `npm run gen` leaves these configs out, and `tsp compile <spec folder>` checks a spec without
+  emitting.
 - `FocusTemplate.Http` holds the types every Admin project generates alike, written once from `src/spec/http.tsp`
   with `output-type: library`: `ProblemDetails`, the validation problem with `Violation` and `ViolationSeverity`,
   `PermissionRequirement` with `RequiresPermissionAttribute`, and the client's `ApiFailure`, `ApiOutcome`,

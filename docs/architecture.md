@@ -27,7 +27,7 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 
   | Project | Holds | References |
   |---|---|---|
-  | `spec/` | `api.tsp`, a `@service` of its own, and `permissions.tsp` | the spine's `primitives.tsp` |
+  | `spec/` | `api.tsp`, a `@service` of its own, `permissions.tsp`, and the editor's `tspconfig.yaml` | the spine's `primitives.tsp` |
   | `FocusTemplate.Weather.Shared` | the generated wire contract and its partials | `Http`, `Primitives` |
   | `FocusTemplate.Weather.Client` | the generated typed clients | `Weather.Shared` |
   | `FocusTemplate.Weather.Data` | entities, `WeatherDbContext` and its read-only twin in schema `weather`, migrations, the dev seed | `Data.Foundation`, `Primitives` |

@@ -77,8 +77,8 @@ errors. Each area lists its packages in its doc.
 ## Build, test, format
 
 - `npm run gen` at the repository root (after a one-time `npm ci`), after every change under `src/*/spec/` and every
-  emitter bump: one `tsp compile` per `tspconfig.yaml`. The `generated/` folders and `openapi.yaml` are checked in and go
-  into the same commit as the spec change. `tsp-output/` is disposable.
+  emitter bump: one `tsp compile` per C# project's `tspconfig.yaml`. The `generated/` folders and `openapi.yaml` are
+  checked in and go into the same commit as the spec change. `tsp-output/` is disposable.
 - `dotnet build FocusTemplate.slnx` builds, `dotnet test FocusTemplate.slnx` runs unit, integration and E2E tests.
 - `dotnet test` runs on Microsoft.Testing.Platform (`global.json`). One test:
   `dotnet test --project tests/<Project> --filter-method "*.TestName"` (repeatable). `--output Detailed` also prints the
