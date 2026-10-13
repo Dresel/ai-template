@@ -63,6 +63,8 @@ version, so a CLI update can bring new or changed skills that only arrive when `
    - refreshes the user-level copies in `~/.agents/skills/`
    - installs the telemetry hooks described below
    - leaves `.mcp.json` alone
+4. Compare `FocusTemplate.Admin.Web.ClientServiceDefaults` with the playground it follows (see
+   [architecture](architecture.md)).
 
 ## Aspire telemetry
 

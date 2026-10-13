@@ -11,17 +11,14 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Hosting;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
 using Radzen;
 
 WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-// In WebAssembly, environment variables are injected via JS initializer into MonoConfig.environmentVariables.
-// They are available via Environment.GetEnvironmentVariable() but NOT automatically in IConfiguration.
-// Service Discovery reads from IConfiguration, so we add environment variables to configuration.
+// The OTLP settings arrive as environment variables through the JS initializer of ClientServiceDefaults, and
+// BlazorClientExtensions reads them from IConfiguration, which holds no environment variables by default in WASM.
 builder.Configuration.AddEnvironmentVariables();
 
 await builder.AddClientConfigurationAsync();
@@ -47,12 +44,6 @@ builder.Services.AddRadzenComponents();
 WebAssemblyHost host = builder.Build();
 
 host.UseAnalytics();
-
-// WebAssembly does not support IHostedService, so TelemetryHostedService is never started.
-// We must force initialization of MeterProvider and TracerProvider manually.
-// See: https://github.com/dotnet/aspire/issues/2816
-_ = host.Services.GetService<MeterProvider>();
-_ = host.Services.GetService<TracerProvider>();
 
 await host.UseStoredCultureAsync();
 

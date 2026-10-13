@@ -14,6 +14,10 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 - **Telemetry**: every server reports OpenTelemetry through ServiceDefaults, the WASM client through
   `FocusTemplate.Admin.Web.ClientServiceDefaults` and the BFF's `/_otlp`, the MAUI app through
   `FocusTemplate.Public.Mobile.ServiceDefaults` (the MAUI counterpart of ServiceDefaults, without ASP.NET Core).
+  The client's `BlazorClientExtensions` and its JS initializer follow `BlazorStandalone.ClientServiceDefaults` in
+  Aspire's playground ([microsoft/aspire](https://github.com/microsoft/aspire/tree/main/playground/BlazorStandalone)),
+  and an update of Aspire or OpenTelemetry starts by comparing against it. Ours takes the service name as an argument,
+  registers no service discovery, since every call goes to the BFF's own origin, and loads the analytics script.
 
 ## Spine, verticals and features
 

@@ -296,7 +296,6 @@
         "dependencies": {
           "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.1.26425.128, )",
           "Microsoft.Extensions.Http.Resilience": "[10.10.0, )",
-          "Microsoft.Extensions.ServiceDiscovery": "[10.10.0, )",
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.19.0, )",
           "OpenTelemetry.Extensions.Hosting": "[1.19.0, )",
           "OpenTelemetry.Instrumentation.Http": "[1.19.0, )"
