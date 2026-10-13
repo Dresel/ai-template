@@ -9,7 +9,8 @@ which waits for the spine's, both added with `AddMigrations<TContext>` (see [dat
 Admin API's server-sent event signals (see [spec-first](spec-first.md)), both APIs, the BFF, Keycloak (its own container or an
 existing realm, see [authentication](authentication.md)), and behind flags an nginx TLS ingress, Umami analytics, and
 the MAUI device resources with a Dev Tunnel. `FocusTemplate.ServiceDefaults` gives every server OTel, service
-discovery, health checks and the standard resilience handler.
+discovery, health checks and the standard resilience handler, and an API its OpenAPI documents and the Scalar page
+(see [spec-first](spec-first.md)), which the dashboard links as `admin-api`'s "API reference".
 
 Packages: `Aspire.Hosting.PostgreSQL`, `Aspire.Hosting.EntityFrameworkCore` (`AddEFMigrations`),
 `Aspire.Hosting.Blazor` (the WASM client's service and telemetry proxying), `Aspire.Hosting.Keycloak`,

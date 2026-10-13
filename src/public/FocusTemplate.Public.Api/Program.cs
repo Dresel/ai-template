@@ -25,12 +25,7 @@ app.MapDefaultEndpoints();
 
 app.UseExceptionHandler();
 
-if (app.Environment.IsDevelopment())
-{
-	app.MapGet(
-		"/openapi/v1.yaml",
-		() => Results.File(Path.Combine(AppContext.BaseDirectory, "openapi.yaml"), "application/yaml"));
-}
+app.MapOpenApiDocuments();
 
 app.MapWeatherForecastsEndpoints();
 

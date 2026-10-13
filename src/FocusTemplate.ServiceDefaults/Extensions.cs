@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Scalar.AspNetCore;
 
 #pragma warning disable IDE0130
 namespace Microsoft.Extensions.Hosting;
@@ -17,7 +20,9 @@ namespace Microsoft.Extensions.Hosting;
 public static class Extensions
 {
 	private const string AlivenessEndpointPath = "/alive";
+	private const string ApiReferenceSetting = "ApiReference:Enabled";
 	private const string HealthEndpointPath = "/health";
+	private const string OpenApiFolder = "openapi";
 
 	public static TBuilder AddDefaultHealthChecks<TBuilder>(this TBuilder builder)
 		where TBuilder : IHostApplicationBuilder
@@ -70,7 +75,8 @@ public static class Extensions
 			.WithMetrics(metrics => metrics.AddAspNetCoreInstrumentation().AddHttpClientInstrumentation().AddRuntimeInstrumentation())
 			.WithTracing(tracing =>
 			{
-				tracing.AddSource(builder.Environment.ApplicationName).AddAspNetCoreInstrumentation(instrumentation =>
+				tracing.AddSource(builder.Environment.ApplicationName)
+					.AddAspNetCoreInstrumentation(instrumentation =>
 
 						// Exclude health check requests from tracing
 						instrumentation.Filter = context =>
@@ -86,6 +92,24 @@ public static class Extensions
 		return builder;
 	}
 
+	// The documents and the Scalar page over them, which opens on the API's own document
+	public static WebApplication MapApiReference(this WebApplication app, string defaultDocument)
+	{
+		if (MapDocuments(app) is { } documents)
+		{
+			app.MapScalarApiReference(options =>
+			{
+				options.WithOpenApiRoutePattern($"/{OpenApiFolder}/{{documentName}}.yaml");
+				foreach (string name in documents.Keys.Order(StringComparer.Ordinal))
+				{
+					options.AddDocument(name, isDefault: name == defaultDocument);
+				}
+			});
+		}
+
+		return app;
+	}
+
 	public static WebApplication MapDefaultEndpoints(this WebApplication app)
 	{
 		// Adding health checks endpoints to applications in non-development environments has security implications.
@@ -99,6 +123,12 @@ public static class Extensions
 			app.MapHealthChecks(AlivenessEndpointPath, new HealthCheckOptions { Predicate = r => r.Tags.Contains("live"), });
 		}
 
+		return app;
+	}
+
+	public static WebApplication MapOpenApiDocuments(this WebApplication app)
+	{
+		MapDocuments(app);
 		return app;
 	}
 
@@ -120,5 +150,33 @@ public static class Extensions
 		////}
 
 		return builder;
+	}
+
+	// The documents the API's projects ship into openapi/, one per service it hosts, when ApiReference:Enabled is on.
+	// Unset, the environment decides, so a deployed stage turns them on through its configuration.
+	private static Dictionary<string, string>? MapDocuments(WebApplication app)
+	{
+		if (!app.Configuration.GetValue(ApiReferenceSetting, app.Environment.IsDevelopment()))
+		{
+			return null;
+		}
+
+		// Read once at startup, so a request names one of them or gets a 404
+		string folder = Path.Combine(AppContext.BaseDirectory, OpenApiFolder);
+		Dictionary<string, string> documents = Directory.Exists(folder)
+			? Directory.EnumerateFiles(folder, "*.yaml")
+				.ToDictionary(path => Path.GetFileNameWithoutExtension(path), StringComparer.Ordinal)
+			: [];
+
+		app.MapGet(
+			$"/{OpenApiFolder}/{{name}}.yaml",
+			(string name, HttpResponse response) =>
+			{
+				// Revalidated on every load, so the reload after a spec change shows the new document
+				response.Headers.CacheControl = "no-cache";
+				return documents.TryGetValue(name, out string? path) ? Results.File(path, "application/yaml") : Results.NotFound();
+			});
+
+		return documents;
 	}
 }

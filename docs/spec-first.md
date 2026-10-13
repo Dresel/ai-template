@@ -25,7 +25,22 @@ imports (`namespace SpatialFocus.Http`).
   so nothing in this solution compiles against those assemblies.
 - `Mediator.Abstractions` with `Mediator.SourceGenerator` (martinothamar, MIT): the generated endpoints dispatch
   `IQuery<T>` and `ICommand<T>` records to hand-written handlers.
-- The OpenAPI document is emitted from the spec, and each API serves the file in Development (`/openapi/v1.yaml`).
+- The OpenAPI document is emitted from the spec into each Api project, which ships it as `openapi/<name>.yaml`
+  (`admin`, `public`, a feature's `weather`). An API serves every document in its output, so the Admin API answers
+  `/openapi/admin.yaml` and `/openapi/weather.yaml`, the Public API `/openapi/public.yaml`. Any other name is a 404.
+- **API reference**: `MapApiReference("admin")` in the service defaults adds `Scalar.AspNetCore` (MIT, trimmable and
+  AOT-compatible, its assets served from the assembly) at `/scalar`, with one entry per document and the API's own
+  first. The Public API serves its document alone through `MapOpenApiDocuments()`. `ApiReference:Enabled` switches
+  the page and the documents together, and unset the environment decides: on in Development, off elsewhere. A deployed
+  stage for external developers sets `ApiReference__Enabled=true` in its configuration (the stage's ConfigMap in
+  `SpatialFocus/Infrastructure`), production leaves it unset. Access control on such a stage belongs to its ingress
+  (basic auth or an IP allowlist, as Traefik middleware). "Try it" sends the bearer token the user pastes, the
+  documents declaring no other scheme yet, and a search shows as `POST` until OpenAPI can write QUERY. The documents
+  go out with `Cache-Control: no-cache`, so a reload after a spec change shows the new one.
+- **Examples**: `@example` on a model and `@opExample` on an operation put real values into the document, from one
+  `const` both share (the weather forecasts so far). The parameters of an `@opExample` reach the document once the
+  Api project's `@typespec/openapi3` options set `experimental-parameter-examples: data`, an option the emitter still
+  calls experimental, so far in `Weather.Api` only. A typed id takes its example there like any other value.
 - **Server-sent events** come from the spec: an operation answering `SSEStream<…>` over an `@events` union of one
   variant (`watch(): SSEStream<GroupEvents>`, `GET /groups:watch`). The events are signals of what changed, and a page
   reads the item again. Generated: the stream query (`IStreamQuery<GroupChanged>`), the endpoint over

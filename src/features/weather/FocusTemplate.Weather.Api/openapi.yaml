@@ -80,6 +80,18 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/WeatherForecastResponse'
+              examples:
+                Two days:
+                  summary: Two days
+                  value:
+                    - id: 1
+                      date: '2026-10-14'
+                      temperatureC: 14
+                      summary: Mild
+                    - id: 2
+                      date: '2026-10-15'
+                      temperatureC: 9
+                      summary: Cool
       tags:
         - WeatherForecasts
   /weather-forecasts/{id}:
@@ -92,6 +104,10 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/Primitives.WeatherForecastId'
+          examples:
+            An existing forecast:
+              summary: An existing forecast
+              value: 1
       responses:
         '200':
           description: The request has succeeded.
@@ -99,6 +115,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WeatherForecastResponse'
+              examples:
+                An existing forecast:
+                  summary: An existing forecast
+                  value:
+                    id: 1
+                    date: '2026-10-14'
+                    temperatureC: 14
+                    summary: Mild
         '404':
           description: The server cannot find the requested resource.
           content:
@@ -275,6 +299,11 @@ components:
           type: string
           description: Free-text summary.
       description: A weather forecast for one day.
+      examples:
+        - id: 1
+          date: '2026-10-14'
+          temperatureC: 14
+          summary: Mild
   securitySchemes:
     BearerAuth:
       type: http

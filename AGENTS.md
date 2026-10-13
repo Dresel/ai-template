@@ -65,6 +65,8 @@ errors. Each area lists its packages in its doc.
   `developer` (with `Features:LocalKeycloak` off, your own account in the external realm). Keycloak's admin console is
   the `keycloak` resource's endpoint, user `admin`, password in the AppHost's secret store under
   `Parameters:keycloak-password`.
+- The Admin API's reference (Scalar, with the Admin and the Weather documents) is `admin-api`'s "API reference" link in
+  the dashboard, `http://localhost:5201/scalar`.
 - The launch profile keeps `localhost` URLs: the Hot Reload refresh servers of Visual Studio and `dotnet watch` accept
   only `localhost` origins (CVE-2026-58649), so a page opened through a `*.dev.localhost` link silently loses Hot Reload.
   Hot Reload of the WASM client works with the AppHost started from Visual Studio (Start Without Debugging).

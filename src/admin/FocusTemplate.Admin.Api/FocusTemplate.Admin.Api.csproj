@@ -29,7 +29,7 @@
 		<None Include="../spec/**/*.tsp" LinkBase="spec" />
 		<None Include="tspconfig.yaml" />
 
-		<Content Include="openapi.yaml" CopyToOutputDirectory="PreserveNewest" />
+		<Content Include="openapi.yaml" Link="openapi/admin.yaml" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 
 	<ItemGroup>

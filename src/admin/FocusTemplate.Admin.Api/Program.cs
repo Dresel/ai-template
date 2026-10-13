@@ -63,10 +63,7 @@ app.UseMiddleware<UserProvisioningMiddleware>();
 
 app.UseAuthorization();
 
-if (app.Environment.IsDevelopment())
-{
-	app.MapGet("/openapi/v1.yaml", () => Results.File(Path.Combine(AppContext.BaseDirectory, "openapi.yaml"), "application/yaml"));
-}
+app.MapApiReference("admin");
 
 RouteGroupBuilder endpoints = app.MapGroup(string.Empty).AddChaosFilter(app.Configuration);
 

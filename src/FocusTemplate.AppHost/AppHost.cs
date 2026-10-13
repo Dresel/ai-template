@@ -52,6 +52,8 @@ IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_A
 	.WaitFor(focusDb)
 	.WaitFor(redis);
 
+api.WithUrl($"{api.GetEndpoint("http")}/scalar", "API reference");
+
 if (addChaos)
 {
 	// Run mode only, so no published environment ever answers slowly or fails on purpose

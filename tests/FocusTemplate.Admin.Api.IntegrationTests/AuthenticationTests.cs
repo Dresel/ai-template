@@ -15,8 +15,18 @@ namespace FocusTemplate.Admin.Api.IntegrationTests;
 
 public sealed class AuthenticationTests(ApiFixture factory) : ApiTestBase(factory)
 {
-	// Health probes and the OpenAPI document are the only endpoints a caller reaches without a token.
-	private static readonly string[] AnonymousRoutes = ["/health", "/alive", "/openapi/v1.yaml",];
+	// Health probes and the API reference, its documents and the Scalar page with its assets, are the only endpoints a
+	// caller reaches without a token.
+	private static readonly string[] AnonymousRoutes =
+	[
+		"/health",
+		"/alive",
+		"/openapi/{name}.yaml",
+		"/scalar/{documentName?}",
+		"/scalar/scalar.js",
+		"/scalar/scalar.aspnetcore.js",
+		"/scalar/favicon.svg",
+	];
 
 	// The test scheme is the default, so the JwtBearer check is driven through its event directly.
 	[Fact]
