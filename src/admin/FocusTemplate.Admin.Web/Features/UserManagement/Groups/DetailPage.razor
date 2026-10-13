@@ -1,4 +1,4 @@
-@attribute [Route("/" + ListPage.Path + "/{Id:guid}")]
+@attribute [Route(ListPage.Path + "/{Id:guid}")]
 @attribute [RequiresPermission(UserManagementPermissions.Names.ViewGroups)]
 @inherits ViewModelPage<DetailPageViewModel>
 @inject IDetailPageLocalizations L

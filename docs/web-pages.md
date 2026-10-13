@@ -92,8 +92,9 @@ As the user management pages (`Features/UserManagement/`) do it.
 - **Shared services** come from `@inject` in the slice's `_Imports.razor` (`DialogService`, `NavigationManager`). A base
   class would hide them and take the one `@inherits` a page has.
 - **Routes**: a list page declares `public const string Path`, a detail page `PathOf(id)` built on it, and both route
-  through `@attribute [Route("/" + ListPage.Path + …)]`, so matching and linking share one string. Links, `NavigateTo`
-  and the menu build on these.
+  through `@attribute [Route(ListPage.Path + …)]`, so matching and linking share one string. `Path` has no leading
+  slash: the router accepts a template without one, and links, `NavigateTo` and the menu resolve it against
+  `<base href>`, which keeps them working under a sub-path.
 
 ## Answers
 
