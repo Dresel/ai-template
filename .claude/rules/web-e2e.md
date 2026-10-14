@@ -4,6 +4,8 @@ paths:
   - "src/admin/*.Admin.Web/**/*.razor"
   - "src/admin/user-management/*.Web/**/*.razor"
   - "src/*.Web.Hosting/**/*.razor"
+  - "src/*.Web.Foundation/**/*.razor"
+  - "src/features/*/*.Web/**/*.razor"
 ---
 # Web E2E tests
 

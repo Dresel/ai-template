@@ -3,9 +3,9 @@
 An AI-first .NET 11 template on Aspire, split into two audience verticals: **Admin** (a Blazor
 WebAssembly client served through a thin BFF over an internal API) and **Public** (a deliberately
 exposed API + a native .NET MAUI mobile client). End-to-end OpenTelemetry, Umami analytics, and
-Playwright E2E tests. Both APIs are **spec-first**: one `api.tsp` per vertical (`src/<vertical>/spec/`) generates the endpoints,
-Mediator request records, wire models, typed clients and the OpenAPI document. Every consuming project generates
-its own slice into its `generated/` folder.
+Playwright E2E tests. Both APIs are **spec-first**: one `api.tsp` per vertical (`src/<vertical>/spec/`), one for user
+management and one per feature generate the endpoints, Mediator request records, wire models, typed clients and the
+OpenAPI documents. Every consuming project generates its own slice into its `generated/` folder.
 
 ## Projects
 
@@ -43,7 +43,7 @@ Shared spine:
   `AppRouter`, `Forbidden`, the account buttons, the loading screen's styles, see
   [web pages](docs/web-pages.md).
 - **SpatialFocus.Web.Bff.Shared** - the BFF's contract with the WASM client: `/bff/user`'s answer, the claim types,
-  the client configuration, see [authentication](docs/authentication.md).
+  the analytics settings of the client configuration, see [authentication](docs/authentication.md).
 - **SpatialFocus.Web.Foundation** - the Razor class library a host's pages and a feature's build on: view model pages,
   forms with their stylesheet, feedback, client permissions, see [web pages](docs/web-pages.md).
 - **SpatialFocus.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
@@ -93,8 +93,8 @@ errors. Each area lists its packages in its doc.
   `developer` (with `Features:LocalKeycloak` off, your own account in the external realm). Keycloak's admin console is
   the `keycloak` resource's endpoint, user `admin`, password in the AppHost's secret store under
   `Parameters:keycloak-password`.
-- The Admin API's reference (Scalar, with the Admin and the Weather documents) is `admin-api`'s "API reference" link in
-  the dashboard, `http://localhost:5201/scalar`.
+- The Admin API's reference (Scalar, with the Admin, the User Management and the Weather documents) is `admin-api`'s
+  "API reference" link in the dashboard, `http://localhost:5201/scalar`.
 - The launch profile keeps `localhost` URLs: the Hot Reload refresh servers of Visual Studio and `dotnet watch` accept
   only `localhost` origins (CVE-2026-58649), so a page opened through a `*.dev.localhost` link silently loses Hot Reload.
   Hot Reload of the WASM client works with the AppHost started from Visual Studio (Start Without Debugging).
@@ -104,7 +104,8 @@ errors. Each area lists its packages in its doc.
 
 ## Build, test, format
 
-- `npm run gen` at the repository root (after a one-time `npm ci`), after every change under `src/*/spec/` and every
+- `npm run gen` at the repository root (after a one-time `npm ci`), after every change under a `spec/` folder
+  (`src/spec/`, `src/<vertical>/spec/`, `src/admin/user-management/spec/`, `src/features/<name>/spec/`) and every
   emitter bump: one `tsp compile` per C# project's `tspconfig.yaml`. The `generated/` folders and `openapi.yaml` are
   checked in and go into the same commit as the spec change. `tsp-output/` is disposable.
 - `dotnet build FocusTemplate.slnx` builds, `dotnet test FocusTemplate.slnx` runs unit, integration and E2E tests.
@@ -141,7 +142,7 @@ For any other package's API, ask `dotnet-inspect` instead of guessing.
 | A .NET package's API (Radzen, YARP, OTel, …) | `dotnet-inspect` skill (`dnx dotnet-inspect -y -- skill` prints the guide of the installed tool) |
 | Browser reproduction, UI checks, screenshots | `playwright-cli` skill |
 | Drive the Android emulator | `appium` MCP, enabled per session (see [mobile](docs/mobile.md)) |
-| Change an API (route, wire model, status code, operation) | the spec in `src/<vertical>/spec/` (a new slice is a kebab-case folder imported in `api.tsp`, new permissions go to the slice's `permissions.tsp`) → `npm run gen` → the handler in the Api project's `Features/` → the consumers → tests, see [spec-first](docs/spec-first.md). A whole slice: the `feature-slice` skill |
+| Change an API (route, wire model, status code, operation) | the spec in `src/<vertical>/spec/`, user management's in `src/admin/user-management/spec/`, a feature's in `src/features/<name>/spec/` (a new slice is a kebab-case folder imported in `api.tsp`, new permissions go to the slice's `permissions.tsp`) → `npm run gen` → the handler in the Api project's `Features/<Slice>/`, user management's and a feature's in `<Interface>/` → the consumers → tests, see [spec-first](docs/spec-first.md). A whole slice: the `feature-slice` skill |
 
 The skills in `.claude/skills/` and `.agents/skills/` are written by `aspire agent init`, see **Updating Aspire** in
 [apphost](docs/apphost.md). The project's own procedures are skills too:

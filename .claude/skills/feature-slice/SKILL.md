@@ -23,7 +23,7 @@ own under `src/features/<name>/` instead, built like `src/features/weather/`, se
 | A detail page with actions | `Groups/DetailPage.razor`, `Groups/DetailPageViewModel` |
 | A list that stays current when others change it | `Groups`: `watch()` in `groups.tsp`, `GroupsWatchHandler`, the `Publish` calls in the command handlers, `Groups/ListPageViewModel` |
 | Rules the spec cannot state, async server checks | `DemoProfiles` (`DemoProfileCustomRules`, `DemoProfileRequestValidator`) |
-| Several interfaces behind one service | user management: `spec/api.tsp` with `Users` and `Groups`, the pages' `_Imports.razor` at the root of its Web project |
+| Several interfaces behind one service | user management, a service of its own: `spec/api.tsp` importing `users.tsp` and `groups.tsp`, one folder per interface in its Api and Web projects. Inside the Admin vertical the same layout goes below `Features/<Feature>/` (step 1) |
 
 ## 1. Decide
 

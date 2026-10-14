@@ -14,7 +14,8 @@ imports (`namespace SpatialFocus.Http`).
   old contents while the version stays the same, hence the bump order below.
 - `npm run gen` (`scripts/gen.mjs`) runs one `tsp compile` per C# project's `tspconfig.yaml`, and the parent
   emitter's scaffolding lands in the disposable `tsp-output/`.
-- Each spec folder (`src/spec/`, `src/<vertical>/spec/`, `src/features/<name>/spec/`) holds the editor's
+- Each spec folder (`src/spec/`, `src/<vertical>/spec/`, `src/admin/user-management/spec/`, `src/features/<name>/spec/`)
+  holds the editor's
   `tspconfig.yaml`: `kind: project` with the `entrypoint` the TypeSpec language server compiles for every file below it
   (`api.tsp`, and `http.tsp` in `src/spec/`). Without it the server compiles an open file on its own, and a slice's file
   reports every type its `api.tsp` imports as unknown. A file the entrypoint does not import (`paging.tsp`) the server
@@ -49,9 +50,10 @@ imports (`namespace SpatialFocus.Http`).
   documents declaring no other scheme yet, and a search shows as `POST` until OpenAPI can write QUERY. The documents
   go out with `Cache-Control: no-cache`, so a reload after a spec change shows the new one.
 - **Examples**: `@example` on a model and `@opExample` on an operation put real values into the document, from one
-  `const` both share (the weather forecasts so far). The parameters of an `@opExample` reach the document once the
-  Api project's `@typespec/openapi3` options set `experimental-parameter-examples: data`, an option the emitter still
-  calls experimental, so far in `Weather.Api` only. A typed id takes its example there like any other value.
+  `const` both share (the weather forecasts so far). The parameters of an `@opExample` reach the document once the Api
+  project's `@typespec/openapi3` options set `experimental-parameter-examples: data`, an option the emitter still calls
+  experimental, so far in `Weather.Api` and `Admin.UserManagement.Api`. A typed id takes its example there like any
+  other value.
 - **Server-sent events** come from the spec: an operation answering `SSEStream<…>` over an `@events` union of one
   variant (`watch(): SSEStream<GroupEvents>`, `GET /groups:watch`). The events are signals of what changed, and a page
   reads the item again. Generated: the stream query (`IStreamQuery<GroupChanged>`), the endpoint over
@@ -86,7 +88,7 @@ imports (`namespace SpatialFocus.Http`).
 - `src/spec/` holds what verticals can share: `primitives.tsp` (the typed ids, namespace `SpatialFocus.Primitives`,
   no service) and `paging.tsp` (`PageQuery`, spread into a search request). `primitives.tsp` also imports each slice's
   `permissions.tsp` and each feature's `primitives.tsp`, so adding or removing a feature in the spine is one import line.
-  Today only the Admin contract and the weather feature import it.
+  Today the Admin contract, user management and the weather feature import it.
 - Three projects per vertical generate, each with its own `tspconfig.yaml` and `generated/` folder: the Api project
   (`output-type: api`), the Shared project (`contracts`) and the Client project (`client`). Everything else consumes
   them by project reference, and generated files are never linked across projects.
@@ -113,12 +115,13 @@ imports (`namespace SpatialFocus.Http`).
 
 ## Typed ids
 
-`SpatialFocus.Primitives` compiles `src/spec/primitives.tsp` and what it imports (`output-type: primitives`) into
-Vogen value objects: `[ValueObject<T>] [Instance("Unspecified", …)] public readonly partial struct` per `@typedId`
-scalar, plus `Permission` (a string id) with one `{Enum}Permissions` class per permissions enum (see
-[authorization](authorization.md)). `Data` and `Admin.Shared` reference it, so one `GroupId` serves the domain and every
-contract. `Data` also runs Vogen itself, for the EF Core converters it marks with `[EfCoreConverter<T>]`. A `@typedId`
-declared inside a service namespace is an emitter error.
+`SpatialFocus.Primitives` compiles `src/spec/primitives.tsp` and what it imports (`output-type: primitives`) into Vogen
+value objects: `[ValueObject<T>] [Instance("Unspecified", …)] public readonly partial struct` per `@typedId` scalar,
+plus `Permission` (a string id) with one `{Enum}Permissions` class per permissions enum (see
+[authorization](authorization.md)). `Data` and every contract project (`Admin.Shared`, `Admin.UserManagement.Shared`, a
+feature's `Shared`) reference it, so one `GroupId` serves the domain and every contract. `Data` also runs Vogen itself,
+for the EF Core converters it marks with `[EfCoreConverter<T>]`. A `@typedId` declared inside a service namespace is an
+emitter error.
 
 ## Namespaces
 
@@ -137,13 +140,15 @@ declared inside a service namespace is an emitter error.
 
 ## Server
 
-- Hand-written code per slice lives in the Api project's `Features/<Slice>/` (`Features/<Feature>/<Interface>/` for a
-  feature's interface, user management's in `Admin.UserManagement.Api/<Interface>/`): the Mediator handlers, and where
+- Hand-written code per slice lives in the Api project's `Features/<Slice>/` (`Features/<Feature>/<Interface>/` for an
+  interface below a slice's own namespace, user management's in `Admin.UserManagement.Api/<Interface>/`, a feature
+  package's in `<Feature>.Api/<Interface>/`): the Mediator handlers, and where
   needed a partial class implementing the generated `ConfigureGroup` / `Configure{Op}` hooks (rate limiting, caching).
   Authorization comes from the spec, never from a hook.
 - **Errors are values**: a handler returns the generated result union and answers a modeled status with its case
   record (`new NotFound("…")`). Anything unhandled becomes a 500 problem response through `AddProblemDetails()`.
-- **Validation**: the Admin Api and Shared projects generate with `validation: fluentvalidation`, so constraint
+- **Validation**: the Api and Shared projects of the Admin vertical, user management and the features generate with
+  `validation: fluentvalidation`, so constraint
   decorators (`@maxLength`, `@minValue`, …) become FluentValidation validators, and a filter on each validated endpoint
   answers a violation with a 400 before the handler runs. `AddAdminEndpoints()` in `Program.cs` registers them through
   `AddAdminValidators()`, and mapping the endpoints without them fails at startup. Rules the spec cannot state stay in

@@ -55,21 +55,23 @@
     <Project Path="src/public/FocusTemplate.Public.Shared/FocusTemplate.Public.Shared.csproj" />
     <Project Path="src/public/spec/FocusTemplate.Public.Spec.csproj" />
   </Folder>
+  <Folder Name="/shared/">
+    <Project Path="src/SpatialFocus.Api.Foundation/SpatialFocus.Api.Foundation.csproj" />
+    <Project Path="src/SpatialFocus.Api.Hosting/SpatialFocus.Api.Hosting.csproj" />
+    <Project Path="src/SpatialFocus.AppHost.Hosting/SpatialFocus.AppHost.Hosting.csproj" />
+    <Project Path="src/SpatialFocus.Data.Foundation/SpatialFocus.Data.Foundation.csproj" />
+    <Project Path="src/SpatialFocus.Data/SpatialFocus.Data.csproj" />
+    <Project Path="src/SpatialFocus.Http/SpatialFocus.Http.csproj" />
+    <Project Path="src/SpatialFocus.Localization/SpatialFocus.Localization.csproj" />
+    <Project Path="src/SpatialFocus.Primitives/SpatialFocus.Primitives.csproj" />
+    <Project Path="src/SpatialFocus.ServiceDefaults/SpatialFocus.ServiceDefaults.csproj" Id="b487fad3-efd6-44f0-ad27-6e19ecab0715" />
+    <Project Path="src/SpatialFocus.Web.Bff.Hosting/SpatialFocus.Web.Bff.Hosting.csproj" />
+    <Project Path="src/SpatialFocus.Web.Bff.Shared/SpatialFocus.Web.Bff.Shared.csproj" />
+    <Project Path="src/SpatialFocus.Web.ClientServiceDefaults/SpatialFocus.Web.ClientServiceDefaults.csproj" />
+    <Project Path="src/SpatialFocus.Web.Foundation/SpatialFocus.Web.Foundation.csproj" />
+    <Project Path="src/SpatialFocus.Web.Hosting/SpatialFocus.Web.Hosting.csproj" />
+    <Project Path="src/spec/SpatialFocus.Spec.csproj" />
+  </Folder>
   <Project Path="src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj" Id="3dbf55d3-63b4-4f1b-a28b-c7313289b89f" />
   <Project Path="src/FocusTemplate.Names/FocusTemplate.Names.csproj" />
-  <Project Path="src/SpatialFocus.Api.Foundation/SpatialFocus.Api.Foundation.csproj" />
-  <Project Path="src/SpatialFocus.Api.Hosting/SpatialFocus.Api.Hosting.csproj" />
-  <Project Path="src/SpatialFocus.AppHost.Hosting/SpatialFocus.AppHost.Hosting.csproj" />
-  <Project Path="src/SpatialFocus.Data.Foundation/SpatialFocus.Data.Foundation.csproj" />
-  <Project Path="src/SpatialFocus.Data/SpatialFocus.Data.csproj" />
-  <Project Path="src/SpatialFocus.Http/SpatialFocus.Http.csproj" />
-  <Project Path="src/SpatialFocus.Localization/SpatialFocus.Localization.csproj" />
-  <Project Path="src/SpatialFocus.Primitives/SpatialFocus.Primitives.csproj" />
-  <Project Path="src/SpatialFocus.ServiceDefaults/SpatialFocus.ServiceDefaults.csproj" Id="b487fad3-efd6-44f0-ad27-6e19ecab0715" />
-  <Project Path="src/SpatialFocus.Web.Bff.Hosting/SpatialFocus.Web.Bff.Hosting.csproj" />
-  <Project Path="src/SpatialFocus.Web.Bff.Shared/SpatialFocus.Web.Bff.Shared.csproj" />
-  <Project Path="src/SpatialFocus.Web.ClientServiceDefaults/SpatialFocus.Web.ClientServiceDefaults.csproj" />
-  <Project Path="src/SpatialFocus.Web.Foundation/SpatialFocus.Web.Foundation.csproj" />
-  <Project Path="src/SpatialFocus.Web.Hosting/SpatialFocus.Web.Hosting.csproj" />
-  <Project Path="src/spec/SpatialFocus.Spec.csproj" />
 </Solution>

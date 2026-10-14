@@ -4,10 +4,11 @@ What to follow when changing these files: [the rule](../.claude/rules/database.m
 
 ## The project
 
-`SpatialFocus.Data` holds the spine's entities, identity and permissions, with their EF Core mapping (`Entities/`,
-each entity next to its `IEntityTypeConfiguration`, all listed by hand in `ApplyEntityConfigurations`), the model in
-`AppDbContextBase` with its two sealed contexts, the migrations, a design-time factory and the dev seed. The Admin
-API and the AppHost's migration resource reference it, and it stays free of Aspire. Its tables sit in `public`.
+`SpatialFocus.Data` holds the spine's entities, identity and permissions, with their EF Core mapping (`Entities/`, each
+entity next to its `IEntityTypeConfiguration`, all listed by hand in `ApplyEntityConfigurations`), the model in
+`AppDbContextBase` with its two sealed contexts, the migrations, a design-time factory and the dev seed. User
+management's Api, the Admin API and the AppHost's migration resource reference it, and it stays free of Aspire. Its
+tables sit in `public`.
 
 `SpatialFocus.Data.Foundation` holds what any context builds on and no entity of its own: `FoundationDbContext<TModel>`
 with `IHasSchema`, auditing (`Auditing/`, with `ICurrentUser` and `WellKnownUsers`), `UseNpgsqlWithConventions` (the
@@ -60,8 +61,8 @@ Query handlers (`IQueryHandler`) take a read-only context (`ReadOnlyAppDbContext
 handlers (`ICommandHandler`) a writable one (`AppDbContext`, `WeatherDbContext`): a command reading through the second
 context would lose its transaction and its tracking. A read-only context implements `IReadOnlyDbContext`.
 `HandlerDbContextTests` in `FocusTemplate.ArchitectureTests` checks the constructor parameters of every handler in both
-APIs and in the features' API assemblies and forbids the abstract bases, so a handler always names the context it
-means.
+APIs, in user management's and in the features' API assemblies and forbids the abstract bases, so a handler always names
+the context it means.
 
 The read-only context tracks nothing and refuses `SaveChanges`: `FoundationDbContext` throws for any context that
 implements `IReadOnlyDbContext`, so a twin is its model base plus the interface and has no members of its own. It is
@@ -201,6 +202,6 @@ step with `__EFMigrationsHistory` until `aspire stop --force --volumes` drops co
 ## Architecture tests
 
 `FocusTemplate.ArchitectureTests` checks rules every handler or type must follow: `HandlerDbContextTests` reflects over
-the API and feature assemblies for the read/write split, `ModelSentinelTests` walks every EF model for the sentinels,
-`UserReferenceTests` keeps `UserReference` in step with `User`, and `FeatureTests` keeps the features on their own projects and the foundations, and
-the pooled contexts' constructors down to their options.
+the API, user management and feature assemblies for the read/write split, `ModelSentinelTests` walks every EF model for
+the sentinels, `UserReferenceTests` keeps `UserReference` in step with `User`, and `FeatureTests` keeps the features on
+their own projects and the foundations, and the pooled contexts' constructors down to their options.

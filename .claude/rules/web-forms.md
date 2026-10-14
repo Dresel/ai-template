@@ -4,6 +4,7 @@ paths:
   - "src/*.Web.Foundation/wwwroot/forms.css"
   - "src/admin/*.Admin.Web/Features/**/{Form,FormValidator,Mapper}*.cs"
   - "src/admin/user-management/*.Web/**/{Form,FormValidator,Mapper}*.cs"
+  - "src/features/*/*.Web/**/{Form,FormValidator,Mapper}*.cs"
   - "src/admin/*.Admin.Shared/*Rules.cs"
   - "tests/*.Web.UnitTests/Foundation/**"
 ---

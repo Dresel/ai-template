@@ -7,8 +7,8 @@ What to follow when changing these files: [the rule](../.claude/rules/web-pages.
 `FocusTemplate.Admin.Web` is the Blazor WebAssembly client on Radzen (`software` theme, `software-dark` behind the
 header's appearance toggle, Material Symbols bundled). It talks to the API through the generated clients of
 `FocusTemplate.Admin.Client`, and learns about the signed-in user from the BFF (`BffAuthenticationStateProvider`).
-`RadzenTheme` in `App.razor` loads the theme through `HeadContent`, `<RadzenComponents />` hosts notifications and
-dialogs, and `AddRadzenComponents()` registers their services.
+`AppearanceTheme` in `App.razor` loads the theme through `HeadContent` with `RadzenTheme`, `<RadzenComponents />` hosts
+notifications and dialogs, and `AddRadzenComponents()` registers their services.
 
 What every product's client runs the same way lives in `SpatialFocus.Web.Hosting`, a Razor class library:
 `AddClientConfigurationAsync()` and `AddWebDefaults()` (the BFF's session as authentication state), `AppRouter` (the
@@ -16,6 +16,8 @@ router with `AuthorizeRouteView`, `Forbidden` for a signed-in user, `RedirectToL
 registered `PageAssembly`), `AccountButtons` (the user's name, log in and log out), and the loading screen's rules in
 `startup.css`. `App.razor` holds one `<AppRouter>` with the product's assembly, its `MainLayout` and its `NotFound`,
 which stays the product's because it names that layout.
+
+The host's own folders and the libraries it builds on:
 
 - **`Features/<Slice>/`**: a slice's pages, view models, form, validator, mapper and its registration
   (`Add<Slice>()`), named without the slice's prefix (`Form`, `FormValidator`, `Mapper`). The form, validator and
@@ -43,7 +45,7 @@ which stays the product's because it names that layout.
   - `Feedback/`: `AppFailure`, `AppItemView`, `AppLoading`, `DialogService.ConfirmAsync`, `ApiFailureMessages`
   - `Authorization/`: `PermissionView`, `CurrentUser`, `user.Has(…)` and the handler that answers a
     `PermissionRequirement` from the claims of type `Permission.ClaimType`; `AddFoundation()` registers handler and
-    `CurrentUser`, the host the `AuthenticationStateProvider` they read
+    `CurrentUser`, `AddWebDefaults()` of `SpatialFocus.Web.Hosting` the `AuthenticationStateProvider` they read
   - `Appearance/`: light, dark or the system's scheme, see **Appearance** below
   - `Localization/`: the culture's storage, its setting at startup and the header's `LanguageSwitch`, see
     [localization](localization.md)
@@ -54,7 +56,7 @@ which stays the product's because it names that layout.
     that throws for a replaced run, so nothing it fetched is shown). `AddFoundation()` registers `Debouncer` and `BusyState`
     transient with their timings, so a view model takes them in its constructor and the page's scope disposes them. A
     view model disposes only the commands it creates. They run on the renderer's dispatcher and take no locks.
-    `Users/ListPageViewModel` uses all of them.
+    User management's `Users/ListPageViewModel` uses all of them.
 - **`Shell/`**: `MainLayout` (the title, the menu, the header's switches and `AccountButtons`), `Home`, `NotFound`.
   **`Diagnostics/`**: the request diagnostics page, over the BFF's `/debug/request` in Development.
 - **`Infrastructure/`**: `Localization/` (`AddWebLocalization()`, which registers the texts and the cultures, see
@@ -71,9 +73,9 @@ choice lives in the browser's local storage under `appearance`, and without one 
 live while the page is open.
 
 - **Before .NET runs**: Foundation's `wwwroot/appearance.js` is a classic script in the head of `index.html`. It
-  resolves the theme and sets `<html data-theme="light|dark">` before the first paint, so the loading screen, styled
-  by the host's `app.css` on that attribute, is dark from the first frame. Its dark colours are those of Radzen's
-  `software-dark`, so the app takes over without a jump.
+  resolves the theme and sets `<html data-theme="light|dark">` before the first paint, so the loading screen, whose
+  colours the host's `app.css` sets on that attribute, is dark from the first frame. Its dark colours are those of
+  Radzen's `software-dark`, so the app takes over without a jump.
 - **After**: `AppearanceTheme` in `App.razor`'s `HeadContent` renders `RadzenTheme` with the theme the script chose and
   switches it when the system's scheme changes. `AppearanceSwitch` stores a new choice through the script and switches
   Radzen's `ThemeService`. `AppearanceStorage` holds the calls into the script.
@@ -149,7 +151,8 @@ A view model turns a call's result union into an outcome:
 - Then `Failure = outcome is ApiFailure failure ? messages.Of(failure) : null;`, which says on its line that success
   clears it, and `if (outcome is Success)`. The view model takes `ApiFailureMessages messages` in its constructor.
 
-The emitter generates the outcome types and methods next to each union in `Admin.Client`, describing the contract only.
+The emitter generates the outcome types into `SpatialFocus.Http` and the `ToOutcome` methods next to each union in the
+client projects (`Admin.Client`, `Admin.UserManagement.Client`, a feature's `Client`), describing the contract only.
 The app's policy stays in the app: `ApiFailureMessages` (the server's words, or the status, or "not answering") in
 `Foundation/Feedback/`, and `NoAnswerHandler` in `ClientServiceDefaults`, outside the resilience handler, which turns
 Polly giving up (`ExecutionRejectedException`) into an `HttpRequestException` without a status, so the client and its

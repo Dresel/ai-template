@@ -37,7 +37,8 @@ Nothing publishes NativeAOT yet, but switching must stay a publish setting.
 - Named after the type they extend, without an interface's `I` (`ServiceCollectionExtensions`,
   `ProjectResourceBuilderExtensions` for `IResourceBuilder<ProjectResource>`), or after the constraint of a generic
   receiver (`TBuilder : IHostApplicationBuilder` → `HostApplicationBuilderExtensions`).
-- Classes that map endpoints are named after the endpoints (`DebugEndpoint`), and so is a class whose methods belong to
-  one feature and only use the receiver as entry point (`GroupQueries`, `Administrators`).
+- Classes that map endpoints are named after the endpoints (`DebugEndpoint`, `BffEndpoints`), and a class whose methods
+  belong to one feature and only use the receiver as entry point is named after what they are, in the feature's
+  namespace (`Queries` in user management's `Groups/`).
 - One class per extended type and namespace. The namespace says what the methods are about, the method name what they
   do. Names that came with a template stay (`Extensions` in both ServiceDefaults projects, `BlazorClientExtensions`).

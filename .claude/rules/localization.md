@@ -2,6 +2,7 @@
 paths:
   - "**/*.resx"
   - "src/admin/**/Localization/**"
+  - "src/*.Web.Foundation/Localization/**"
   - "src/*.Localization/**"
   - "src/*.Api.Hosting/Localization/**"
   - "src/FocusTemplate.AppHost/keycloak/**"
@@ -19,9 +20,9 @@ paths:
   `localizations.NoGroup(command.Id)`. Its translation uses no index the neutral text lacks.
 - A service or view model takes its texts in its constructor, a shared rule as a parameter.
 - A resx read by key (permissions, contracts) gets `SkipFile` in its project file.
-- Each host registers `AddResxLocalization()` first, then `AddAdminSharedLocalization()` beside its own
-  `UsingResXGenerator()`, and the Web host `AddFoundationLocalization()` too. A library with resx sets
-  `ResXGenerator_InternalRegistration` and offers such a method.
+- Each host registers `AddResxLocalization()` first (the API through `AddApiLocalization(cultures)`), then
+  `AddAdminSharedLocalization()` beside its own `UsingResXGenerator()`, and the Web host `AddFoundationLocalization()`
+  too. A library with resx sets `ResXGenerator_InternalRegistration` and offers such a method.
 - A contract's field names and pattern messages go into the resx named after the contract type in the contract's
   project: `Admin.Shared` (`DemoProfileRequest.de.resx`, keys `Code` and `Code.pattern`), user management's or a
   feature's `Shared`.

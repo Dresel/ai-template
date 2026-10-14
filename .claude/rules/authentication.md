@@ -4,6 +4,8 @@ paths:
   - "src/*.Web.Bff.Hosting/**"
   - "src/*.Api.Hosting/Authentication/**"
   - "src/admin/*.Admin.Web/{App.razor,_Imports.razor}"
+  - "src/admin/user-management/*.Web/_Imports.razor"
+  - "src/features/*/*.Web/_Imports.razor"
   - "src/*.Web.Hosting/{AppRouter,AccountButtons,RedirectToLogin,Forbidden}.razor"
   - "src/*.Web.Hosting/Authentication/**"
   - "src/admin/*.Admin.Web/Shell/MainLayout.razor"

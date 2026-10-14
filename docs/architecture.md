@@ -21,18 +21,21 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 
 ## Spine, verticals and features
 
-- **The spine** is what every host has: `Primitives`, `Http` (the generated library types), `Data.Foundation`,
-  `Data` (identity: users, groups, permissions), `Api.Foundation`, `Web.Foundation`, the service defaults and
-  the AppHost.
+- **The spine** is what the hosts build on: `Primitives`, `Http` (the generated library types), `Data.Foundation`,
+  `Data` (identity: users, groups, permissions), `Api.Foundation`, `Web.Foundation`, `Web.ClientServiceDefaults`,
+  `Localization`, the BFF's contract `Web.Bff.Shared`, the hosting libraries (`AppHost.Hosting`, `Api.Hosting`,
+  `Web.Bff.Hosting`, `Web.Hosting`), the service defaults and the AppHost.
 - **A vertical** is an audience with its own API, contract and client: Admin, Public. Its slices live inside its
   projects (`Features/<Slice>/`).
 - **User management** (`src/admin/user-management/`) is the Admin vertical's part of the spine: every Admin host
   includes it, since the BFF asks its `/users/me` on each page load and every `@requiresPermission` goes to its
   permission handler. Its projects are laid out as a feature's below (`spec/` with a `@service` of its own,
   `SpatialFocus.Admin.UserManagement.Shared`, `.Client`, `.Api`, `.Web`), without a data project: it works on the
-  identity tables of `Data`. `AddUserManagement(…)` registers the spine's two contexts, the handlers, the permission
-  handler and the provisioning, which the host runs with `app.UseUserProvisioning()` between authentication and
-  authorization. `MapUserManagementEndpoints()` maps its endpoints, `AddUserManagementPages(…)` registers its pages.
+  identity tables of `Data`. `AddUserManagement(connectionName, readOnlyConnectionName)` registers the spine's two
+  context pools, its endpoints' JSON context and validators, `UserPermissions` with the permission handler, the memory
+  cache of the provisioning and the `GroupChanged` signal. `app.UseUserProvisioning()` adds the provisioning, which the
+  host runs between authentication and authorization. `MapUserManagementEndpoints()` maps its endpoints,
+  `AddUserManagementPages(…)` registers its pages and their `PageAssembly`.
   A feature never references it.
 - **A feature** is a package of projects under `src/features/<name>/` that a host adds without touching its own
   code beyond composition. Weather is the first:
@@ -72,7 +75,7 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 - **SpatialFocus.Localization**: the localization machinery the API and the WASM client both run, a plain library
   with no vertical in its name (see [localization](localization.md)).
 - **SpatialFocus.Web.Bff.Shared**: the BFF's contract with the WASM client, `/bff/user`'s answer, the claim types and the
-  client configuration (see [authentication](authentication.md)).
+  analytics settings of the client configuration (see [authentication](authentication.md)).
 - **FocusTemplate.Public.Mobile**: native MAUI with XAML, `net11.0-android;net11.0-ios` only (no Windows or
   MacCatalyst targets by decision, and iOS builds only on macOS), see [mobile](mobile.md).
 

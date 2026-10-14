@@ -6,10 +6,11 @@ Keycloak is the identity provider and the BFF holds the session: the shape of Du
 is paid in production. Authentication is always on, and `Features:LocalKeycloak` only decides whether the AppHost runs a
 Keycloak or takes an existing realm.
 
-Packages: `Yarp.ReverseProxy` with `Microsoft.Extensions.ServiceDiscovery.Yarp`,
-`Microsoft.AspNetCore.Authentication.OpenIdConnect` (cookie and code flow), `Duende.AccessTokenManagement.OpenIdConnect`
-(refreshes the user's access token for the proxied calls) and `Microsoft.AspNetCore.Authentication.JwtBearer` in the
-API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
+Packages: in `SpatialFocus.Web.Bff.Hosting` `Yarp.ReverseProxy` with `Microsoft.Extensions.ServiceDiscovery.Yarp`,
+`Microsoft.AspNetCore.Authentication.OpenIdConnect` (cookie and code flow) and
+`Duende.AccessTokenManagement.OpenIdConnect` (refreshes the user's access token for the proxied calls), in
+`SpatialFocus.Api.Hosting` `Microsoft.AspNetCore.Authentication.JwtBearer`. The token management is Apache-2.0, unlike
+Duende's BFF and IdentityServer.
 
 ## AppHost
 
@@ -105,7 +106,8 @@ authorization. A handler reads `Id`, which throws then. The provisioning middlew
 
 - `BffAuthenticationStateProvider` asks `/bff/user` once per load. Only its 401 means anonymous, and any other failure
   throws into the error UI, since a login would bring back the same state.
-- `[Authorize]` in `_Imports.razor` and `AuthorizeRouteView` in `AppRouter` (`SpatialFocus.Web.Hosting`, with the
+- `[Authorize]` in each page assembly's `_Imports.razor` (the host's, user management's, a feature's) and
+  `AuthorizeRouteView` in `AppRouter` (`SpatialFocus.Web.Hosting`, with the
   provider above and `RedirectToLogin`) guard every page but `Home` (`[AllowAnonymous]`). A page the user may not see
   renders `Forbidden` for a signed-in user and `RedirectToLogin` for an anonymous one, since a signed-in user sent to
   log in would come straight back from Keycloak's session.

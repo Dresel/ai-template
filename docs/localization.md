@@ -52,9 +52,12 @@ FluentValidation and Radzen ship their own German texts.
   `AddAdminSharedLocalization()` for the texts of `Admin.Shared` and its own `UsingResXGenerator()`.
   `SpatialFocus.Localization` holds the machinery every API and client share, with no vertical in its name, and
   `Admin.Shared` keeps `Cultures`. ResXGenerator gives every assembly a registration class of the same name, and two
-  visible ones make `UsingResXGenerator()` ambiguous, so `Admin.Shared` generates its own `internal`
+  visible ones make `UsingResXGenerator()` ambiguous, so every library with resx (`Admin.Shared`, `Web.Foundation`,
+  `Web.Hosting`, user management's and a feature's `Api` and `Web`) generates its own `internal`
   (`ResXGenerator_InternalRegistration`, from the local package of
-  [ycanardeau/ResXGenerator#15](https://github.com/ycanardeau/ResXGenerator/pull/15)).
+  [ycanardeau/ResXGenerator#15](https://github.com/ycanardeau/ResXGenerator/pull/15)) and calls it from its own
+  registration (`AddAdminSharedLocalization()`, `AddFoundationLocalization()`, `AddWebDefaults()`,
+  `AddUserManagement()`, `AddUserManagementPages()`, `AddWeather()`, `AddWeatherPages()`).
 - **Who reads how**: a component injects `@inject IMainLayoutLocalizations L`, a service or view model takes its texts
   in its constructor (`ApiFailureMessages`). In the API one resx per interface folder, named after it
   (`Groups/Groups.resx` in `Admin.UserManagement.Api`), serves its handlers and validators through
@@ -110,5 +113,6 @@ A message has a sentence and a field name in it, `'Kürzel' darf nicht leer sein
 ## Another language
 
 Add it to `Cultures.Supported`, the realm's `supportedLocales` and the loading screen's texts in `index.html`, and add
-its resx beside every neutral file. The
-`.de.resx` patterns in the Web, API and Shared project files (`EmbeddedResource` nesting) need the new suffix too.
+its resx beside every neutral file. The `.de.resx` patterns (`EmbeddedResource` nesting) of the project files that
+carry them (the hosts', `Admin.Shared`, `Web.Foundation`, `Web.Hosting`, user management's and a feature's `Api` and
+`Web`) need the new suffix too.
