@@ -66,11 +66,15 @@ one outcome, so a form for both needs one switch.
 ## Radzen
 
 Radzen styles a field's state only through an `EditContext`, which these forms do not use. So each wrapper puts the
-state on the input element itself (`aria-invalid` for an error, `data-severity` for `app.css`, `aria-describedby` for
+state on the input element itself (`aria-invalid` for an error, `data-severity` for the border, `aria-describedby` for
 the line below) and renders its messages through `AppValidationMessage`, the tooltip and the dialog through Radzen's
 `TooltipService` and `DialogService`. `RadzenTextBox` is a bare `<input>` that takes the attributes directly.
 `RadzenNumeric` wraps its input in a span, so its attributes go to `InputAttributes`. Both run with `Immediate` (a value
 on every keystroke) and focus with `FocusAsync()`.
+
+Foundation's `wwwroot/forms.css` styles these components: the field grid (`app-fields`, `app-field`), the borders by
+`data-severity`, the messages, the tooltip and the summary's groups. The host's `index.html` loads it before its own
+`app.css`, so a feature's form looks the same in every host, and a host can still override a rule.
 
 Another UI library rewrites `Forms/` of `Admin.Web.Foundation`: its form derives from `FormHostBase<TModel>`, which owns the form's
 messages and validation, the submit and the `IFormHost` its inputs call, and overrides `RefreshAsync` only where the
