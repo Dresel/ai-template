@@ -1,7 +1,6 @@
 using System.Net;
 using System.Text.Json;
-using FocusTemplate.Admin.Shared;
-using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Admin.UserManagement.Shared;
 using FocusTemplate.Primitives;
 
 namespace FocusTemplate.Admin.Web.UnitTests.Features.UserManagement.Users;
@@ -10,7 +9,7 @@ namespace FocusTemplate.Admin.Web.UnitTests.Features.UserManagement.Users;
 public sealed class TestUsersHandler : HttpMessageHandler
 {
 	private static readonly JsonSerializerOptions Options =
-		new(JsonSerializerDefaults.Web) { TypeInfoResolver = AdminJsonContext.Default, };
+		new(JsonSerializerDefaults.Web) { TypeInfoResolver = UserManagementJsonContext.Default, };
 
 	private readonly List<(TaskCompletionSource<HttpResponseMessage> Response, CancellationToken Cancellation)>
 		requests = [];

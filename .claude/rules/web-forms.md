@@ -2,6 +2,7 @@
 paths:
   - "src/admin/*.Admin.Web.Foundation/{Forms,Validation}/**"
   - "src/admin/*.Admin.Web/Features/**/{Form,FormValidator,Mapper}*.cs"
+  - "src/admin/user-management/*.Web/**/{Form,FormValidator,Mapper}*.cs"
   - "src/admin/*.Admin.Shared/*Rules.cs"
   - "tests/*.Admin.Web.UnitTests/Foundation/**"
 ---

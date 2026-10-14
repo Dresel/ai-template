@@ -1,6 +1,6 @@
-using FocusTemplate.Admin.Client;
-using FocusTemplate.Admin.Client.UserManagement.Groups;
-using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Admin.UserManagement.Client;
+using FocusTemplate.Admin.UserManagement.Client.Groups;
+using FocusTemplate.Admin.UserManagement.Shared;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Data.Foundation.Auditing;

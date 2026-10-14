@@ -4,6 +4,7 @@ paths:
   - "src/*/spec/**"
   - "src/features/*/spec/**"
   - "src/features/*/*.{Api,Client,Shared}/**"
+  - "src/admin/user-management/**"
   - "**/tspconfig.yaml"
   - "**/generated/**"
   - "**/openapi.yaml"
@@ -19,7 +20,8 @@ paths:
 # Spec-first APIs
 
 - Change an API in `src/<vertical>/spec/`, one kebab-case folder per slice. A slice with several interfaces declares a
-  namespace below the service namespace. A feature's API is a service of its own in `src/features/<name>/spec/api.tsp`.
+  namespace below the service namespace. A feature's API is a service of its own in `src/features/<name>/spec/api.tsp`,
+  and so is user management's in `src/admin/user-management/spec/api.tsp`.
 - A spec folder holds a `tspconfig.yaml` with `kind: project` and `entrypoint: api.tsp` (`http.tsp` in `src/spec/`),
   so the editor's language server compiles every file below it through its entrypoint. It is also a NoTargets project
   (`FocusTemplate.<Name>.Spec`) in the vertical's solution folder, which shows it in Visual Studio.

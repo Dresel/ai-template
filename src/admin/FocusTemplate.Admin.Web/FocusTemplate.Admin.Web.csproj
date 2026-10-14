@@ -38,6 +38,7 @@
 		<ProjectReference Include="..\FocusTemplate.Admin.Web.ClientServiceDefaults\FocusTemplate.Admin.Web.ClientServiceDefaults.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Web.Foundation\FocusTemplate.Admin.Web.Foundation.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.Names\FocusTemplate.Names.csproj" />
+		<ProjectReference Include="..\user-management\FocusTemplate.Admin.UserManagement.Web\FocusTemplate.Admin.UserManagement.Web.csproj" />
 		<ProjectReference Include="..\..\features\weather\FocusTemplate.Weather.Web\FocusTemplate.Weather.Web.csproj" />
 	</ItemGroup>
 
@@ -52,11 +53,6 @@
 			<StaticClass>false</StaticClass>
 			<StaticMembers>false</StaticMembers>
 			<GenerateFormatMethods>true</GenerateFormatMethods>
-		</EmbeddedResource>
-
-		<!-- Read by key, one per permission, through IStringLocalizer<PermissionLabels> -->
-		<EmbeddedResource Update="Features\UserManagement\PermissionLabels.resx">
-			<SkipFile>true</SkipFile>
 		</EmbeddedResource>
 	</ItemGroup>
 

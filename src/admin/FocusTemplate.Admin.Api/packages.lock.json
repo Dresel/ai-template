@@ -501,6 +501,25 @@
           "FocusTemplate.Primitives": "[1.0.0, )"
         }
       },
+      "focustemplate.admin.usermanagement.api": {
+        "type": "Project",
+        "dependencies": {
+          "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": "[13.6.1, )",
+          "FluentValidation": "[12.1.1, )",
+          "FocusTemplate.Admin.UserManagement.Shared": "[1.0.0, )",
+          "FocusTemplate.Api.Foundation": "[1.0.0, )",
+          "FocusTemplate.Data": "[1.0.0, )",
+          "Mediator.Abstractions": "[3.1.0-rc.1, )"
+        }
+      },
+      "focustemplate.admin.usermanagement.shared": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "FocusTemplate.Http": "[1.0.0, )",
+          "FocusTemplate.Primitives": "[1.0.0, )"
+        }
+      },
       "focustemplate.api.foundation": {
         "type": "Project",
         "dependencies": {

@@ -1,5 +1,5 @@
 using Duende.AccessTokenManagement.OpenIdConnect;
-using FocusTemplate.Admin.Client.UserManagement.Users;
+using FocusTemplate.Admin.UserManagement.Client.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;

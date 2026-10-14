@@ -52,14 +52,15 @@ FluentValidation and Radzen ship their own German texts.
   [ycanardeau/ResXGenerator#15](https://github.com/ycanardeau/ResXGenerator/pull/15)).
 - **Who reads how**: a component injects `@inject IMainLayoutLocalizations L`, a service or view model takes its texts
   in its constructor (`ApiFailureMessages`). In the API one resx per interface folder, named after it
-  (`Features/UserManagement/Groups/Groups.resx`), serves its handlers and validators through
+  (`Groups/Groups.resx` in `Admin.UserManagement.Api`), serves its handlers and validators through
   `IGroupsLocalizations localizations`. A shared rule takes its texts as a parameter, as it takes a lookup
   (`DemoProfileCustomRules.CodeNotTaken(rule, isTaken, localizations)`), and both validators pass them in.
 - **Read by key**: a resx whose keys are data (permissions) or follow a type found at run time (contracts) is read
   through `IStringLocalizer` and gets no generated class, `SkipFile` in its project file. ResXGenerator's
   `StringLocalizer` mode would generate an invalid property for a dotted key such as `Code.pattern`.
-- **Permissions** are labelled by `PermissionLabels` from `Features/UserManagement/PermissionLabels.resx`, keyed by slice
-  (`UserManagement`) and by permission (`UserManagement.ViewUsers`). A permission the resx lacks reads off its name.
+- **Permissions** are labelled by `PermissionLabels` from `PermissionLabels.resx` in `Admin.UserManagement.Web`, keyed
+  by slice (`UserManagement`) and by permission (`UserManagement.ViewUsers`). A permission the resx lacks reads off its
+  name.
 - **Radzen** shows its own German for its built-in texts (pager, dialog buttons, empty grid). To word one differently,
   an app resource named `Radzen.Blazor.RadzenStrings` (`LogicalName` in the project file) with Radzen's key overrides
   it, since Radzen looks up the entry assembly's resources before its own.
@@ -79,8 +80,8 @@ A message has a sentence and a field name in it, `'Kürzel' darf nicht leer sein
   `FocusTemplate.Http`, one for the Admin contracts and every feature's. `ValidationTexts.UseResources()`
   (`Admin.Shared/Localization/`), which both hosts call at startup, answers from the resx named after the contract type
   in its namespace's folder of the contract's own project: `DemoProfileRequest.de.resx` in `Admin.Shared`, keys `Code`
-  and `Code.pattern`, `UserManagement/GroupRequest.de.resx` for a contract of the UserManagement namespace, and a
-  feature's beside its contracts in its `Shared` project. The neutral file keeps
+  and `Code.pattern`, user management's and a feature's beside its contracts in its `Shared` project
+  (`GroupRequest.de.resx` in `Admin.UserManagement.Shared`). The neutral file keeps
   the generated readable names, so English messages read as before.
 - The hook and FluentValidation's language manager are process-wide and outlive a host, so they read through a localizer
   factory of their own, which no host disposes with its container. Integration tests start a host per test class in one

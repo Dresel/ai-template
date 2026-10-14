@@ -1,5 +1,6 @@
 using System.Reflection;
-using FocusTemplate.Admin.Api.Features.UserManagement.Groups;
+using FocusTemplate.Admin.Api.Features.DemoProfiles;
+using FocusTemplate.Admin.UserManagement.Api.Groups;
 using FocusTemplate.Data.Foundation;
 using FocusTemplate.Public.Api.Features.WeatherForecasts;
 using FocusTemplate.Weather.Api.Stations;
@@ -17,7 +18,10 @@ public sealed class HandlerDbContextTests
 	private static readonly Type[] QueryHandlerInterfaces = [typeof(IQueryHandler<,>),];
 
 	// Anchored on a handler rather than Program: both APIs emit a Program class in the global namespace.
-	public static TheoryData<Type> Apis => [typeof(GroupsGetHandler), typeof(WeatherForecastsListHandler), typeof(StationsListHandler),];
+	public static TheoryData<Type> Apis =>
+	[
+		typeof(DemoProfilesCreateHandler), typeof(GroupsGetHandler), typeof(WeatherForecastsListHandler), typeof(StationsListHandler),
+	];
 
 	[Theory]
 	[MemberData(nameof(Apis))]

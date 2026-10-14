@@ -1,7 +1,7 @@
+using FocusTemplate.Admin.UserManagement.Web;
 using FocusTemplate.Admin.Web;
 using FocusTemplate.Admin.Web.Diagnostics;
 using FocusTemplate.Admin.Web.Features.DemoProfiles;
-using FocusTemplate.Admin.Web.Features.UserManagement;
 using FocusTemplate.Admin.Web.Foundation;
 using FocusTemplate.Admin.Web.Foundation.Appearance;
 using FocusTemplate.Admin.Web.Foundation.Localization;
@@ -34,8 +34,8 @@ builder.Services.AddAppearance("software", "software-dark");
 builder.Services.AddWebLocalization();
 builder.Services.AddDemoProfiles(builder.HostEnvironment);
 builder.Services.AddDiagnostics(builder.HostEnvironment);
-builder.Services.AddUserManagement(builder.HostEnvironment);
 
+builder.Services.AddUserManagementPages(builder.HostEnvironment, ResourceNames.AdminApi);
 builder.Services.AddWeatherPages(builder.HostEnvironment, ResourceNames.AdminApi);
 
 builder.Services.AddAuthorizationCore();

@@ -6,7 +6,7 @@ Keycloak says who the user is, the database says what they may do. No roles in t
 
 ## Permissions
 
-- **In the spec**: one enum per slice in the slice's `permissions.tsp` (`src/admin/spec/user-management/`), in
+- **In the spec**: one enum per slice in the slice's `permissions.tsp` (`src/admin/user-management/spec/`), in
   namespace `FocusTemplate.Primitives.Permissions` outside the service, marked
   `@permissions(FocusTemplate.Primitives.Permission)`
   (`enum UserManagement { ViewUsers, ManageUsers, ViewGroups, ManageGroups }`). The spine's `src/spec/primitives.tsp`
@@ -29,10 +29,11 @@ Keycloak says who the user is, the database says what they may do. No roles in t
 No policies and no roles: the attribute yields a `PermissionRequirement`, and each side registers its own handler.
 
 - **API**: `PermissionRequirementHandler` asks the scoped `UserPermissions`, one query per request over the groups of
-  an active user, so a deactivated user holds nothing, whatever their token.
+  an active user, so a deactivated user holds nothing, whatever their token. Both come with user management
+  (`AddUserManagement()`), which every Admin host includes.
 - **A feature's handler** that decides per resource (who owns the station) asks
   `IAuthorizationService.HasPermissionAsync(user, permission)` from `Api.Foundation`, which wraps a
-  `PermissionRequirement` that the host's handler above answers, and answers 403 with its result union's case
+  `PermissionRequirement` that user management's handler above answers, and answers 403 with its result union's case
   (`StationsRenameHandler`: the owner, or whoever holds `Weather.ManageStations`).
 - **WASM**: `PermissionClaimsHandler` reads the `permission` claims (`Permission.ClaimType`) of `/bff/user`, which
   the BFF adds from the API's `GET /users/me` with the session's token, so a page load costs one request. Without an
@@ -65,7 +66,8 @@ The client only hides, the API decides.
 
 ## Runtime
 
-`UserProvisioningMiddleware` runs between authentication and authorization. It creates the token's user in `users` on
+`UserProvisioningMiddleware` of user management runs between authentication and authorization, where the host places
+`app.UseUserProvisioning()`. It creates the token's user in `users` on
 their first request, and at most once per 15 minutes and instance (remembered in `IMemoryCache`) writes
 `user_activities.last_seen_at` and refreshes the display name and e-mail from the token. The activity goes through
 `User.Activity` in the same `SaveChanges`. The activity table is no `IAuditable`, so the user's audit columns stay the
@@ -75,8 +77,8 @@ changes somebody made.
 
 - **Run mode**: the dev seed makes `WellKnownUsers.Developer` a member of `Administrators`.
 - **Production**: the Admin API image runs once as a job with `bootstrap-admin --subject <keycloak sub>`
-  (`AdministratorBootstrap`). It is idempotent, works before the user's first sign-in, reactivates the user, and is the
-  repair when `Administrators` lost its last active member.
+  (`AdministratorBootstrap` of user management, called from the host's `Program.cs`). It is idempotent, works before
+  the user's first sign-in, reactivates the user, and is the repair when `Administrators` lost its last active member.
 
 ## Tests
 

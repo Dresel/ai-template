@@ -1,0 +1,10 @@
+emit:
+  - "@spatialfocus/typespec-http-csharp-slim"
+options:
+  "@spatialfocus/typespec-http-csharp-slim":
+    emitter-output-dir: "{output-dir}"
+    output-type: contracts
+    library-namespace: FocusTemplate.Http
+    generated-dir: "generated"
+    contracts-namespace: "FocusTemplate.Admin.UserManagement.Shared"
+    validation: fluentvalidation

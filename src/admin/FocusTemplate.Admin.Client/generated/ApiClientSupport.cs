@@ -73,27 +73,6 @@ internal static class ApiClientSupport
 			response.StatusCode);
 	}
 
-	/// <summary>The RFC 9457 problem details of a modeled error response; synthesized from the status line when the body is not problem JSON.</summary>
-	public static async ValueTask<ProblemDetails> ReadProblemAsync(HttpResponseMessage response, JsonSerializerOptions jsonOptions, CancellationToken cancellationToken)
-	{
-		if (response.Content.Headers.ContentType?.MediaType is "application/problem+json" or "application/json")
-		{
-			try
-			{
-				if (await response.Content.ReadFromJsonAsync(jsonOptions.GetTypeInfo<ProblemDetails>(), cancellationToken).ConfigureAwait(false) is { } problem)
-				{
-					return problem;
-				}
-			}
-			catch (JsonException)
-			{
-				// Not problem JSON after all: fall through to the synthesized problem.
-			}
-		}
-
-		return new ProblemDetails(Title: response.ReasonPhrase, Status: (int)response.StatusCode);
-	}
-
 	/// <summary>The validation problem of a 400: the errors by wire path and every failed rule. A 400 from elsewhere (model binding, ASP.NET Core's own validation) may lack either member, which is then empty; a body that is not problem JSON gives an empty problem with the status line.</summary>
 	public static async ValueTask<ValidationProblemDetails> ReadValidationProblemAsync(HttpResponseMessage response, JsonSerializerOptions jsonOptions, CancellationToken cancellationToken)
 	{

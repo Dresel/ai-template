@@ -3,7 +3,7 @@
 What to follow when changing these files: [the rule](../.claude/rules/web-forms.md).
 
 How a form validates, as the demo at `/demo/validation` (`Features/DemoProfiles/`) shows it in full. The group form
-(`Features/UserManagement/Groups/FormDialog.razor`) is the everyday case.
+(`Groups/FormDialog.razor` in `FocusTemplate.Admin.UserManagement.Web`) is the everyday case.
 
 ## View model and rules
 

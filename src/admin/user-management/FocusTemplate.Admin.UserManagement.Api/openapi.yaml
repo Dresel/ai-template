@@ -1,0 +1,751 @@
+openapi: 3.2.0
+info:
+  title: FocusTemplate User Management API
+  version: 0.1.0
+  description: "User management: the users who signed in, the groups and the permissions they grant. Reached through the BFF of the host's Admin API."
+tags:
+  - name: Users
+  - name: Groups
+paths:
+  /groups:
+    get:
+      operationId: Groups_list
+      description: Every group, by name.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GroupSummaryResponse'
+      tags:
+        - Groups
+    post:
+      operationId: Groups_create
+      description: Creates a group without members or permissions.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ValidationProblemDetails'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+  /groups/{id}:
+    get:
+      operationId: Groups_get
+      description: A group with its members and permissions.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.GroupId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - Groups
+    put:
+      operationId: Groups_update
+      description: Renames a group or changes its description, a managed group too.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.GroupId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GroupResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ValidationProblemDetails'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+    delete:
+      operationId: Groups_delete
+      description: Deletes a group, and its members lose what it granted. Not a managed group. A missing group answers 204 too, so a retry stays idempotent.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.GroupId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - Groups
+  /groups/{id}/members/{userId}:
+    put:
+      operationId: Groups_addMember
+      description: Adds a user to the group. A member already stays one.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.GroupId'
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.UserId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - Groups
+    delete:
+      operationId: Groups_removeMember
+      description: Removes a user from the group. One who is no member answers 204 too. Not the last active member of the Administrators.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.GroupId'
+        - name: userId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.UserId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - Groups
+  /groups/{id}/permissions:
+    put:
+      operationId: Groups_setPermissions
+      description: Sets every permission the group grants, replacing the ones before. Not for a managed group.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.GroupId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Primitives.Permission'
+  /groups:watch:
+    get:
+      operationId: Groups_watch
+      description: "Signals when a group changes, so a list stays current. The stream ends with the access token, after 15 minutes at the latest, and when the caller's permissions change: reconnect, then read the groups again."
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            text/event-stream:
+              itemSchema:
+                type: object
+                properties:
+                  event:
+                    type: string
+                  data:
+                    type: string
+                required:
+                  - event
+                oneOf:
+                  - properties:
+                      data:
+                        contentMediaType: application/json
+                        contentSchema:
+                          $ref: '#/components/schemas/GroupChanged'
+                      event:
+                        const: groupChanged
+      tags:
+        - Groups
+  /users:
+    post:
+      operationId: Users_search
+      description: Searches the users who have signed in at least once.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPageResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ValidationProblemDetails'
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSearchRequest'
+  /users/me:
+    get:
+      operationId: Users_me
+      description: The signed-in user and their permissions.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUserResponse'
+      tags:
+        - Users
+  /users/{id}:
+    get:
+      operationId: Users_get
+      description: A user, their groups and their permissions.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.UserId'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - Users
+  /users/{id}:activate:
+    post:
+      operationId: Users_activate
+      description: Reactivates a deactivated user.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.UserId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - Users
+  /users/{id}:deactivate:
+    post:
+      operationId: Users_deactivate
+      description: 'Deactivates a user: from their next request on they hold no permission. Neither the caller nor the last active administrator.'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/Primitives.UserId'
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Http.ProblemDetails'
+      tags:
+        - Users
+security:
+  - BearerAuth: []
+components:
+  schemas:
+    CurrentUserResponse:
+      type: object
+      required:
+        - id
+        - displayName
+        - permissions
+      properties:
+        id:
+          $ref: '#/components/schemas/Primitives.UserId'
+          description: Identifier, the subject the identity provider issued.
+        displayName:
+          type: string
+          description: Display name.
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Primitives.Permission'
+          description: Every permission the user's groups grant, so the UI can hide what the user may not do.
+      description: The signed-in user and what they may do.
+    GroupChange:
+      type: string
+      enum:
+        - created
+        - updated
+        - deleted
+      description: What happened to a group.
+    GroupChanged:
+      type: object
+      required:
+        - id
+        - change
+      properties:
+        id:
+          $ref: '#/components/schemas/Primitives.GroupId'
+          description: The group.
+        change:
+          $ref: '#/components/schemas/GroupChange'
+          description: What happened.
+      description: A group changed. Read it again to see how.
+    GroupEvents:
+      $ref: '#/components/schemas/GroupChanged'
+      description: The events of a watch on the groups.
+    GroupMemberResponse:
+      type: object
+      required:
+        - id
+        - displayName
+        - isActive
+      properties:
+        id:
+          $ref: '#/components/schemas/Primitives.UserId'
+          description: Identifier of the user.
+        displayName:
+          type: string
+          description: Display name.
+        isActive:
+          type: boolean
+          description: False once the user is deactivated.
+      description: A member of a group.
+    GroupReferenceResponse:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          $ref: '#/components/schemas/Primitives.GroupId'
+          description: Identifier.
+        name:
+          type: string
+          description: Name.
+      description: A group a user is a member of.
+    GroupRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Name, unique.
+        description:
+          type: string
+          maxLength: 500
+          description: What the group is for.
+      description: The name and description of a group.
+    GroupResponse:
+      type: object
+      required:
+        - id
+        - name
+        - isManaged
+        - memberCount
+        - members
+        - permissions
+      properties:
+        id:
+          $ref: '#/components/schemas/Primitives.GroupId'
+          description: Identifier.
+        name:
+          type: string
+          description: Name, unique.
+        description:
+          type: string
+          description: What the group is for.
+        isManaged:
+          type: boolean
+          description: 'Managed by the application: its permissions come with each release, and it cannot be deleted.'
+        memberCount:
+          type: integer
+          format: int32
+          description: How many users are members.
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupMemberResponse'
+          description: The members, by display name.
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Primitives.Permission'
+          description: The permissions the group grants its members.
+      description: A group with its members and permissions.
+    GroupSummaryResponse:
+      type: object
+      required:
+        - id
+        - name
+        - isManaged
+        - memberCount
+      properties:
+        id:
+          $ref: '#/components/schemas/Primitives.GroupId'
+          description: Identifier.
+        name:
+          type: string
+          description: Name, unique.
+        description:
+          type: string
+          description: What the group is for.
+        isManaged:
+          type: boolean
+          description: 'Managed by the application: its permissions come with each release, and it cannot be deleted.'
+        memberCount:
+          type: integer
+          format: int32
+          description: How many users are members.
+      description: A group in a list.
+    Http.ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          description: URI reference identifying the problem type.
+        title:
+          type: string
+          description: Short summary of the problem type.
+        status:
+          type: integer
+          format: int32
+          description: HTTP status code.
+        detail:
+          type: string
+          description: Explanation specific to this occurrence.
+        instance:
+          type: string
+          description: URI reference identifying this occurrence.
+      additionalProperties: {}
+      description: |-
+        Problem details for an HTTP API response, as defined by RFC 9457
+        (https://www.rfc-editor.org/rfc/rfc9457). Extension members are allowed and carry information
+        specific to the problem type, such as a trace id or the fields of a validation failure.
+    Http.ValidationProblemDetails:
+      type: object
+      required:
+        - errors
+        - violations
+      properties:
+        type:
+          type: string
+          description: URI reference identifying the problem type.
+        title:
+          type: string
+          description: Short summary of the problem type.
+        status:
+          type: integer
+          format: int32
+          description: HTTP status code.
+        detail:
+          type: string
+          description: Explanation specific to this occurrence.
+        instance:
+          type: string
+          description: URI reference identifying this occurrence.
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+          description: Error messages by wire path (name, address.street, lines[2].quantity), errors only; the shape of ASP.NET Core's HttpValidationProblemDetails.
+        violations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Http.Violation'
+          description: Every failed rule, warnings and infos included.
+      additionalProperties: {}
+      description: |-
+        Problem details (RFC 9457) of a request that failed validation: the errors by the wire path of the member or parameter
+        they concern, and every failed rule with its code, severity and the constraint's values.
+    Http.Violation:
+      type: object
+      required:
+        - key
+        - code
+        - severity
+        - message
+      properties:
+        key:
+          type: string
+          description: Wire path of the member or parameter, as in the errors of the problem.
+        code:
+          type: string
+          description: "What failed: for a rule of the contract the constraint's name (required, minLength, maxLength, pattern, minValue, maxValue, minValueExclusive, maxValueExclusive, minItems, maxItems), otherwise the code the rule sets."
+        severity:
+          $ref: '#/components/schemas/Http.ViolationSeverity'
+          description: Only an error blocks the request.
+        message:
+          type: string
+          description: The message, in the language of the server.
+        args:
+          type: object
+          additionalProperties: {}
+          description: The constraint's values by name, maxLength for example, for a client that phrases its own message.
+      description: One failed rule of a validation.
+    Http.ViolationSeverity:
+      type: string
+      enum:
+        - error
+        - warning
+        - info
+      description: 'How much a failed rule weighs: only an error blocks the request.'
+    Primitives.GroupId:
+      type: string
+      format: uuid
+      description: Identifier of a group of users, the unit permissions are granted to.
+    Primitives.Permission:
+      type: string
+      description: A permission, named after its feature slice and action, such as UserManagement.ManageGroups. Admins grant permissions to groups.
+    Primitives.UserId:
+      type: string
+      format: uuid
+      description: Identifier of a user, the owner of stations and the author of audited changes.
+    UserPageResponse:
+      type: object
+      required:
+        - items
+        - total
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummaryResponse'
+          description: The users of this page.
+        total:
+          type: integer
+          format: int32
+          description: How many users match in all.
+      description: A page of users, and how many match in all.
+    UserResponse:
+      type: object
+      required:
+        - id
+        - displayName
+        - isActive
+        - lastSeenAt
+        - firstSeenAt
+        - groups
+        - permissions
+      properties:
+        id:
+          $ref: '#/components/schemas/Primitives.UserId'
+          description: Identifier, the subject the identity provider issued.
+        displayName:
+          type: string
+          description: Display name, as the identity provider last reported it.
+        email:
+          type: string
+          description: E-mail address, as the identity provider last reported it.
+        isActive:
+          type: boolean
+          description: 'False once deactivated: the user then holds no permission, whatever their token says.'
+        lastSeenAt:
+          type: string
+          format: date-time
+          description: Last request the user made, to a quarter of an hour.
+        firstSeenAt:
+          type: string
+          format: date-time
+          description: First request the user made.
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupReferenceResponse'
+          description: The groups the user is a member of, by name.
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Primitives.Permission'
+          description: Every permission the user's groups grant.
+      description: A user with their groups and the permissions those grant.
+    UserSearchRequest:
+      type: object
+      properties:
+        search:
+          type: string
+          maxLength: 100
+          description: Part of the display name or e-mail address.
+        sort:
+          $ref: '#/components/schemas/UserSort'
+          description: Order of the list.
+          default: displayName
+        descending:
+          type: boolean
+          description: From last to first instead.
+        skip:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Items to skip.
+          default: 0
+        top:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 100
+          description: Items per page, at most 100.
+          default: 10
+      description: Which users to list, in which order, and which page of them.
+    UserSort:
+      type: string
+      enum:
+        - displayName
+        - lastSeenAt
+        - email
+      description: What a user list is ordered by.
+    UserSummaryResponse:
+      type: object
+      required:
+        - id
+        - displayName
+        - isActive
+        - lastSeenAt
+      properties:
+        id:
+          $ref: '#/components/schemas/Primitives.UserId'
+          description: Identifier, the subject the identity provider issued.
+        displayName:
+          type: string
+          description: Display name, as the identity provider last reported it.
+        email:
+          type: string
+          description: E-mail address, as the identity provider last reported it.
+        isActive:
+          type: boolean
+          description: 'False once deactivated: the user then holds no permission, whatever their token says.'
+        lastSeenAt:
+          type: string
+          format: date-time
+          description: Last request the user made, to a quarter of an hour.
+      description: A user in a list.
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: Bearer

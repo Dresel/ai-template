@@ -509,11 +509,37 @@
           "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )"
         }
       },
+      "focustemplate.admin.usermanagement.client": {
+        "type": "Project",
+        "dependencies": {
+          "FocusTemplate.Admin.UserManagement.Shared": "[1.0.0, )"
+        }
+      },
+      "focustemplate.admin.usermanagement.shared": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "FocusTemplate.Http": "[1.0.0, )",
+          "FocusTemplate.Primitives": "[1.0.0, )"
+        }
+      },
+      "focustemplate.admin.usermanagement.web": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "FocusTemplate.Admin.UserManagement.Client": "[1.0.0, )",
+          "FocusTemplate.Admin.Web.ClientServiceDefaults": "[1.0.0, )",
+          "FocusTemplate.Admin.Web.Foundation": "[1.0.0, )",
+          "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )",
+          "Radzen.Blazor": "[12.1.2, )"
+        }
+      },
       "focustemplate.admin.web": {
         "type": "Project",
         "dependencies": {
           "FocusTemplate.Admin.Client": "[1.0.0, )",
           "FocusTemplate.Admin.Shared": "[1.0.0, )",
+          "FocusTemplate.Admin.UserManagement.Web": "[1.0.0, )",
           "FocusTemplate.Admin.Web.ClientServiceDefaults": "[1.0.0, )",
           "FocusTemplate.Admin.Web.Foundation": "[1.0.0, )",
           "FocusTemplate.Names": "[1.0.0, )",

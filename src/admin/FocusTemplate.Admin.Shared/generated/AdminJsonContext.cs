@@ -2,33 +2,14 @@
 
 #nullable enable
 
-using System;
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using FocusTemplate.Admin.Shared.UserManagement;
 using FocusTemplate.Http;
-using FocusTemplate.Primitives;
 
 namespace FocusTemplate.Admin.Shared;
 
 /// <summary>The serializer contracts of this API: every request and response body, and the problem body of a modeled error. The generated clients resolve their JsonTypeInfo from it, and an API serves the same contracts by inserting it into JsonSerializerOptions.TypeInfoResolverChain, so neither end needs reflection.</summary>
-[JsonSerializable(typeof(CurrentUserResponse))]
 [JsonSerializable(typeof(DemoCodeResponse))]
 [JsonSerializable(typeof(DemoProfileRequest))]
 [JsonSerializable(typeof(DemoProfileResponse))]
-[JsonSerializable(typeof(GroupChanged))]
-[JsonSerializable(typeof(GroupId))]
-[JsonSerializable(typeof(GroupRequest))]
-[JsonSerializable(typeof(GroupResponse))]
-[JsonSerializable(typeof(Guid))]
-[JsonSerializable(typeof(IReadOnlyList<GroupSummaryResponse>))]
-[JsonSerializable(typeof(IReadOnlyList<Permission>))]
-[JsonSerializable(typeof(Permission))]
-[JsonSerializable(typeof(ProblemDetails))]
-[JsonSerializable(typeof(UserId))]
-[JsonSerializable(typeof(UserPageResponse))]
-[JsonSerializable(typeof(UserResponse))]
-[JsonSerializable(typeof(UserSearchRequest))]
 [JsonSerializable(typeof(ValidationProblemDetails))]
-[JsonSerializable(typeof(string))]
 public sealed partial class AdminJsonContext : JsonSerializerContext;

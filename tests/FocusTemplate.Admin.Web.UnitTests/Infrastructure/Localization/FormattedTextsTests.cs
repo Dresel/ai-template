@@ -1,4 +1,4 @@
-using FocusTemplate.Admin.Web.Features.UserManagement.Users;
+using FocusTemplate.Admin.UserManagement.Web.Users;
 
 namespace FocusTemplate.Admin.Web.UnitTests.Infrastructure.Localization;
 

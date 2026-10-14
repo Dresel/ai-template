@@ -1,7 +1,7 @@
 using System.Net;
-using FocusTemplate.Admin.Client.UserManagement.Users;
-using FocusTemplate.Admin.Shared.UserManagement;
-using FocusTemplate.Admin.Web.Features.UserManagement.Users;
+using FocusTemplate.Admin.UserManagement.Client.Users;
+using FocusTemplate.Admin.UserManagement.Shared;
+using FocusTemplate.Admin.UserManagement.Web.Users;
 using FocusTemplate.Admin.Web.Foundation;
 using FocusTemplate.Admin.Web.Foundation.Feedback;
 using Microsoft.Extensions.Time.Testing;

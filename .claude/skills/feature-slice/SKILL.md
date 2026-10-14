@@ -18,12 +18,12 @@ own under `src/features/<name>/` instead, built like `src/features/weather/`, se
 |---|---|
 | A read-only list | `WeatherForecasts` in the weather feature (`spec/weather-forecasts.tsp`, `WeatherForecasts/` in its Api and Web) |
 | An action only the owner, or a permission, may take | `Stations` in the weather feature: `StationsRenameHandler`, and `MayRename` in `Stations/ListPage.razor` |
-| A list that searches, sorts and pages | `Users`: `UsersSearchHandler`, `Users/ListPage.razor`, `Users/ListPageViewModel` |
-| Create and update through a form in a dialog | `Groups`: `GroupsCreateHandler`, `GroupsUpdateHandler`, `Groups/FormDialog.razor`, `Form`, `FormValidator`, `Mapper` |
+| A list that searches, sorts and pages | `Users` in user management (`src/admin/user-management/`): `UsersSearchHandler`, `Users/ListPage.razor`, `Users/ListPageViewModel` |
+| Create and update through a form in a dialog | `Groups` in user management: `GroupsCreateHandler`, `GroupsUpdateHandler`, `Groups/FormDialog.razor`, `Form`, `FormValidator`, `Mapper` |
 | A detail page with actions | `Groups/DetailPage.razor`, `Groups/DetailPageViewModel` |
 | A list that stays current when others change it | `Groups`: `watch()` in `groups.tsp`, `GroupsWatchHandler`, the `Publish` calls in the command handlers, `Groups/ListPageViewModel` |
 | Rules the spec cannot state, async server checks | `DemoProfiles` (`DemoProfileCustomRules`, `DemoProfileRequestValidator`) |
-| Several interfaces in one feature | `UserManagement` (spec namespace, `Features/UserManagement/_Imports.razor`) |
+| Several interfaces behind one service | user management: `spec/api.tsp` with `Users` and `Groups`, the pages' `_Imports.razor` at the root of its Web project |
 
 ## 1. Decide
 
@@ -37,8 +37,8 @@ own under `src/features/<name>/` instead, built like `src/features/weather/`, se
 ## 2. Contract ([spec-first](../../../docs/spec-first.md))
 
 1. A new id: `@typedId scalar <X>Id extends uuid;` with a doc comment in `src/spec/primitives.tsp`.
-2. New permissions: an enum in `src/admin/spec/<slice>/permissions.tsp` (copy the one of `user-management/`),
-   imported in `src/spec/primitives.tsp`.
+2. New permissions: an enum in `src/admin/spec/<slice>/permissions.tsp` (copy user management's in
+   `src/admin/user-management/spec/`), imported in `src/spec/primitives.tsp`.
 3. The slice's file in `src/admin/spec/<slice>/`, imported in `src/admin/spec/api.tsp`: `@requiresPermission` per
    operation or interface, `Problem<404 | 409>` for what the handler refuses, the `ValidationProblem` alias behind a
    form, `@httpQuery` over a request spreading `PageQuery` for a searchable list, defaults in the spec. A list that
@@ -89,7 +89,7 @@ own under `src/features/<name>/` instead, built like `src/features/weather/`, se
    view model takes the `LiveUpdates<T>` and reloads on `Received` and on `Connected`.
 
 New permissions appear in the group editor by themselves, labelled from their names. Their German labels go into
-`PermissionLabels.de.resx`, keyed by slice and by permission.
+`PermissionLabels.de.resx` of `Admin.UserManagement.Web`, keyed by slice and by permission.
 
 ## 6. Tests
 

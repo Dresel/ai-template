@@ -1,8 +1,6 @@
-using FocusTemplate.Admin.Api.Authorization;
 using FocusTemplate.Api.Foundation.Authentication;
 using FocusTemplate.Data.Foundation.Auditing;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 
@@ -38,10 +36,6 @@ public static class WebApplicationBuilderExtensions
 			});
 
 		builder.Services.AddAuthorization();
-		builder.Services.AddScoped<UserPermissions>();
-		builder.Services.AddScoped<IAuthorizationHandler, PermissionRequirementHandler>();
-
-		builder.Services.AddMemoryCache();
 
 		builder.Services.AddHttpContextAccessor();
 		builder.Services.AddSingleton<ICurrentUser, HttpContextCurrentUser>();

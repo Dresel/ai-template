@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.ServerSentEvents;
 using System.Runtime.CompilerServices;
-using FocusTemplate.Admin.Api.Features;
-using FocusTemplate.Admin.Client.UserManagement.Groups;
-using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Admin.UserManagement.Api;
+using FocusTemplate.Admin.UserManagement.Client.Groups;
+using FocusTemplate.Admin.UserManagement.Shared;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Http;
 using FocusTemplate.Primitives;

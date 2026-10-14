@@ -36,8 +36,9 @@ imports (`namespace SpatialFocus.Http`).
 - `Mediator.Abstractions` with `Mediator.SourceGenerator` (martinothamar, MIT): the generated endpoints dispatch
   `IQuery<T>` and `ICommand<T>` records to hand-written handlers.
 - The OpenAPI document is emitted from the spec into each Api project, which ships it as `openapi/<name>.yaml`
-  (`admin`, `public`, a feature's `weather`). An API serves every document in its output, so the Admin API answers
-  `/openapi/admin.yaml` and `/openapi/weather.yaml`, the Public API `/openapi/public.yaml`. Any other name is a 404.
+  (`admin`, `public`, `user-management`, a feature's `weather`). An API serves every document in its output, so the
+  Admin API answers `/openapi/admin.yaml`, `/openapi/user-management.yaml` and `/openapi/weather.yaml`, the Public API
+  `/openapi/public.yaml`. Any other name is a 404.
 - **API reference**: `MapApiReference("admin")` in the service defaults adds `Scalar.AspNetCore` (MIT, trimmable and
   AOT-compatible, its assets served from the assembly) at `/scalar`, with one entry per document and the API's own
   first. The Public API serves its document alone through `MapOpenApiDocuments()`. `ApiReference:Enabled` switches
@@ -77,11 +78,11 @@ imports (`namespace SpatialFocus.Http`).
 ## Layout
 
 - One contract per vertical in `src/<vertical>/spec/`. `api.tsp` carries the service metadata and imports one folder
-  per feature slice (`weather-forecasts/weather-forecasts.tsp`, `user-management/users.tsp` + `groups.tsp`). Files and
+  per feature slice (`weather-forecasts/weather-forecasts.tsp`, `demo-profiles/demo-profiles.tsp`). Files and
   folders are kebab-case, like the routes. The Admin `api.tsp` also declares `@useAuth`, while the Public API stays anonymous
   for now.
 - A slice with one interface stays in the service namespace (`FocusTemplate.Admin`), a slice with several declares a
-  namespace below it (`FocusTemplate.Admin.UserManagement`), its feature.
+  namespace below it (`FocusTemplate.Admin.<Feature>`), its feature.
 - `src/spec/` holds what verticals can share: `primitives.tsp` (the typed ids, namespace `FocusTemplate.Primitives`,
   no service) and `paging.tsp` (`PageQuery`, spread into a search request). `primitives.tsp` also imports each slice's
   `permissions.tsp` and each feature's `primitives.tsp`, so adding or removing a feature in the spine is one import line.
@@ -96,12 +97,19 @@ imports (`namespace SpatialFocus.Http`).
   (`WeatherJsonContext`, `AddWeatherValidators()`), and its `openapi.yaml` sits in its Api project. Its typed ids sit
   beside it in a `primitives.tsp` of its own, in namespace `FocusTemplate.Primitives`, which imports its
   `permissions.tsp` and which the host's `primitives.tsp` imports.
+- User management, which every Admin host includes, has the same layout in `src/admin/user-management/`: the service
+  `FocusTemplate.Admin.UserManagement` with the interfaces `Users` and `Groups`
+  (`FocusTemplate.Admin.UserManagement.Api.{interface}`, `.Shared`, `.Client.{interface}`), `UserManagementJsonContext`,
+  and its document shipped as `openapi/user-management.yaml`. Its ids are the spine's, so only its `permissions.tsp` is
+  imported by `src/spec/primitives.tsp`. `npm run gen` compiles a folder with a `spec/api.tsp` of its own inside a
+  vertical as it does a feature.
 - **Registering and mapping** an API is generated per service: `{Service}Endpoints` in the Api namespace without the
   placeholders, with `Add{Service}Endpoints()` (the JSON context first in the minimal API's resolver chain, and the
   validators) and `Map{Service}Endpoints()` (every interface). A feature namespace with `{feature}` in the pattern gets
-  `{Feature}Endpoints` with `Map{Feature}Endpoints()`. The Admin API calls `AddAdminEndpoints()`,
-  `MapDemoProfilesEndpoints()` and `MapUserManagementEndpoints()`, and the weather feature `AddWeatherEndpoints()` in
-  `AddWeather()` and `MapWeatherEndpoints()` in the host.
+  `{Feature}Endpoints` with `Map{Feature}Endpoints()`. The Admin API calls `AddAdminEndpoints()` and
+  `MapDemoProfilesEndpoints()`, user management `AddUserManagementEndpoints()` in `AddUserManagement()` and
+  `MapUserManagementEndpoints()` in the host, and the weather feature `AddWeatherEndpoints()` in `AddWeather()` and
+  `MapWeatherEndpoints()` in the host.
 
 ## Typed ids
 
@@ -116,23 +124,23 @@ declared inside a service namespace is an emitter error.
 
 - `api-namespace: FocusTemplate.<V>.Api.Features.{feature}.{interface}` puts a slice's generated code in the namespace
   of its hand-written handlers, and `client-namespace: FocusTemplate.<V>.Client.{feature}.{interface}` does the same on
-  the consumer side. `{feature}` is empty for an interface in the service namespace: `Features.WeatherForecasts`,
-  `Features.UserManagement.Users`.
+  the consumer side. `{feature}` is empty for an interface in the service namespace: `Features.DemoProfiles`, the
+  Public API's `Features.WeatherForecasts`.
 - `contracts-namespace: FocusTemplate.<V>.Shared.{feature}`, in all three of the vertical's `tspconfig.yaml`, gives a
-  feature's models a namespace of their own (`FocusTemplate.Admin.Shared.UserManagement`).
+  feature's models a namespace of their own (`FocusTemplate.Admin.Shared.<Feature>`).
 - What every slice shares (`NotFound`, `ApiClientSupport`, the `{Status}Problem` cases, the outcomes, the JSON context,
   the paths) lands in the namespace without the placeholders.
 - OpenAPI names a schema of the service namespace bare and every other one after the last segment of its namespace: a
-  feature's by itself (`UserManagement.GroupResponse`), the typed ids through `@friendlyName("Primitives.<Name>")`
+  feature's by itself (`<Feature>.<Name>`), the typed ids through `@friendlyName("Primitives.<Name>")`
   (`Primitives.GroupId`), the emitter's library types through its own friendly names (`Http.ValidationProblemDetails`,
   `Http.uuid`). The emitter keeps a friendly name's prefix out of the C# names.
 
 ## Server
 
-- Hand-written code per slice lives in the Api project's `Features/<Slice>/` (`Features/UserManagement/Users/` for a
-  feature's interface): the Mediator handlers, and where needed a partial class implementing the generated
-  `ConfigureGroup` / `Configure{Op}` hooks (rate limiting, caching). Authorization comes from the spec, never from a
-  hook.
+- Hand-written code per slice lives in the Api project's `Features/<Slice>/` (`Features/<Feature>/<Interface>/` for a
+  feature's interface, user management's in `Admin.UserManagement.Api/<Interface>/`): the Mediator handlers, and where
+  needed a partial class implementing the generated `ConfigureGroup` / `Configure{Op}` hooks (rate limiting, caching).
+  Authorization comes from the spec, never from a hook.
 - **Errors are values**: a handler returns the generated result union and answers a modeled status with its case
   record (`new NotFound("…")`). Anything unhandled becomes a 500 problem response through `AddProblemDetails()`.
 - **Validation**: the Admin Api and Shared projects generate with `validation: fluentvalidation`, so constraint

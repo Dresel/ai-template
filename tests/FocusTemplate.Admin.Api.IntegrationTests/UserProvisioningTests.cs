@@ -1,4 +1,4 @@
-using FocusTemplate.Admin.Client.UserManagement.Users;
+using FocusTemplate.Admin.UserManagement.Client.Users;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Data.Foundation.Auditing;

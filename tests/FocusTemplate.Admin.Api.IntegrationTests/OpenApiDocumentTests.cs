@@ -21,6 +21,7 @@ public sealed class OpenApiDocumentTests(ApiFixture factory) : ApiTestBase(facto
 
 	[Theory]
 	[InlineData("admin", "title: FocusTemplate Admin API")]
+	[InlineData("user-management", "title: FocusTemplate User Management API")]
 	[InlineData("weather", "title: FocusTemplate Weather API")]
 	public async Task EachHostedServiceHasADocumentOfItsOwn(string name, string title)
 	{

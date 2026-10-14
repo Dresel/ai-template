@@ -25,7 +25,7 @@
 		</EmbeddedResource>
 
 		<!-- A contract's names and pattern messages, read by its type through the localizer factory (ValidationTexts) -->
-		<EmbeddedResource Update="DemoProfileRequest.resx;DemoAddressRequest.resx;UserManagement\GroupRequest.resx;UserManagement\UserSearchRequest.resx">
+		<EmbeddedResource Update="DemoProfileRequest.resx;DemoAddressRequest.resx">
 			<SkipFile>true</SkipFile>
 		</EmbeddedResource>
 	</ItemGroup>

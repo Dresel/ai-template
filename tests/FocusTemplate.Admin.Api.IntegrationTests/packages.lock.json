@@ -835,6 +835,7 @@
           "Aspire.StackExchange.Redis": "[13.6.1, )",
           "FluentValidation": "[12.1.1, )",
           "FocusTemplate.Admin.Shared": "[1.0.0, )",
+          "FocusTemplate.Admin.UserManagement.Api": "[1.0.0, )",
           "FocusTemplate.Api.Foundation": "[1.0.0, )",
           "FocusTemplate.Data": "[1.0.0, )",
           "FocusTemplate.Names": "[1.0.0, )",
@@ -857,6 +858,31 @@
           "FocusTemplate.Http": "[1.0.0, )",
           "FocusTemplate.Primitives": "[1.0.0, )",
           "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )"
+        }
+      },
+      "focustemplate.admin.usermanagement.api": {
+        "type": "Project",
+        "dependencies": {
+          "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": "[13.6.1, )",
+          "FluentValidation": "[12.1.1, )",
+          "FocusTemplate.Admin.UserManagement.Shared": "[1.0.0, )",
+          "FocusTemplate.Api.Foundation": "[1.0.0, )",
+          "FocusTemplate.Data": "[1.0.0, )",
+          "Mediator.Abstractions": "[3.1.0-rc.1, )"
+        }
+      },
+      "focustemplate.admin.usermanagement.client": {
+        "type": "Project",
+        "dependencies": {
+          "FocusTemplate.Admin.UserManagement.Shared": "[1.0.0, )"
+        }
+      },
+      "focustemplate.admin.usermanagement.shared": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "FocusTemplate.Http": "[1.0.0, )",
+          "FocusTemplate.Primitives": "[1.0.0, )"
         }
       },
       "focustemplate.api.foundation": {

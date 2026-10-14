@@ -4,8 +4,6 @@
 
 using FluentValidation;
 using FocusTemplate.Admin.Api.Features.DemoProfiles;
-using FocusTemplate.Admin.Api.Features.UserManagement.Groups;
-using FocusTemplate.Admin.Api.Features.UserManagement.Users;
 using FocusTemplate.Admin.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -25,12 +23,6 @@ public static class AdminValidators
 		services.TryAddScoped<IValidator<DemoProfilesCheckCodeQuery>, DemoProfilesCheckCodeQueryContractValidator>();
 		services.TryAddScoped<DemoProfilesCreateCommandContractValidator>();
 		services.TryAddScoped<IValidator<DemoProfilesCreateCommand>, DemoProfilesCreateCommandContractValidator>();
-		services.TryAddScoped<GroupsCreateCommandContractValidator>();
-		services.TryAddScoped<IValidator<GroupsCreateCommand>, GroupsCreateCommandContractValidator>();
-		services.TryAddScoped<GroupsUpdateCommandContractValidator>();
-		services.TryAddScoped<IValidator<GroupsUpdateCommand>, GroupsUpdateCommandContractValidator>();
-		services.TryAddScoped<UsersSearchQueryContractValidator>();
-		services.TryAddScoped<IValidator<UsersSearchQuery>, UsersSearchQueryContractValidator>();
 		return services;
 	}
 }

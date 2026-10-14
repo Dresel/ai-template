@@ -25,6 +25,13 @@
     <Project Path="src/admin/FocusTemplate.Admin.Web.Foundation/FocusTemplate.Admin.Web.Foundation.csproj" />
     <Project Path="src/admin/FocusTemplate.Admin.Web/FocusTemplate.Admin.Web.csproj" />
   </Folder>
+  <Folder Name="/admin/user-management/">
+    <Project Path="src/admin/user-management/FocusTemplate.Admin.UserManagement.Api/FocusTemplate.Admin.UserManagement.Api.csproj" />
+    <Project Path="src/admin/user-management/FocusTemplate.Admin.UserManagement.Client/FocusTemplate.Admin.UserManagement.Client.csproj" />
+    <Project Path="src/admin/user-management/FocusTemplate.Admin.UserManagement.Shared/FocusTemplate.Admin.UserManagement.Shared.csproj" />
+    <Project Path="src/admin/user-management/spec/FocusTemplate.Admin.UserManagement.Spec.csproj" />
+    <Project Path="src/admin/user-management/FocusTemplate.Admin.UserManagement.Web/FocusTemplate.Admin.UserManagement.Web.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/FocusTemplate.Admin.Api.IntegrationTests/FocusTemplate.Admin.Api.IntegrationTests.csproj" />
     <Project Path="tests/FocusTemplate.Admin.Web.E2E/FocusTemplate.Admin.Web.E2E.csproj" />

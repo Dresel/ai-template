@@ -39,6 +39,7 @@ public sealed class ApiReferenceTests(ApiFixture factory) : ApiTestBase(factory)
 		Assert.Equal("text/html", response.Content.Headers.ContentType?.MediaType);
 		string page = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 		Assert.Contains("admin.yaml", page, StringComparison.Ordinal);
+		Assert.Contains("user-management.yaml", page, StringComparison.Ordinal);
 		Assert.Contains("weather.yaml", page, StringComparison.Ordinal);
 	}
 

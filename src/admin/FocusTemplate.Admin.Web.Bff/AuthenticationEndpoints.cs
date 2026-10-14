@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Security.Claims;
-using FocusTemplate.Admin.Client.UserManagement.Users;
 using FocusTemplate.Admin.Shared;
 using FocusTemplate.Admin.Shared.Localization;
-using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Admin.UserManagement.Client.Users;
+using FocusTemplate.Admin.UserManagement.Shared;
 using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

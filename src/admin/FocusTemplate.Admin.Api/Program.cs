@@ -1,13 +1,11 @@
 using FocusTemplate.Admin.Api.Authentication;
-using FocusTemplate.Admin.Api.Authorization;
 using FocusTemplate.Admin.Api.Chaos;
 using FocusTemplate.Admin.Api.Features;
 using FocusTemplate.Admin.Api.Features.DemoProfiles;
-using FocusTemplate.Admin.Api.Features.UserManagement;
 using FocusTemplate.Admin.Api.Localization;
-using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Admin.UserManagement.Api;
+using FocusTemplate.Admin.UserManagement.Api.Authorization;
 using FocusTemplate.Api.Foundation.Realtime;
-using FocusTemplate.Data;
 using FocusTemplate.Names;
 using FocusTemplate.Primitives;
 using FocusTemplate.Weather.Api;
@@ -22,12 +20,6 @@ builder.AddApiAuthentication();
 
 builder.AddApiLocalization();
 
-builder.Services.AddAppDbContextPool(ConnectionNames.Database);
-builder.EnrichNpgsqlDbContext<AppDbContext>();
-
-builder.Services.AddReadOnlyAppDbContextPool(ConnectionNames.ReadOnlyDatabase);
-builder.EnrichNpgsqlDbContext<ReadOnlyAppDbContext>();
-
 builder.Services.AddProblemDetails();
 
 builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.RespectRequiredConstructorParameters = true);
@@ -36,10 +28,12 @@ builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetim
 builder.Services.AddAdminEndpoints();
 builder.Services.AddDemoProfiles();
 
+builder.AddUserManagement(ConnectionNames.Database, ConnectionNames.ReadOnlyDatabase);
+
 builder.AddWeather(ConnectionNames.Database, ConnectionNames.ReadOnlyDatabase);
 
 builder.AddRedisClient(ConnectionNames.Redis);
-builder.Services.AddSignalBackplane().AddSignal<GroupChanged>();
+builder.Services.AddSignalBackplane();
 
 WebApplication app = builder.Build();
 
@@ -60,7 +54,7 @@ app.UseUnbufferedEventStreams();
 app.UseAuthentication();
 
 // Before the authorization, so a user who may not do anything yet still appears in the user list
-app.UseMiddleware<UserProvisioningMiddleware>();
+app.UseUserProvisioning();
 
 app.UseAuthorization();
 

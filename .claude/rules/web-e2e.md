@@ -2,6 +2,7 @@
 paths:
   - "tests/*.Admin.Web.E2E/**"
   - "src/admin/*.Admin.Web/**/*.razor"
+  - "src/admin/user-management/*.Web/**/*.razor"
 ---
 # Web E2E tests
 

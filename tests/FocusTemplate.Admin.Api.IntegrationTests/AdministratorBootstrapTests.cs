@@ -1,4 +1,4 @@
-using FocusTemplate.Admin.Api.Authorization;
+using FocusTemplate.Admin.UserManagement.Api.Authorization;
 using FocusTemplate.Data;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Primitives;

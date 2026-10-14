@@ -3,8 +3,6 @@
 #nullable enable
 
 using FocusTemplate.Admin.Api.Features.DemoProfiles;
-using FocusTemplate.Admin.Api.Features.UserManagement.Groups;
-using FocusTemplate.Admin.Api.Features.UserManagement.Users;
 using FocusTemplate.Admin.Shared;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,8 +28,6 @@ public static class AdminEndpoints
 	/// <returns>The route builder, for chaining.</returns>
 	public static IEndpointRouteBuilder MapAdminEndpoints(this IEndpointRouteBuilder app)
 	{
-		GroupsEndpoints.MapGroupsEndpoints(app);
-		UsersEndpoints.MapUsersEndpoints(app);
 		DemoProfilesEndpoints.MapDemoProfilesEndpoints(app);
 		return app;
 	}

@@ -14,9 +14,12 @@ dialogs, and `AddRadzenComponents()` registers their services.
   (`Add<Slice>()`), named without the slice's prefix (`Form`, `FormValidator`, `Mapper`). The form, validator and
   mapper are `internal`. Pages, view models and the registration class are `public`: Razor generates public pages, and a
   public page cannot derive from a base with an internal type argument. A slice with several areas gets a folder per
-  area (`Features/UserManagement/Users/`, `Groups/`) with its registration and an `_Imports.razor` one level up, which
-  imports the slice's contracts (`FocusTemplate.Admin.Shared.UserManagement`). The validation demo is
-  `Features/DemoProfiles/` at `/demo/validation`.
+  area (`Features/<Slice>/<Area>/`) with its registration and an `_Imports.razor` one level up, which imports the
+  slice's contracts. The validation demo is `Features/DemoProfiles/` at `/demo/validation`.
+- **User management's pages** (`FocusTemplate.Admin.UserManagement.Web`, `src/admin/user-management/`) sit in a Razor
+  class library as a feature's do, one folder per area (`Users/`, `Groups/`) and the `_Imports.razor` at its root.
+  Every Admin host includes them with `AddUserManagementPages(environment, ResourceNames.AdminApi)`, the menu entries in
+  `MainLayout` point at their `ListPage.Path`.
 - **A feature's pages** sit in a Razor class library of their own (`FocusTemplate.Weather.Web`: the forecasts at
   `/weather`, the stations with their owners and a rename dialog at `/weather/stations`) with their resx, built on the
   foundation below. `AddWeatherPages(environment, ResourceNames.AdminApi)` registers its clients through the BFF route
@@ -76,7 +79,7 @@ live while the page is open.
 
 ## Pages and view models
 
-As the user management pages (`Features/UserManagement/`) do it.
+As the user management pages (`FocusTemplate.Admin.UserManagement.Web`) do it.
 
 - **Directives** open a `.razor` file in one block without blank lines, which ReSharper's formatter would otherwise
   remove: the route (`@page` or `@attribute [Route(…)]`), `@layout`, the other `@attribute`s, `@using`, `@typeparam`,

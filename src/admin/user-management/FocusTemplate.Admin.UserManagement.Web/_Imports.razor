@@ -1,0 +1,22 @@
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Web
+
+@using FocusTemplate.Admin.UserManagement.Client
+@using FocusTemplate.Admin.UserManagement.Shared
+@using FocusTemplate.Admin.Web.Foundation.Authorization
+@using FocusTemplate.Admin.Web.Foundation.Feedback
+@using FocusTemplate.Admin.Web.Foundation.Forms
+@using FocusTemplate.Admin.Web.Foundation.Pages
+@using FocusTemplate.Admin.Web.Foundation.Validation.App
+@using FocusTemplate.Http
+@using FocusTemplate.Primitives
+
+@using Radzen
+@using Radzen.Blazor
+
+@inject CurrentUser CurrentUser
+@inject DialogService Dialogs
+@inject NavigationManager Navigation
+@inject PermissionLabels PermissionLabels

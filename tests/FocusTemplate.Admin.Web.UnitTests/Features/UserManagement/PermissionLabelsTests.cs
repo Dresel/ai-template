@@ -1,4 +1,4 @@
-using FocusTemplate.Admin.Web.Features.UserManagement;
+using FocusTemplate.Admin.UserManagement.Web;
 using FocusTemplate.Primitives;
 using Microsoft.Extensions.Localization;
 

@@ -5,6 +5,7 @@ paths:
   - "src/features/*/*.Data/**"
   - "src/*/*.Api/Features/**/*Handler.cs"
   - "src/features/*/*.Api/**/*Handler.cs"
+  - "src/admin/user-management/*.Api/**/*Handler.cs"
   - "tests/*.ArchitectureTests/**"
 ---
 # Database

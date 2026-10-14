@@ -26,6 +26,14 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   the AppHost.
 - **A vertical** is an audience with its own API, contract and client: Admin, Public. Its slices live inside its
   projects (`Features/<Slice>/`).
+- **User management** (`src/admin/user-management/`) is the Admin vertical's part of the spine: every Admin host
+  includes it, since the BFF asks its `/users/me` on each page load and every `@requiresPermission` goes to its
+  permission handler. Its projects are laid out as a feature's below (`spec/` with a `@service` of its own,
+  `FocusTemplate.Admin.UserManagement.Shared`, `.Client`, `.Api`, `.Web`), without a data project: it works on the
+  identity tables of `Data`. `AddUserManagement(…)` registers the spine's two contexts, the handlers, the permission
+  handler and the provisioning, which the host runs with `app.UseUserProvisioning()` between authentication and
+  authorization. `MapUserManagementEndpoints()` maps its endpoints, `AddUserManagementPages(…)` registers its pages.
+  A feature never references it.
 - **A feature** is a package of projects under `src/features/<name>/` that a host adds without touching its own
   code beyond composition. Weather is the first:
 
@@ -40,7 +48,7 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 
   A feature never references the host's projects (`Data`, `Admin.Api`, `Admin.Shared`, `Admin.Client`,
   `Admin.Web`, `Public.Api`); `FeatureTests` checks it. What it needs of identity comes from the spine: `ICurrentUser`,
-  `UserReference` for a foreign key to the users, `PermissionRequirement` answered by the host's handler.
+  `UserReference` for a foreign key to the users, `PermissionRequirement` answered by user management's handler.
 
 - **Composition** in the host, one line each:
   `builder.AddWeather(ConnectionNames.Database, ConnectionNames.ReadOnlyDatabase)` and

@@ -2,6 +2,7 @@
 paths:
   - "src/admin/*.Admin.Web/Features/**"
   - "src/features/*/*.Web/**"
+  - "src/admin/user-management/*.Web/**"
   - "src/admin/*.Admin.Web.Foundation/{Pages,Feedback,Appearance}/**"
   - "src/admin/*.Admin.Web/wwwroot/**"
   - "src/admin/*.Admin.Web/Shell/**"

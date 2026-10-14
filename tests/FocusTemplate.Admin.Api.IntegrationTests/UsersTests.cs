@@ -1,6 +1,6 @@
-using FocusTemplate.Admin.Client;
-using FocusTemplate.Admin.Client.UserManagement.Users;
-using FocusTemplate.Admin.Shared.UserManagement;
+using FocusTemplate.Admin.UserManagement.Client;
+using FocusTemplate.Admin.UserManagement.Client.Users;
+using FocusTemplate.Admin.UserManagement.Shared;
 using FocusTemplate.Data.Entities;
 using FocusTemplate.Http;
 using FocusTemplate.Primitives;

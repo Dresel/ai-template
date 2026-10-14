@@ -60,11 +60,11 @@
 					<RadzenPanelMenuItem Text="@L.UserManagement" Icon="manage_accounts" data-testid="nav-user-management">
 						@if (users)
 						{
-							<RadzenPanelMenuItem Text="@L.Users" Icon="person" Path="@Features.UserManagement.Users.ListPage.Path" data-testid="nav-users" />
+							<RadzenPanelMenuItem Text="@L.Users" Icon="person" Path="@UserManagement.Web.Users.ListPage.Path" data-testid="nav-users" />
 						}
 						@if (groups)
 						{
-							<RadzenPanelMenuItem Text="@L.Groups" Icon="group" Path="@Features.UserManagement.Groups.ListPage.Path" data-testid="nav-groups" />
+							<RadzenPanelMenuItem Text="@L.Groups" Icon="group" Path="@UserManagement.Web.Groups.ListPage.Path" data-testid="nav-groups" />
 						}
 					</RadzenPanelMenuItem>
 				}

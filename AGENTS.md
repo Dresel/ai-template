@@ -41,6 +41,9 @@ Admin vertical (`src/admin/`):
   [authentication](docs/authentication.md).
 - **FocusTemplate.Admin.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
 - **FocusTemplate.Admin.Shared** - the wire contract shared by server and client.
+- **FocusTemplate.Admin.UserManagement.*** (`src/admin/user-management/`) - users, groups and permissions, which every
+  Admin host includes: `spec/`, `Shared`, `Client`, `Api` (with `/users/me`, the provisioning and the permission
+  handler), `Web`, see [architecture](docs/architecture.md) and [authorization](docs/authorization.md).
 
 Public vertical (`src/public/`):
 
