@@ -202,5 +202,5 @@ step with `__EFMigrationsHistory` until `aspire stop --force --volumes` drops co
 
 `FocusTemplate.ArchitectureTests` checks rules every handler or type must follow: `HandlerDbContextTests` reflects over
 the API and feature assemblies for the read/write split, `ModelSentinelTests` walks every EF model for the sentinels,
-`UserReferenceTests` keeps `UserReference` in step with `User`, and `FeatureTests` keeps the features off the host's projects and
+`UserReferenceTests` keeps `UserReference` in step with `User`, and `FeatureTests` keeps the features on their own projects and the foundations, and
 the pooled contexts' constructors down to their options.

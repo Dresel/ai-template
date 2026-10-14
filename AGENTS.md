@@ -179,8 +179,9 @@ new files. The summary names root cause, test, fix, commands run and remaining r
 - Consumers call API operations through the generated clients and never hand-write those calls. The BFF's own endpoints
   (`/bff/user`, the diagnostics) are not in a spec and have small hand-written clients.
 - Nothing under `generated/` or `Migrations/` is edited by hand.
-- A feature under `src/features/` references the spine (`Primitives`, `Http`, `Data.Foundation`, `Api.Foundation`,
-  `Admin.Web.Foundation`, `Admin.Web.ClientServiceDefaults`), never the host's projects. `FeatureTests` checks it.
+- A feature under `src/features/` references its own projects and the spine's foundations alone (`Primitives`, `Http`,
+  `Data.Foundation`, `Api.Foundation`, `Admin.Web.Foundation`, `Admin.Web.ClientServiceDefaults`). `FeatureTests`
+  checks it against that list, so a new shared project stays closed to features until it is added there.
 - Comments, AOT readiness and the names of extension classes apply to all C# code, see [csharp](.claude/rules/csharp.md).
 - A change that makes a statement in AGENTS.md, `docs/` or `.claude/rules/` wrong corrects it in the same commit.
 

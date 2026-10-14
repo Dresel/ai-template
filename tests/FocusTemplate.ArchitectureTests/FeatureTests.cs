@@ -11,14 +11,15 @@ namespace FocusTemplate.ArchitectureTests;
 // A feature drops into another host only while it builds on the spine alone
 public sealed class FeatureTests
 {
-	private static readonly string[] HostAssemblies =
+	// An allowlist, so a new shared project stays closed to the features until it is added here
+	private static readonly string[] Foundations =
 	[
-		"FocusTemplate.Admin.Api",
-		"FocusTemplate.Admin.Client",
-		"FocusTemplate.Admin.Shared",
-		"FocusTemplate.Admin.Web",
-		"FocusTemplate.Data",
-		"FocusTemplate.Public.Api",
+		"FocusTemplate.Admin.Web.ClientServiceDefaults",
+		"FocusTemplate.Admin.Web.Foundation",
+		"FocusTemplate.Api.Foundation",
+		"FocusTemplate.Data.Foundation",
+		"FocusTemplate.Http",
+		"FocusTemplate.Primitives",
 	];
 
 	public static TheoryData<Type> FeatureAssemblies =>
@@ -40,10 +41,17 @@ public sealed class FeatureTests
 
 	[Theory]
 	[MemberData(nameof(FeatureAssemblies))]
-	public void AFeatureReferencesNoHostProject(Type inTheFeature) =>
+	public void AFeatureReferencesItsOwnProjectsAndTheFoundationsAlone(Type inTheFeature)
+	{
+		// FocusTemplate.Weather.Api belongs to the feature FocusTemplate.Weather
+		string feature = string.Join('.', inTheFeature.Assembly.GetName().Name!.Split('.')[..2]) + ".";
+
 		Assert.DoesNotContain(
-			inTheFeature.Assembly.GetReferencedAssemblies().Select(reference => reference.Name),
-			name => HostAssemblies.Contains(name, StringComparer.Ordinal));
+			inTheFeature.Assembly.GetReferencedAssemblies()
+				.Select(reference => reference.Name!)
+				.Where(name => name.StartsWith("FocusTemplate.", StringComparison.Ordinal)),
+			name => !name.StartsWith(feature, StringComparison.Ordinal) && !Foundations.Contains(name, StringComparer.Ordinal));
+	}
 
 	[Theory]
 	[MemberData(nameof(PooledContexts))]

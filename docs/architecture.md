@@ -46,8 +46,10 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   | `FocusTemplate.Weather.Api` | handlers, the generated endpoints with `MapWeatherEndpoints()`, `AddWeather()` | `Api.Foundation`, `Weather.Data`, `Weather.Shared` |
   | `FocusTemplate.Weather.Web` | the pages, a Razor class library, `AddWeatherPages()` | `Admin.Web.Foundation`, `Admin.Web.ClientServiceDefaults`, `Weather.Client` |
 
-  A feature never references the host's projects (`Data`, `Admin.Api`, `Admin.Shared`, `Admin.Client`,
-  `Admin.Web`, `Public.Api`); `FeatureTests` checks it. What it needs of identity comes from the spine: `ICurrentUser`,
+  A feature references its own projects and the spine's foundations alone (`Primitives`, `Http`, `Data.Foundation`,
+  `Api.Foundation`, `Admin.Web.Foundation`, `Admin.Web.ClientServiceDefaults`). `FeatureTests` checks it against that
+  list, which keeps `Data`, user management, the hosting libraries and the host's projects out of a feature's reach,
+  and a new shared project too until it is added there. What it needs of identity comes from the spine: `ICurrentUser`,
   `UserReference` for a foreign key to the users, `PermissionRequirement` answered by user management's handler.
 
 - **Composition** in the host, one line each:
