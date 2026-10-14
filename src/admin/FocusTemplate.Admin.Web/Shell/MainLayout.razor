@@ -1,9 +1,7 @@
-@using System.Security.Claims
 @using FocusTemplate.Admin.Web.Foundation.Appearance
 @using FocusTemplate.Admin.Web.Foundation.Localization
 @using FocusTemplate.Primitives
-@using FocusTemplate.Web.Bff.Shared
-@using Microsoft.Extensions.Hosting
+@using FocusTemplate.Web.Hosting
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
 @inject IMainLayoutLocalizations L
@@ -21,25 +19,7 @@
 			<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
 				<LanguageSwitch />
 				<AppearanceSwitch />
-				<AuthorizeView>
-					<Authorized>
-						<RadzenText TagName="TagName.Span" data-testid="user-name">@context.User.Identity?.Name</RadzenText>
-						<RadzenButton Icon="logout"
-							ButtonStyle="ButtonStyle.Base"
-							Variant="Variant.Outlined"
-							title="@L.LogOut"
-							Click="@(() => Logout(context.User))"
-							data-testid="logout-button" />
-					</Authorized>
-					<NotAuthorized>
-						<RadzenButton Icon="login"
-							ButtonStyle="ButtonStyle.Base"
-							Variant="Variant.Outlined"
-							title="@L.LogIn"
-							Click="@Navigation.NavigateToLogin"
-							data-testid="login-button" />
-					</NotAuthorized>
-				</AuthorizeView>
+				<AccountButtons />
 			</RadzenStack>
 		</RadzenStack>
 	</RadzenHeader>
@@ -86,12 +66,4 @@
 
 	// Without the query, so a page that keeps its filters there survives changing them
 	private string PagePath => new Uri(Navigation.Uri).AbsolutePath;
-
-	private void Logout(ClaimsPrincipal user)
-	{
-		string logoutUrl = user.FindFirst(BffClaimTypes.LogoutUrl)?.Value ??
-							throw new InvalidOperationException("Missing bff logout url.");
-
-		Navigation.NavigateTo(logoutUrl, true);
-	}
 }

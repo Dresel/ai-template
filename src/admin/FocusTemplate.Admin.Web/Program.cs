@@ -5,12 +5,10 @@ using FocusTemplate.Admin.Web.Features.DemoProfiles;
 using FocusTemplate.Admin.Web.Foundation;
 using FocusTemplate.Admin.Web.Foundation.Appearance;
 using FocusTemplate.Admin.Web.Foundation.Localization;
-using FocusTemplate.Admin.Web.Infrastructure.Authentication;
-using FocusTemplate.Admin.Web.Infrastructure.Configuration;
 using FocusTemplate.Admin.Web.Infrastructure.Localization;
 using FocusTemplate.Names;
 using FocusTemplate.Weather.Web;
-using Microsoft.AspNetCore.Components.Authorization;
+using FocusTemplate.Web.Hosting;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -28,6 +26,8 @@ await builder.AddClientConfigurationAsync();
 
 builder.AddBlazorClientServiceDefaults("admin-web");
 
+builder.AddWebDefaults();
+
 builder.Services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress), });
 builder.Services.AddFoundation();
 builder.Services.AddAppearance("software", "software-dark");
@@ -37,11 +37,6 @@ builder.Services.AddDiagnostics(builder.HostEnvironment);
 
 builder.Services.AddUserManagementPages(builder.HostEnvironment, ResourceNames.AdminApi);
 builder.Services.AddWeatherPages(builder.HostEnvironment, ResourceNames.AdminApi);
-
-builder.Services.AddAuthorizationCore();
-builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddScoped<AuthenticationStateProvider, BffAuthenticationStateProvider>();
-builder.Services.AddHttpClient<AuthenticationClient>(client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 
 builder.Services.AddRadzenComponents();
 

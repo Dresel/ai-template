@@ -1,0 +1,36 @@
+@using System.Security.Claims
+@using FocusTemplate.Web.Bff.Shared
+@using Microsoft.Extensions.Hosting
+@inject NavigationManager Navigation
+@inject IAccountButtonsLocalizations L
+
+<AuthorizeView>
+	<Authorized>
+		<RadzenText TagName="TagName.Span" data-testid="user-name">@context.User.Identity?.Name</RadzenText>
+		<RadzenButton Icon="logout"
+			ButtonStyle="ButtonStyle.Base"
+			Variant="Variant.Outlined"
+			title="@L.LogOut"
+			Click="@(() => Logout(context.User))"
+			data-testid="logout-button" />
+	</Authorized>
+	<NotAuthorized>
+		<RadzenButton Icon="login"
+			ButtonStyle="ButtonStyle.Base"
+			Variant="Variant.Outlined"
+			title="@L.LogIn"
+			Click="@Navigation.NavigateToLogin"
+			data-testid="login-button" />
+	</NotAuthorized>
+</AuthorizeView>
+
+@code
+{
+	private void Logout(ClaimsPrincipal user)
+	{
+		string logoutUrl = user.FindFirst(BffClaimTypes.LogoutUrl)?.Value ??
+							throw new InvalidOperationException("Missing bff logout url.");
+
+		Navigation.NavigateTo(logoutUrl, true);
+	}
+}

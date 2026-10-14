@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json;
 using FocusTemplate.Web.Bff.Shared;
 
-namespace FocusTemplate.Admin.Web.Infrastructure.Authentication;
+namespace FocusTemplate.Web.Hosting.Authentication;
 
 public sealed class AuthenticationClient(HttpClient httpClient)
 {

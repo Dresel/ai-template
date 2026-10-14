@@ -103,9 +103,10 @@ authorization. A handler reads `Id`, which throws then. The provisioning middlew
 
 - `BffAuthenticationStateProvider` asks `/bff/user` once per load. Only its 401 means anonymous, and any other failure
   throws into the error UI, since a login would bring back the same state.
-- `[Authorize]` in `_Imports.razor` and `AuthorizeRouteView` in `App.razor` guard every page but `Home`
-  (`[AllowAnonymous]`). A page the user may not see renders `Forbidden` for a signed-in user and `RedirectToLogin` for an
-  anonymous one, since a signed-in user sent to log in would come straight back from Keycloak's session.
+- `[Authorize]` in `_Imports.razor` and `AuthorizeRouteView` in `AppRouter` (`FocusTemplate.Web.Hosting`, with the
+  provider above and `RedirectToLogin`) guard every page but `Home` (`[AllowAnonymous]`). A page the user may not see
+  renders `Forbidden` for a signed-in user and `RedirectToLogin` for an anonymous one, since a signed-in user sent to
+  log in would come straight back from Keycloak's session.
 - Login, `RedirectToLogin` and `RedirectToLoginHandler` do a full load of `bff/login` through `NavigateToLogin()`, which
   carries the culture. Logout navigates to the `bff:logout_url` claim with `forceLoad`: both live outside the client
   router.

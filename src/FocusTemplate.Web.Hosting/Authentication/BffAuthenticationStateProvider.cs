@@ -2,7 +2,7 @@ using System.Security.Claims;
 using FocusTemplate.Web.Bff.Shared;
 using Microsoft.AspNetCore.Components.Authorization;
 
-namespace FocusTemplate.Admin.Web.Infrastructure.Authentication;
+namespace FocusTemplate.Web.Hosting.Authentication;
 
 public sealed class BffAuthenticationStateProvider(AuthenticationClient client) : AuthenticationStateProvider
 {

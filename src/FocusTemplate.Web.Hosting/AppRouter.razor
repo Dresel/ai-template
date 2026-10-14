@@ -1,0 +1,49 @@
+@using System.Diagnostics.CodeAnalysis
+@using System.Reflection
+@inject IAppRouterLocalizations L
+@inject IEnumerable<PageAssembly> PageAssemblies
+
+<Router AppAssembly="@AppAssembly" AdditionalAssemblies="additionalAssemblies" NotFoundPage="@NotFoundPage">
+	<Found Context="routeData">
+		<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@Layout">
+			<NotAuthorized>
+				@if (context.User.Identity?.IsAuthenticated == true)
+				{
+					<Forbidden />
+				}
+				else
+				{
+					<RedirectToLogin />
+				}
+			</NotAuthorized>
+			<Authorizing>
+				<p data-testid="authorizing">@L.CheckingSession</p>
+			</Authorizing>
+		</AuthorizeRouteView>
+		<FocusOnNavigate RouteData="@routeData" Selector="h1" />
+	</Found>
+</Router>
+
+@code
+{
+	// The pages of the features the host includes, which each feature registers along with its other services
+	private Assembly[] additionalAssemblies = [];
+
+	[Parameter]
+	[EditorRequired]
+	public Assembly AppAssembly { get; set; } = null!;
+
+	[Parameter]
+	[EditorRequired]
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+	public Type Layout { get; set; } = null!;
+
+	// A product's own page, since it names the product's layout
+	[Parameter]
+	[EditorRequired]
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
+	public Type NotFoundPage { get; set; } = null!;
+
+	protected override void OnInitialized() =>
+		additionalAssemblies = [.. PageAssemblies.Select(pages => pages.Assembly).Distinct()];
+}

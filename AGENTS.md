@@ -33,6 +33,9 @@ Shared spine:
   see [authentication](docs/authentication.md).
 - **FocusTemplate.Web.Bff.Hosting** - the BFF every product's BFF project runs: the session, OIDC with PAR, `/bff/*`,
   the YARP transforms, `AddBff()` and `MapBffEndpoints()`, see [authentication](docs/authentication.md).
+- **FocusTemplate.Web.Hosting** - what every product's WASM client runs: the BFF's session as authentication state,
+  `AppRouter`, `Forbidden`, the account buttons, the loading screen's styles, see
+  [web pages](docs/web-pages.md).
 - **FocusTemplate.Web.Bff.Shared** - the BFF's contract with the WASM client: `/bff/user`'s answer, the claim types,
   the client configuration, see [authentication](docs/authentication.md).
 - **`@spatialfocus/typespec-http-csharp-slim`** - the TypeSpec emitter, consumed as the tgz under `.npm/`, see

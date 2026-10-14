@@ -10,6 +10,13 @@ header's appearance toggle, Material Symbols bundled). It talks to the API throu
 `RadzenTheme` in `App.razor` loads the theme through `HeadContent`, `<RadzenComponents />` hosts notifications and
 dialogs, and `AddRadzenComponents()` registers their services.
 
+What every product's client runs the same way lives in `FocusTemplate.Web.Hosting`, a Razor class library:
+`AddClientConfigurationAsync()` and `AddWebDefaults()` (the BFF's session as authentication state), `AppRouter` (the
+router with `AuthorizeRouteView`, `Forbidden` for a signed-in user, `RedirectToLogin` for an anonymous one, every
+registered `PageAssembly`), `AccountButtons` (the user's name, log in and log out), and the loading screen's rules in
+`startup.css`. `App.razor` holds one `<AppRouter>` with the product's assembly, its `MainLayout` and its `NotFound`,
+which stays the product's because it names that layout.
+
 - **`Features/<Slice>/`**: a slice's pages, view models, form, validator, mapper and its registration
   (`Add<Slice>()`), named without the slice's prefix (`Form`, `FormValidator`, `Mapper`). The form, validator and
   mapper are `internal`. Pages, view models and the registration class are `public`: Razor generates public pages, and a
@@ -23,7 +30,7 @@ dialogs, and `AddRadzenComponents()` registers their services.
 - **A feature's pages** sit in a Razor class library of their own (`FocusTemplate.Weather.Web`: the forecasts at
   `/weather`, the stations with their owners and a rename dialog at `/weather/stations`) with their resx, built on the
   foundation below. `AddWeatherPages(environment, ResourceNames.AdminApi)` registers its clients through the BFF route
-  of the API that maps the feature, its view models, validators and texts, and its `PageAssembly`. `App.razor` hands
+  of the API that maps the feature, its view models, validators and texts, and its `PageAssembly`. `AppRouter` hands
   every registered `PageAssembly` to the `Router`'s `AdditionalAssemblies`, so the host routes to the feature's pages
   without naming them. The host keeps the menu entries in `MainLayout`.
 - **`FocusTemplate.Admin.Web.Foundation`**, a Razor class library of what is domain-neutral, so the pages of a feature
@@ -48,9 +55,9 @@ dialogs, and `AddRadzenComponents()` registers their services.
     transient with their timings, so a view model takes them in its constructor and the page's scope disposes them. A
     view model disposes only the commands it creates. They run on the renderer's dispatcher and take no locks.
     `Users/ListPageViewModel` uses all of them.
-- **`Shell/`**: `MainLayout`, `Home`, `NotFound`, `Forbidden`. **`Diagnostics/`**: the request diagnostics page.
-- **`Infrastructure/`**: `Authentication/` (the BFF's session as the client's authentication state), `Configuration/`,
-  `Localization/` (`AddWebLocalization()`, which registers the texts and the cultures, see
+- **`Shell/`**: `MainLayout` (the title, the menu, the header's switches and `AccountButtons`), `Home`, `NotFound`.
+  **`Diagnostics/`**: the request diagnostics page.
+- **`Infrastructure/`**: `Localization/` (`AddWebLocalization()`, which registers the texts and the cultures, see
   [localization](localization.md)).
 - **Texts** a page shows come from its resx pair through `@inject I{Page}Localizations L`, as do a confirmation's
   message and title. Radzen's own texts, such as a confirmation's cancel button, come in its own German.
@@ -71,7 +78,8 @@ live while the page is open.
   switches it when the system's scheme changes. `AppearanceSwitch` stores a new choice through the script and switches
   Radzen's `ThemeService`. `AppearanceStorage` holds the calls into the script.
 - **The host** names its Radzen themes with `AddAppearance("software", "software-dark")`, loads the script in its
-  page's head and brings its own loading screen. Its logo is the symbol in `images/logo.svg`, drawn through a
+  page's head and brings its own loading screen, styled by `startup.css` of `FocusTemplate.Web.Hosting` with the
+  `--app-startup-*` colours of its `app.css`. Its logo is the symbol in `images/logo.svg`, drawn through a
   `<use>` whose parts take their colours from the `--app-logo-*` variables of `app.css`: the original colours in light,
   all white in dark with the letters in the mark cut out. The page's CSS variables reach the symbol through the
   `<use>`. The outer `<svg>` carries only the logo's proportions (`0 0 428.85 94.76`), since the symbol maps its own

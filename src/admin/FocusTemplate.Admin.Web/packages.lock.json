@@ -544,6 +544,18 @@
       "focustemplate.web.bff.shared": {
         "type": "Project"
       },
+      "focustemplate.web.hosting": {
+        "type": "Project",
+        "dependencies": {
+          "FocusTemplate.Admin.Web.ClientServiceDefaults": "[1.0.0, )",
+          "FocusTemplate.Admin.Web.Foundation": "[1.0.0, )",
+          "FocusTemplate.Web.Bff.Shared": "[1.0.0, )",
+          "Microsoft.AspNetCore.Components.Authorization": "[11.0.0-rc.2.26504.105, )",
+          "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
+          "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )",
+          "Radzen.Blazor": "[12.1.2, )"
+        }
+      },
       "FluentValidation": {
         "type": "CentralTransitive",
         "requested": "[12.1.1, )",

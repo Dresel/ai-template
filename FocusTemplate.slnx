@@ -68,5 +68,6 @@
   <Project Path="src/FocusTemplate.ServiceDefaults/FocusTemplate.ServiceDefaults.csproj" Id="b487fad3-efd6-44f0-ad27-6e19ecab0715" />
   <Project Path="src/FocusTemplate.Web.Bff.Hosting/FocusTemplate.Web.Bff.Hosting.csproj" />
   <Project Path="src/FocusTemplate.Web.Bff.Shared/FocusTemplate.Web.Bff.Shared.csproj" />
+  <Project Path="src/FocusTemplate.Web.Hosting/FocusTemplate.Web.Hosting.csproj" />
   <Project Path="src/spec/FocusTemplate.Spec.csproj" />
 </Solution>
