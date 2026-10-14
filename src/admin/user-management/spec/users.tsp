@@ -6,9 +6,9 @@ using Http;
 using OpenAPI;
 using SpatialFocus.Http;
 using FocusTemplate.Paging;
-using FocusTemplate.Primitives;
+using SpatialFocus.Primitives;
 
-namespace FocusTemplate.Admin.UserManagement;
+namespace SpatialFocus.Admin.UserManagement;
 
 /** The signed-in user and what they may do. */
 model CurrentUserResponse {

@@ -35,13 +35,13 @@
 	<ItemGroup>
 		<ProjectReference Include="..\FocusTemplate.Admin.Client\FocusTemplate.Admin.Client.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Shared\FocusTemplate.Admin.Shared.csproj" />
-		<ProjectReference Include="..\FocusTemplate.Admin.Web.ClientServiceDefaults\FocusTemplate.Admin.Web.ClientServiceDefaults.csproj" />
-		<ProjectReference Include="..\FocusTemplate.Admin.Web.Foundation\FocusTemplate.Admin.Web.Foundation.csproj" />
-		<ProjectReference Include="..\..\FocusTemplate.Localization\FocusTemplate.Localization.csproj" />
+		<ProjectReference Include="..\..\SpatialFocus.Web.ClientServiceDefaults\SpatialFocus.Web.ClientServiceDefaults.csproj" />
+		<ProjectReference Include="..\..\SpatialFocus.Web.Foundation\SpatialFocus.Web.Foundation.csproj" />
+		<ProjectReference Include="..\..\SpatialFocus.Localization\SpatialFocus.Localization.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.Names\FocusTemplate.Names.csproj" />
-		<ProjectReference Include="..\..\FocusTemplate.Web.Hosting\FocusTemplate.Web.Hosting.csproj" />
-		<ProjectReference Include="..\user-management\FocusTemplate.Admin.UserManagement.Web\FocusTemplate.Admin.UserManagement.Web.csproj" />
-		<ProjectReference Include="..\..\features\weather\FocusTemplate.Weather.Web\FocusTemplate.Weather.Web.csproj" />
+		<ProjectReference Include="..\..\SpatialFocus.Web.Hosting\SpatialFocus.Web.Hosting.csproj" />
+		<ProjectReference Include="..\user-management\SpatialFocus.Admin.UserManagement.Web\SpatialFocus.Admin.UserManagement.Web.csproj" />
+		<ProjectReference Include="..\..\features\weather\SpatialFocus.Weather.Web\SpatialFocus.Weather.Web.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

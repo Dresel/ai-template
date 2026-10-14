@@ -48,13 +48,13 @@ own under `src/features/<name>/` instead, built like `src/features/weather/`, se
 
 ## 3. Data ([database](../../../docs/database.md))
 
-1. The entity and its `IEntityTypeConfiguration` in `src/FocusTemplate.Data/Entities/`, the configuration in
+1. The entity and its `IEntityTypeConfiguration` in `src/SpatialFocus.Data/Entities/`, the configuration in
    `ApplyEntityConfigurations` (`ModelBuilderExtensions`), a `DbSet` in `AppDbContextBase`, `IAuditable` when its
    changes are audited.
 2. A new id: `[EfCoreConverter<X>]` in `VogenEfCoreConverters` and `HaveSentinel(X.Unspecified)` in
    `AppDbContextBase.ConfigureIds`.
 3. The migration, with the AppHost stopped:
-   `dotnet dotnet-ef migrations add <Name> --project src/FocusTemplate.Data --startup-project src/FocusTemplate.Data --context AppDbContext`.
+   `dotnet dotnet-ef migrations add <Name> --project src/SpatialFocus.Data --startup-project src/SpatialFocus.Data --context AppDbContext`.
    With new permissions, check that it inserts their rows and grants them to `Administrators`.
 4. Dev data, if the slice needs it: a part in `DevelopmentSeed` that checks for its own rows.
 
@@ -95,7 +95,7 @@ New permissions appear in the group editor by themselves, labelled from their na
 
 - **Integration** (`tests/FocusTemplate.Admin.Api.IntegrationTests`, through the generated client): per operation the
   answer, the 404, each 409, the 400, and the 403 without the permission.
-- **Unit** (`tests/FocusTemplate.Admin.Web.UnitTests` for a slice of the host, `tests/FocusTemplate.Web.UnitTests` for
+- **Unit** (`tests/FocusTemplate.Admin.Web.UnitTests` for a slice of the host, `tests/SpatialFocus.Web.UnitTests` for
   one of user management or a feature): a view model against a fake HTTP handler (`ListPageViewModelTests`), the
   form's validator.
 - **E2E**: one flow through the BFF on `BffPageTest`, selected by `data-testid`, including the menu entry.

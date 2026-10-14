@@ -20,15 +20,15 @@ imports (`namespace SpatialFocus.Http`).
   reports every type its `api.tsp` imports as unknown. A file the entrypoint does not import (`paging.tsp`) the server
   compiles on its own. `npm run gen` leaves these configs out, and `tsp compile <spec folder>` checks a spec without
   emitting.
-- Each spec folder is also a project that builds nothing (`FocusTemplate.Spec`, `FocusTemplate.<Vertical>.Spec`,
-  `FocusTemplate.<Feature>.Spec`) on the `Microsoft.Build.NoTargets` SDK, pinned in `global.json`. Visual Studio shows
-  the folder as it is on disk, next to the vertical's projects, and a file created outside it appears without an edit to
-  a project or the solution. It restores without a lock file, since its only package is the global analyzer.
-- `FocusTemplate.Http` holds the types every Admin project generates alike, written once from `src/spec/http.tsp`
+- Each spec folder is also a project that builds nothing (`SpatialFocus.Spec`, `FocusTemplate.<Vertical>.Spec`,
+  `SpatialFocus.Admin.UserManagement.Spec`, `SpatialFocus.<Feature>.Spec`) on the `Microsoft.Build.NoTargets` SDK,
+  pinned in `global.json`. Visual Studio shows the folder as it is on disk, next to the vertical's projects, and a file
+  created outside it appears without an edit to a project or the solution. It restores without a lock file, since its only package is the global analyzer.
+- `SpatialFocus.Http` holds the types every Admin project generates alike, written once from `src/spec/http.tsp`
   with `output-type: library`: `ProblemDetails`, the validation problem with `Violation` and `ViolationSeverity`,
   `PermissionRequirement` with `RequiresPermissionAttribute`, and the client's `ApiFailure`, `ApiOutcome`,
   `IProblemOf`, `Success` and `ServerEventReader`. The Admin vertical's `tspconfig.yaml` files set
-  `library-namespace: FocusTemplate.Http`, so their output references these and writes none, and code shared across
+  `library-namespace: SpatialFocus.Http`, so their output references these and writes none, and code shared across
   the projects of several APIs (the Web foundation, the permission handlers) accepts one type for each. The Public
   vertical keeps its own copies, so its mobile app carries no ASP.NET authorization package.
 - The emitter wraps `@typespec/http-client-csharp` (alpha, daily builds) and ships its .NET plugin inside the package,
@@ -57,7 +57,7 @@ imports (`namespace SpatialFocus.Http`).
   reads the item again. Generated: the stream query (`IStreamQuery<GroupChanged>`), the endpoint over
   `TypedResults.ServerSentEvents` with a keepalive event every 15 s (`ServerEventSupport`), and a client method that
   returns a `ServerEventReader<T>` once the stream is open, which ends after 30 s of silence and owns the connection.
-  By hand, in `Realtime/` of `FocusTemplate.Api.Foundation`, so a feature's API uses it too. Its root is the local SSE
+  By hand, in `Realtime/` of `SpatialFocus.Api.Foundation`, so a feature's API uses it too. Its root is the local SSE
   side: the handler on `EventStreamHandler<TQuery, TSignal>`,
   authorized when the stream opens, subscribes to the process's `EventStreams<T>` of its signal type, then loads its
   filter once through `MatchesAsync`, which may query, and applies it to each signal in the stream's own request.
@@ -83,7 +83,7 @@ imports (`namespace SpatialFocus.Http`).
   for now.
 - A slice with one interface stays in the service namespace (`FocusTemplate.Admin`), a slice with several declares a
   namespace below it (`FocusTemplate.Admin.<Feature>`), its feature.
-- `src/spec/` holds what verticals can share: `primitives.tsp` (the typed ids, namespace `FocusTemplate.Primitives`,
+- `src/spec/` holds what verticals can share: `primitives.tsp` (the typed ids, namespace `SpatialFocus.Primitives`,
   no service) and `paging.tsp` (`PageQuery`, spread into a search request). `primitives.tsp` also imports each slice's
   `permissions.tsp` and each feature's `primitives.tsp`, so adding or removing a feature in the spine is one import line.
   Today only the Admin contract and the weather feature import it.
@@ -91,15 +91,15 @@ imports (`namespace SpatialFocus.Http`).
   (`output-type: api`), the Shared project (`contracts`) and the Client project (`client`). Everything else consumes
   them by project reference, and generated files are never linked across projects.
 - A feature has a contract of its own in `src/features/<name>/spec/`: `api.tsp` is a `@service` with `@useAuth`
-  (`FocusTemplate.Weather`), imports the spine's `primitives.tsp` and one file per interface, and its three projects
-  generate as a vertical's do (`FocusTemplate.Weather.Api.{interface}`, `FocusTemplate.Weather.Shared`,
-  `FocusTemplate.Weather.Client.{interface}`). Its own JSON context, validators and paths carry the service's name
+  (`SpatialFocus.Weather`), imports the spine's `primitives.tsp` and one file per interface, and its three projects
+  generate as a vertical's do (`SpatialFocus.Weather.Api.{interface}`, `SpatialFocus.Weather.Shared`,
+  `SpatialFocus.Weather.Client.{interface}`). Its own JSON context, validators and paths carry the service's name
   (`WeatherJsonContext`, `AddWeatherValidators()`), and its `openapi.yaml` sits in its Api project. Its typed ids sit
-  beside it in a `primitives.tsp` of its own, in namespace `FocusTemplate.Primitives`, which imports its
+  beside it in a `primitives.tsp` of its own, in namespace `SpatialFocus.Primitives`, which imports its
   `permissions.tsp` and which the host's `primitives.tsp` imports.
 - User management, which every Admin host includes, has the same layout in `src/admin/user-management/`: the service
-  `FocusTemplate.Admin.UserManagement` with the interfaces `Users` and `Groups`
-  (`FocusTemplate.Admin.UserManagement.Api.{interface}`, `.Shared`, `.Client.{interface}`), `UserManagementJsonContext`,
+  `SpatialFocus.Admin.UserManagement` with the interfaces `Users` and `Groups`
+  (`SpatialFocus.Admin.UserManagement.Api.{interface}`, `.Shared`, `.Client.{interface}`), `UserManagementJsonContext`,
   and its document shipped as `openapi/user-management.yaml`. Its ids are the spine's, so only its `permissions.tsp` is
   imported by `src/spec/primitives.tsp`. `npm run gen` compiles a folder with a `spec/api.tsp` of its own inside a
   vertical as it does a feature.
@@ -113,7 +113,7 @@ imports (`namespace SpatialFocus.Http`).
 
 ## Typed ids
 
-`FocusTemplate.Primitives` compiles `src/spec/primitives.tsp` and what it imports (`output-type: primitives`) into
+`SpatialFocus.Primitives` compiles `src/spec/primitives.tsp` and what it imports (`output-type: primitives`) into
 Vogen value objects: `[ValueObject<T>] [Instance("Unspecified", …)] public readonly partial struct` per `@typedId`
 scalar, plus `Permission` (a string id) with one `{Enum}Permissions` class per permissions enum (see
 [authorization](authorization.md)). `Data` and `Admin.Shared` reference it, so one `GroupId` serves the domain and every
@@ -149,7 +149,7 @@ declared inside a service namespace is an emitter error.
   `AddAdminValidators()`, and mapping the endpoints without them fails at startup. Rules the spec cannot state stay in
   the handler, or go into a validator registered as `IValidator<T>` that includes the generated one. Those that need no
   server data can live in `Admin.Shared`, so the forms run them too (see [web forms](web-forms.md)). The generated rules
-  ask `ContractTexts` in `FocusTemplate.Http`, one hook for every service that shares the library, for the names of
+  ask `ContractTexts` in `SpatialFocus.Http`, one hook for every service that shares the library, for the names of
   their members and for the messages of their patterns, see [localization](localization.md).
 - The 400 carries `errors` by wire path and `violations` (key, code, severity, message, args), a typed
   `ValidationProblem` case on the client. An operation behind a form declares the `ValidationProblem` alias, since under
@@ -172,7 +172,7 @@ declared inside a service namespace is an emitter error.
 - A list that searches, sorts or pages is `@httpQuery` (HTTP QUERY with a body) over a request spreading `PageQuery`,
   sorted by an enum the handler switches over.
 - DTOs carry a `Request` or `Response` suffix, which keeps them apart from the like-named entities in
-  `FocusTemplate.Data`. They live in the vertical's `Shared` project, and the two `Shared` projects never reference each
+  `SpatialFocus.Data`. They live in the vertical's `Shared` project, and the two `Shared` projects never reference each
   other. Entities stay on the server: the handler maps entity to DTO. Computed members go into hand-written partials
   next to the project file.
 - An optional member's default (`top?: int32 = 10`) reaches both ends as the C# default (`int Top = 10`). An optional

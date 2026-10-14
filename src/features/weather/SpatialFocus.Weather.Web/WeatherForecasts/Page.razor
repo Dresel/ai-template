@@ -1,0 +1,50 @@
+@page "/weather"
+@using SpatialFocus.Weather.Client.WeatherForecasts
+@using SpatialFocus.Weather.Shared
+@inject WeatherForecastsClient Api
+@inject IPageLocalizations L
+
+<PageTitle>@L.Title</PageTitle>
+
+<RadzenStack Gap="1rem">
+	<RadzenText TextStyle="TextStyle.H3" TagName="TagName.H1">@L.Title</RadzenText>
+
+	<RadzenCard>
+		<RadzenText TextStyle="TextStyle.H5" TagName="TagName.H2">@L.Forecast</RadzenText>
+		@if (Forecasts is null)
+		{
+			<RadzenText data-testid="weather-loading">@L.Loading</RadzenText>
+		}
+		else
+		{
+			<RadzenTable AllowAlternatingRows="true" data-testid="weather-table">
+				<RadzenTableHeader>
+					<RadzenTableHeaderRow>
+						<RadzenTableHeaderCell>@L.Date</RadzenTableHeaderCell>
+						<RadzenTableHeaderCell>@L.TemperatureC</RadzenTableHeaderCell>
+						<RadzenTableHeaderCell>@L.TemperatureF</RadzenTableHeaderCell>
+						<RadzenTableHeaderCell>@L.Summary</RadzenTableHeaderCell>
+					</RadzenTableHeaderRow>
+				</RadzenTableHeader>
+				<RadzenTableBody>
+					@foreach (WeatherForecastResponse forecast in Forecasts)
+					{
+						<RadzenTableRow data-testid="weather-row">
+							<RadzenTableCell>@forecast.Date.ToShortDateString()</RadzenTableCell>
+							<RadzenTableCell>@forecast.TemperatureC</RadzenTableCell>
+							<RadzenTableCell>@forecast.TemperatureF</RadzenTableCell>
+							<RadzenTableCell>@forecast.Summary</RadzenTableCell>
+						</RadzenTableRow>
+					}
+				</RadzenTableBody>
+			</RadzenTable>
+		}
+	</RadzenCard>
+</RadzenStack>
+
+@code
+{
+	private IReadOnlyList<WeatherForecastResponse>? Forecasts { get; set; }
+
+	protected override async Task OnInitializedAsync() => Forecasts = await Api.ListAsync();
+}

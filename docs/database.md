@@ -4,12 +4,12 @@ What to follow when changing these files: [the rule](../.claude/rules/database.m
 
 ## The project
 
-`FocusTemplate.Data` holds the spine's entities, identity and permissions, with their EF Core mapping (`Entities/`,
+`SpatialFocus.Data` holds the spine's entities, identity and permissions, with their EF Core mapping (`Entities/`,
 each entity next to its `IEntityTypeConfiguration`, all listed by hand in `ApplyEntityConfigurations`), the model in
 `AppDbContextBase` with its two sealed contexts, the migrations, a design-time factory and the dev seed. The Admin
 API and the AppHost's migration resource reference it, and it stays free of Aspire. Its tables sit in `public`.
 
-`FocusTemplate.Data.Foundation` holds what any context builds on and no entity of its own: `FoundationDbContext<TModel>`
+`SpatialFocus.Data.Foundation` holds what any context builds on and no entity of its own: `FoundationDbContext<TModel>`
 with `IHasSchema`, auditing (`Auditing/`, with `ICurrentUser` and `WellKnownUsers`), `UseNpgsqlWithConventions` (the
 provider with the naming and check-constraint plugins), `AddFoundationConventions` (the `UserId` converter and sentinel
 the audit columns need), `IReadOnlyDbContext`, the registration of a feature's contexts, `UserReference` and
@@ -23,7 +23,7 @@ entity gets its audit columns. The base states its schema as a static member (`I
 spine), since EF builds a model once per type and a pooled context takes nothing but its options. The model and a
 feature's registration both read it from there.
 
-A feature's data project, `FocusTemplate.Weather.Data` the first, holds the feature's entities with a context and its
+A feature's data project, `SpatialFocus.Weather.Data` the first, holds the feature's entities with a context and its
 read-only twin of its own, its migrations and its seed, see **Feature contexts**.
 
 - **No DDD layer.** Entities are plain classes (`required`/`init`, public setters, no base types, no domain events).
@@ -156,13 +156,13 @@ for the spine's, since its foreign keys point at the spine's users. Locally and 
 `dotnet ef database update` on start. `aspire publish` emits each as a migration-bundle container.
 
 The AppHost adds each with `AddMigrations<TContext>(name, migrationsProjectPath, database)` (`Migrations/` in
-`FocusTemplate.AppHost.Hosting`), which holds what every migrations resource needs: the tool's environment, both database references, the update on
+`SpatialFocus.AppHost.Hosting`), which holds what every migrations resource needs: the tool's environment, both database references, the update on
 start and the bundle. A feature's call adds `.WaitForCompletion(migrations)`, and the APIs that read its tables wait for
 it in turn.
 
 Adding one, with the AppHost stopped:
-`dotnet dotnet-ef migrations add <Name> --project src/FocusTemplate.Data --startup-project src/FocusTemplate.Data --context AppDbContext`,
-for the weather feature `--project` and `--startup-project` `src/features/weather/FocusTemplate.Weather.Data` with
+`dotnet dotnet-ef migrations add <Name> --project src/SpatialFocus.Data --startup-project src/SpatialFocus.Data --context AppDbContext`,
+for the weather feature `--project` and `--startup-project` `src/features/weather/SpatialFocus.Weather.Data` with
 `--context WeatherDbContext`. `--context` is required because each assembly holds two contexts and only the writable one
 has migrations. The design-time factories need no live database. The migration resources' dashboard commands (Add
 Migration, Update/Reset/Drop Database, Status) do the same.

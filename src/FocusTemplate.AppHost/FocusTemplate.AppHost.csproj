@@ -19,10 +19,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\admin\FocusTemplate.Admin.Api\FocusTemplate.Admin.Api.csproj" />
 		<ProjectReference Include="..\admin\FocusTemplate.Admin.Web.Bff\FocusTemplate.Admin.Web.Bff.csproj" />
-		<ProjectReference Include="..\features\weather\FocusTemplate.Weather.Data\FocusTemplate.Weather.Data.csproj"
+		<ProjectReference Include="..\features\weather\SpatialFocus.Weather.Data\SpatialFocus.Weather.Data.csproj"
 			IsAspireProjectResource="false" />
-		<ProjectReference Include="..\FocusTemplate.AppHost.Hosting\FocusTemplate.AppHost.Hosting.csproj" IsAspireProjectResource="false" />
-		<ProjectReference Include="..\FocusTemplate.Data\FocusTemplate.Data.csproj" IsAspireProjectResource="false" />
+		<ProjectReference Include="..\SpatialFocus.AppHost.Hosting\SpatialFocus.AppHost.Hosting.csproj" IsAspireProjectResource="false" />
+		<ProjectReference Include="..\SpatialFocus.Data\SpatialFocus.Data.csproj" IsAspireProjectResource="false" />
 		<ProjectReference Include="..\FocusTemplate.Names\FocusTemplate.Names.csproj" IsAspireProjectResource="false" />
 		<ProjectReference Include="..\public\FocusTemplate.Public.Api\FocusTemplate.Public.Api.csproj" />
 	</ItemGroup>

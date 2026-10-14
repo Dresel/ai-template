@@ -1,6 +1,6 @@
 using FocusTemplate.Admin.Shared.Localization;
 using FocusTemplate.Admin.Web.Bff.Diagnostics;
-using FocusTemplate.Web.Bff.Hosting;
+using SpatialFocus.Web.Bff.Hosting;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

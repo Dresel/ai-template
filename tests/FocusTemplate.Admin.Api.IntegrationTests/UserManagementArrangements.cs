@@ -1,7 +1,7 @@
-using FocusTemplate.Data;
-using FocusTemplate.Data.Entities;
-using FocusTemplate.Primitives;
 using Microsoft.EntityFrameworkCore;
+using SpatialFocus.Data;
+using SpatialFocus.Data.Entities;
+using SpatialFocus.Primitives;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 

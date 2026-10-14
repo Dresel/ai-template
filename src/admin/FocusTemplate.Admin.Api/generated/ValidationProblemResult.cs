@@ -4,11 +4,11 @@
 
 using System.Text.Json;
 using System.Threading.Tasks;
-using FocusTemplate.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using SpatialFocus.Http;
 
 namespace FocusTemplate.Admin.Api.Features;
 

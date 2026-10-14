@@ -5,9 +5,9 @@ import "@spatialfocus/typespec-http-csharp-slim";
 using Http;
 using OpenAPI;
 using SpatialFocus.Http;
-using FocusTemplate.Primitives;
+using SpatialFocus.Primitives;
 
-namespace FocusTemplate.Weather;
+namespace SpatialFocus.Weather;
 
 /** A weather station with its owner. */
 model StationResponse {

@@ -1,7 +1,7 @@
-using FocusTemplate.Data.Entities;
-using FocusTemplate.Data.Foundation.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using SpatialFocus.Data.Entities;
+using SpatialFocus.Data.Foundation.Identity;
 
 namespace FocusTemplate.ArchitectureTests;
 

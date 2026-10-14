@@ -12,7 +12,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using FocusTemplate.Admin.Shared;
-using FocusTemplate.Http;
+using SpatialFocus.Http;
 
 namespace FocusTemplate.Admin.Client;
 

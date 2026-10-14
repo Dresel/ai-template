@@ -17,4 +17,4 @@ using OpenAPI;
 @service(#{ title: "FocusTemplate Weather API" })
 @info(#{ version: "0.1.0" })
 @useAuth(BearerAuth)
-namespace FocusTemplate.Weather;
+namespace SpatialFocus.Weather;

@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FluentValidation;
-using FocusTemplate.Http;
+using SpatialFocus.Http;
 
 namespace FocusTemplate.Admin.Shared;
 

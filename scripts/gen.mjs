@@ -2,9 +2,9 @@
 // A project inside a vertical, src/<vertical>/FocusTemplate.<Vertical>.*, and a test project compile that vertical's spec at
 // src/<vertical>/spec/api.tsp. A project of a package with a spec of its own, a feature (src/features/<feature>/*) or a
 // part of a vertical (src/admin/user-management/*), compiles the package's spec/api.tsp. A project of the shared spine,
-// src/FocusTemplate.<Name>, compiles
-// src/spec/<name>.tsp: FocusTemplate.Primitives over primitives.tsp, the typed ids every vertical imports, and
-// FocusTemplate.Http over http.tsp, the library types. The tspconfig.yaml in a spec/ folder is the editor's project
+// src/SpatialFocus.<Name>, compiles
+// src/spec/<name>.tsp: SpatialFocus.Primitives over primitives.tsp, the typed ids every vertical imports, and
+// SpatialFocus.Http over http.tsp, the library types. The tspconfig.yaml in a spec/ folder is the editor's project
 // (kind: project), which names the file the language server compiles, and generates nothing.
 // Temporary TypeSpec output goes to tsp-output/, generated C# to each project's generated/ folder.
 import { execFileSync } from "node:child_process";
@@ -50,7 +50,7 @@ for (const project of projects) {
     packageSpecs.get(project) ??
     (spine.includes(project) ? join("src", "spec", `${segment ?? ""}.tsp`) : join("src", segment ?? "", "spec", "api.tsp"));
   if (!segment || !existsSync(spec)) {
-    console.error(`${project}: cannot derive the spec from the project name (FocusTemplate.<Vertical>.* compiles src/<vertical>/spec/api.tsp, FocusTemplate.<Name> compiles src/spec/<name>.tsp; looked for ${spec}).`);
+    console.error(`${project}: cannot derive the spec from the project name (FocusTemplate.<Vertical>.* compiles src/<vertical>/spec/api.tsp, SpatialFocus.<Name> compiles src/spec/<name>.tsp; looked for ${spec}).`);
     process.exit(1);
   }
 

@@ -1,8 +1,8 @@
-using FocusTemplate.Api.Hosting;
 using FocusTemplate.Names;
 using FocusTemplate.Public.Api.Features.WeatherForecasts;
 using FocusTemplate.Public.Shared;
-using FocusTemplate.Weather.Data;
+using SpatialFocus.Api.Hosting;
+using SpatialFocus.Weather.Data;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

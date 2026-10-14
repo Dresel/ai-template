@@ -1,18 +1,18 @@
-using FocusTemplate.Admin.UserManagement.Web;
 using FocusTemplate.Admin.Web;
 using FocusTemplate.Admin.Web.Diagnostics;
 using FocusTemplate.Admin.Web.Features.DemoProfiles;
-using FocusTemplate.Admin.Web.Foundation;
-using FocusTemplate.Admin.Web.Foundation.Appearance;
-using FocusTemplate.Admin.Web.Foundation.Localization;
 using FocusTemplate.Admin.Web.Infrastructure.Localization;
 using FocusTemplate.Names;
-using FocusTemplate.Weather.Web;
-using FocusTemplate.Web.Hosting;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Hosting;
 using Radzen;
+using SpatialFocus.Admin.UserManagement.Web;
+using SpatialFocus.Weather.Web;
+using SpatialFocus.Web.Foundation;
+using SpatialFocus.Web.Foundation.Appearance;
+using SpatialFocus.Web.Foundation.Localization;
+using SpatialFocus.Web.Hosting;
 
 WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

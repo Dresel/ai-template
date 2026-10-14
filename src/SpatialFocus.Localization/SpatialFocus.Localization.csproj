@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="Microsoft.Extensions.Localization" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../SpatialFocus.Http/SpatialFocus.Http.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -10,7 +10,7 @@ header's appearance toggle, Material Symbols bundled). It talks to the API throu
 `RadzenTheme` in `App.razor` loads the theme through `HeadContent`, `<RadzenComponents />` hosts notifications and
 dialogs, and `AddRadzenComponents()` registers their services.
 
-What every product's client runs the same way lives in `FocusTemplate.Web.Hosting`, a Razor class library:
+What every product's client runs the same way lives in `SpatialFocus.Web.Hosting`, a Razor class library:
 `AddClientConfigurationAsync()` and `AddWebDefaults()` (the BFF's session as authentication state), `AppRouter` (the
 router with `AuthorizeRouteView`, `Forbidden` for a signed-in user, `RedirectToLogin` for an anonymous one, every
 registered `PageAssembly`), `AccountButtons` (the user's name, log in and log out), and the loading screen's rules in
@@ -23,18 +23,18 @@ which stays the product's because it names that layout.
   public page cannot derive from a base with an internal type argument. A slice with several areas gets a folder per
   area (`Features/<Slice>/<Area>/`) with its registration and an `_Imports.razor` one level up, which imports the
   slice's contracts. The validation demo is `Features/DemoProfiles/` at `/demo/validation`.
-- **User management's pages** (`FocusTemplate.Admin.UserManagement.Web`, `src/admin/user-management/`) sit in a Razor
+- **User management's pages** (`SpatialFocus.Admin.UserManagement.Web`, `src/admin/user-management/`) sit in a Razor
   class library as a feature's do, one folder per area (`Users/`, `Groups/`) and the `_Imports.razor` at its root.
   Every Admin host includes them with `AddUserManagementPages(environment, ResourceNames.AdminApi)`, the menu entries in
   `MainLayout` point at their `ListPage.Path`.
-- **A feature's pages** sit in a Razor class library of their own (`FocusTemplate.Weather.Web`: the forecasts at
+- **A feature's pages** sit in a Razor class library of their own (`SpatialFocus.Weather.Web`: the forecasts at
   `/weather`, the stations with their owners and a rename dialog at `/weather/stations`) with their resx, built on the
   foundation below. `AddWeatherPages(environment, ResourceNames.AdminApi)` registers its clients through the BFF route
   of the API that maps the feature, its view models, validators and texts, and its `PageAssembly`. `AppRouter` hands
   every registered `PageAssembly` to the `Router`'s `AdditionalAssemblies`, so the host routes to the feature's pages
   without naming them. The host keeps the menu entries in `MainLayout`.
-- **`FocusTemplate.Admin.Web.Foundation`**, a Razor class library of what is domain-neutral, so the pages of a feature
-  in a project of its own build on it as the host's do. It references `FocusTemplate.Http` and `Primitives`, never the
+- **`SpatialFocus.Web.Foundation`**, a Razor class library of what is domain-neutral, so the pages of a feature
+  in a project of its own build on it as the host's do. It references `SpatialFocus.Http` and `Primitives`, never the
   host's projects, and its `_Imports.razor` carries the usings a page needs:
   - `Validation/Core/` (`FormMessages` with its field registrations, `FormValidation`, `ValidatorBase`) and
     `Validation/App/` (`FormHostBase`, `AppInputBase`, `IFormHost`), see [web forms](web-forms.md)
@@ -78,7 +78,7 @@ live while the page is open.
   switches it when the system's scheme changes. `AppearanceSwitch` stores a new choice through the script and switches
   Radzen's `ThemeService`. `AppearanceStorage` holds the calls into the script.
 - **The host** names its Radzen themes with `AddAppearance("software", "software-dark")`, loads the script in its
-  page's head and brings its own loading screen, styled by `startup.css` of `FocusTemplate.Web.Hosting` with the
+  page's head and brings its own loading screen, styled by `startup.css` of `SpatialFocus.Web.Hosting` with the
   `--app-startup-*` colours of its `app.css`. Its logo is the symbol in `images/logo.svg`, drawn through a
   `<use>` whose parts take their colours from the `--app-logo-*` variables of `app.css`: the original colours in light,
   all white in dark with the letters in the mark cut out. The page's CSS variables reach the symbol through the
@@ -87,7 +87,7 @@ live while the page is open.
 
 ## Pages and view models
 
-As the user management pages (`FocusTemplate.Admin.UserManagement.Web`) do it.
+As the user management pages (`SpatialFocus.Admin.UserManagement.Web`) do it.
 
 - **Directives** open a `.razor` file in one block without blank lines, which ReSharper's formatter would otherwise
   remove: the route (`@page` or `@attribute [Route(…)]`), `@layout`, the other `@attribute`s, `@using`, `@typeparam`,

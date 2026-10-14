@@ -1,10 +1,10 @@
-using FocusTemplate.Data;
-using FocusTemplate.Data.Entities;
-using FocusTemplate.Primitives;
-using FocusTemplate.Weather.Data;
-using FocusTemplate.Weather.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
+using SpatialFocus.Data;
+using SpatialFocus.Data.Entities;
+using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Data;
+using SpatialFocus.Weather.Data.Entities;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 

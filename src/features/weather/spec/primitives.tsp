@@ -5,8 +5,8 @@ import "./permissions.tsp";
 using SpatialFocus.Http;
 
 // The typed ids of the weather feature, with its permissions. The host's primitives.tsp imports this file, so
-// FocusTemplate.Primitives writes them beside the host's own.
-namespace FocusTemplate.Primitives;
+// SpatialFocus.Primitives writes them beside the host's own.
+namespace SpatialFocus.Primitives;
 
 /** Identifier of a weather station. */
 @friendlyName("Primitives.StationId")

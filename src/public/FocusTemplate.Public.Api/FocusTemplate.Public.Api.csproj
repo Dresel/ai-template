@@ -13,10 +13,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\FocusTemplate.ServiceDefaults\FocusTemplate.ServiceDefaults.csproj" />
-		<ProjectReference Include="..\..\FocusTemplate.Api.Hosting\FocusTemplate.Api.Hosting.csproj" />
+		<ProjectReference Include="..\..\SpatialFocus.ServiceDefaults\SpatialFocus.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\..\SpatialFocus.Api.Hosting\SpatialFocus.Api.Hosting.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.Names\FocusTemplate.Names.csproj" />
-		<ProjectReference Include="..\..\features\weather\FocusTemplate.Weather.Data\FocusTemplate.Weather.Data.csproj" />
+		<ProjectReference Include="..\..\features\weather\SpatialFocus.Weather.Data\SpatialFocus.Weather.Data.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Public.Shared\FocusTemplate.Public.Shared.csproj" />
 	</ItemGroup>
 

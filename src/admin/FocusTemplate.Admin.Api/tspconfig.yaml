@@ -10,7 +10,7 @@ options:
   "@spatialfocus/typespec-http-csharp-slim":
     emitter-output-dir: "{output-dir}"
     output-type: api
-    library-namespace: FocusTemplate.Http
+    library-namespace: SpatialFocus.Http
     generated-dir: "generated"
     api-namespace: "FocusTemplate.Admin.Api.Features.{feature}.{interface}"
     contracts-namespace: "FocusTemplate.Admin.Shared.{feature}"

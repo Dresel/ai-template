@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+		<PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+		<PackageReference Include="Yarp.ReverseProxy" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../admin/user-management/SpatialFocus.Admin.UserManagement.Client/SpatialFocus.Admin.UserManagement.Client.csproj" />
+		<ProjectReference Include="../SpatialFocus.Web.Bff.Shared/SpatialFocus.Web.Bff.Shared.csproj" />
+	</ItemGroup>
+
+</Project>

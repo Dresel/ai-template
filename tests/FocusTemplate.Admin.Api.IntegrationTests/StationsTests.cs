@@ -1,10 +1,10 @@
-using FocusTemplate.Primitives;
-using FocusTemplate.Weather.Client;
-using FocusTemplate.Weather.Client.Stations;
-using FocusTemplate.Weather.Data;
-using FocusTemplate.Weather.Data.Entities;
-using FocusTemplate.Weather.Shared;
 using Microsoft.EntityFrameworkCore;
+using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Client;
+using SpatialFocus.Weather.Client.Stations;
+using SpatialFocus.Weather.Data;
+using SpatialFocus.Weather.Data.Entities;
+using SpatialFocus.Weather.Shared;
 using Xunit.Sdk;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;

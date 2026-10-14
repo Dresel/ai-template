@@ -1,6 +1,6 @@
-using FocusTemplate.Data;
-using FocusTemplate.Weather.Data;
 using Microsoft.EntityFrameworkCore;
+using SpatialFocus.Data;
+using SpatialFocus.Weather.Data;
 
 namespace FocusTemplate.ArchitectureTests;
 

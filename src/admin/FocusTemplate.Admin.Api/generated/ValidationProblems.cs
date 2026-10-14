@@ -11,9 +11,9 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
-using FocusTemplate.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using SpatialFocus.Http;
 
 namespace FocusTemplate.Admin.Api.Features;
 

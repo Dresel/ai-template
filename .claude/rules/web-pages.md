@@ -3,11 +3,11 @@ paths:
   - "src/admin/*.Admin.Web/Features/**"
   - "src/features/*/*.Web/**"
   - "src/admin/user-management/*.Web/**"
-  - "src/admin/*.Admin.Web.Foundation/{Pages,Feedback,Appearance}/**"
+  - "src/*.Web.Foundation/{Pages,Feedback,Appearance}/**"
   - "src/admin/*.Admin.Web/wwwroot/**"
   - "src/admin/*.Admin.Web/Shell/**"
   - "src/*.Web.Hosting/**"
-  - "src/admin/*.Admin.Web.Foundation/*.cs"
+  - "src/*.Web.Foundation/*.cs"
   - "tests/*.Admin.Web.UnitTests/Features/**"
   - "tests/*.Web.UnitTests/{UserManagement,Weather}/**"
 ---

@@ -1,10 +1,10 @@
-using FocusTemplate.Data;
-using FocusTemplate.Weather.Api;
-using FocusTemplate.Weather.Client.Stations;
-using FocusTemplate.Weather.Data;
-using FocusTemplate.Weather.Shared;
 using Microsoft.EntityFrameworkCore;
-using ServiceCollectionExtensions = FocusTemplate.Weather.Web.ServiceCollectionExtensions;
+using SpatialFocus.Data;
+using SpatialFocus.Weather.Api;
+using SpatialFocus.Weather.Client.Stations;
+using SpatialFocus.Weather.Data;
+using SpatialFocus.Weather.Shared;
+using ServiceCollectionExtensions = SpatialFocus.Weather.Web.ServiceCollectionExtensions;
 
 namespace FocusTemplate.ArchitectureTests;
 
@@ -14,13 +14,16 @@ public sealed class FeatureTests
 	// An allowlist, so a new shared project stays closed to the features until it is added here
 	private static readonly string[] Foundations =
 	[
-		"FocusTemplate.Admin.Web.ClientServiceDefaults",
-		"FocusTemplate.Admin.Web.Foundation",
-		"FocusTemplate.Api.Foundation",
-		"FocusTemplate.Data.Foundation",
-		"FocusTemplate.Http",
-		"FocusTemplate.Primitives",
+		"SpatialFocus.Api.Foundation",
+		"SpatialFocus.Data.Foundation",
+		"SpatialFocus.Http",
+		"SpatialFocus.Primitives",
+		"SpatialFocus.Web.ClientServiceDefaults",
+		"SpatialFocus.Web.Foundation",
 	];
+
+	// The repository's own assemblies, the hosts' and the shared ones
+	private static readonly string[] OwnPrefixes = ["FocusTemplate.", "SpatialFocus.",];
 
 	public static TheoryData<Type> FeatureAssemblies =>
 	[
@@ -43,13 +46,13 @@ public sealed class FeatureTests
 	[MemberData(nameof(FeatureAssemblies))]
 	public void AFeatureReferencesItsOwnProjectsAndTheFoundationsAlone(Type inTheFeature)
 	{
-		// FocusTemplate.Weather.Api belongs to the feature FocusTemplate.Weather
+		// SpatialFocus.Weather.Api belongs to the feature SpatialFocus.Weather
 		string feature = string.Join('.', inTheFeature.Assembly.GetName().Name!.Split('.')[..2]) + ".";
 
 		Assert.DoesNotContain(
 			inTheFeature.Assembly.GetReferencedAssemblies()
 				.Select(reference => reference.Name!)
-				.Where(name => name.StartsWith("FocusTemplate.", StringComparison.Ordinal)),
+				.Where(name => OwnPrefixes.Any(prefix => name.StartsWith(prefix, StringComparison.Ordinal))),
 			name => !name.StartsWith(feature, StringComparison.Ordinal) && !Foundations.Contains(name, StringComparer.Ordinal));
 	}
 

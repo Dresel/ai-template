@@ -1,7 +1,7 @@
 using FluentValidation;
 using FocusTemplate.Admin.Client.DemoProfiles;
 using FocusTemplate.Admin.Shared;
-using FocusTemplate.Admin.Web.Foundation.Validation.Core;
+using SpatialFocus.Web.Foundation.Validation.Core;
 
 namespace FocusTemplate.Admin.Web.Features.DemoProfiles;
 

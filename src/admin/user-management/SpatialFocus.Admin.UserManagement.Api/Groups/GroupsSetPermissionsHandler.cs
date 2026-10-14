@@ -1,0 +1,52 @@
+using Mediator;
+using Microsoft.EntityFrameworkCore;
+using SpatialFocus.Admin.UserManagement.Shared;
+using SpatialFocus.Api.Foundation.Realtime.Backplane;
+using SpatialFocus.Data;
+using SpatialFocus.Data.Entities;
+using SpatialFocus.Primitives;
+
+namespace SpatialFocus.Admin.UserManagement.Api.Groups;
+
+public sealed class GroupsSetPermissionsHandler(AppDbContext dbContext, SignalBackplane backplane, IGroupsLocalizations localizations)
+	: ICommandHandler<GroupsSetPermissionsCommand, GroupsSetPermissionsResult>
+{
+	public async ValueTask<GroupsSetPermissionsResult> Handle(GroupsSetPermissionsCommand command, CancellationToken cancellationToken)
+	{
+		Group? group = await dbContext.Groups.Include(entity => entity.Permissions)
+			.SingleOrDefaultAsync(entity => entity.Id == command.Id, cancellationToken);
+
+		if (group is null)
+		{
+			return new NotFound(localizations.NoGroup(command.Id));
+		}
+
+		if (group.IsManaged)
+		{
+			return new Conflict(localizations.ManagedPermissions(group.Name));
+		}
+
+		HashSet<Permission> requested = [.. command.Permissions,];
+		string[] unknown = [.. requested.Except(Permission.All).Select(permission => permission.Value).Order(StringComparer.Ordinal),];
+		if (unknown.Length > 0)
+		{
+			return new Conflict(localizations.UnknownPermissions(string.Join(", ", unknown)));
+		}
+
+		group.Permissions.RemoveAll(permission => !requested.Contains(permission.Name));
+
+		HashSet<Permission> missing = [.. requested.Except(group.Permissions.Select(permission => permission.Name)),];
+		if (missing.Count > 0)
+		{
+			group.Permissions.AddRange(
+				await dbContext.Permissions.Where(permission => missing.Contains(permission.Name)).ToListAsync(cancellationToken));
+		}
+
+		await dbContext.SaveChangesAsync(cancellationToken);
+
+		backplane.CloseStreamsFor(await dbContext.GetMemberIdsByGroupIdAsync(command.Id, cancellationToken));
+		backplane.Publish(new GroupChanged(command.Id, GroupChange.Updated));
+
+		return Unit.Value;
+	}
+}

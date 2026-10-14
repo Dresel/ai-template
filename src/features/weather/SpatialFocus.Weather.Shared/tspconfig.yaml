@@ -1,0 +1,10 @@
+emit:
+  - "@spatialfocus/typespec-http-csharp-slim"
+options:
+  "@spatialfocus/typespec-http-csharp-slim":
+    emitter-output-dir: "{output-dir}"
+    output-type: contracts
+    library-namespace: SpatialFocus.Http
+    generated-dir: "generated"
+    contracts-namespace: "SpatialFocus.Weather.Shared"
+    validation: fluentvalidation

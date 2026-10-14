@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite" />
+		<PackageReference Include="Vogen" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\SpatialFocus.Data.Foundation\SpatialFocus.Data.Foundation.csproj" />
+		<ProjectReference Include="..\..\..\SpatialFocus.Primitives\SpatialFocus.Primitives.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Entities\**\*Configuration.cs">
+			<DependentUpon>$([System.Text.RegularExpressions.Regex]::Replace('%(Filename)', 'Configuration$', '')).cs</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+</Project>

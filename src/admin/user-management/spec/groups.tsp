@@ -9,9 +9,9 @@ using OpenAPI;
 using TypeSpec.SSE;
 using TypeSpec.Events;
 using SpatialFocus.Http;
-using FocusTemplate.Primitives;
+using SpatialFocus.Primitives;
 
-namespace FocusTemplate.Admin.UserManagement;
+namespace SpatialFocus.Admin.UserManagement;
 
 /** A group in a list. */
 model GroupSummaryResponse {

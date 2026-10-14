@@ -1,16 +1,16 @@
 using Aspire.Hosting.DevTunnels;
 using Aspire.Hosting.EntityFrameworkCore;
 using Aspire.Hosting.Maui;
-using FocusTemplate.AppHost.Hosting;
-using FocusTemplate.AppHost.Hosting.Analytics;
-using FocusTemplate.AppHost.Hosting.Authentication;
-using FocusTemplate.AppHost.Hosting.Ingress;
-using FocusTemplate.AppHost.Hosting.Migrations;
-using FocusTemplate.Data;
 using FocusTemplate.Names;
-using FocusTemplate.Weather.Data;
 using Microsoft.Extensions.Configuration;
 using Projects;
+using SpatialFocus.AppHost.Hosting;
+using SpatialFocus.AppHost.Hosting.Analytics;
+using SpatialFocus.AppHost.Hosting.Authentication;
+using SpatialFocus.AppHost.Hosting.Ingress;
+using SpatialFocus.AppHost.Hosting.Migrations;
+using SpatialFocus.Data;
+using SpatialFocus.Weather.Data;
 
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 builder.AddLocalSettings();
@@ -79,13 +79,13 @@ if (addChaos)
 
 IResourceBuilder<EFMigrationResource> migrations = api.AddMigrations<AppDbContext>(
 	"migrations",
-	"../FocusTemplate.Data/FocusTemplate.Data.csproj",
+	"../SpatialFocus.Data/SpatialFocus.Data.csproj",
 	focusDb);
 
 // The weather feature's schema, after the spine's, whose users its stations point at
 IResourceBuilder<EFMigrationResource> weatherMigrations = api.AddMigrations<WeatherDbContext>(
 		"weather-migrations",
-		"../features/weather/FocusTemplate.Weather.Data/FocusTemplate.Weather.Data.csproj",
+		"../features/weather/SpatialFocus.Weather.Data/SpatialFocus.Weather.Data.csproj",
 		focusDb)
 	.WaitForCompletion(migrations);
 

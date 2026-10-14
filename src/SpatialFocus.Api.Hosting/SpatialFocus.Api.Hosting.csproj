@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.StackExchange.Redis" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../SpatialFocus.Api.Foundation/SpatialFocus.Api.Foundation.csproj" />
+		<ProjectReference Include="../SpatialFocus.Data.Foundation/SpatialFocus.Data.Foundation.csproj" />
+		<ProjectReference Include="../SpatialFocus.Localization/SpatialFocus.Localization.csproj" />
+		<ProjectReference Include="../SpatialFocus.ServiceDefaults/SpatialFocus.ServiceDefaults.csproj" />
+	</ItemGroup>
+
+</Project>

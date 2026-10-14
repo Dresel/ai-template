@@ -1,0 +1,22 @@
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Web
+
+@using SpatialFocus.Admin.UserManagement.Client
+@using SpatialFocus.Admin.UserManagement.Shared
+@using SpatialFocus.Web.Foundation.Authorization
+@using SpatialFocus.Web.Foundation.Feedback
+@using SpatialFocus.Web.Foundation.Forms
+@using SpatialFocus.Web.Foundation.Pages
+@using SpatialFocus.Web.Foundation.Validation.App
+@using SpatialFocus.Http
+@using SpatialFocus.Primitives
+
+@using Radzen
+@using Radzen.Blazor
+
+@inject CurrentUser CurrentUser
+@inject DialogService Dialogs
+@inject NavigationManager Navigation
+@inject PermissionLabels PermissionLabels

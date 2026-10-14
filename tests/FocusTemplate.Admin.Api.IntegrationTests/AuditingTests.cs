@@ -1,11 +1,11 @@
-using FocusTemplate.Data.Foundation.Auditing;
-using FocusTemplate.Primitives;
-using FocusTemplate.Weather.Data;
-using FocusTemplate.Weather.Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NetTopologySuite.Geometries;
+using SpatialFocus.Data.Foundation.Auditing;
+using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Data;
+using SpatialFocus.Weather.Data.Entities;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 

@@ -2,7 +2,7 @@ import "@typespec/http";
 import "@typespec/openapi";
 import "@spatialfocus/typespec-http-csharp-slim";
 
-// The typed ids and permissions every vertical shares, generated once by FocusTemplate.Primitives and referenced by
+// The typed ids and permissions every vertical shares, generated once by SpatialFocus.Primitives and referenced by
 // the slices. The paging query is spread into the list requests and generates nothing of its own.
 import "../../spec/primitives.tsp";
 import "../../spec/paging.tsp";

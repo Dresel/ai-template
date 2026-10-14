@@ -3,7 +3,7 @@
 #nullable enable
 
 using FocusTemplate.Admin.Client.DemoProfiles;
-using FocusTemplate.Http;
+using SpatialFocus.Http;
 
 namespace FocusTemplate.Admin.Client;
 

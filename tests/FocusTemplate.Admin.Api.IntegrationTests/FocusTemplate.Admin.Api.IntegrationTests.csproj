@@ -25,10 +25,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\admin\FocusTemplate.Admin.Api\FocusTemplate.Admin.Api.csproj" />
 		<ProjectReference Include="..\..\src\admin\FocusTemplate.Admin.Client\FocusTemplate.Admin.Client.csproj" />
-		<ProjectReference Include="..\..\src\admin\user-management\FocusTemplate.Admin.UserManagement.Client\FocusTemplate.Admin.UserManagement.Client.csproj" />
-		<ProjectReference Include="..\..\src\FocusTemplate.Data\FocusTemplate.Data.csproj" />
-		<ProjectReference Include="..\..\src\features\weather\FocusTemplate.Weather.Client\FocusTemplate.Weather.Client.csproj" />
-		<ProjectReference Include="..\..\src\features\weather\FocusTemplate.Weather.Data\FocusTemplate.Weather.Data.csproj" />
+		<ProjectReference Include="..\..\src\admin\user-management\SpatialFocus.Admin.UserManagement.Client\SpatialFocus.Admin.UserManagement.Client.csproj" />
+		<ProjectReference Include="..\..\src\SpatialFocus.Data\SpatialFocus.Data.csproj" />
+		<ProjectReference Include="..\..\src\features\weather\SpatialFocus.Weather.Client\SpatialFocus.Weather.Client.csproj" />
+		<ProjectReference Include="..\..\src\features\weather\SpatialFocus.Weather.Data\SpatialFocus.Weather.Data.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

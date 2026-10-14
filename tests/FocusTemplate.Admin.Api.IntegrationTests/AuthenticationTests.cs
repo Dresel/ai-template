@@ -1,7 +1,5 @@
 using System.Net;
 using System.Security.Claims;
-using FocusTemplate.Data.Foundation.Auditing;
-using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +8,8 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
+using SpatialFocus.Data.Foundation.Auditing;
+using SpatialFocus.Primitives;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 

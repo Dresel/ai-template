@@ -1,9 +1,9 @@
-using FocusTemplate.Admin.UserManagement.Client;
-using FocusTemplate.Admin.UserManagement.Client.Users;
-using FocusTemplate.Admin.UserManagement.Shared;
-using FocusTemplate.Data.Entities;
-using FocusTemplate.Http;
-using FocusTemplate.Primitives;
+using SpatialFocus.Admin.UserManagement.Client;
+using SpatialFocus.Admin.UserManagement.Client.Users;
+using SpatialFocus.Admin.UserManagement.Shared;
+using SpatialFocus.Data.Entities;
+using SpatialFocus.Http;
+using SpatialFocus.Primitives;
 using Xunit.Sdk;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;

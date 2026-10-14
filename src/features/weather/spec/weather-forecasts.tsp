@@ -5,9 +5,9 @@ import "@spatialfocus/typespec-http-csharp-slim";
 using Http;
 using OpenAPI;
 using SpatialFocus.Http;
-using FocusTemplate.Primitives;
+using SpatialFocus.Primitives;
 
-namespace FocusTemplate.Weather;
+namespace SpatialFocus.Weather;
 
 // One value for the model, the list and the single forecast, so the examples cannot drift apart
 const mildDay = #{ id: 1, date: plainDate.fromISO("2026-10-14"), temperatureC: 14, summary: "Mild" };

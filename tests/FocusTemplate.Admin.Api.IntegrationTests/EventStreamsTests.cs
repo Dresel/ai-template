@@ -1,6 +1,6 @@
-using FocusTemplate.Api.Foundation.Realtime;
-using FocusTemplate.Primitives;
 using Microsoft.Extensions.Time.Testing;
+using SpatialFocus.Api.Foundation.Realtime;
+using SpatialFocus.Primitives;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 

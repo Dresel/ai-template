@@ -1,7 +1,7 @@
 using FocusTemplate.Admin.Client;
 using FocusTemplate.Admin.Client.DemoProfiles;
 using FocusTemplate.Admin.Shared;
-using FocusTemplate.Http;
+using SpatialFocus.Http;
 using Xunit.Sdk;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;

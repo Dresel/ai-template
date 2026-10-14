@@ -8,7 +8,7 @@ Postgres with the database, its `migrations` resource for the spine and `weather
 which waits for the spine's, both added with `AddMigrations<TContext>` (see [database](database.md)), Redis for the
 Admin API's server-sent event signals (see [spec-first](spec-first.md)), both APIs, the BFF, Keycloak (its own container or an
 existing realm, see [authentication](authentication.md)), and behind flags an nginx TLS ingress, Umami analytics, and
-the MAUI device resources with a Dev Tunnel. `FocusTemplate.ServiceDefaults` gives every server OTel, service
+the MAUI device resources with a Dev Tunnel. `SpatialFocus.ServiceDefaults` gives every server OTel, service
 discovery, health checks and the standard resilience handler, and an API its OpenAPI documents and the Scalar page
 (see [spec-first](spec-first.md)), which the dashboard links as `admin-api`'s "API reference".
 
@@ -19,7 +19,7 @@ fixtures address them by the same constants. A feature takes the names as argume
 `keycloak/focus-realm.json` names its client after the BFF's resource and its audience after the API's, which the
 AppHost hands the realm's methods.
 
-`FocusTemplate.AppHost.Hosting` holds what every product's AppHost runs the same way, so a product's AppHost keeps
+`SpatialFocus.AppHost.Hosting` holds what every product's AppHost runs the same way, so a product's AppHost keeps
 `AppHost.cs`, its settings and its realm file:
 
 - `AddLocalSettings()` reads `appsettings.local.json` after the JSON sources and before the environment and the
@@ -34,7 +34,7 @@ AppHost hands the realm's methods.
 Packages: `Aspire.Hosting.PostgreSQL`, `Aspire.Hosting.EntityFrameworkCore` (`AddEFMigrations`),
 `Aspire.Hosting.Blazor` (the WASM client's service and telemetry proxying), `Aspire.Hosting.Keycloak`,
 `Aspire.Hosting.Maui` with `Aspire.Hosting.DevTunnels`, and `CommunityToolkit.Aspire.Hosting.Umami`. Blazor, Keycloak,
-Maui and EntityFrameworkCore are previews in lockstep with the AppHost SDK. `FocusTemplate.AppHost.Hosting` references
+Maui and EntityFrameworkCore are previews in lockstep with the AppHost SDK. `SpatialFocus.AppHost.Hosting` references
 `Aspire.Hosting` itself, in the AppHost SDK's version.
 
 ## Feature flags
@@ -50,7 +50,7 @@ fixtures pin all of them as arguments. Authentication is always on and has no fl
 | `Features:LocalKeycloak` | on | a Keycloak container with the imported realm. Off takes an existing realm from parameters |
 | `Features:PersistentLocalKeycloak` | off | that container and its data survive between starts |
 | `Features:PersistentDatabase` | off | the dev Postgres and its data survive between starts, on `localhost:15432` |
-| `Features:Chaos` | off | run mode only: the Admin API gets the AppHost's `Chaos` section, and `ChaosFilter` (`FocusTemplate.Api.Hosting`) on the route group every slice maps onto delays and fails a share of the requests through Polly's chaos strategies, never the health probes |
+| `Features:Chaos` | off | run mode only: the Admin API gets the AppHost's `Chaos` section, and `ChaosFilter` (`SpatialFocus.Api.Hosting`) on the route group every slice maps onto delays and fails a share of the requests through Polly's chaos strategies, never the health probes |
 
 ## Persistent containers
 
@@ -83,7 +83,7 @@ version, so a CLI update can bring new or changed skills that only arrive when `
    - refreshes the user-level copies in `~/.agents/skills/`
    - installs the telemetry hooks described below
    - leaves `.mcp.json` alone
-4. Compare `FocusTemplate.Admin.Web.ClientServiceDefaults` with the playground it follows (see
+4. Compare `SpatialFocus.Web.ClientServiceDefaults` with the playground it follows (see
    [architecture](architecture.md)).
 
 ## Aspire telemetry

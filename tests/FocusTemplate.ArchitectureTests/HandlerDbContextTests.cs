@@ -1,11 +1,11 @@
 using System.Reflection;
 using FocusTemplate.Admin.Api.Features.DemoProfiles;
-using FocusTemplate.Admin.UserManagement.Api.Groups;
-using FocusTemplate.Data.Foundation;
 using FocusTemplate.Public.Api.Features.WeatherForecasts;
-using FocusTemplate.Weather.Api.Stations;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
+using SpatialFocus.Admin.UserManagement.Api.Groups;
+using SpatialFocus.Data.Foundation;
+using SpatialFocus.Weather.Api.Stations;
 
 namespace FocusTemplate.ArchitectureTests;
 

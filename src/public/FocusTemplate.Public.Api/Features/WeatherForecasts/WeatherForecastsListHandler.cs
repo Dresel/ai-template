@@ -1,7 +1,7 @@
 using FocusTemplate.Public.Shared;
-using FocusTemplate.Weather.Data;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
+using SpatialFocus.Weather.Data;
 
 namespace FocusTemplate.Public.Api.Features.WeatherForecasts;
 

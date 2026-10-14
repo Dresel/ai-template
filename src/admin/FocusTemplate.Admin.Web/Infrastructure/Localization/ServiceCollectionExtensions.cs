@@ -1,8 +1,8 @@
 using FocusTemplate.Admin.Shared.Localization;
-using FocusTemplate.Admin.Web.Foundation;
-using FocusTemplate.Admin.Web.Foundation.Localization;
-using FocusTemplate.Localization;
 using ResXGenerator.Registration;
+using SpatialFocus.Localization;
+using SpatialFocus.Web.Foundation;
+using SpatialFocus.Web.Foundation.Localization;
 
 namespace FocusTemplate.Admin.Web.Infrastructure.Localization;
 

@@ -1,13 +1,13 @@
 using System.Net;
 using System.Net.ServerSentEvents;
 using System.Runtime.CompilerServices;
-using FocusTemplate.Admin.UserManagement.Api;
-using FocusTemplate.Admin.UserManagement.Client.Groups;
-using FocusTemplate.Admin.UserManagement.Shared;
-using FocusTemplate.Data.Entities;
-using FocusTemplate.Http;
-using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Mvc.Testing;
+using SpatialFocus.Admin.UserManagement.Api;
+using SpatialFocus.Admin.UserManagement.Client.Groups;
+using SpatialFocus.Admin.UserManagement.Shared;
+using SpatialFocus.Data.Entities;
+using SpatialFocus.Http;
+using SpatialFocus.Primitives;
 using Xunit.Sdk;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;

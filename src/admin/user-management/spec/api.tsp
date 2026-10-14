@@ -20,4 +20,4 @@ using OpenAPI;
 @service(#{ title: "FocusTemplate User Management API" })
 @info(#{ version: "0.1.0" })
 @useAuth(BearerAuth)
-namespace FocusTemplate.Admin.UserManagement;
+namespace SpatialFocus.Admin.UserManagement;

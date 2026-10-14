@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.StackExchange.Redis" />
+		<PackageReference Include="Mediator.Abstractions" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SpatialFocus.Http\SpatialFocus.Http.csproj" />
+		<ProjectReference Include="..\SpatialFocus.Primitives\SpatialFocus.Primitives.csproj" />
+	</ItemGroup>
+
+</Project>

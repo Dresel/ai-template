@@ -1,7 +1,7 @@
-@using FocusTemplate.Admin.Web.Foundation.Appearance
-@using FocusTemplate.Admin.Web.Foundation.Localization
-@using FocusTemplate.Primitives
-@using FocusTemplate.Web.Hosting
+@using SpatialFocus.Web.Foundation.Appearance
+@using SpatialFocus.Web.Foundation.Localization
+@using SpatialFocus.Primitives
+@using SpatialFocus.Web.Hosting
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
 @inject IMainLayoutLocalizations L
@@ -27,7 +27,7 @@
 		<RadzenPanelMenu>
 			<RadzenPanelMenuItem Text="@L.Home" Icon="home" Path="" data-testid="nav-home" />
 			<RadzenPanelMenuItem Text="@L.Weather" Icon="cloud" Path="weather" data-testid="nav-weather" />
-			<RadzenPanelMenuItem Text="@L.Stations" Icon="sensors" Path="@Weather.Web.Stations.ListPage.Path" data-testid="nav-stations" />
+			<RadzenPanelMenuItem Text="@L.Stations" Icon="sensors" Path="@SpatialFocus.Weather.Web.Stations.ListPage.Path" data-testid="nav-stations" />
 			<RadzenPanelMenuItem Text="@L.Validation" Icon="fact_check" Path="demo/validation" data-testid="nav-validation" />
 			@* Shown with either of its pages' permissions, so a PermissionView, which asks for one, does not fit *@
 			<AuthorizeView>
@@ -40,11 +40,11 @@
 					<RadzenPanelMenuItem Text="@L.UserManagement" Icon="manage_accounts" data-testid="nav-user-management">
 						@if (users)
 						{
-							<RadzenPanelMenuItem Text="@L.Users" Icon="person" Path="@UserManagement.Web.Users.ListPage.Path" data-testid="nav-users" />
+							<RadzenPanelMenuItem Text="@L.Users" Icon="person" Path="@SpatialFocus.Admin.UserManagement.Web.Users.ListPage.Path" data-testid="nav-users" />
 						}
 						@if (groups)
 						{
-							<RadzenPanelMenuItem Text="@L.Groups" Icon="group" Path="@UserManagement.Web.Groups.ListPage.Path" data-testid="nav-groups" />
+							<RadzenPanelMenuItem Text="@L.Groups" Icon="group" Path="@SpatialFocus.Admin.UserManagement.Web.Groups.ListPage.Path" data-testid="nav-groups" />
 						}
 					</RadzenPanelMenuItem>
 				}

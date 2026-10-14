@@ -12,7 +12,7 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   the weather feature's `ReadOnlyWeatherDbContext`, with a contract of its own shaped for the mobile client. The API
   is anonymous until the mobile client's PKCE leg.
 - **Telemetry**: every server reports OpenTelemetry through ServiceDefaults, the WASM client through
-  `FocusTemplate.Admin.Web.ClientServiceDefaults` and the BFF's `/_otlp`, the MAUI app through
+  `SpatialFocus.Web.ClientServiceDefaults` and the BFF's `/_otlp`, the MAUI app through
   `FocusTemplate.Public.Mobile.ServiceDefaults` (the MAUI counterpart of ServiceDefaults, without ASP.NET Core).
   The client's `BlazorClientExtensions` and its JS initializer follow `BlazorStandalone.ClientServiceDefaults` in
   Aspire's playground ([microsoft/aspire](https://github.com/microsoft/aspire/tree/main/playground/BlazorStandalone)),
@@ -22,14 +22,14 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 ## Spine, verticals and features
 
 - **The spine** is what every host has: `Primitives`, `Http` (the generated library types), `Data.Foundation`,
-  `Data` (identity: users, groups, permissions), `Api.Foundation`, `Admin.Web.Foundation`, the service defaults and
+  `Data` (identity: users, groups, permissions), `Api.Foundation`, `Web.Foundation`, the service defaults and
   the AppHost.
 - **A vertical** is an audience with its own API, contract and client: Admin, Public. Its slices live inside its
   projects (`Features/<Slice>/`).
 - **User management** (`src/admin/user-management/`) is the Admin vertical's part of the spine: every Admin host
   includes it, since the BFF asks its `/users/me` on each page load and every `@requiresPermission` goes to its
   permission handler. Its projects are laid out as a feature's below (`spec/` with a `@service` of its own,
-  `FocusTemplate.Admin.UserManagement.Shared`, `.Client`, `.Api`, `.Web`), without a data project: it works on the
+  `SpatialFocus.Admin.UserManagement.Shared`, `.Client`, `.Api`, `.Web`), without a data project: it works on the
   identity tables of `Data`. `AddUserManagement(…)` registers the spine's two contexts, the handlers, the permission
   handler and the provisioning, which the host runs with `app.UseUserProvisioning()` between authentication and
   authorization. `MapUserManagementEndpoints()` maps its endpoints, `AddUserManagementPages(…)` registers its pages.
@@ -39,15 +39,15 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 
   | Project | Holds | References |
   |---|---|---|
-  | `spec/` (`FocusTemplate.Weather.Spec`) | `api.tsp`, a `@service` of its own, `primitives.tsp` with its typed ids, `permissions.tsp`, and the editor's `tspconfig.yaml` | the spine's `primitives.tsp` |
-  | `FocusTemplate.Weather.Shared` | the generated wire contract and its partials | `Http`, `Primitives` |
-  | `FocusTemplate.Weather.Client` | the generated typed clients | `Weather.Shared` |
-  | `FocusTemplate.Weather.Data` | entities, `WeatherDbContext` and its read-only twin in schema `weather`, migrations, the dev seed | `Data.Foundation`, `Primitives` |
-  | `FocusTemplate.Weather.Api` | handlers, the generated endpoints with `MapWeatherEndpoints()`, `AddWeather()` | `Api.Foundation`, `Weather.Data`, `Weather.Shared` |
-  | `FocusTemplate.Weather.Web` | the pages, a Razor class library, `AddWeatherPages()` | `Admin.Web.Foundation`, `Admin.Web.ClientServiceDefaults`, `Weather.Client` |
+  | `spec/` (`SpatialFocus.Weather.Spec`) | `api.tsp`, a `@service` of its own, `primitives.tsp` with its typed ids, `permissions.tsp`, and the editor's `tspconfig.yaml` | the spine's `primitives.tsp` |
+  | `SpatialFocus.Weather.Shared` | the generated wire contract and its partials | `Http`, `Primitives` |
+  | `SpatialFocus.Weather.Client` | the generated typed clients | `Weather.Shared` |
+  | `SpatialFocus.Weather.Data` | entities, `WeatherDbContext` and its read-only twin in schema `weather`, migrations, the dev seed | `Data.Foundation`, `Primitives` |
+  | `SpatialFocus.Weather.Api` | handlers, the generated endpoints with `MapWeatherEndpoints()`, `AddWeather()` | `Api.Foundation`, `Weather.Data`, `Weather.Shared` |
+  | `SpatialFocus.Weather.Web` | the pages, a Razor class library, `AddWeatherPages()` | `Web.Foundation`, `Web.ClientServiceDefaults`, `Weather.Client` |
 
   A feature references its own projects and the spine's foundations alone (`Primitives`, `Http`, `Data.Foundation`,
-  `Api.Foundation`, `Admin.Web.Foundation`, `Admin.Web.ClientServiceDefaults`). `FeatureTests` checks it against that
+  `Api.Foundation`, `Web.Foundation`, `Web.ClientServiceDefaults`). `FeatureTests` checks it against that
   list, which keeps `Data`, user management, the hosting libraries and the host's projects out of a feature's reach,
   and a new shared project too until it is added there. What it needs of identity comes from the spine: `ICurrentUser`,
   `UserReference` for a foreign key to the users, `PermissionRequirement` answered by user management's handler.
@@ -69,9 +69,9 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   hand-written partials for computed members. They never reference each other. `Admin.Shared` also holds the
   languages the app speaks (`Localization/Cultures`, see [localization](localization.md)) and the answer of the BFF's
   `/debug/request` (`Diagnostics/RequestDiagnostics`).
-- **FocusTemplate.Localization**: the localization machinery the API and the WASM client both run, a plain library
+- **SpatialFocus.Localization**: the localization machinery the API and the WASM client both run, a plain library
   with no vertical in its name (see [localization](localization.md)).
-- **FocusTemplate.Web.Bff.Shared**: the BFF's contract with the WASM client, `/bff/user`'s answer, the claim types and the
+- **SpatialFocus.Web.Bff.Shared**: the BFF's contract with the WASM client, `/bff/user`'s answer, the claim types and the
   client configuration (see [authentication](authentication.md)).
 - **FocusTemplate.Public.Mobile**: native MAUI with XAML, `net11.0-android;net11.0-ios` only (no Windows or
   MacCatalyst targets by decision, and iOS builds only on macOS), see [mobile](mobile.md).
@@ -82,7 +82,7 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 |---|---|
 | `FocusTemplate.Admin.Api.IntegrationTests` | `Microsoft.AspNetCore.Mvc.Testing`, Testcontainers Postgres and Redis, Respawn, `FakeTimeProvider`, see [integration tests](integration-tests.md) |
 | `FocusTemplate.Admin.Web.E2E` | `Aspire.Hosting.Testing` booting the AppHost, Playwright, see [web E2E](web-e2e.md) |
-| `FocusTemplate.Web.UnitTests` | plain xUnit over Foundation, user management and the features, components rendered with `HtmlRenderer`, see [web forms](web-forms.md) |
+| `SpatialFocus.Web.UnitTests` | plain xUnit over Foundation, user management and the features, components rendered with `HtmlRenderer`, see [web forms](web-forms.md) |
 | `FocusTemplate.Admin.Web.UnitTests` | plain xUnit over the host's own slices, see [web forms](web-forms.md) |
 | `FocusTemplate.ArchitectureTests` | reflection over the API assemblies and the EF model, see [database](database.md) |
 | `FocusTemplate.Public.Mobile.E2E` | Appium with UiAutomator2 on the Android emulator, see [mobile](mobile.md) |

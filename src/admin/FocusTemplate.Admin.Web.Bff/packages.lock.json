@@ -251,32 +251,8 @@
         "type": "Project",
         "dependencies": {
           "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Http": "[1.0.0, )",
-          "FocusTemplate.Primitives": "[1.0.0, )"
-        }
-      },
-      "focustemplate.admin.usermanagement.client": {
-        "type": "Project",
-        "dependencies": {
-          "FocusTemplate.Admin.UserManagement.Shared": "[1.0.0, )"
-        }
-      },
-      "focustemplate.admin.usermanagement.shared": {
-        "type": "Project",
-        "dependencies": {
-          "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Http": "[1.0.0, )",
-          "FocusTemplate.Primitives": "[1.0.0, )"
-        }
-      },
-      "focustemplate.admin.usermanagement.web": {
-        "type": "Project",
-        "dependencies": {
-          "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Admin.UserManagement.Client": "[1.0.0, )",
-          "FocusTemplate.Admin.Web.ClientServiceDefaults": "[1.0.0, )",
-          "FocusTemplate.Admin.Web.Foundation": "[1.0.0, )",
-          "Radzen.Blazor": "[12.1.2, )"
+          "SpatialFocus.Http": "[1.0.0, )",
+          "SpatialFocus.Primitives": "[1.0.0, )"
         }
       },
       "focustemplate.admin.web": {
@@ -284,63 +260,67 @@
         "dependencies": {
           "FocusTemplate.Admin.Client": "[1.0.0, )",
           "FocusTemplate.Admin.Shared": "[1.0.0, )",
-          "FocusTemplate.Admin.UserManagement.Web": "[1.0.0, )",
-          "FocusTemplate.Admin.Web.ClientServiceDefaults": "[1.0.0, )",
-          "FocusTemplate.Admin.Web.Foundation": "[1.0.0, )",
-          "FocusTemplate.Localization": "[1.0.0, )",
           "FocusTemplate.Names": "[1.0.0, )",
-          "FocusTemplate.Weather.Web": "[1.0.0, )",
-          "FocusTemplate.Web.Hosting": "[1.0.0, )",
           "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.19.0, )",
           "OpenTelemetry.Extensions.Hosting": "[1.19.0, )",
           "OpenTelemetry.Instrumentation.Http": "[1.19.0, )",
-          "Radzen.Blazor": "[12.1.2, )"
-        }
-      },
-      "focustemplate.admin.web.clientservicedefaults": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
-          "Microsoft.Extensions.Http.Resilience": "[10.10.0, )",
-          "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.19.0, )",
-          "OpenTelemetry.Extensions.Hosting": "[1.19.0, )",
-          "OpenTelemetry.Instrumentation.Http": "[1.19.0, )"
-        }
-      },
-      "focustemplate.admin.web.foundation": {
-        "type": "Project",
-        "dependencies": {
-          "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Http": "[1.0.0, )",
-          "FocusTemplate.Primitives": "[1.0.0, )",
-          "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
-          "Radzen.Blazor": "[12.1.2, )"
-        }
-      },
-      "focustemplate.http": {
-        "type": "Project",
-        "dependencies": {
-          "FocusTemplate.Primitives": "[1.0.0, )"
-        }
-      },
-      "focustemplate.localization": {
-        "type": "Project",
-        "dependencies": {
-          "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Http": "[1.0.0, )"
+          "Radzen.Blazor": "[12.1.2, )",
+          "SpatialFocus.Admin.UserManagement.Web": "[1.0.0, )",
+          "SpatialFocus.Localization": "[1.0.0, )",
+          "SpatialFocus.Weather.Web": "[1.0.0, )",
+          "SpatialFocus.Web.ClientServiceDefaults": "[1.0.0, )",
+          "SpatialFocus.Web.Foundation": "[1.0.0, )",
+          "SpatialFocus.Web.Hosting": "[1.0.0, )"
         }
       },
       "focustemplate.names": {
         "type": "Project"
       },
-      "focustemplate.primitives": {
+      "spatialfocus.admin.usermanagement.client": {
+        "type": "Project",
+        "dependencies": {
+          "SpatialFocus.Admin.UserManagement.Shared": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.admin.usermanagement.shared": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "SpatialFocus.Http": "[1.0.0, )",
+          "SpatialFocus.Primitives": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.admin.usermanagement.web": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "Radzen.Blazor": "[12.1.2, )",
+          "SpatialFocus.Admin.UserManagement.Client": "[1.0.0, )",
+          "SpatialFocus.Web.ClientServiceDefaults": "[1.0.0, )",
+          "SpatialFocus.Web.Foundation": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.http": {
+        "type": "Project",
+        "dependencies": {
+          "SpatialFocus.Primitives": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.localization": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "SpatialFocus.Http": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.primitives": {
         "type": "Project",
         "dependencies": {
           "Vogen": "[8.0.7, )"
         }
       },
-      "focustemplate.servicedefaults": {
+      "spatialfocus.servicedefaults": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Http.Resilience": "[10.10.0, )",
@@ -353,54 +333,74 @@
           "Scalar.AspNetCore": "[2.17.14, )"
         }
       },
-      "focustemplate.weather.client": {
+      "spatialfocus.weather.client": {
         "type": "Project",
         "dependencies": {
-          "FocusTemplate.Weather.Shared": "[1.0.0, )"
+          "SpatialFocus.Weather.Shared": "[1.0.0, )"
         }
       },
-      "focustemplate.weather.shared": {
-        "type": "Project",
-        "dependencies": {
-          "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Http": "[1.0.0, )",
-          "FocusTemplate.Primitives": "[1.0.0, )"
-        }
-      },
-      "focustemplate.weather.web": {
+      "spatialfocus.weather.shared": {
         "type": "Project",
         "dependencies": {
           "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Admin.Web.ClientServiceDefaults": "[1.0.0, )",
-          "FocusTemplate.Admin.Web.Foundation": "[1.0.0, )",
-          "FocusTemplate.Weather.Client": "[1.0.0, )",
-          "Radzen.Blazor": "[12.1.2, )"
+          "SpatialFocus.Http": "[1.0.0, )",
+          "SpatialFocus.Primitives": "[1.0.0, )"
         }
       },
-      "focustemplate.web.bff.hosting": {
+      "spatialfocus.weather.web": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "Radzen.Blazor": "[12.1.2, )",
+          "SpatialFocus.Weather.Client": "[1.0.0, )",
+          "SpatialFocus.Web.ClientServiceDefaults": "[1.0.0, )",
+          "SpatialFocus.Web.Foundation": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.web.bff.hosting": {
         "type": "Project",
         "dependencies": {
           "Duende.AccessTokenManagement.OpenIdConnect": "[4.2.0, )",
-          "FocusTemplate.Admin.UserManagement.Client": "[1.0.0, )",
-          "FocusTemplate.Web.Bff.Shared": "[1.0.0, )",
           "Microsoft.AspNetCore.Authentication.OpenIdConnect": "[11.0.0-rc.2.26504.105, )",
           "Microsoft.Extensions.ServiceDiscovery.Yarp": "[10.10.0, )",
           "OpenTelemetry.Instrumentation.AspNetCore": "[1.19.0, )",
           "OpenTelemetry.Instrumentation.Http": "[1.19.0, )",
+          "SpatialFocus.Admin.UserManagement.Client": "[1.0.0, )",
+          "SpatialFocus.Web.Bff.Shared": "[1.0.0, )",
           "Yarp.ReverseProxy": "[2.3.0, )"
         }
       },
-      "focustemplate.web.bff.shared": {
+      "spatialfocus.web.bff.shared": {
         "type": "Project"
       },
-      "focustemplate.web.hosting": {
+      "spatialfocus.web.clientservicedefaults": {
         "type": "Project",
         "dependencies": {
-          "FocusTemplate.Admin.Web.ClientServiceDefaults": "[1.0.0, )",
-          "FocusTemplate.Admin.Web.Foundation": "[1.0.0, )",
-          "FocusTemplate.Web.Bff.Shared": "[1.0.0, )",
           "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
-          "Radzen.Blazor": "[12.1.2, )"
+          "Microsoft.Extensions.Http.Resilience": "[10.10.0, )",
+          "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.19.0, )",
+          "OpenTelemetry.Extensions.Hosting": "[1.19.0, )",
+          "OpenTelemetry.Instrumentation.Http": "[1.19.0, )"
+        }
+      },
+      "spatialfocus.web.foundation": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
+          "Radzen.Blazor": "[12.1.2, )",
+          "SpatialFocus.Http": "[1.0.0, )",
+          "SpatialFocus.Primitives": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.web.hosting": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
+          "Radzen.Blazor": "[12.1.2, )",
+          "SpatialFocus.Web.Bff.Shared": "[1.0.0, )",
+          "SpatialFocus.Web.ClientServiceDefaults": "[1.0.0, )",
+          "SpatialFocus.Web.Foundation": "[1.0.0, )"
         }
       },
       "Duende.AccessTokenManagement.OpenIdConnect": {

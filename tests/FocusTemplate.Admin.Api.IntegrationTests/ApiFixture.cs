@@ -1,8 +1,4 @@
 using System.Net.Http.Headers;
-using FocusTemplate.Data;
-using FocusTemplate.Data.Foundation.Auditing;
-using FocusTemplate.Primitives;
-using FocusTemplate.Weather.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -11,6 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using Npgsql;
 using Respawn;
+using SpatialFocus.Data;
+using SpatialFocus.Data.Foundation.Auditing;
+using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Data;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 

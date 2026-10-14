@@ -7,7 +7,7 @@ paths:
   - "src/*.Web.Hosting/{AppRouter,AccountButtons,RedirectToLogin,Forbidden}.razor"
   - "src/*.Web.Hosting/Authentication/**"
   - "src/admin/*.Admin.Web/Shell/MainLayout.razor"
-  - "src/admin/*.Admin.Web.ClientServiceDefaults/{CsrfHeaderHandler,RedirectToLoginHandler,ServiceCollectionExtensions}.cs"
+  - "src/*.Web.ClientServiceDefaults/{CsrfHeaderHandler,RedirectToLoginHandler,ServiceCollectionExtensions}.cs"
   - "src/*.Web.Bff.Shared/**"
   - "src/*.AppHost/keycloak/**"
   - "src/*.AppHost.Hosting/Authentication/**"

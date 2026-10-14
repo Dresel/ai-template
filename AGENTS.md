@@ -9,56 +9,60 @@ its own slice into its `generated/` folder.
 
 ## Projects
 
+What products built from the template share carries the prefix `SpatialFocus.*`. The template's hosts and what a
+product names for itself (`FocusTemplate.Names`, the verticals' contracts) keep `FocusTemplate.*`.
+
 Shared spine:
 
 - **FocusTemplate.AppHost** - the Aspire orchestrator, see [apphost](docs/apphost.md).
-- **FocusTemplate.ServiceDefaults** - server-side Aspire defaults (OTel, service discovery, health), see
+- **SpatialFocus.ServiceDefaults** - server-side Aspire defaults (OTel, service discovery, health), see
   [apphost](docs/apphost.md).
 - **FocusTemplate.Names** - the names of the AppHost's resources and connections, which the services, the clients and
   the tests address them by, see [apphost](docs/apphost.md).
-- **FocusTemplate.Primitives** - the typed ids and permissions every vertical shares, see [spec-first](docs/spec-first.md).
-- **FocusTemplate.Http** - the generated problem, permission, outcome and stream types the Admin projects share, see
+- **SpatialFocus.Primitives** - the typed ids and permissions every vertical shares, see [spec-first](docs/spec-first.md).
+- **SpatialFocus.Http** - the generated problem, permission, outcome and stream types the Admin projects share, see
   [spec-first](docs/spec-first.md).
-- **FocusTemplate.Data.Foundation** - what every context builds on: provider conventions, auditing, the current user,
+- **SpatialFocus.Data.Foundation** - what every context builds on: provider conventions, auditing, the current user,
   see [database](docs/database.md).
-- **FocusTemplate.Api.Foundation** - what every API builds on: event streams with the Redis backplane, the access
+- **SpatialFocus.Api.Foundation** - what every API builds on: event streams with the Redis backplane, the access
   token's claims, see [spec-first](docs/spec-first.md).
-- **FocusTemplate.Data** - the spine's entities (identity and permissions), their EF Core mapping, the migrations and
+- **SpatialFocus.Data** - the spine's entities (identity and permissions), their EF Core mapping, the migrations and
   the dev seed, see [database](docs/database.md).
-- **FocusTemplate.Localization** - the localization machinery every API and client share: the localizer factory for
+- **SpatialFocus.Localization** - the localization machinery every API and client share: the localizer factory for
   ResXGenerator's classes, FluentValidation's texts, the contracts' field names, see
   [localization](docs/localization.md).
-- **FocusTemplate.AppHost.Hosting** - what every product's AppHost runs: the local or external Keycloak realm, the
+- **SpatialFocus.AppHost.Hosting** - what every product's AppHost runs: the local or external Keycloak realm, the
   TLS-offloading ingress, `AddMigrations<TContext>`, Umami analytics, `AddLocalSettings()`, see
   [apphost](docs/apphost.md).
-- **FocusTemplate.Api.Hosting** - what an API host runs: `AddApiDefaults()`, `AddSignalBackplane(redis)`, the Keycloak
+- **SpatialFocus.Api.Hosting** - what an API host runs: `AddApiDefaults()`, `AddSignalBackplane(redis)`, the Keycloak
   bearer authentication with the current user, request localization over the product's cultures, the chaos filter,
   see [authentication](docs/authentication.md).
-- **FocusTemplate.Web.Bff.Hosting** - the BFF every product's BFF project runs: the session, OIDC with PAR, `/bff/*`,
+- **SpatialFocus.Web.Bff.Hosting** - the BFF every product's BFF project runs: the session, OIDC with PAR, `/bff/*`,
   the YARP transforms, `AddBff()` and `MapBffEndpoints()`, see [authentication](docs/authentication.md).
-- **FocusTemplate.Web.Hosting** - what every product's WASM client runs: the BFF's session as authentication state,
+- **SpatialFocus.Web.Hosting** - what every product's WASM client runs: the BFF's session as authentication state,
   `AppRouter`, `Forbidden`, the account buttons, the loading screen's styles, see
   [web pages](docs/web-pages.md).
-- **FocusTemplate.Web.Bff.Shared** - the BFF's contract with the WASM client: `/bff/user`'s answer, the claim types,
+- **SpatialFocus.Web.Bff.Shared** - the BFF's contract with the WASM client: `/bff/user`'s answer, the claim types,
   the client configuration, see [authentication](docs/authentication.md).
+- **SpatialFocus.Web.Foundation** - the Razor class library a host's pages and a feature's build on: view model pages,
+  forms with their stylesheet, feedback, client permissions, see [web pages](docs/web-pages.md).
+- **SpatialFocus.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
 - **`@spatialfocus/typespec-http-csharp-slim`** - the TypeSpec emitter, consumed as the tgz under `.npm/`, see
   [spec-first](docs/spec-first.md).
-- **FocusTemplate.Spec** and one **FocusTemplate.\<Name>.Spec** per vertical and feature - the spec folders as
-  projects that build nothing, so Visual Studio shows them, see [spec-first](docs/spec-first.md).
+- **SpatialFocus.Spec** and one **\<Name>.Spec** per vertical, user management and feature
+  (`FocusTemplate.Admin.Spec`, `SpatialFocus.Weather.Spec`) - the spec folders as projects that build nothing, so
+  Visual Studio shows them, see [spec-first](docs/spec-first.md).
 
 Admin vertical (`src/admin/`):
 
 - **FocusTemplate.Admin.Api** - the internal minimal API, see [architecture](docs/architecture.md).
 - **FocusTemplate.Admin.Client** - the generated typed HTTP clients of the vertical.
 - **FocusTemplate.Admin.Web** - the Blazor WASM client on Radzen, see [web pages](docs/web-pages.md).
-- **FocusTemplate.Admin.Web.Foundation** - the Razor class library its pages and a feature's build on: view model pages,
-  forms, feedback, client permissions, see [web pages](docs/web-pages.md).
 - **FocusTemplate.Admin.Web.Bff** - the BFF host that serves the client and holds the session, on
-  `FocusTemplate.Web.Bff.Hosting`: its `Program.cs`, appsettings and `/debug/request`, see
+  `SpatialFocus.Web.Bff.Hosting`: its `Program.cs`, appsettings and `/debug/request`, see
   [authentication](docs/authentication.md).
-- **FocusTemplate.Admin.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
 - **FocusTemplate.Admin.Shared** - the wire contract shared by server and client.
-- **FocusTemplate.Admin.UserManagement.*** (`src/admin/user-management/`) - users, groups and permissions, which every
+- **SpatialFocus.Admin.UserManagement.*** (`src/admin/user-management/`) - users, groups and permissions, which every
   Admin host includes: `spec/`, `Shared`, `Client`, `Api` (with `/users/me`, the provisioning and the permission
   handler), `Web`, see [architecture](docs/architecture.md) and [authorization](docs/authorization.md).
 
@@ -73,7 +77,7 @@ Public vertical (`src/public/`):
 Features (`src/features/<name>/`), packages a host adds with a few lines of composition, see
 [architecture](docs/architecture.md):
 
-- **FocusTemplate.Weather.*** - forecasts and stations: `spec/`, `Shared`, `Client`, `Data` (schema `weather`), `Api`,
+- **SpatialFocus.Weather.*** - forecasts and stations: `spec/`, `Shared`, `Client`, `Data` (schema `weather`), `Api`,
   `Web`.
 
 ## Tech stack
@@ -158,7 +162,7 @@ production code changes.
 - **Convention** (a rule every handler or type must follow) → `FocusTemplate.ArchitectureTests`, see
   [database](docs/database.md).
 - **Unit** (no browser, no server: Foundation helpers, forms, view models, components rendered with `HtmlRenderer`) →
-  `FocusTemplate.Web.UnitTests` for Foundation, user management and the features, `FocusTemplate.Admin.Web.UnitTests`
+  `SpatialFocus.Web.UnitTests` for Foundation, user management and the features, `FocusTemplate.Admin.Web.UnitTests`
   for the host's own slices, see [web forms](docs/web-forms.md).
 
 Watch the test fail for the reported reason, make the smallest fix, re-run the test and its area's tests, and format
@@ -181,7 +185,7 @@ new files. The summary names root cause, test, fix, commands run and remaining r
   (`/bff/user`, the diagnostics) are not in a spec and have small hand-written clients.
 - Nothing under `generated/` or `Migrations/` is edited by hand.
 - A feature under `src/features/` references its own projects and the spine's foundations alone (`Primitives`, `Http`,
-  `Data.Foundation`, `Api.Foundation`, `Admin.Web.Foundation`, `Admin.Web.ClientServiceDefaults`). `FeatureTests`
+  `Data.Foundation`, `Api.Foundation`, `Web.Foundation`, `Web.ClientServiceDefaults`). `FeatureTests`
   checks it against that list, so a new shared project stays closed to features until it is added there.
 - Comments, AOT readiness and the names of extension classes apply to all C# code, see [csharp](.claude/rules/csharp.md).
 - A change that makes a statement in AGENTS.md, `docs/` or `.claude/rules/` wrong corrects it in the same commit.

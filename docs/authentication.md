@@ -35,7 +35,7 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
   for this. The AppHost models it as the external service `keycloak`, whose health check probes the realm URL itself,
   since a health-check path would replace the URL's last segment, the realm. No login hint goes to an external realm.
 - `KeycloakRealm` carries what the projects need either way. `WithKeycloakAudience` and `WithKeycloakClient`
-  (`Authentication/` in `FocusTemplate.AppHost.Hosting`) hand a project `Oidc__Authority` plus its audience or its client id and secret, and wait
+  (`Authentication/` in `SpatialFocus.AppHost.Hosting`) hand a project `Oidc__Authority` plus its audience or its client id and secret, and wait
   for the Keycloak.
 - **Persistent Keycloak** (`Features:PersistentLocalKeycloak`, off by default): a persistent container with a data
   volume, kept running between starts, so no start waits for the JVM and the realm import, and the BFF's session
@@ -47,7 +47,7 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
 
 ## BFF
 
-- **Code**: `FocusTemplate.Web.Bff.Hosting` holds the BFF, `AddBff(Cultures.Supported)` and `MapBffEndpoints()`, so a
+- **Code**: `SpatialFocus.Web.Bff.Hosting` holds the BFF, `AddBff(Cultures.Supported)` and `MapBffEndpoints()`, so a
   product's BFF project keeps its `Program.cs`, its appsettings and the reference to the client it serves. The
   template's BFF also maps `/debug/request` in Development, the scheme, host and forwarded headers it received, which
   the client's Diagnostics page shows. The section `Bff` names the session cookie and the API that answers `/users/me` (`https+http://admin-api/`). Cookies on
@@ -60,7 +60,7 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
 - **Endpoints**: `/bff/login?returnUrl=` and `/bff/logout?sid=&returnUrl=` (a GET, so the browser can carry on to
   Keycloak's end-session page, with the session id as its CSRF token) accept local return paths only. `/bff/user` answers
   401 when anonymous, otherwise `UserInfoResponse`: the user's claims, the BFF's own `bff:logout_url` (`BffClaimTypes`,
-  both in `FocusTemplate.Web.Bff.Shared`, the BFF's contract with the client) and the permissions it asks the API for
+  both in `SpatialFocus.Web.Bff.Shared`, the BFF's contract with the client) and the permissions it asks the API for
   (`GET /users/me`), with `Cache-Control: no-store`.
   `/bff/login` also takes the app's `culture`, which reaches Keycloak as `ui_locales` when the app speaks it.
 - **Proxied routes**: the `/_api` route is declared in full in the BFF's `appsettings.json` under its Aspire-generated
@@ -89,7 +89,7 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
 
 ## API
 
-`AddApiAuthentication()` of `FocusTemplate.Api.Hosting`, which any API that signs users in calls: JwtBearer with
+`AddApiAuthentication()` of `SpatialFocus.Api.Hosting`, which any API that signs users in calls: JwtBearer with
 `Oidc:Authority` and `Oidc:Audience`, and `MapInboundClaims = false`, so claims keep Keycloak's names.
 Every generated endpoint requires authorization because `api.tsp` declares `@useAuth(BearerAuth)`. A fallback policy
 would also lock the health probes. `AuthenticationTests.EveryApiEndpointRequiresAuthorization` catches a spec that lost
@@ -105,7 +105,7 @@ authorization. A handler reads `Id`, which throws then. The provisioning middlew
 
 - `BffAuthenticationStateProvider` asks `/bff/user` once per load. Only its 401 means anonymous, and any other failure
   throws into the error UI, since a login would bring back the same state.
-- `[Authorize]` in `_Imports.razor` and `AuthorizeRouteView` in `AppRouter` (`FocusTemplate.Web.Hosting`, with the
+- `[Authorize]` in `_Imports.razor` and `AuthorizeRouteView` in `AppRouter` (`SpatialFocus.Web.Hosting`, with the
   provider above and `RedirectToLogin`) guard every page but `Home` (`[AllowAnonymous]`). A page the user may not see
   renders `Forbidden` for a signed-in user and `RedirectToLogin` for an anonymous one, since a signed-in user sent to
   log in would come straight back from Keycloak's session.

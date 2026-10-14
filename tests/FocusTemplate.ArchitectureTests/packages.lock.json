@@ -686,147 +686,125 @@
           "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": "[13.6.1, )",
           "FluentValidation": "[12.1.1, )",
           "FocusTemplate.Admin.Shared": "[1.0.0, )",
-          "FocusTemplate.Admin.UserManagement.Api": "[1.0.0, )",
-          "FocusTemplate.Api.Foundation": "[1.0.0, )",
-          "FocusTemplate.Api.Hosting": "[1.0.0, )",
-          "FocusTemplate.Data": "[1.0.0, )",
           "FocusTemplate.Names": "[1.0.0, )",
-          "FocusTemplate.ServiceDefaults": "[1.0.0, )",
-          "FocusTemplate.Weather.Api": "[1.0.0, )",
-          "Mediator.Abstractions": "[3.1.0-rc.1, )"
+          "Mediator.Abstractions": "[3.1.0-rc.1, )",
+          "SpatialFocus.Admin.UserManagement.Api": "[1.0.0, )",
+          "SpatialFocus.Api.Foundation": "[1.0.0, )",
+          "SpatialFocus.Api.Hosting": "[1.0.0, )",
+          "SpatialFocus.Data": "[1.0.0, )",
+          "SpatialFocus.ServiceDefaults": "[1.0.0, )",
+          "SpatialFocus.Weather.Api": "[1.0.0, )"
         }
       },
       "focustemplate.admin.shared": {
         "type": "Project",
         "dependencies": {
           "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Http": "[1.0.0, )",
-          "FocusTemplate.Primitives": "[1.0.0, )",
-          "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )"
-        }
-      },
-      "focustemplate.admin.usermanagement.api": {
-        "type": "Project",
-        "dependencies": {
-          "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": "[13.6.1, )",
-          "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Admin.UserManagement.Shared": "[1.0.0, )",
-          "FocusTemplate.Api.Foundation": "[1.0.0, )",
-          "FocusTemplate.Data": "[1.0.0, )",
-          "Mediator.Abstractions": "[3.1.0-rc.1, )"
-        }
-      },
-      "focustemplate.admin.usermanagement.shared": {
-        "type": "Project",
-        "dependencies": {
-          "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Http": "[1.0.0, )",
-          "FocusTemplate.Primitives": "[1.0.0, )"
-        }
-      },
-      "focustemplate.admin.web.clientservicedefaults": {
-        "type": "Project",
-        "dependencies": {
-          "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
-          "Microsoft.Extensions.Http.Resilience": "[10.10.0, )",
-          "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.19.0, )",
-          "OpenTelemetry.Extensions.Hosting": "[1.19.0, )",
-          "OpenTelemetry.Instrumentation.Http": "[1.19.0, )"
-        }
-      },
-      "focustemplate.admin.web.foundation": {
-        "type": "Project",
-        "dependencies": {
-          "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Http": "[1.0.0, )",
-          "FocusTemplate.Primitives": "[1.0.0, )",
-          "Microsoft.AspNetCore.Components.Authorization": "[11.0.0-rc.2.26504.105, )",
-          "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
           "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )",
-          "Radzen.Blazor": "[12.1.2, )"
-        }
-      },
-      "focustemplate.api.foundation": {
-        "type": "Project",
-        "dependencies": {
-          "Aspire.StackExchange.Redis": "[13.6.1, )",
-          "FocusTemplate.Http": "[1.0.0, )",
-          "FocusTemplate.Primitives": "[1.0.0, )",
-          "Mediator.Abstractions": "[3.1.0-rc.1, )",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[11.0.0-rc.2.26504.105, )"
-        }
-      },
-      "focustemplate.api.hosting": {
-        "type": "Project",
-        "dependencies": {
-          "Aspire.StackExchange.Redis": "[13.6.1, )",
-          "FocusTemplate.Api.Foundation": "[1.0.0, )",
-          "FocusTemplate.Data.Foundation": "[1.0.0, )",
-          "FocusTemplate.Localization": "[1.0.0, )",
-          "FocusTemplate.ServiceDefaults": "[1.0.0, )",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[11.0.0-rc.2.26504.105, )"
-        }
-      },
-      "focustemplate.data": {
-        "type": "Project",
-        "dependencies": {
-          "Bogus": "[35.6.5, )",
-          "FocusTemplate.Data.Foundation": "[1.0.0, )",
-          "FocusTemplate.Primitives": "[1.0.0, )",
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
-          "Vogen": "[8.0.7, )"
-        }
-      },
-      "focustemplate.data.foundation": {
-        "type": "Project",
-        "dependencies": {
-          "EFCore.CheckConstraints": "[10.0.0, )",
-          "EFCore.NamingConventions": "[10.0.1, )",
-          "FocusTemplate.Primitives": "[1.0.0, )",
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
-          "Vogen": "[8.0.7, )"
-        }
-      },
-      "focustemplate.http": {
-        "type": "Project",
-        "dependencies": {
-          "FocusTemplate.Primitives": "[1.0.0, )",
-          "Microsoft.AspNetCore.Authorization": "[11.0.0-rc.2.26504.105, )"
-        }
-      },
-      "focustemplate.localization": {
-        "type": "Project",
-        "dependencies": {
-          "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Http": "[1.0.0, )",
-          "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )"
+          "SpatialFocus.Http": "[1.0.0, )",
+          "SpatialFocus.Primitives": "[1.0.0, )"
         }
       },
       "focustemplate.names": {
         "type": "Project"
       },
-      "focustemplate.primitives": {
-        "type": "Project",
-        "dependencies": {
-          "Vogen": "[8.0.7, )"
-        }
-      },
       "focustemplate.public.api": {
         "type": "Project",
         "dependencies": {
           "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": "[13.6.1, )",
-          "FocusTemplate.Api.Hosting": "[1.0.0, )",
           "FocusTemplate.Names": "[1.0.0, )",
           "FocusTemplate.Public.Shared": "[1.0.0, )",
-          "FocusTemplate.ServiceDefaults": "[1.0.0, )",
-          "FocusTemplate.Weather.Data": "[1.0.0, )",
-          "Mediator.Abstractions": "[3.1.0-rc.1, )"
+          "Mediator.Abstractions": "[3.1.0-rc.1, )",
+          "SpatialFocus.Api.Hosting": "[1.0.0, )",
+          "SpatialFocus.ServiceDefaults": "[1.0.0, )",
+          "SpatialFocus.Weather.Data": "[1.0.0, )"
         }
       },
       "focustemplate.public.shared": {
         "type": "Project"
       },
-      "focustemplate.servicedefaults": {
+      "spatialfocus.admin.usermanagement.api": {
+        "type": "Project",
+        "dependencies": {
+          "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": "[13.6.1, )",
+          "FluentValidation": "[12.1.1, )",
+          "Mediator.Abstractions": "[3.1.0-rc.1, )",
+          "SpatialFocus.Admin.UserManagement.Shared": "[1.0.0, )",
+          "SpatialFocus.Api.Foundation": "[1.0.0, )",
+          "SpatialFocus.Data": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.admin.usermanagement.shared": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "SpatialFocus.Http": "[1.0.0, )",
+          "SpatialFocus.Primitives": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.api.foundation": {
+        "type": "Project",
+        "dependencies": {
+          "Aspire.StackExchange.Redis": "[13.6.1, )",
+          "Mediator.Abstractions": "[3.1.0-rc.1, )",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[11.0.0-rc.2.26504.105, )",
+          "SpatialFocus.Http": "[1.0.0, )",
+          "SpatialFocus.Primitives": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.api.hosting": {
+        "type": "Project",
+        "dependencies": {
+          "Aspire.StackExchange.Redis": "[13.6.1, )",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[11.0.0-rc.2.26504.105, )",
+          "SpatialFocus.Api.Foundation": "[1.0.0, )",
+          "SpatialFocus.Data.Foundation": "[1.0.0, )",
+          "SpatialFocus.Localization": "[1.0.0, )",
+          "SpatialFocus.ServiceDefaults": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.data": {
+        "type": "Project",
+        "dependencies": {
+          "Bogus": "[35.6.5, )",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
+          "SpatialFocus.Data.Foundation": "[1.0.0, )",
+          "SpatialFocus.Primitives": "[1.0.0, )",
+          "Vogen": "[8.0.7, )"
+        }
+      },
+      "spatialfocus.data.foundation": {
+        "type": "Project",
+        "dependencies": {
+          "EFCore.CheckConstraints": "[10.0.0, )",
+          "EFCore.NamingConventions": "[10.0.1, )",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
+          "SpatialFocus.Primitives": "[1.0.0, )",
+          "Vogen": "[8.0.7, )"
+        }
+      },
+      "spatialfocus.http": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.AspNetCore.Authorization": "[11.0.0-rc.2.26504.105, )",
+          "SpatialFocus.Primitives": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.localization": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )",
+          "SpatialFocus.Http": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.primitives": {
+        "type": "Project",
+        "dependencies": {
+          "Vogen": "[8.0.7, )"
+        }
+      },
+      "spatialfocus.servicedefaults": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Http.Resilience": "[10.10.0, )",
@@ -839,50 +817,72 @@
           "Scalar.AspNetCore": "[2.17.14, )"
         }
       },
-      "focustemplate.weather.api": {
+      "spatialfocus.weather.api": {
         "type": "Project",
         "dependencies": {
           "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": "[13.6.1, )",
           "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Api.Foundation": "[1.0.0, )",
-          "FocusTemplate.Weather.Data": "[1.0.0, )",
-          "FocusTemplate.Weather.Shared": "[1.0.0, )",
-          "Mediator.Abstractions": "[3.1.0-rc.1, )"
+          "Mediator.Abstractions": "[3.1.0-rc.1, )",
+          "SpatialFocus.Api.Foundation": "[1.0.0, )",
+          "SpatialFocus.Weather.Data": "[1.0.0, )",
+          "SpatialFocus.Weather.Shared": "[1.0.0, )"
         }
       },
-      "focustemplate.weather.client": {
+      "spatialfocus.weather.client": {
         "type": "Project",
         "dependencies": {
-          "FocusTemplate.Weather.Shared": "[1.0.0, )"
+          "SpatialFocus.Weather.Shared": "[1.0.0, )"
         }
       },
-      "focustemplate.weather.data": {
+      "spatialfocus.weather.data": {
         "type": "Project",
         "dependencies": {
-          "FocusTemplate.Data.Foundation": "[1.0.0, )",
-          "FocusTemplate.Primitives": "[1.0.0, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite": "[10.0.3, )",
+          "SpatialFocus.Data.Foundation": "[1.0.0, )",
+          "SpatialFocus.Primitives": "[1.0.0, )",
           "Vogen": "[8.0.7, )"
         }
       },
-      "focustemplate.weather.shared": {
+      "spatialfocus.weather.shared": {
         "type": "Project",
         "dependencies": {
           "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Http": "[1.0.0, )",
-          "FocusTemplate.Primitives": "[1.0.0, )"
+          "SpatialFocus.Http": "[1.0.0, )",
+          "SpatialFocus.Primitives": "[1.0.0, )"
         }
       },
-      "focustemplate.weather.web": {
+      "spatialfocus.weather.web": {
         "type": "Project",
         "dependencies": {
           "FluentValidation": "[12.1.1, )",
-          "FocusTemplate.Admin.Web.ClientServiceDefaults": "[1.0.0, )",
-          "FocusTemplate.Admin.Web.Foundation": "[1.0.0, )",
-          "FocusTemplate.Weather.Client": "[1.0.0, )",
           "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )",
-          "Radzen.Blazor": "[12.1.2, )"
+          "Radzen.Blazor": "[12.1.2, )",
+          "SpatialFocus.Weather.Client": "[1.0.0, )",
+          "SpatialFocus.Web.ClientServiceDefaults": "[1.0.0, )",
+          "SpatialFocus.Web.Foundation": "[1.0.0, )"
+        }
+      },
+      "spatialfocus.web.clientservicedefaults": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
+          "Microsoft.Extensions.Http.Resilience": "[10.10.0, )",
+          "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.19.0, )",
+          "OpenTelemetry.Extensions.Hosting": "[1.19.0, )",
+          "OpenTelemetry.Instrumentation.Http": "[1.19.0, )"
+        }
+      },
+      "spatialfocus.web.foundation": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "Microsoft.AspNetCore.Components.Authorization": "[11.0.0-rc.2.26504.105, )",
+          "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
+          "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )",
+          "Radzen.Blazor": "[12.1.2, )",
+          "SpatialFocus.Http": "[1.0.0, )",
+          "SpatialFocus.Primitives": "[1.0.0, )"
         }
       },
       "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": {

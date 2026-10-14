@@ -15,7 +15,7 @@ FluentValidation and Radzen ship their own German texts.
 
 - `Cultures` in `Admin.Shared/Localization/` lists what the app speaks: `Default` (en) and `Supported` (en, de),
   default first. A fork with another default language changes `Default`.
-- **Web**: `Admin.Web.Foundation/Localization/`, which the host's `AddWebLocalization()` registers with
+- **Web**: `Web.Foundation/Localization/`, which the host's `AddWebLocalization()` registers with
   `AddCultures(Cultures.Supported)`. `wwwroot/culture.js`, a classic script in the head of `index.html`, keeps the
   user's choice in local storage (key `culture`), so the loading screen's texts read it before .NET runs.
   `CultureStorage` reads it through the script, and without one the browser's language. `SupportedCultures.Resolve`
@@ -25,7 +25,7 @@ FluentValidation and Radzen ship their own German texts.
   names the current language (`EN`, labelled "Language: English") and steps to the next supported one. It stores the
   choice and reloads, since the culture is set once per load.
 - **API**: request localization from `Accept-Language` alone, with the cultures of `Cultures`, which the host hands to
-  `AddApiLocalization(Cultures.Supported)` of `FocusTemplate.Api.Hosting`. Proxied clients send the
+  `AddApiLocalization(Cultures.Supported)` of `SpatialFocus.Api.Hosting`. Proxied clients send the
   app's culture through `AcceptLanguageHandler` (`AddProxiedHttpClient`), since the browser's own header does not know
   the user's choice. YARP forwards it unchanged.
 - **Keycloak**: `NavigateToLogin()` (`ClientServiceDefaults`) passes the culture to `/bff/login?culture=`. The BFF keeps
@@ -41,16 +41,16 @@ FluentValidation and Radzen ship their own German texts.
   class behind it from the neutral resx at build time, one property per key, registered as singletons. The generated
   code is not in the repository, `-p:EmitCompilerGeneratedFiles=true` writes it under `obj/` to look at. Each reads
   its resx through `IStringLocalizer` in the culture of the moment, the request's on the server.
-  `ConventionBasedStringLocalizerFactory` (`FocusTemplate.Localization`) maps `MainLayoutLocalizations` to
+  `ConventionBasedStringLocalizerFactory` (`SpatialFocus.Localization`) maps `MainLayoutLocalizations` to
   `MainLayout.resx`.
 - **Texts with values** become methods (`GenerateFormatMethods` in the project files), one `object` parameter per
   index of the neutral text: `localizations.NoGroup(command.Id)`, `L.Seen(first, last)`. The localizer formats them in
   the culture of the moment. A translation may leave a value out, and an index the neutral text lacks throws a
   `FormatException` when the text is read.
-- **Registration**: each host calls `AddResxLocalization()` of `FocusTemplate.Localization`, which registers the
+- **Registration**: each host calls `AddResxLocalization()` of `SpatialFocus.Localization`, which registers the
   localization services with that factory (the API through `AddApiLocalization()`), then
   `AddAdminSharedLocalization()` for the texts of `Admin.Shared` and its own `UsingResXGenerator()`.
-  `FocusTemplate.Localization` holds the machinery every API and client share, with no vertical in its name, and
+  `SpatialFocus.Localization` holds the machinery every API and client share, with no vertical in its name, and
   `Admin.Shared` keeps `Cultures`. ResXGenerator gives every assembly a registration class of the same name, and two
   visible ones make `UsingResXGenerator()` ambiguous, so `Admin.Shared` generates its own `internal`
   (`ResXGenerator_InternalRegistration`, from the local package of
@@ -77,13 +77,13 @@ FluentValidation and Radzen ship their own German texts.
 A message has a sentence and a field name in it, `'Kürzel' darf nicht leer sein.`
 
 - **Sentences** of FluentValidation's built-in validators come in the UI culture. `CustomLanguageManager`
-  (`FocusTemplate.Localization`) adds what FluentValidation lacks from its resx through
+  (`SpatialFocus.Localization`) adds what FluentValidation lacks from its resx through
   `IStringLocalizer<CustomLanguageManager>`, the item counts the generated rules ask
   for (`MinItemsValidator`, `MaxItemsValidator`), and can reword a built-in one. It looks up on every message, in the
   culture of the moment.
 - **Field names and pattern messages** of the generated rules come from the emitter's `ContractTexts` hook in
-  `FocusTemplate.Http`, one for the Admin contracts and every feature's. `ValidationTexts.UseResources()`
-  (`FocusTemplate.Localization`), which both hosts call at startup, answers from the resx named after the contract type
+  `SpatialFocus.Http`, one for the Admin contracts and every feature's. `ValidationTexts.UseResources()`
+  (`SpatialFocus.Localization`), which both hosts call at startup, answers from the resx named after the contract type
   in its namespace's folder of the contract's own project: `DemoProfileRequest.de.resx` in `Admin.Shared`, keys `Code`
   and `Code.pattern`, user management's and a feature's beside its contracts in its `Shared` project
   (`GroupRequest.de.resx` in `Admin.UserManagement.Shared`). The neutral file keeps

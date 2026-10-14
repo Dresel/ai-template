@@ -24,9 +24,10 @@ paths:
   and so is user management's in `src/admin/user-management/spec/api.tsp`.
 - A spec folder holds a `tspconfig.yaml` with `kind: project` and `entrypoint: api.tsp` (`http.tsp` in `src/spec/`),
   so the editor's language server compiles every file below it through its entrypoint. It is also a NoTargets project
-  (`FocusTemplate.<Name>.Spec`) in the vertical's solution folder, which shows it in Visual Studio.
+  (`FocusTemplate.<Vertical>.Spec`, `SpatialFocus.<Feature>.Spec`) in its solution folder, which shows it in Visual
+  Studio.
 - Every contracts, api and client `tspconfig.yaml` of the Admin vertical and the features sets
-  `library-namespace: FocusTemplate.Http`. Code shared across APIs takes the library types from there.
+  `library-namespace: SpatialFocus.Http`. Code shared across APIs takes the library types from there.
 - Run `npm run gen` at the repository root after every spec change and every emitter bump. `generated/` and
   `openapi.yaml` go into the same commit as the spec change.
 - Never edit a file under `generated/`. `tsp-output/` is disposable.

@@ -1,17 +1,17 @@
 using FocusTemplate.Admin.Api.Features;
 using FocusTemplate.Admin.Api.Features.DemoProfiles;
 using FocusTemplate.Admin.Shared.Localization;
-using FocusTemplate.Admin.UserManagement.Api;
-using FocusTemplate.Admin.UserManagement.Api.Authorization;
-using FocusTemplate.Api.Foundation.Realtime;
-using FocusTemplate.Api.Hosting;
-using FocusTemplate.Api.Hosting.Authentication;
-using FocusTemplate.Api.Hosting.Chaos;
-using FocusTemplate.Api.Hosting.Localization;
 using FocusTemplate.Names;
-using FocusTemplate.Primitives;
-using FocusTemplate.Weather.Api;
 using ResXGenerator.Registration;
+using SpatialFocus.Admin.UserManagement.Api;
+using SpatialFocus.Admin.UserManagement.Api.Authorization;
+using SpatialFocus.Api.Foundation.Realtime;
+using SpatialFocus.Api.Hosting;
+using SpatialFocus.Api.Hosting.Authentication;
+using SpatialFocus.Api.Hosting.Chaos;
+using SpatialFocus.Api.Hosting.Localization;
+using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Api;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 

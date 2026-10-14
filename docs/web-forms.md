@@ -3,7 +3,7 @@
 What to follow when changing these files: [the rule](../.claude/rules/web-forms.md).
 
 How a form validates, as the demo at `/demo/validation` (`Features/DemoProfiles/`) shows it in full. The group form
-(`Groups/FormDialog.razor` in `FocusTemplate.Admin.UserManagement.Web`) is the everyday case.
+(`Groups/FormDialog.razor` in `SpatialFocus.Admin.UserManagement.Web`) is the everyday case.
 
 ## View model and rules
 
@@ -52,7 +52,7 @@ How a form validates, as the demo at `/demo/validation` (`Features/DemoProfiles/
 - A value changed in code, not through an input, calls `appForm.NotifyFieldChangedAsync(field)`.
 - **Messages at a field**: one line, the most severe with its icon, and a pill counting the rest. Hovering the line
   lists them all, clicking the pill opens them grouped by severity, as the summary groups its own. The store only says
-  which messages a field has (`For(field)`). `Forms/` of `Admin.Web.Foundation` decides how they show, and the input takes its state
+  which messages a field has (`For(field)`). `Forms/` of `Web.Foundation` decides how they show, and the input takes its state
   from the most severe.
 
 ## Submit
@@ -76,7 +76,7 @@ Foundation's `wwwroot/forms.css` styles these components: the field grid (`app-f
 `data-severity`, the messages, the tooltip and the summary's groups. The host's `index.html` loads it before its own
 `app.css`, so a feature's form looks the same in every host, and a host can still override a rule.
 
-Another UI library rewrites `Forms/` of `Admin.Web.Foundation`: its form derives from `FormHostBase<TModel>`, which owns the form's
+Another UI library rewrites `Forms/` of `Web.Foundation`: its form derives from `FormHostBase<TModel>`, which owns the form's
 messages and validation, the submit and the `IFormHost` its inputs call, and overrides `RefreshAsync` only where the
 library keeps a validation state of its own to trigger again. Its inputs derive from `AppInputBase`. No folder is named
 after the library (`Radzen`, `MudBlazor`): that namespace segment would hide the library's own namespace from the Razor
@@ -84,7 +84,7 @@ files inside it.
 
 ## Unit tests
 
-Unit tests run without a browser and without a server, in two projects. `FocusTemplate.Web.UnitTests` tests the shared
+Unit tests run without a browser and without a server, in two projects. `SpatialFocus.Web.UnitTests` tests the shared
 projects, which it references directly: the forms store and validation (`FormMessages`, `FormValidation`), the
 Foundation helpers (`AsyncCommand`, `BusyState`, `Debouncer`), components rendered with `HtmlRenderer` over a small
 service provider (`PermissionViewTests`, `RequiresPermissionTests`), and user management's and the features' view

@@ -12,7 +12,7 @@ namespace Microsoft.Extensions.Hosting;
 #pragma warning restore IDE0130
 
 // Adds common Aspire client services to a .NET MAUI app: service discovery, resilience, and OpenTelemetry.
-// Counterpart of FocusTemplate.ServiceDefaults for mobile clients (no ASP.NET Core dependency).
+// Counterpart of SpatialFocus.ServiceDefaults for mobile clients (no ASP.NET Core dependency).
 // Generated from the `maui-aspire-servicedefaults` template, see https://aka.ms/dotnet/aspire/service-defaults
 public static class Extensions
 {

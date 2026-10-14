@@ -1,10 +1,10 @@
 using System.Security.Claims;
-using FocusTemplate.Api.Foundation.Realtime;
-using FocusTemplate.Primitives;
 using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Time.Testing;
 using Microsoft.IdentityModel.JsonWebTokens;
+using SpatialFocus.Api.Foundation.Realtime;
+using SpatialFocus.Primitives;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 

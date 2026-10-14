@@ -1,11 +1,11 @@
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
-using FocusTemplate.Primitives;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
+using SpatialFocus.Primitives;
 
 namespace FocusTemplate.Admin.Api.IntegrationTests;
 

@@ -2,7 +2,7 @@
 
 #nullable enable
 
-using FocusTemplate.Http;
+using SpatialFocus.Http;
 
 namespace FocusTemplate.Admin.Api.Features;
 

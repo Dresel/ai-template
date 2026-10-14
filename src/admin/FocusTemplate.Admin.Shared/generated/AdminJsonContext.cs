@@ -3,7 +3,7 @@
 #nullable enable
 
 using System.Text.Json.Serialization;
-using FocusTemplate.Http;
+using SpatialFocus.Http;
 
 namespace FocusTemplate.Admin.Shared;
 

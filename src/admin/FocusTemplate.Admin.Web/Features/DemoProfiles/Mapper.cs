@@ -1,6 +1,6 @@
 using FocusTemplate.Admin.Shared;
-using FocusTemplate.Admin.Web.Foundation.Forms;
 using Riok.Mapperly.Abstractions;
+using SpatialFocus.Web.Foundation.Forms;
 
 namespace FocusTemplate.Admin.Web.Features.DemoProfiles;
 

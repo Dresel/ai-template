@@ -4,7 +4,7 @@ using FluentValidation.Results;
 using FocusTemplate.Admin.Client.DemoProfiles;
 using FocusTemplate.Admin.Shared;
 using FocusTemplate.Admin.Web.Features.DemoProfiles;
-using FocusTemplate.Localization;
+using SpatialFocus.Localization;
 
 namespace FocusTemplate.Admin.Web.UnitTests.Features.DemoProfiles;
 
