@@ -155,8 +155,8 @@ never by an API, which `WaitForCompletion`s them, so there is no startup race un
 for the spine's, since its foreign keys point at the spine's users. Locally and in the E2E suite each runs
 `dotnet ef database update` on start. `aspire publish` emits each as a migration-bundle container.
 
-The AppHost adds each with `AddMigrations<TContext>(name, migrationsProjectPath, database)` (`MigrationExtensions`),
-which holds what every migrations resource needs: the tool's environment, both database references, the update on
+The AppHost adds each with `AddMigrations<TContext>(name, migrationsProjectPath, database)` (`Migrations/` in
+`FocusTemplate.AppHost.Hosting`), which holds what every migrations resource needs: the tool's environment, both database references, the update on
 start and the bundle. A feature's call adds `.WaitForCompletion(migrations)`, and the APIs that read its tables wait for
 it in turn.
 

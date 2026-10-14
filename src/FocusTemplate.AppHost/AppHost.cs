@@ -1,7 +1,11 @@
 using Aspire.Hosting.DevTunnels;
 using Aspire.Hosting.EntityFrameworkCore;
 using Aspire.Hosting.Maui;
-using FocusTemplate.AppHost;
+using FocusTemplate.AppHost.Hosting;
+using FocusTemplate.AppHost.Hosting.Analytics;
+using FocusTemplate.AppHost.Hosting.Authentication;
+using FocusTemplate.AppHost.Hosting.Ingress;
+using FocusTemplate.AppHost.Hosting.Migrations;
 using FocusTemplate.Data;
 using FocusTemplate.Names;
 using FocusTemplate.Weather.Data;
@@ -43,7 +47,16 @@ IResourceBuilder<PostgresDatabaseResource> focusDb = postgres.AddDatabase(Connec
 // Backplane (pub/sub) for server-sent event signals between the API's processes
 IResourceBuilder<RedisResource> redis = builder.AddRedis(ConnectionNames.Redis);
 
-KeycloakRealm realm = addLocalKeycloak ? builder.AddLocalKeycloakRealm(persistentLocalKeycloak) : builder.AddExternalKeycloakRealm();
+// The realm keycloak/focus-realm.json imports, which is also where its client, audience and secret are declared
+KeycloakRealm realm = addLocalKeycloak
+	? builder.AddLocalKeycloakRealm(
+		ResourceNames.Keycloak,
+		8080,
+		"focus",
+		ResourceNames.AdminApi,
+		ResourceNames.AdminBff,
+		persistentLocalKeycloak)
+	: builder.AddExternalKeycloakRealm(ResourceNames.Keycloak, ResourceNames.AdminApi, ResourceNames.AdminBff);
 
 IResourceBuilder<ProjectResource> api = builder.AddProject<FocusTemplate_Admin_Api>(ResourceNames.AdminApi)
 	.WithReference(focusDb)

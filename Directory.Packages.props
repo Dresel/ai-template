@@ -55,6 +55,7 @@
     <PackageVersion Include="AndroidSdk" Version="0.35.1" />
     <!-- Appium .NET client (mobile E2E); requires an Appium 2/3 server with the uiautomator2 driver -->
     <PackageVersion Include="Appium.WebDriver" Version="9.0.0" />
+    <PackageVersion Include="Aspire.Hosting" Version="13.6.1" />
     <PackageVersion Include="Aspire.Hosting.Blazor" Version="13.6.1-preview.1.26506.6" />
     <PackageVersion Include="Aspire.Hosting.DevTunnels" Version="13.6.1" />
     <PackageVersion Include="Aspire.Hosting.EntityFrameworkCore" Version="13.6.1-preview.1.26506.6" />

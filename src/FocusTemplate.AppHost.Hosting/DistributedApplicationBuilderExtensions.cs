@@ -1,8 +1,10 @@
+using Aspire.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 
-namespace FocusTemplate.AppHost;
+namespace FocusTemplate.AppHost.Hosting;
 
-internal static class BuilderExtensions
+public static class DistributedApplicationBuilderExtensions
 {
 	public static IDistributedApplicationBuilder AddLocalSettings(this IDistributedApplicationBuilder builder)
 	{

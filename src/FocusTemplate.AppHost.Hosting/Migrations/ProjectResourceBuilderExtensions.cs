@@ -1,10 +1,12 @@
+using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.EntityFrameworkCore;
 using FocusTemplate.Data.Foundation;
 
-namespace FocusTemplate.AppHost;
+namespace FocusTemplate.AppHost.Hosting.Migrations;
 
 // See https://aspire.dev/integrations/databases/efcore/migrations/
-internal static class MigrationExtensions
+public static class ProjectResourceBuilderExtensions
 {
 	public static IResourceBuilder<EFMigrationResource> AddMigrations<TContext>(
 		this IResourceBuilder<ProjectResource> startupProject,

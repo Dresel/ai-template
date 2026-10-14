@@ -16,13 +16,26 @@ The AppHost names its resources and connection references through `FocusTemplate
 (`admin-api`, `admin-bff`, `public-api`, `keycloak`, `postgres`) and `ConnectionNames` (`focusdb`, `focusdb-readonly`,
 `redis`). The APIs, the WASM client (`_api/admin-api/` is the BFF's route to that resource), the MAUI app and the E2E
 fixtures address them by the same constants. A feature takes the names as arguments and references none of them.
-Keycloak's client ids and audience come from `keycloak/focus-realm.json`, so they stay literals there and in the
-AppHost.
+`keycloak/focus-realm.json` names its client after the BFF's resource and its audience after the API's, which the
+AppHost hands the realm's methods.
+
+`FocusTemplate.AppHost.Hosting` holds what every product's AppHost runs the same way, so a product's AppHost keeps
+`AppHost.cs`, its settings and its realm file:
+
+- `AddLocalSettings()` reads `appsettings.local.json` after the JSON sources and before the environment and the
+  command line.
+- `Authentication/`: the local or external Keycloak realm and the projects' `Oidc__*` settings, see
+  [authentication](authentication.md).
+- `Ingress/`: `WithTlsOffloadingIngress(port)`, an nginx with the dev certificate in front of a project. Its
+  configuration is a template embedded in the library, written into the container at each start.
+- `Migrations/`: `AddMigrations<TContext>`, see [database](database.md).
+- `Analytics/`: `WithUmamiAnalytics`, which creates the website in the local Umami on the first start.
 
 Packages: `Aspire.Hosting.PostgreSQL`, `Aspire.Hosting.EntityFrameworkCore` (`AddEFMigrations`),
 `Aspire.Hosting.Blazor` (the WASM client's service and telemetry proxying), `Aspire.Hosting.Keycloak`,
 `Aspire.Hosting.Maui` with `Aspire.Hosting.DevTunnels`, and `CommunityToolkit.Aspire.Hosting.Umami`. Blazor, Keycloak,
-Maui and EntityFrameworkCore are previews in lockstep with the AppHost SDK.
+Maui and EntityFrameworkCore are previews in lockstep with the AppHost SDK. `FocusTemplate.AppHost.Hosting` references
+`Aspire.Hosting` itself, in the AppHost SDK's version.
 
 ## Feature flags
 

@@ -97,37 +97,6 @@
         "resolved": "0.35.1",
         "contentHash": "qSErwjqE16+fb6KY+NcA7DR6hHyHotuUl91heuFgxjVoKaa9HdFCJgmlhDgj/r4E181duLSJ2JXxZI8cTNWAMg=="
       },
-      "Aspire.Hosting": {
-        "type": "Transitive",
-        "resolved": "13.6.1",
-        "contentHash": "gIcP7+rPSBPWLlEpFGCWGKdjoXvyn0rZRCbjxUHTMnw8Y+a6Esp915o8MOROpYI++MQN3Fo55Yu0XuBJ6MqEIw==",
-        "dependencies": {
-          "AspNetCore.HealthChecks.Uris": "9.0.0",
-          "Google.Protobuf": "3.36.1",
-          "Grpc.AspNetCore": "2.83.0",
-          "Grpc.Net.ClientFactory": "2.83.0",
-          "Grpc.Tools": "2.83.0",
-          "Hex1b": "0.168.0",
-          "KubernetesClient": "19.0.2",
-          "MessagePack": "2.5.302",
-          "Microsoft.Extensions.Configuration.Binder": "10.0.12",
-          "Microsoft.Extensions.Configuration.EnvironmentVariables": "10.0.12",
-          "Microsoft.Extensions.Diagnostics.HealthChecks": "8.0.31",
-          "Microsoft.Extensions.FileSystemGlobbing": "10.0.12",
-          "Microsoft.Extensions.Hosting": "10.0.12",
-          "Microsoft.Extensions.Http": "10.0.12",
-          "Microsoft.Extensions.Logging": "10.0.12",
-          "ModelContextProtocol": "1.4.1",
-          "Newtonsoft.Json": "13.0.4",
-          "OpenTelemetry.Exporter.OpenTelemetryProtocol": "1.17.0",
-          "OpenTelemetry.Extensions.Hosting": "1.17.0",
-          "Polly.Core": "8.7.0",
-          "Semver": "3.0.0",
-          "StreamJsonRpc": "2.25.29",
-          "System.IO.Hashing": "10.0.12",
-          "YamlDotNet": "18.1.0"
-        }
-      },
       "Aspire.Hosting.AppHost": {
         "type": "Transitive",
         "resolved": "13.6.1",
@@ -995,14 +964,24 @@
           "Aspire.Hosting.Blazor": "[13.6.1-preview.1.26506.6, )",
           "Aspire.Hosting.DevTunnels": "[13.6.1, )",
           "Aspire.Hosting.EntityFrameworkCore": "[13.6.1-preview.1.26506.6, )",
-          "Aspire.Hosting.Keycloak": "[13.6.1-preview.1.26506.6, )",
           "Aspire.Hosting.Maui": "[13.6.1-preview.1.26506.6, )",
           "Aspire.Hosting.PostgreSQL": "[13.6.1, )",
           "Aspire.Hosting.Redis": "[13.6.1, )",
           "CommunityToolkit.Aspire.Hosting.Umami": "[13.5.0, )",
+          "FocusTemplate.AppHost.Hosting": "[1.0.0, )",
           "FocusTemplate.Data": "[1.0.0, )",
           "FocusTemplate.Names": "[1.0.0, )",
           "FocusTemplate.Weather.Data": "[1.0.0, )"
+        }
+      },
+      "focustemplate.apphost.hosting": {
+        "type": "Project",
+        "dependencies": {
+          "Aspire.Hosting": "[13.6.1, )",
+          "Aspire.Hosting.EntityFrameworkCore": "[13.6.1-preview.1.26506.6, )",
+          "Aspire.Hosting.Keycloak": "[13.6.1-preview.1.26506.6, )",
+          "CommunityToolkit.Aspire.Hosting.Umami": "[13.5.0, )",
+          "FocusTemplate.Data.Foundation": "[1.0.0, )"
         }
       },
       "focustemplate.data": {
@@ -1042,6 +1021,38 @@
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite": "[10.0.3, )",
           "Vogen": "[8.0.7, )"
+        }
+      },
+      "Aspire.Hosting": {
+        "type": "CentralTransitive",
+        "requested": "[13.6.1, )",
+        "resolved": "13.6.1",
+        "contentHash": "gIcP7+rPSBPWLlEpFGCWGKdjoXvyn0rZRCbjxUHTMnw8Y+a6Esp915o8MOROpYI++MQN3Fo55Yu0XuBJ6MqEIw==",
+        "dependencies": {
+          "AspNetCore.HealthChecks.Uris": "9.0.0",
+          "Google.Protobuf": "3.36.1",
+          "Grpc.AspNetCore": "2.83.0",
+          "Grpc.Net.ClientFactory": "2.83.0",
+          "Grpc.Tools": "2.83.0",
+          "Hex1b": "0.168.0",
+          "KubernetesClient": "19.0.2",
+          "MessagePack": "2.5.302",
+          "Microsoft.Extensions.Configuration.Binder": "10.0.12",
+          "Microsoft.Extensions.Configuration.EnvironmentVariables": "10.0.12",
+          "Microsoft.Extensions.Diagnostics.HealthChecks": "8.0.31",
+          "Microsoft.Extensions.FileSystemGlobbing": "10.0.12",
+          "Microsoft.Extensions.Hosting": "10.0.12",
+          "Microsoft.Extensions.Http": "10.0.12",
+          "Microsoft.Extensions.Logging": "10.0.12",
+          "ModelContextProtocol": "1.4.1",
+          "Newtonsoft.Json": "13.0.4",
+          "OpenTelemetry.Exporter.OpenTelemetryProtocol": "1.17.0",
+          "OpenTelemetry.Extensions.Hosting": "1.17.0",
+          "Polly.Core": "8.7.0",
+          "Semver": "3.0.0",
+          "StreamJsonRpc": "2.25.29",
+          "System.IO.Hashing": "10.0.12",
+          "YamlDotNet": "18.1.0"
         }
       },
       "Aspire.Hosting.Blazor": {

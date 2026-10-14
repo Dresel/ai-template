@@ -9,7 +9,8 @@ paths:
   - "src/admin/*.Admin.Web/Shell/MainLayout.razor"
   - "src/admin/*.Admin.Web.ClientServiceDefaults/{CsrfHeaderHandler,RedirectToLoginHandler,ServiceCollectionExtensions}.cs"
   - "src/*.Web.Bff.Shared/**"
-  - "src/*.AppHost/{AuthenticationExtensions.cs,keycloak/**}"
+  - "src/*.AppHost/keycloak/**"
+  - "src/*.AppHost.Hosting/Authentication/**"
   - "tests/*.Admin.Web.E2E/{AuthenticationTests,BlazorAppFixture,KeycloakAdmin}.cs"
   - "tests/*.IntegrationTests/{AuthenticationTests,TestAuthenticationHandler}.cs"
 ---

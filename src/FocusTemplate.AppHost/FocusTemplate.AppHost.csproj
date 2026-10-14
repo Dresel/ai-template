@@ -10,7 +10,6 @@
 		<PackageReference Include="Aspire.Hosting.Blazor" />
 		<PackageReference Include="Aspire.Hosting.DevTunnels" />
 		<PackageReference Include="Aspire.Hosting.EntityFrameworkCore" />
-		<PackageReference Include="Aspire.Hosting.Keycloak" />
 		<PackageReference Include="Aspire.Hosting.Maui" />
 		<PackageReference Include="Aspire.Hosting.PostgreSQL" />
 		<PackageReference Include="Aspire.Hosting.Redis" />
@@ -22,6 +21,7 @@
 		<ProjectReference Include="..\admin\FocusTemplate.Admin.Web.Bff\FocusTemplate.Admin.Web.Bff.csproj" />
 		<ProjectReference Include="..\features\weather\FocusTemplate.Weather.Data\FocusTemplate.Weather.Data.csproj"
 			IsAspireProjectResource="false" />
+		<ProjectReference Include="..\FocusTemplate.AppHost.Hosting\FocusTemplate.AppHost.Hosting.csproj" IsAspireProjectResource="false" />
 		<ProjectReference Include="..\FocusTemplate.Data\FocusTemplate.Data.csproj" IsAspireProjectResource="false" />
 		<ProjectReference Include="..\FocusTemplate.Names\FocusTemplate.Names.csproj" IsAspireProjectResource="false" />
 		<ProjectReference Include="..\public\FocusTemplate.Public.Api\FocusTemplate.Public.Api.csproj" />

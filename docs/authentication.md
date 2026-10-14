@@ -19,8 +19,9 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
   `developer`, whose user id is `WellKnownUsers.Developer`. Sessions last 7 days idle and 30 days at most, and survive browser restarts
   when "Remember me" is ticked. `WithKeycloakClient` hands the BFF that login as `Oidc__LoginHint`, sent as
   `login_hint` inside the pushed request, so the form asks only for the password. The realm has internationalization on
-  (en, de) for the form's language, see [localization](localization.md). The realm file and the values in
-  `AddLocalKeycloakRealm` change together by hand.
+  (en, de) for the form's language, see [localization](localization.md). The realm file and the AppHost's call of
+  `AddLocalKeycloakRealm` change together by hand: the realm's name, the client named after the BFF's resource with the
+  secret `admin-bff-secret`, and the audience named after the API's.
 - **Keycloak's endpoint** is named `http` whatever its scheme: the integration switches it to https at start when the
   dev certificate is available, and a separate `https` endpoint would yield a `tcp://` authority. Both handlers keep the
   default https-metadata requirement, so a Keycloak left on http fails at the first login with the handler's own
@@ -28,13 +29,13 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
 - **External realm** (the flag off, and always when publishing, since the imported realm's login and client secret are
   public): `AddExternalKeycloakRealm` takes a realm on any Keycloak from the parameters `oidc-authority` (the realm's
   URL, `https://sso.example.com/realms/focus`), `oidc-admin-bff-secret`, `oidc-admin-bff-client-id` and
-  `oidc-admin-api-audience` (defaults `admin-bff`, `admin-api`). That realm needs the confidential client, the audience
+  `oidc-admin-api-audience` (defaults `admin-bff`, `admin-api`), named after the BFF's and the API's resources. That realm needs the confidential client, the audience
   mapper, `sub` as the user's UUID, internationalization with en and de, and the redirect URIs `http://localhost:5770/signin-oidc` and
   `https://localhost:7770/signin-oidc` with their `/signout-callback-oidc` counterparts. The ingress's port is pinned
   for this. The AppHost models it as the external service `keycloak`, whose health check probes the realm URL itself,
   since a health-check path would replace the URL's last segment, the realm. No login hint goes to an external realm.
 - `KeycloakRealm` carries what the projects need either way. `WithKeycloakAudience` and `WithKeycloakClient`
-  (`AuthenticationExtensions`) hand a project `Oidc__Authority` plus its audience or its client id and secret, and wait
+  (`Authentication/` in `FocusTemplate.AppHost.Hosting`) hand a project `Oidc__Authority` plus its audience or its client id and secret, and wait
   for the Keycloak.
 - **Persistent Keycloak** (`Features:PersistentLocalKeycloak`, off by default): a persistent container with a data
   volume, kept running between starts, so no start waits for the JVM and the realm import, and the BFF's session

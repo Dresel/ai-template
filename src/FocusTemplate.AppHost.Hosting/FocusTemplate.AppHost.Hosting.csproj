@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting" />
+		<PackageReference Include="Aspire.Hosting.EntityFrameworkCore" />
+		<PackageReference Include="Aspire.Hosting.Keycloak" />
+		<PackageReference Include="CommunityToolkit.Aspire.Hosting.Umami" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../FocusTemplate.Data.Foundation/FocusTemplate.Data.Foundation.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Ingress/default.conf.template" LogicalName="default.conf.template" />
+	</ItemGroup>
+
+</Project>

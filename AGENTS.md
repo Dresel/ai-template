@@ -28,6 +28,9 @@ Shared spine:
 - **FocusTemplate.Localization** - the localization machinery every API and client share: the localizer factory for
   ResXGenerator's classes, FluentValidation's texts, the contracts' field names, see
   [localization](docs/localization.md).
+- **FocusTemplate.AppHost.Hosting** - what every product's AppHost runs: the local or external Keycloak realm, the
+  TLS-offloading ingress, `AddMigrations<TContext>`, Umami analytics, `AddLocalSettings()`, see
+  [apphost](docs/apphost.md).
 - **FocusTemplate.Api.Hosting** - what an API host runs: `AddApiDefaults()`, `AddSignalBackplane(redis)`, the Keycloak
   bearer authentication with the current user, request localization over the product's cultures, the chaos filter,
   see [authentication](docs/authentication.md).

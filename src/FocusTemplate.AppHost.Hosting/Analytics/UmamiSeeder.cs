@@ -1,6 +1,7 @@
+using System.Net.Http.Headers;
 using System.Text.Json;
 
-namespace FocusTemplate.AppHost;
+namespace FocusTemplate.AppHost.Hosting.Analytics;
 
 internal static class UmamiSeeder
 {
@@ -27,7 +28,7 @@ internal static class UmamiSeeder
 
 			using JsonDocument loginJson = JsonDocument.Parse(await loginResponse.Content.ReadAsStringAsync(cancellationToken));
 			string? token = loginJson.RootElement.GetProperty("token").GetString();
-			client.DefaultRequestHeaders.Authorization = new("Bearer", token);
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
 			string? existingId = await FindWebsiteAsync(client, websiteName, cancellationToken);
 			if (existingId is not null)
@@ -64,9 +65,7 @@ internal static class UmamiSeeder
 
 		using JsonDocument json = JsonDocument.Parse(await response.Content.ReadAsStringAsync(cancellationToken));
 
-		JsonElement websites = json.RootElement.ValueKind == JsonValueKind.Array
-			? json.RootElement
-			: json.RootElement.GetProperty("data");
+		JsonElement websites = json.RootElement.ValueKind == JsonValueKind.Array ? json.RootElement : json.RootElement.GetProperty("data");
 
 		foreach (JsonElement website in websites.EnumerateArray())
 		{

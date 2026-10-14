@@ -1,8 +1,11 @@
 #pragma warning disable IDE0046
 
-namespace FocusTemplate.AppHost;
+using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
 
-internal static class AnalyticsExtensions
+namespace FocusTemplate.AppHost.Hosting.Analytics;
+
+public static class ProjectResourceBuilderExtensions
 {
 	public static IResourceBuilder<ProjectResource> WithUmamiAnalytics(
 		this IResourceBuilder<ProjectResource> app,
