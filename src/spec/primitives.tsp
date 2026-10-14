@@ -3,9 +3,6 @@ import "@spatialfocus/typespec-http-csharp-slim";
 // The permissions of user management, which every Admin host includes. Its typed ids are the spine's own, declared below.
 import "../admin/user-management/spec/permissions.tsp";
 
-// Each feature the host includes, with its typed ids and its permissions
-import "../features/weather/spec/primitives.tsp";
-
 using SpatialFocus.Http;
 
 // The spec of the shared spine: the typed ids and the permissions every vertical uses, and nothing else. No @service on purpose:

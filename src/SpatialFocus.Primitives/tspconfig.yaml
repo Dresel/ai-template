@@ -4,4 +4,5 @@ options:
   "@spatialfocus/typespec-http-csharp-slim":
     emitter-output-dir: "{output-dir}"
     output-type: primitives
+    primitives-namespace: SpatialFocus.Primitives
     generated-dir: "generated"

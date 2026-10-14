@@ -1,4 +1,5 @@
 using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Primitives;
 using Vogen;
 
 namespace SpatialFocus.Weather.Data;

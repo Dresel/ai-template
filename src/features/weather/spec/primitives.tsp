@@ -1,12 +1,14 @@
 import "@spatialfocus/typespec-http-csharp-slim";
 
+// The spine's ids and its permission scalar, which the feature's permissions take their values from
+import "../../../spec/primitives.tsp";
 import "./permissions.tsp";
 
 using SpatialFocus.Http;
 
-// The typed ids of the weather feature, with its permissions. The host's primitives.tsp imports this file, so
-// SpatialFocus.Primitives writes them beside the host's own.
-namespace SpatialFocus.Primitives;
+// The typed ids of the weather feature, with its permissions. SpatialFocus.Weather.Primitives writes them into the
+// feature's own assembly, and a product's primitives.tsp imports this file for its permission list.
+namespace SpatialFocus.Weather.Primitives;
 
 /** Identifier of a weather station. */
 @friendlyName("Primitives.StationId")

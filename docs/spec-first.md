@@ -86,19 +86,22 @@ imports (`namespace SpatialFocus.Http`).
 - A slice with one interface stays in the service namespace (`FocusTemplate.Admin`), a slice with several declares a
   namespace below it (`FocusTemplate.Admin.<Feature>`), its feature.
 - `src/spec/` holds what verticals can share: `primitives.tsp` (the typed ids, namespace `SpatialFocus.Primitives`,
-  no service) and `paging.tsp` (`PageQuery`, spread into a search request). `primitives.tsp` also imports each slice's
-  `permissions.tsp` and each feature's `primitives.tsp`, so adding or removing a feature in the spine is one import line.
-  Today the Admin contract, user management and the weather feature import it.
+  no service) and `paging.tsp` (`PageQuery`, spread into a search request). `primitives.tsp` also imports user
+  management's `permissions.tsp`. Today the Admin contract, user management and the weather feature import it.
+- `src/admin/spec/primitives.tsp` is the Admin product's composition of permissions: it imports the spine's
+  `primitives.tsp` and each included feature's, so adding or removing a feature there is one import line.
 - Three projects per vertical generate, each with its own `tspconfig.yaml` and `generated/` folder: the Api project
   (`output-type: api`), the Shared project (`contracts`) and the Client project (`client`). Everything else consumes
   them by project reference, and generated files are never linked across projects.
 - A feature has a contract of its own in `src/features/<name>/spec/`: `api.tsp` is a `@service` with `@useAuth`
-  (`SpatialFocus.Weather`), imports the spine's `primitives.tsp` and one file per interface, and its three projects
+  (`SpatialFocus.Weather`), imports its own `primitives.tsp` and one file per interface, and its three projects
   generate as a vertical's do (`SpatialFocus.Weather.Api.{interface}`, `SpatialFocus.Weather.Shared`,
   `SpatialFocus.Weather.Client.{interface}`). Its own JSON context, validators and paths carry the service's name
   (`WeatherJsonContext`, `AddWeatherValidators()`), and its `openapi.yaml` sits in its Api project. Its typed ids sit
-  beside it in a `primitives.tsp` of its own, in namespace `SpatialFocus.Primitives`, which imports its
-  `permissions.tsp` and which the host's `primitives.tsp` imports.
+  beside it in a `primitives.tsp` of its own, in namespace `SpatialFocus.Weather.Primitives` below the service, which
+  imports the spine's `primitives.tsp` and its `permissions.tsp` (`SpatialFocus.Weather.Primitives.Permissions`). Its
+  Api project sets `omit-unreachable-types: true` for `@typespec/openapi3`, so the ids and the permissions enum below
+  the service appear in the document only where a model uses them.
 - User management, which every Admin host includes, has the same layout in `src/admin/user-management/`: the service
   `SpatialFocus.Admin.UserManagement` with the interfaces `Users` and `Groups`
   (`SpatialFocus.Admin.UserManagement.Api.{interface}`, `.Shared`, `.Client.{interface}`), `UserManagementJsonContext`,
@@ -115,11 +118,22 @@ imports (`namespace SpatialFocus.Http`).
 
 ## Typed ids
 
-`SpatialFocus.Primitives` compiles `src/spec/primitives.tsp` and what it imports (`output-type: primitives`) into Vogen
-value objects: `[ValueObject<T>] [Instance("Unspecified", …)] public readonly partial struct` per `@typedId` scalar,
-plus `Permission` (a string id) with one `{Enum}Permissions` class per permissions enum (see
-[authorization](authorization.md)). `Data` and every contract project (`Admin.Shared`, `Admin.UserManagement.Shared`, a
-feature's `Shared`) reference it, so one `GroupId` serves the domain and every contract. `Data` also runs Vogen itself,
+A primitives project compiles a `primitives.tsp` (`output-type: primitives`) into Vogen value objects:
+`[ValueObject<T>] [Instance("Unspecified", …)] public readonly partial struct` per `@typedId` scalar, plus one
+`{Enum}Permissions` class per permissions enum (see [authorization](authorization.md)). Its `primitives-namespace` names
+the one namespace it writes, and what its spec imports from elsewhere it references:
+
+- `SpatialFocus.Primitives` writes the spine's ids, `Permission` (a string id) and `UserManagementPermissions` from
+  `src/spec/primitives.tsp`.
+- A feature's `*.Primitives` project (`SpatialFocus.Weather.Primitives`) writes the feature's ids and its permission
+  class from the feature's `spec/primitives.tsp`, into an assembly of the feature's own. A permission class goes into
+  the enum's namespace without its last segment `Permissions`, so a feature's sits beside its ids.
+- `FocusTemplate.Admin.Primitives` writes no id. Its `permission-list: AdminPermissions` lists every permission its spec
+  `src/admin/spec/primitives.tsp` imports, which is what the Admin product's groups can be granted.
+
+`scripts/gen.mjs` compiles a feature's or a vertical's `*.Primitives` project from the `spec/primitives.tsp` beside it.
+`Data` and every contract project (`Admin.Shared`, `Admin.UserManagement.Shared`, a feature's `Shared`) reference the
+primitives they use, so one `GroupId` serves the domain and every contract. `Data` also runs Vogen itself,
 for the EF Core converters it marks with `[EfCoreConverter<T>]`. A `@typedId` declared inside a service namespace is an
 emitter error.
 

@@ -8,7 +8,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="../SpatialFocus.Data.Foundation/SpatialFocus.Data.Foundation.csproj" />
+		<ProjectReference Include="../SpatialFocus.Names/SpatialFocus.Names.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

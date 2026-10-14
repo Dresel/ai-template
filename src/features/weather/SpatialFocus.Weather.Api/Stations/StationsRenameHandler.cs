@@ -7,6 +7,7 @@ using SpatialFocus.Data.Foundation.Auditing;
 using SpatialFocus.Primitives;
 using SpatialFocus.Weather.Data;
 using SpatialFocus.Weather.Data.Entities;
+using SpatialFocus.Weather.Primitives;
 using SpatialFocus.Weather.Shared;
 
 namespace SpatialFocus.Weather.Api.Stations;

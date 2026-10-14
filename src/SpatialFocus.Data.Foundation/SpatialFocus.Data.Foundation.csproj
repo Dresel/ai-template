@@ -8,6 +8,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\SpatialFocus.Names\SpatialFocus.Names.csproj" />
 		<ProjectReference Include="..\SpatialFocus.Primitives\SpatialFocus.Primitives.csproj" />
 	</ItemGroup>
 

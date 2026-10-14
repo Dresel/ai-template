@@ -5,7 +5,7 @@ What to follow when changing these files: [the rule](../.claude/rules/apphost.md
 ## What the AppHost wires
 
 Postgres with the database, its `migrations` resource for the spine and `weather-migrations` for the weather feature,
-which waits for the spine's, both added with `AddMigrations<TContext>` (see [database](database.md)), Redis for the
+which waits for the spine's, both added with `AddMigrations(…)` (see [database](database.md)), Redis for the
 Admin API's server-sent event signals (see [spec-first](spec-first.md)), both APIs, the BFF, Keycloak (its own container or an
 existing realm, see [authentication](authentication.md)), and behind flags an nginx TLS ingress, Umami analytics, and
 the MAUI device resources with a Dev Tunnel. `SpatialFocus.ServiceDefaults` gives every server OTel, service
@@ -28,7 +28,8 @@ AppHost hands the realm's methods.
   [authentication](authentication.md).
 - `Ingress/`: `WithTlsOffloadingIngress(port)`, an nginx with the dev certificate in front of a project. Its
   configuration is a template embedded in the library, written into the container at each start.
-- `Migrations/`: `AddMigrations<TContext>`, see [database](database.md).
+- `Migrations/`: `AddMigrations(name, contextTypeName, migrationsProjectPath, database)`, the context and its project
+  as strings, so the AppHost references no data project, see [database](database.md).
 - `Analytics/`: `WithUmamiAnalytics`, which creates the website in the local Umami on the first start.
 
 Packages: `Aspire.Hosting.PostgreSQL`, `Aspire.Hosting.EntityFrameworkCore` (`AddEFMigrations`),

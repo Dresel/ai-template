@@ -1,28 +1,26 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.EntityFrameworkCore;
-using SpatialFocus.Data.Foundation;
+using SpatialFocus.Names;
 
 namespace SpatialFocus.AppHost.Hosting.Migrations;
 
 // See https://aspire.dev/integrations/databases/efcore/migrations/
 public static class ProjectResourceBuilderExtensions
 {
-	public static IResourceBuilder<EFMigrationResource> AddMigrations<TContext>(
+	// The context by its full name and the project by its path, so the AppHost compiles no data project
+	public static IResourceBuilder<EFMigrationResource> AddMigrations(
 		this IResourceBuilder<ProjectResource> startupProject,
 		string name,
+		string contextTypeName,
 		string migrationsProjectPath,
 		IResourceBuilder<IResourceWithConnectionString> database) =>
-		startupProject.AddEFMigrations(name, typeof(TContext).FullName!, ConfigureTool)
-
-			// A path because the data projects' references keep ASPIRE004 quiet with IsAspireProjectResource="false", which
-			// also means no Projects type for the typed overload. Switch once ASPIRE004 can be disabled per reference:
-			// https://github.com/microsoft/aspire/issues/16876
+		startupProject.AddEFMigrations(name, contextTypeName, ConfigureTool)
 			.WithMigrationsProject(migrationsProjectPath)
 
 			// The published bundle reads the database under its own name, a design-time factory under the host-neutral one
 			.WithReference(database)
-			.WithReference(database, DesignTime.ConnectionName)
+			.WithReference(database, DesignTimeNames.ConnectionName)
 			.WaitFor(database)
 			.RunDatabaseUpdateOnStart()
 			.PublishAsMigrationBundle(publishContainer: true);
@@ -37,7 +35,7 @@ public static class ProjectResourceBuilderExtensions
 		// Seed only in run mode: the published migration bundle runs against real databases.
 		if (tool.ApplicationBuilder.ExecutionContext.IsRunMode)
 		{
-			tool.WithEnvironment(DesignTime.SeedTestDataVariable, bool.TrueString);
+			tool.WithEnvironment(DesignTimeNames.SeedTestDataVariable, bool.TrueString);
 		}
 	}
 }

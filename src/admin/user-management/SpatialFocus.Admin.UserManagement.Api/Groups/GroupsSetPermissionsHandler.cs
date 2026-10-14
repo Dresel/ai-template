@@ -8,7 +8,11 @@ using SpatialFocus.Primitives;
 
 namespace SpatialFocus.Admin.UserManagement.Api.Groups;
 
-public sealed class GroupsSetPermissionsHandler(AppDbContext dbContext, SignalBackplane backplane, IGroupsLocalizations localizations)
+public sealed class GroupsSetPermissionsHandler(
+	AppDbContext dbContext,
+	SignalBackplane backplane,
+	PermissionCatalog permissions,
+	IGroupsLocalizations localizations)
 	: ICommandHandler<GroupsSetPermissionsCommand, GroupsSetPermissionsResult>
 {
 	public async ValueTask<GroupsSetPermissionsResult> Handle(GroupsSetPermissionsCommand command, CancellationToken cancellationToken)
@@ -27,7 +31,7 @@ public sealed class GroupsSetPermissionsHandler(AppDbContext dbContext, SignalBa
 		}
 
 		HashSet<Permission> requested = [.. command.Permissions,];
-		string[] unknown = [.. requested.Except(Permission.All).Select(permission => permission.Value).Order(StringComparer.Ordinal),];
+		string[] unknown = [.. requested.Except(permissions.All).Select(permission => permission.Value).Order(StringComparer.Ordinal),];
 		if (unknown.Length > 0)
 		{
 			return new Conflict(localizations.UnknownPermissions(string.Join(", ", unknown)));

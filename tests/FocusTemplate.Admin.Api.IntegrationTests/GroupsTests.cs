@@ -1,3 +1,4 @@
+using FocusTemplate.Admin.Primitives;
 using Microsoft.EntityFrameworkCore;
 using SpatialFocus.Admin.UserManagement.Client;
 using SpatialFocus.Admin.UserManagement.Client.Groups;
@@ -150,7 +151,7 @@ public sealed class GroupsTests(ApiFixture factory) : ApiTestBase(factory)
 			.SetPermissionsAsync(WellKnownGroups.Administrators, [], TestContext.Current.CancellationToken);
 
 		Assert.True(result is ConflictProblem, $"Expected ConflictProblem, got {result}");
-		Assert.Equal(Permission.All.Count, (await GrantsOfAsync(WellKnownGroups.Administrators)).Count);
+		Assert.Equal(AdminPermissions.All.Count, (await GrantsOfAsync(WellKnownGroups.Administrators)).Count);
 	}
 
 	[Fact]

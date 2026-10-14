@@ -34,6 +34,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\FocusTemplate.Admin.Client\FocusTemplate.Admin.Client.csproj" />
+		<ProjectReference Include="..\FocusTemplate.Admin.Primitives\FocusTemplate.Admin.Primitives.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Shared\FocusTemplate.Admin.Shared.csproj" />
 		<ProjectReference Include="..\..\SpatialFocus.Web.ClientServiceDefaults\SpatialFocus.Web.ClientServiceDefaults.csproj" />
 		<ProjectReference Include="..\..\SpatialFocus.Web.Foundation\SpatialFocus.Web.Foundation.csproj" />

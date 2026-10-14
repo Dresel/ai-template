@@ -241,25 +241,10 @@
         "resolved": "2.5.302",
         "contentHash": "PTHQHbMJzx1VtUUCpnvPavD7o5X9s2dAJ4uQHAP2kBCwJKICpPTZq0qxzbB4/6iJJiIxem8zlxyfldGAx1SjSQ=="
       },
-      "Microsoft.EntityFrameworkCore.Abstractions": {
-        "type": "Transitive",
-        "resolved": "10.0.12",
-        "contentHash": "kDrux7T6C3V/YYYe2LXr7x6AEsVyq5Y2YoTE9er1SwbDtap3z1g8RgxNh5eKQVyB4T+DKvBBJ4Ezd/VZzJQJZg=="
-      },
-      "Microsoft.EntityFrameworkCore.Analyzers": {
-        "type": "Transitive",
-        "resolved": "10.0.12",
-        "contentHash": "Kd4o2oO1A6dfKxjz5LS16QyLtpCFTUiFWwmBABETAXRsSImBdRdWeKjSgbbRhAMiV3a3/nWr95ZtzClT4uaADQ=="
-      },
       "Microsoft.Extensions.AI.Abstractions": {
         "type": "Transitive",
         "resolved": "10.5.2",
         "contentHash": "Ei+YWV9Ybnps7pR1dgjlG29gelXEwZkhLVAcWmKe6HvXS6LNBYgSdWiY3Hk9OZXYtK34rv/NtLWBQYQGOBQYPQ=="
-      },
-      "Microsoft.Extensions.Caching.Memory": {
-        "type": "Transitive",
-        "resolved": "10.0.12",
-        "contentHash": "fhC3DHcBcFF4bXvHIxFtXJYNut7q7ZItqNFcgWfrIgmpVImlcEKNHhE7ztpNSPJYMHYYStS5QGND2I5mC26yeA=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
@@ -515,8 +500,8 @@
       },
       "Npgsql": {
         "type": "Transitive",
-        "resolved": "10.0.3",
-        "contentHash": "7nb5YzXuvWWJxB0J8DiyL3we+X4FOctZrt0fIBnucOIaIevFEEwGQVZKtiu9olXdlNAK1eNgqSral6r/jlhI4w=="
+        "resolved": "8.0.3",
+        "contentHash": "6WEmzsQJCZAlUG1pThKg/RmeF6V+I0DmBBBE/8YzpRtEzhyZzKcK7ulMANDm5CkxrALBEC8H+5plxHWtIL7xnA=="
       },
       "OpenTelemetry": {
         "type": "Transitive",
@@ -605,21 +590,8 @@
         "resolved": "18.1.0",
         "contentHash": "5K+9KFg2TdTl7VXv88Qzi/0lqK6JFoNP3lRuImPYGRV7K/QYklDyTrj4+A+KAki1JsQi6qKY+hDyY7d6WRqjrw=="
       },
-      "spatialfocus.data.foundation": {
-        "type": "Project",
-        "dependencies": {
-          "EFCore.CheckConstraints": "[10.0.0, )",
-          "EFCore.NamingConventions": "[10.0.1, )",
-          "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
-          "SpatialFocus.Primitives": "[1.0.0, )",
-          "Vogen": "[8.0.7, )"
-        }
-      },
-      "spatialfocus.primitives": {
-        "type": "Project",
-        "dependencies": {
-          "Vogen": "[8.0.7, )"
-        }
+      "spatialfocus.names": {
+        "type": "Project"
       },
       "Aspire.Hosting.PostgreSQL": {
         "type": "CentralTransitive",
@@ -655,60 +627,6 @@
           "YamlDotNet": "18.1.0"
         }
       },
-      "EFCore.CheckConstraints": {
-        "type": "CentralTransitive",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "O6dAN5TlBvn0NKZ/At9iE3fMBZ89N83nlqnROSuH6W3EIoYIiXohklsIWfTh2iHomPAC9IKGi34D3FpdNbCXxg==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "[10.0.0, 11.0.0)",
-          "Microsoft.EntityFrameworkCore.Relational": "[10.0.0, 11.0.0)"
-        }
-      },
-      "EFCore.NamingConventions": {
-        "type": "CentralTransitive",
-        "requested": "[10.0.1, )",
-        "resolved": "10.0.1",
-        "contentHash": "Xs5k8XfNKPkkQSkGmZkmDI1je0prLTdxse+s8PgTFZxyBrlrTLzTBUTVJtQKSsbvu4y+luAv8DdtO5SALJE++A==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "[10.0.1, 11.0.0)",
-          "Microsoft.EntityFrameworkCore.Relational": "[10.0.1, 11.0.0)"
-        }
-      },
-      "Microsoft.EntityFrameworkCore": {
-        "type": "CentralTransitive",
-        "requested": "[10.0.12, )",
-        "resolved": "10.0.12",
-        "contentHash": "e7OrVN8U5yr4kuwdTHWBHGVQIVsGfMkAr0Ej1/BnrS989Q0XBVANpIzNZ2bc1GvMZ0/XwMt5InTnmKskxGy99Q==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore.Abstractions": "10.0.12",
-          "Microsoft.EntityFrameworkCore.Analyzers": "10.0.12",
-          "Microsoft.Extensions.Caching.Memory": "10.0.12",
-          "Microsoft.Extensions.Logging": "10.0.12"
-        }
-      },
-      "Microsoft.EntityFrameworkCore.Relational": {
-        "type": "CentralTransitive",
-        "requested": "[10.0.12, )",
-        "resolved": "10.0.12",
-        "contentHash": "OiHmr8XzX96dbgMsYGe8qoqg4KxibdZG2r0QUVJBGktFInOp8IrABe8jvcbo5hrqeWfbwpK7fCEBiEPbY/ik4A==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "10.0.12",
-          "Microsoft.Extensions.Caching.Memory": "10.0.12",
-          "Microsoft.Extensions.Logging": "10.0.12"
-        }
-      },
-      "Npgsql.EntityFrameworkCore.PostgreSQL": {
-        "type": "CentralTransitive",
-        "requested": "[10.0.3, )",
-        "resolved": "10.0.3",
-        "contentHash": "IPGrrZnRkuW7OlHDhUESZz4G5DLkW7Nej/O3Cx+0iTsgyU5XJxBgpsvTHLloo3WWuAKKbDHXBvWPVkX1deRh1Q==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "[10.0.4, 11.0.0)",
-          "Microsoft.EntityFrameworkCore.Relational": "[10.0.4, 11.0.0)",
-          "Npgsql": "10.0.3"
-        }
-      },
       "OpenTelemetry.Exporter.OpenTelemetryProtocol": {
         "type": "CentralTransitive",
         "requested": "[1.19.0, )",
@@ -726,12 +644,6 @@
         "dependencies": {
           "OpenTelemetry": "1.19.0"
         }
-      },
-      "Vogen": {
-        "type": "CentralTransitive",
-        "requested": "[8.0.7, )",
-        "resolved": "8.0.7",
-        "contentHash": "0DrJ2ZPEGoJlzwqhum2LaZJ2FzJzgy5HP0km+XYL2MC/hS4Sn5/C35oRyob146Yjlf5xit2tmPx5xhI2BXkhLw=="
       }
     }
   }

@@ -36,9 +36,11 @@ own under `src/features/<name>/` instead, built like `src/features/weather/`, se
 
 ## 2. Contract ([spec-first](../../../docs/spec-first.md))
 
-1. A new id: `@typedId scalar <X>Id extends uuid;` with a doc comment in `src/spec/primitives.tsp`.
-2. New permissions: an enum in `src/admin/spec/<slice>/permissions.tsp` (copy user management's in
-   `src/admin/user-management/spec/`), imported in `src/spec/primitives.tsp`.
+1. A new id: `@typedId scalar <X>Id extends uuid;` with a doc comment in `src/admin/spec/primitives.tsp`, namespace
+   `FocusTemplate.Admin.Primitives`. The first id also brings the `Vogen` package into `FocusTemplate.Admin.Primitives`.
+2. New permissions: an enum in `src/admin/spec/<slice>/permissions.tsp`, namespace
+   `FocusTemplate.Admin.Primitives.Permissions` (copy user management's in `src/admin/user-management/spec/`), imported
+   in `src/admin/spec/primitives.tsp`, which puts them into `AdminPermissions`.
 3. The slice's file in `src/admin/spec/<slice>/`, imported in `src/admin/spec/api.tsp`: `@requiresPermission` per
    operation or interface, `Problem<404 | 409>` for what the handler refuses, the `ValidationProblem` alias behind a
    form, `@httpQuery` over a request spreading `PageQuery` for a searchable list, defaults in the spec. A list that
@@ -48,15 +50,23 @@ own under `src/features/<name>/` instead, built like `src/features/weather/`, se
 
 ## 3. Data ([database](../../../docs/database.md))
 
-1. The entity and its `IEntityTypeConfiguration` in `src/SpatialFocus.Data/Entities/`, the configuration in
-   `ApplyEntityConfigurations` (`ModelBuilderExtensions`), a `DbSet` in `AppDbContextBase`, `IAuditable` when its
-   changes are audited.
-2. A new id: `[EfCoreConverter<X>]` in `VogenEfCoreConverters` and `HaveSentinel(X.Unspecified)` in
-   `AppDbContextBase.ConfigureIds`.
-3. The migration, with the AppHost stopped:
-   `dotnet dotnet-ef migrations add <Name> --project src/SpatialFocus.Data --startup-project src/SpatialFocus.Data --context AppDbContext`.
-   With new permissions, check that it inserts their rows and grants them to `Administrators`.
-4. Dev data, if the slice needs it: a part in `DevelopmentSeed` that checks for its own rows.
+A slice of the Admin product keeps its tables in the product's own context in `FocusTemplate.Data`, schema `admin`. A
+self-contained capability that hosts drop in is a feature package instead, laid out like weather (see
+[architecture](../../../docs/architecture.md)).
+
+1. The first slice with entities creates the product context once, each piece as weather's has it: `AdminDbContextBase`
+   deriving from `FoundationDbContext` in `src/FocusTemplate.Data/Admin/`, `AdminDbContext` and
+   `ReadOnlyAdminDbContext`, their design-time factory beside them, the registration in `Admin.Api`, and an
+   `admin-migrations` resource in the AppHost that waits for the spine's `migrations`.
+2. The entity and its `IEntityTypeConfiguration` in `src/FocusTemplate.Data/Admin/Entities/`, the configuration in the
+   context's `ConfigureModel`, a `DbSet`, `IAuditable` when its changes are audited, and `UserReference` for a foreign
+   key to the users.
+3. A new id: its `[EfCoreConverter<X>]` and `HaveSentinel(X.Unspecified)` in the context's `ConfigureIds`.
+4. The migration, with the AppHost stopped:
+   `dotnet dotnet-ef migrations add <Name> --project src/FocusTemplate.Data --startup-project src/admin/FocusTemplate.Admin.Api --context AdminDbContext`.
+   New permissions are a migration of the spine's context as well, the same command with `--context AppDbContext`:
+   check that it inserts their rows and grants them to `Administrators`.
+5. Dev data, if the slice needs it: a seed part that checks for its own rows.
 
 ## 4. Handlers
 

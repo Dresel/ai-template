@@ -10,19 +10,25 @@ Keycloak says who the user is, the database says what they may do. No roles in t
   namespace `SpatialFocus.Primitives.Permissions` outside the service, marked
   `@permissions(SpatialFocus.Primitives.Permission)`
   (`enum UserManagement { ViewUsers, ManageUsers, ViewGroups, ManageGroups }`). The spine's `src/spec/primitives.tsp`
-  imports it, so it joins `Permission.All` and the groups can grant it. A feature declares its own the same way in
-  `src/features/<name>/spec/permissions.tsp` (`enum Weather { ManageStations }`), which the feature's `primitives.tsp`
-  imports.
-- **Generated** into Primitives as `UserManagementPermissions.ViewUsers` (the `Permission` "UserManagement.ViewUsers"),
-  beside `Permission` in `SpatialFocus.Primitives`, plus `Permission.All` and the constants in
-  `UserManagementPermissions.Names` for attribute arguments.
+  imports it. A feature declares its own the same way in `src/features/<name>/spec/permissions.tsp`
+  (`enum Weather { ManageStations }`, namespace `SpatialFocus.Weather.Primitives.Permissions`), which the feature's
+  `primitives.tsp` imports.
+- **Generated** as `UserManagementPermissions.ViewUsers` (the `Permission` "UserManagement.ViewUsers") beside
+  `Permission` in `SpatialFocus.Primitives`, and a feature's as `WeatherPermissions` in its own primitives assembly,
+  each with its names as constants in `Names` for attribute arguments.
+- **The product's list**: `src/admin/spec/primitives.tsp` imports the permission sets the Admin product includes, and
+  `FocusTemplate.Admin.Primitives` generates `AdminPermissions.All` from it. The hosts hand it to
+  `AddUserManagement(…)` and `AddUserManagementPages(…)`, which register it as `PermissionCatalog`: the handler that
+  sets a group's permissions refuses a name outside it, and the groups page lists it.
 - **Required** by an operation or interface with `@requiresPermission(Permissions.UserManagement.ViewUsers)`, qualified
   because the enum lives outside the service namespace. The generated endpoint carries it as
   `RequiresPermissionAttribute` metadata (generated into `SpatialFocus.Http`) and answers 403 without it. An operation
   without one only needs a signed-in user.
 - **Stored** by name: groups grant permissions by name, so renaming or removing one is a migration.
-  `PermissionDefinition` is the table of the release's permissions, seeded by `HasData` from `Permission.All`, so a new
-  permission is `dotnet ef migrations add`.
+  `PermissionDefinition` is the table of the release's permissions. The product owns the migrations of the spine's
+  `AppDbContext` (`FocusTemplate.Data`, see [database](database.md)), whose `PermissionSeed` seeds the table and the
+  administrators' grants by `HasData` from `AdminPermissions.All`. So a new permission, or a feature with permissions
+  added to the product, is `dotnet ef migrations add` there.
 
 ## One mechanism on both ends
 

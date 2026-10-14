@@ -3,7 +3,7 @@
 #nullable enable
 
 using Mediator;
-using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Primitives;
 using SpatialFocus.Weather.Shared;
 
 namespace SpatialFocus.Weather.Api.Stations;

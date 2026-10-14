@@ -1,5 +1,6 @@
 using FocusTemplate.Admin.Api.Features;
 using FocusTemplate.Admin.Api.Features.DemoProfiles;
+using FocusTemplate.Admin.Primitives;
 using FocusTemplate.Admin.Shared.Localization;
 using FocusTemplate.Names;
 using ResXGenerator.Registration;
@@ -28,7 +29,7 @@ builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetim
 builder.Services.AddAdminEndpoints();
 builder.Services.AddDemoProfiles();
 
-builder.AddUserManagement(ConnectionNames.Database, ConnectionNames.ReadOnlyDatabase);
+builder.AddUserManagement(ConnectionNames.Database, ConnectionNames.ReadOnlyDatabase, AdminPermissions.All);
 
 builder.AddWeather(ConnectionNames.Database, ConnectionNames.ReadOnlyDatabase);
 

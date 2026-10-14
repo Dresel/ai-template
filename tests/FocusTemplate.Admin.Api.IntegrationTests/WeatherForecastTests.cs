@@ -3,6 +3,7 @@ using SpatialFocus.Weather.Client;
 using SpatialFocus.Weather.Client.WeatherForecasts;
 using SpatialFocus.Weather.Data;
 using SpatialFocus.Weather.Data.Entities;
+using SpatialFocus.Weather.Primitives;
 using SpatialFocus.Weather.Shared;
 using Xunit.Sdk;
 

@@ -25,6 +25,10 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   `Data` (identity: users, groups, permissions), `Api.Foundation`, `Web.Foundation`, `Web.ClientServiceDefaults`,
   `Localization`, the BFF's contract `Web.Bff.Shared`, the hosting libraries (`AppHost.Hosting`, `Api.Hosting`,
   `Web.Bff.Hosting`, `Web.Hosting`), the service defaults and the AppHost.
+- **References** run from the product down to what it shares: a `SpatialFocus.*` project references no
+  `FocusTemplate.*` one, and a shared project without a vertical in its name references none of a vertical's. A
+  product's BFF hands `Web.Bff.Hosting` its permission source, the one piece of user management the BFF needs.
+  `ProjectReferenceTests` checks both rules from the project files.
 - **A vertical** is an audience with its own API, contract and client: Admin, Public. Its slices live inside its
   projects (`Features/<Slice>/`).
 - **User management** (`src/admin/user-management/`) is the Admin vertical's part of the spine: every Admin host
@@ -38,14 +42,19 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   `AddUserManagementPages(…)` registers its pages and their `PageAssembly`.
   A feature never references it.
 - **A feature** is a package of projects under `src/features/<name>/` that a host adds without touching its own
-  code beyond composition. Weather is the first:
+  code beyond composition. A package fits a self-contained capability that hosts drop in: shared between products,
+  likely to be, or standing on its own with jobs and pages (Lamama's monitoring, Focuma's releases). A product's own
+  business is a slice of its vertical, with its tables in a context of the product's own in `FocusTemplate.Data`.
+  Weather is the template's example of a package. On its own merits it would be a slice of the Admin vertical, since
+  it serves one product, runs no jobs and shares nothing:
 
   | Project | Holds | References |
   |---|---|---|
   | `spec/` (`SpatialFocus.Weather.Spec`) | `api.tsp`, a `@service` of its own, `primitives.tsp` with its typed ids, `permissions.tsp`, and the editor's `tspconfig.yaml` | the spine's `primitives.tsp` |
-  | `SpatialFocus.Weather.Shared` | the generated wire contract and its partials | `Http`, `Primitives` |
+  | `SpatialFocus.Weather.Primitives` | the feature's typed ids and `WeatherPermissions` (generated), `StationId.New()` | `Primitives` |
+  | `SpatialFocus.Weather.Shared` | the generated wire contract and its partials | `Http`, `Primitives`, `Weather.Primitives` |
   | `SpatialFocus.Weather.Client` | the generated typed clients | `Weather.Shared` |
-  | `SpatialFocus.Weather.Data` | entities, `WeatherDbContext` and its read-only twin in schema `weather`, migrations, the dev seed | `Data.Foundation`, `Primitives` |
+  | `SpatialFocus.Weather.Data` | entities, `WeatherDbContext` and its read-only twin in schema `weather`, migrations, the dev seed | `Data.Foundation`, `Primitives`, `Weather.Primitives` |
   | `SpatialFocus.Weather.Api` | handlers, the generated endpoints with `MapWeatherEndpoints()`, `AddWeather()` | `Api.Foundation`, `Weather.Data`, `Weather.Shared` |
   | `SpatialFocus.Weather.Web` | the pages, a Razor class library, `AddWeatherPages()` | `Web.Foundation`, `Web.ClientServiceDefaults`, `Weather.Client` |
 
@@ -58,11 +67,12 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 - **Composition** in the host, one line each:
   `builder.AddWeather(ConnectionNames.Database, ConnectionNames.ReadOnlyDatabase)` and
   `endpoints.MapWeatherEndpoints()` in `Admin.Api`, `AddWeatherPages(environment, ResourceNames.AdminApi)` in
-  `Admin.Web`, which also hands the feature's pages to the `Router`, `AddMigrations<WeatherDbContext>(…)` with
+  `Admin.Web`, which also hands the feature's pages to the `Router`,
+  `AddMigrations("weather-migrations", "SpatialFocus.Weather.Data.WeatherDbContext", …)` with
   `.WaitForCompletion(migrations)` in the AppHost (see [database](database.md)), the feature's `primitives.tsp`
-  imported by `src/spec/primitives.tsp`, and the menu entry in `MainLayout`. A host without the feature leaves out
-  these lines and the project references. The feature takes the host's names as arguments, so it never references
-  `FocusTemplate.Names`.
+  imported by the product's `src/admin/spec/primitives.tsp`, and the menu entry in `MainLayout`. A feature with permissions changes `AdminPermissions.All`, so adding or removing
+  it is also a migration in `FocusTemplate.Data`. A host without the feature leaves out these lines and the project
+  references. The feature takes the host's names as arguments, so it never references `FocusTemplate.Names`.
 
 ## Projects not covered by an area doc
 

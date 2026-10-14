@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using FocusTemplate.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -45,6 +46,7 @@ public sealed class ApiFixture(PostgresFixture postgres, RedisFixture redis) : W
 			new DbContextOptionsBuilder<AppDbContext>().ConfigureAppDbContext(
 					this.connectionString,
 					new AuditingInterceptor(Clock, new FixedCurrentUser(user ?? TestUser)))
+				.UseProductMigrations()
 				.Options);
 
 	// Another API process on the same database and Redis channels, as a second replica behind the ingress would be

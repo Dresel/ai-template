@@ -9,6 +9,7 @@
 		<ProjectReference Include="..\..\SpatialFocus.Web.Bff.Hosting\SpatialFocus.Web.Bff.Hosting.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Shared\FocusTemplate.Admin.Shared.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Web\FocusTemplate.Admin.Web.csproj" />
+		<ProjectReference Include="..\user-management\SpatialFocus.Admin.UserManagement.Client\SpatialFocus.Admin.UserManagement.Client.csproj" />
 	</ItemGroup>
 
 </Project>

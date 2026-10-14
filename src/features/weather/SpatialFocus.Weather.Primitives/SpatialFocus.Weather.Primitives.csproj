@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="Vogen" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\SpatialFocus.Primitives\SpatialFocus.Primitives.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="tspconfig.yaml" />
+	</ItemGroup>
+
+</Project>

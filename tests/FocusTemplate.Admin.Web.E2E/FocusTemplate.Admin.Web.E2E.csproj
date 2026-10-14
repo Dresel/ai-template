@@ -19,6 +19,8 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\FocusTemplate.AppHost\FocusTemplate.AppHost.csproj" />
 		<ProjectReference Include="..\..\src\FocusTemplate.Names\FocusTemplate.Names.csproj" />
+		<ProjectReference Include="..\..\src\SpatialFocus.Data\SpatialFocus.Data.csproj" />
+		<ProjectReference Include="..\..\src\features\weather\SpatialFocus.Weather.Data\SpatialFocus.Weather.Data.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

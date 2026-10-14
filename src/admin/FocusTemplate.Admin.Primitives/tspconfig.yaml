@@ -1,0 +1,9 @@
+emit:
+  - "@spatialfocus/typespec-http-csharp-slim"
+options:
+  "@spatialfocus/typespec-http-csharp-slim":
+    emitter-output-dir: "{output-dir}"
+    output-type: primitives
+    primitives-namespace: FocusTemplate.Admin.Primitives
+    permission-list: AdminPermissions
+    generated-dir: "generated"

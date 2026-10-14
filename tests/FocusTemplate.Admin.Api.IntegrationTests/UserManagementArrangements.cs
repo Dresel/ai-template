@@ -1,3 +1,4 @@
+using FocusTemplate.Admin.Primitives;
 using Microsoft.EntityFrameworkCore;
 using SpatialFocus.Data;
 using SpatialFocus.Data.Entities;
@@ -16,7 +17,7 @@ public static class UserManagementArrangements
 		dbContext.Groups.Add(
 			new Group { Id = WellKnownGroups.Administrators, Name = "Administrators", IsManaged = true, });
 		dbContext.GroupPermissions.AddRange(
-			Permission.All.Select(permission => new GroupPermission
+			AdminPermissions.All.Select(permission => new GroupPermission
 			{
 				GroupId = WellKnownGroups.Administrators, Permission = permission,
 			}));

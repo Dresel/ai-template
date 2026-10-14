@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Primitives;
 using SpatialFocus.Weather.Shared;
 using ValidationProblemDetails = SpatialFocus.Http.ValidationProblemDetails;
 

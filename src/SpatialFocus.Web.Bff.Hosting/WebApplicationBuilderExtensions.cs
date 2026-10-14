@@ -10,7 +10,6 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using OpenTelemetry.Instrumentation.AspNetCore;
 using OpenTelemetry.Instrumentation.Http;
-using SpatialFocus.Admin.UserManagement.Client.Users;
 
 namespace SpatialFocus.Web.Bff.Hosting;
 
@@ -117,11 +116,6 @@ public static class WebApplicationBuilderExtensions
 						http.Request.Headers.ContainsKey(ProxiedApiDefaults.CsrfHeader)));
 
 		builder.Services.AddOpenIdConnectAccessTokenManagement();
-
-		// /bff/user asks the API for the user's permissions, with the session's access token
-		builder.Services.AddHttpClient<UsersClient>((provider, client) =>
-				client.BaseAddress = new Uri(provider.GetRequiredService<IOptions<BffOptions>>().Value.Api))
-			.AddUserAccessTokenHandler();
 	}
 
 	// YARP forwards /_otlp/* to the dashboard, and tracing those forwarding requests would export them again, in a loop

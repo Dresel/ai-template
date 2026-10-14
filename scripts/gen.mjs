@@ -4,12 +4,14 @@
 // part of a vertical (src/admin/user-management/*), compiles the package's spec/api.tsp. A project of the shared spine,
 // src/SpatialFocus.<Name>, compiles
 // src/spec/<name>.tsp: SpatialFocus.Primitives over primitives.tsp, the typed ids every vertical imports, and
-// SpatialFocus.Http over http.tsp, the library types. The tspconfig.yaml in a spec/ folder is the editor's project
+// SpatialFocus.Http over http.tsp, the library types. A *.Primitives project of a feature or a vertical compiles the
+// primitives.tsp of the spec/ folder beside it: the feature's typed ids, or the product's permission list.
+// The tspconfig.yaml in a spec/ folder is the editor's project
 // (kind: project), which names the file the language server compiles, and generates nothing.
 // Temporary TypeSpec output goes to tsp-output/, generated C# to each project's generated/ folder.
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 const projectDirectories = (parent) =>
   existsSync(parent)
@@ -46,7 +48,9 @@ if (projects.length === 0) {
 for (const project of projects) {
   const name = project.split(/[\/]/).at(-1);
   const segment = name.split(".")[1]?.toLowerCase();
+  const primitives = !spine.includes(project) && name.endsWith(".Primitives");
   const spec =
+    (primitives ? join(dirname(project), "spec", "primitives.tsp") : undefined) ??
     packageSpecs.get(project) ??
     (spine.includes(project) ? join("src", "spec", `${segment ?? ""}.tsp`) : join("src", segment ?? "", "spec", "api.tsp"));
   if (!segment || !existsSync(spec)) {

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using SpatialFocus.Data.Foundation.Auditing;
 using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Primitives;
 
 namespace SpatialFocus.Weather.Data.Entities;
 

@@ -18,8 +18,9 @@ paths:
   configurations into `ConfigureModel`, and states its schema once, as `IHasSchema.Schema`.
 - The spine's contexts get their provider through `ConfigureAppDbContext` or `ConfigureReadOnlyAppDbContext`, a
   feature's through `ConfigureFeatureDbContext` or `ConfigureReadOnlyFeatureDbContext`.
-- A feature's entities go into its own data project, in a schema named after the feature, never into
-  `SpatialFocus.Data`. A pooled context's only constructor parameter is its options.
+- A feature's entities go into its own data project, in a schema named after the feature, a product slice's into the
+  product's context in `FocusTemplate.Data`, and neither into `SpatialFocus.Data`. A pooled context's only constructor
+  parameter is its options.
 - A feature reaches the spine's users through `UserReference` and saves nothing through it. Another feature's tables it
   reaches through ids and a lookup.
 - Entities are plain classes. A business rule lives in the handler that needs it and answers a refusal with a case of
@@ -38,10 +39,14 @@ paths:
 - Raw SQL and `HasCheckConstraint` use the snake_case database names, with the schema outside `public`.
 - `ExecuteUpdate` and raw SQL on an `IAuditable` type set the audit columns themselves.
 - The schema changes only through a migration, added with the AppHost stopped:
-  `dotnet dotnet-ef migrations add <Name> --project src/SpatialFocus.Data --startup-project src/SpatialFocus.Data --context AppDbContext`,
-  for a feature with its data project and its writable context.
-- A design-time factory takes its connection and the seed flag from `DesignTime`. The AppHost adds its migrations
-  resource with `AddMigrations<TContext>`, a feature's followed by `.WaitForCompletion(migrations)`.
+  `dotnet dotnet-ef migrations add <Name> --project src/FocusTemplate.Data --startup-project src/admin/FocusTemplate.Admin.Api --context AppDbContext`,
+  for a feature with its data project as both and its writable context.
+- The spine's migrations and its permission seed are the product's, in `FocusTemplate.Data`, and what migrates the
+  spine's context calls `UseProductMigrations()`. A shared model ships its migrations unless its data differs per
+  product.
+- A design-time factory takes its connection and the seed flag from `DesignTime`, and sits in the startup project or
+  the context's project, where EF looks for it. The AppHost adds its migrations resource with `AddMigrations(…)`,
+  a feature's followed by `.WaitForCompletion(migrations)`.
 - The dev seed implements both the sync and the async delegate, and each part checks for its own rows before inserting.
 - No migration creates or grants to `focusdb_reader`.
 

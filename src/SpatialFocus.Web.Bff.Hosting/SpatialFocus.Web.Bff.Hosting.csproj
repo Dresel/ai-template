@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="../admin/user-management/SpatialFocus.Admin.UserManagement.Client/SpatialFocus.Admin.UserManagement.Client.csproj" />
+		<ProjectReference Include="../SpatialFocus.Primitives/SpatialFocus.Primitives.csproj" />
 		<ProjectReference Include="../SpatialFocus.Web.Bff.Shared/SpatialFocus.Web.Bff.Shared.csproj" />
 	</ItemGroup>
 

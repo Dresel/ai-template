@@ -1,6 +1,7 @@
 @attribute [Route(ListPage.Path + "/{Id:guid}")]
 @attribute [RequiresPermission(UserManagementPermissions.Names.ViewGroups)]
 @inherits ViewModelPage<DetailPageViewModel>
+@inject PermissionCatalog Permissions
 @inject IDetailPageLocalizations L
 
 <RadzenStack Gap="1rem">
@@ -106,7 +107,7 @@
 						@L.ManagedNote
 					</RadzenText>
 				}
-				@foreach (IGrouping<string, Permission> section in Permission.All.GroupBy(permission => PermissionLabels.Of(permission).Section))
+				@foreach (IGrouping<string, Permission> section in Permissions.All.GroupBy(permission => PermissionLabels.Of(permission).Section))
 				{
 					<RadzenText TextStyle="TextStyle.Subtitle1" TagName="TagName.H3">@section.Key</RadzenText>
 					@foreach (Permission permission in section)

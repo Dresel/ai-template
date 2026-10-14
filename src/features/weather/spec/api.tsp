@@ -2,8 +2,8 @@ import "@typespec/http";
 import "@typespec/openapi";
 import "@spatialfocus/typespec-http-csharp-slim";
 
-// The typed ids and permissions from the host's spine, which imports the feature's own primitives.tsp
-import "../../../spec/primitives.tsp";
+// The feature's typed ids and permissions, which bring the spine's along
+import "./primitives.tsp";
 
 import "./weather-forecasts.tsp";
 import "./stations.tsp";

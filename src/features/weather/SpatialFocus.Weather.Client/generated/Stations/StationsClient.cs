@@ -8,7 +8,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Primitives;
 using SpatialFocus.Weather.Shared;
 
 namespace SpatialFocus.Weather.Client.Stations;

@@ -8,6 +8,7 @@ options:
       - "3.2.0"
     file-type: yaml
     experimental-parameter-examples: data
+    omit-unreachable-types: true
   "@spatialfocus/typespec-http-csharp-slim":
     emitter-output-dir: "{output-dir}"
     output-type: api

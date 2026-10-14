@@ -1,4 +1,4 @@
-namespace SpatialFocus.Primitives;
+namespace SpatialFocus.Weather.Primitives;
 
 public readonly partial struct StationId
 {

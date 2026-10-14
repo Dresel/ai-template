@@ -3,6 +3,7 @@ using NetTopologySuite.Geometries;
 using SpatialFocus.Data.Foundation.Auditing;
 using SpatialFocus.Data.Foundation.Identity;
 using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Primitives;
 
 namespace SpatialFocus.Weather.Data.Entities;
 

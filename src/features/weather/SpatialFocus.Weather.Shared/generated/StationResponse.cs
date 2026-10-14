@@ -3,6 +3,7 @@
 #nullable enable
 
 using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Primitives;
 
 namespace SpatialFocus.Weather.Shared;
 

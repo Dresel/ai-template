@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\SpatialFocus.Primitives\SpatialFocus.Primitives.csproj" />
+		<ProjectReference Include="..\..\features\weather\SpatialFocus.Weather.Primitives\SpatialFocus.Weather.Primitives.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="tspconfig.yaml" />
+	</ItemGroup>
+
+</Project>

@@ -14,8 +14,8 @@ paths:
 - Authentication has no flag.
 - What every product's AppHost runs the same way goes into `SpatialFocus.AppHost.Hosting`, which takes the
   product's names as arguments. The AppHost keeps its composition, its settings and its realm file.
-- A migrations resource is added with `AddMigrations<TContext>`, and an API waits for the completion of each one
-  whose tables it reads.
+- A migrations resource is added with `AddMigrations(…)`, naming its context by its full name and its project by its
+  path, and an API waits for the completion of each one whose tables it reads. The AppHost references no data project.
 - A resource or connection reference is named through `ResourceNames` or `ConnectionNames` in `FocusTemplate.Names`,
   and its consumers use the same constant. A feature takes names as arguments. The realm file names its client after
   the BFF's resource and its audience after the API's.

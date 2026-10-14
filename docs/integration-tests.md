@@ -23,10 +23,10 @@ One container, one database per test class, fresh state per test.
 - `RedisFixture` (assembly fixture) starts one Redis, and each `ApiFixture` connects with a GUID as its `channelPrefix`,
   so a class's streams receive only the signals its own API publishes.
 - `ApiTestBase` resets the class database before every test (`ApiFixture.ResetAsync()`,
-  [Respawn](https://github.com/jbogard/Respawn), FK-safe). It keeps `__EFMigrationsHistory`, so migrations never
-  re-run, and `permissions`, whose rows the migration seeds from `Permission.All`. Everything else is empty, the seeded
-  `Administrators` group included, which `UserManagementArrangements.AddAdministratorsAsync` puts back for the tests
-  that need it.
+  [Respawn](https://github.com/jbogard/Respawn), FK-safe). It keeps `__EFMigrationsHistory`, so migrations never re-run,
+  and `permissions`, whose rows the product's migration seeds from `AdminPermissions.All`. Everything else is empty, the
+  seeded `Administrators` group included, which `UserManagementArrangements.AddAdministratorsAsync` puts back for the
+  tests that need it.
 
 ## Users across tests
 

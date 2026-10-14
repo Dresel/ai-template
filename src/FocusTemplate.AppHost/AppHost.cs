@@ -9,8 +9,6 @@ using SpatialFocus.AppHost.Hosting.Analytics;
 using SpatialFocus.AppHost.Hosting.Authentication;
 using SpatialFocus.AppHost.Hosting.Ingress;
 using SpatialFocus.AppHost.Hosting.Migrations;
-using SpatialFocus.Data;
-using SpatialFocus.Weather.Data;
 
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 builder.AddLocalSettings();
@@ -77,14 +75,16 @@ if (addChaos)
 		.WithEnvironment("Chaos__FaultRate", chaos["FaultRate"]);
 }
 
-IResourceBuilder<EFMigrationResource> migrations = api.AddMigrations<AppDbContext>(
+IResourceBuilder<EFMigrationResource> migrations = api.AddMigrations(
 	"migrations",
-	"../SpatialFocus.Data/SpatialFocus.Data.csproj",
+	"SpatialFocus.Data.AppDbContext",
+	"../FocusTemplate.Data/FocusTemplate.Data.csproj",
 	focusDb);
 
 // The weather feature's schema, after the spine's, whose users its stations point at
-IResourceBuilder<EFMigrationResource> weatherMigrations = api.AddMigrations<WeatherDbContext>(
+IResourceBuilder<EFMigrationResource> weatherMigrations = api.AddMigrations(
 		"weather-migrations",
+		"SpatialFocus.Weather.Data.WeatherDbContext",
 		"../features/weather/SpatialFocus.Weather.Data/SpatialFocus.Weather.Data.csproj",
 		focusDb)
 	.WaitForCompletion(migrations);

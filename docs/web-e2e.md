@@ -23,7 +23,8 @@ The suite needs Docker, and the developer's AppHost stopped.
   ingress on and tests through `https`.
 - **`KeycloakAdmin`** changes the shared realm for a test and puts it back when disposed (see
   [authentication](authentication.md)).
-- Tests that only need the AppHost's model (`KeycloakRealmTests`, `PersistentDatabaseTests`) build it without starting
+- Tests that only need the AppHost's model (`KeycloakRealmTests`, `PersistentDatabaseTests`,
+  `MigrationResourceTests`) build it without starting
   it.
 
 ## UI bugs

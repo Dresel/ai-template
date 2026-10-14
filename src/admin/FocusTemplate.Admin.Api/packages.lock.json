@@ -471,12 +471,26 @@
         "resolved": "10.0.12",
         "contentHash": "jDix4bBMYnpZdSPcnY+KDV6ik3SRMzpMKby/bZl/XUwIiflwRNAFZ0oOl61R/pSaveIJ8t1gs2BUlrGsPs/bcg=="
       },
+      "focustemplate.admin.primitives": {
+        "type": "Project",
+        "dependencies": {
+          "SpatialFocus.Primitives": "[1.0.0, )",
+          "SpatialFocus.Weather.Primitives": "[1.0.0, )"
+        }
+      },
       "focustemplate.admin.shared": {
         "type": "Project",
         "dependencies": {
           "FluentValidation": "[12.1.1, )",
           "SpatialFocus.Http": "[1.0.0, )",
           "SpatialFocus.Primitives": "[1.0.0, )"
+        }
+      },
+      "focustemplate.data": {
+        "type": "Project",
+        "dependencies": {
+          "FocusTemplate.Admin.Primitives": "[1.0.0, )",
+          "SpatialFocus.Data": "[1.0.0, )"
         }
       },
       "focustemplate.names": {
@@ -538,6 +552,7 @@
           "EFCore.CheckConstraints": "[10.0.0, )",
           "EFCore.NamingConventions": "[10.0.1, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[10.0.3, )",
+          "SpatialFocus.Names": "[1.0.0, )",
           "SpatialFocus.Primitives": "[1.0.0, )",
           "Vogen": "[8.0.7, )"
         }
@@ -554,6 +569,9 @@
           "FluentValidation": "[12.1.1, )",
           "SpatialFocus.Http": "[1.0.0, )"
         }
+      },
+      "spatialfocus.names": {
+        "type": "Project"
       },
       "spatialfocus.primitives": {
         "type": "Project",
@@ -592,6 +610,14 @@
           "Npgsql.EntityFrameworkCore.PostgreSQL.NetTopologySuite": "[10.0.3, )",
           "SpatialFocus.Data.Foundation": "[1.0.0, )",
           "SpatialFocus.Primitives": "[1.0.0, )",
+          "SpatialFocus.Weather.Primitives": "[1.0.0, )",
+          "Vogen": "[8.0.7, )"
+        }
+      },
+      "spatialfocus.weather.primitives": {
+        "type": "Project",
+        "dependencies": {
+          "SpatialFocus.Primitives": "[1.0.0, )",
           "Vogen": "[8.0.7, )"
         }
       },
@@ -600,7 +626,8 @@
         "dependencies": {
           "FluentValidation": "[12.1.1, )",
           "SpatialFocus.Http": "[1.0.0, )",
-          "SpatialFocus.Primitives": "[1.0.0, )"
+          "SpatialFocus.Primitives": "[1.0.0, )",
+          "SpatialFocus.Weather.Primitives": "[1.0.0, )"
         }
       },
       "Aspire.StackExchange.Redis": {

@@ -1,4 +1,5 @@
 using System.Net;
+using FocusTemplate.Admin.Primitives;
 using Microsoft.EntityFrameworkCore;
 using SpatialFocus.Admin.UserManagement.Client.Users;
 using SpatialFocus.Admin.UserManagement.Shared;
@@ -77,6 +78,6 @@ public sealed class PermissionTests(ApiFixture factory) : ApiTestBase(factory)
 		List<Permission> seeded = await dbContext.Permissions.Select(permission => permission.Name)
 			.ToListAsync(TestContext.Current.CancellationToken);
 
-		Assert.Equal(Permission.All.Order(), seeded.Order());
+		Assert.Equal(AdminPermissions.All.Order(), seeded.Order());
 	}
 }

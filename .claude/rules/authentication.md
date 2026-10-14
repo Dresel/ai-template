@@ -22,6 +22,9 @@ paths:
   lock the health probes. `EveryApiEndpointRequiresAuthorization` checks the spec.
 - A new proxied API gets its own route entry with the `ProxiedApi` policy in the BFF's `appsettings.json`.
 - Proxied clients are registered with `AddProxiedHttpClient`, which adds `X-CSRF` and sends a 401 through login.
+- The product's BFF registers the `IUserPermissionSource` that `/bff/user` asks, and the clients it calls with the
+  session's token through `AddApiClient<TClient>()`. `SpatialFocus.Web.Bff.Hosting` references no vertical
+  (`ProjectReferenceTests`).
 - A 401 from the BFF means the session is gone. A 502 on a proxied call or on `/bff/user` means the BFF and the API
   disagree about tokens, or the API is down.
 - Return URLs of `/bff/login` and `/bff/logout` are local paths only.

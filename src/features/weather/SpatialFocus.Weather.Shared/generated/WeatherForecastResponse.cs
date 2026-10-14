@@ -4,7 +4,7 @@
 
 using System;
 using System.Text.Json.Serialization;
-using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Primitives;
 
 namespace SpatialFocus.Weather.Shared;
 

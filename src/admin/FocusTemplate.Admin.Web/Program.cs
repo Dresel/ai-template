@@ -1,3 +1,4 @@
+using FocusTemplate.Admin.Primitives;
 using FocusTemplate.Admin.Web;
 using FocusTemplate.Admin.Web.Diagnostics;
 using FocusTemplate.Admin.Web.Features.DemoProfiles;
@@ -35,7 +36,7 @@ builder.Services.AddWebLocalization();
 builder.Services.AddDemoProfiles(builder.HostEnvironment);
 builder.Services.AddDiagnostics(builder.HostEnvironment);
 
-builder.Services.AddUserManagementPages(builder.HostEnvironment, ResourceNames.AdminApi);
+builder.Services.AddUserManagementPages(builder.HostEnvironment, ResourceNames.AdminApi, AdminPermissions.All);
 builder.Services.AddWeatherPages(builder.HostEnvironment, ResourceNames.AdminApi);
 
 builder.Services.AddRadzenComponents();

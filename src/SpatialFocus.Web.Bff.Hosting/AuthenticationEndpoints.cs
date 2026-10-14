@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.IdentityModel.JsonWebTokens;
-using SpatialFocus.Admin.UserManagement.Client.Users;
-using SpatialFocus.Admin.UserManagement.Shared;
 using SpatialFocus.Primitives;
 using SpatialFocus.Web.Bff.Shared;
 
@@ -52,7 +50,7 @@ internal static class AuthenticationEndpoints
 		// fails, 502 as on the proxied routes, since the session is fine and a new login would bring the same token.
 		app.MapGet(
 			"/bff/user",
-			async (HttpContext context, UsersClient users) =>
+			async (HttpContext context, IUserPermissionSource permissions) =>
 			{
 				context.Response.Headers.CacheControl = "no-store";
 
@@ -64,14 +62,14 @@ internal static class AuthenticationEndpoints
 
 				try
 				{
-					CurrentUserResponse me = await users.MeAsync(context.RequestAborted);
+					IReadOnlyList<Permission> granted = await permissions.GetAsync(context.RequestAborted);
 
 					return Results.Ok(
 						new UserInfoResponse(
 						[
 							.. context.User.Claims.Select(claim => new UserClaim(claim.Type, claim.Value)),
 							new UserClaim(BffClaimTypes.LogoutUrl, LogoutUrl(context.User)),
-							.. me.Permissions.Select(permission => new UserClaim(Permission.ClaimType, permission.Value)),
+							.. granted.Select(permission => new UserClaim(Permission.ClaimType, permission.Value)),
 						]));
 				}
 				catch (HttpRequestException)

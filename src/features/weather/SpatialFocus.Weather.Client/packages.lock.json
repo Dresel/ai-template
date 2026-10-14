@@ -64,12 +64,20 @@
           "Vogen": "[8.0.7, )"
         }
       },
+      "spatialfocus.weather.primitives": {
+        "type": "Project",
+        "dependencies": {
+          "SpatialFocus.Primitives": "[1.0.0, )",
+          "Vogen": "[8.0.7, )"
+        }
+      },
       "spatialfocus.weather.shared": {
         "type": "Project",
         "dependencies": {
           "FluentValidation": "[12.1.1, )",
           "SpatialFocus.Http": "[1.0.0, )",
-          "SpatialFocus.Primitives": "[1.0.0, )"
+          "SpatialFocus.Primitives": "[1.0.0, )",
+          "SpatialFocus.Weather.Primitives": "[1.0.0, )"
         }
       },
       "FluentValidation": {

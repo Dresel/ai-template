@@ -10,6 +10,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\SpatialFocus.Data.Foundation\SpatialFocus.Data.Foundation.csproj" />
 		<ProjectReference Include="..\..\..\SpatialFocus.Primitives\SpatialFocus.Primitives.csproj" />
+		<ProjectReference Include="..\SpatialFocus.Weather.Primitives\SpatialFocus.Weather.Primitives.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

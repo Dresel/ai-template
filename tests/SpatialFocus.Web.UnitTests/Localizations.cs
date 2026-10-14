@@ -13,7 +13,7 @@ internal static class Localizations
 		.AddLogging()
 		.AddResxLocalization()
 		.AddFoundationLocalization()
-		.AddUserManagementPages(new TestHostEnvironment(), "admin-api")
+		.AddUserManagementPages(new TestHostEnvironment(), "admin-api", [])
 		.BuildServiceProvider();
 
 	public static T Get<T>()

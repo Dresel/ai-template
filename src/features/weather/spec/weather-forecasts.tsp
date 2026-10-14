@@ -5,7 +5,7 @@ import "@spatialfocus/typespec-http-csharp-slim";
 using Http;
 using OpenAPI;
 using SpatialFocus.Http;
-using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Primitives;
 
 namespace SpatialFocus.Weather;
 

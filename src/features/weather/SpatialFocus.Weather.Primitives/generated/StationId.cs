@@ -5,9 +5,9 @@
 using System;
 using Vogen;
 
-namespace SpatialFocus.Primitives;
+namespace SpatialFocus.Weather.Primitives;
 
-/// <summary>Identifier of an alert raised for a station.</summary>
+/// <summary>Identifier of a weather station.</summary>
 [ValueObject<Guid>]
 [Instance("Unspecified", "global::System.Guid.Empty")]
-public readonly partial struct AlertId;
+public readonly partial struct StationId;

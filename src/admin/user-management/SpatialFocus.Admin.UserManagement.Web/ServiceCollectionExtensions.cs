@@ -5,7 +5,9 @@ using Microsoft.Extensions.Hosting;
 using ResXGenerator.Registration;
 using SpatialFocus.Admin.UserManagement.Client.Groups;
 using SpatialFocus.Admin.UserManagement.Client.Users;
+using SpatialFocus.Admin.UserManagement.Shared;
 using SpatialFocus.Admin.UserManagement.Web.Users;
+using SpatialFocus.Primitives;
 using SpatialFocus.Web.Foundation;
 using SpatialFocus.Web.Foundation.Pages;
 
@@ -16,7 +18,8 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddUserManagementPages(
 		this IServiceCollection services,
 		IWebAssemblyHostEnvironment environment,
-		string apiName)
+		string apiName,
+		IReadOnlyList<Permission> permissions)
 	{
 		services.AddProxiedHttpClient<UsersClient>(environment, apiName);
 		services.AddProxiedHttpClient<GroupsClient>(environment, apiName);
@@ -24,6 +27,7 @@ public static class ServiceCollectionExtensions
 		services.AddLiveUpdates((GroupsClient groups, CancellationToken cancellationToken) => groups.WatchAsync(cancellationToken));
 
 		services.AddScoped<IValidator<Groups.Form>, Groups.FormValidator>();
+		services.AddSingleton(new PermissionCatalog(permissions));
 		services.AddSingleton<PermissionLabels>();
 
 		services.AddScoped<ListPageViewModel>();

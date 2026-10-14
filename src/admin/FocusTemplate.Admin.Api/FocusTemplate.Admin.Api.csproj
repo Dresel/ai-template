@@ -19,7 +19,9 @@
 		<ProjectReference Include="..\..\SpatialFocus.Api.Foundation\SpatialFocus.Api.Foundation.csproj" />
 		<ProjectReference Include="..\..\SpatialFocus.Data\SpatialFocus.Data.csproj" />
 		<ProjectReference Include="..\..\SpatialFocus.Api.Hosting\SpatialFocus.Api.Hosting.csproj" />
+		<ProjectReference Include="..\..\FocusTemplate.Data\FocusTemplate.Data.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.Names\FocusTemplate.Names.csproj" />
+		<ProjectReference Include="..\FocusTemplate.Admin.Primitives\FocusTemplate.Admin.Primitives.csproj" />
 		<ProjectReference Include="..\..\SpatialFocus.ServiceDefaults\SpatialFocus.ServiceDefaults.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Shared\FocusTemplate.Admin.Shared.csproj" />
 		<ProjectReference Include="..\user-management\SpatialFocus.Admin.UserManagement.Api\SpatialFocus.Admin.UserManagement.Api.csproj" />

@@ -4,7 +4,7 @@
 
 using Vogen;
 
-namespace SpatialFocus.Primitives;
+namespace SpatialFocus.Weather.Primitives;
 
 /// <summary>Identifier of a weather forecast.</summary>
 [ValueObject<int>]

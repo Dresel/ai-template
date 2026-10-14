@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using SpatialFocus.Data.Foundation;
 using SpatialFocus.Primitives;
 using SpatialFocus.Weather.Data.Entities;
+using SpatialFocus.Weather.Primitives;
 
 namespace SpatialFocus.Weather.Data;
 

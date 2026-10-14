@@ -6,9 +6,15 @@ What to follow when changing these files: [the rule](../.claude/rules/database.m
 
 `SpatialFocus.Data` holds the spine's entities, identity and permissions, with their EF Core mapping (`Entities/`, each
 entity next to its `IEntityTypeConfiguration`, all listed by hand in `ApplyEntityConfigurations`), the model in
-`AppDbContextBase` with its two sealed contexts, the migrations, a design-time factory and the dev seed. User
-management's Api, the Admin API and the AppHost's migration resource reference it, and it stays free of Aspire. Its
-tables sit in `public`.
+`AppDbContextBase` with its two sealed contexts and the dev seed. User management's Api and the Admin API reference it,
+and it stays free of Aspire. Its tables sit in `public`.
+
+`FocusTemplate.Data` is the product's: the migrations of the spine's `AppDbContext`, and `PermissionSeed`, a model
+customizer that seeds the permission rows and the administrators' grants from `AdminPermissions.All`.
+`UseProductMigrations()` puts both into a context's options (`MigrationsAssembly`, `ReplaceService<IModelCustomizer>`).
+The design-time factory and the integration tests' `ApiFixture` call it. The API's context pools go without, since
+nothing there migrates and the seeded rows change no query. Shared models ship their migrations, and a shared model
+whose data differs per product leaves them to the product, as the spine's does for its permission rows.
 
 `SpatialFocus.Data.Foundation` holds what any context builds on and no entity of its own: `FoundationDbContext<TModel>`
 with `IHasSchema`, auditing (`Auditing/`, with `ICurrentUser` and `WellKnownUsers`), `UseNpgsqlWithConventions` (the
@@ -156,21 +162,27 @@ never by an API, which `WaitForCompletion`s them, so there is no startup race un
 for the spine's, since its foreign keys point at the spine's users. Locally and in the E2E suite each runs
 `dotnet ef database update` on start. `aspire publish` emits each as a migration-bundle container.
 
-The AppHost adds each with `AddMigrations<TContext>(name, migrationsProjectPath, database)` (`Migrations/` in
-`SpatialFocus.AppHost.Hosting`), which holds what every migrations resource needs: the tool's environment, both database references, the update on
-start and the bundle. A feature's call adds `.WaitForCompletion(migrations)`, and the APIs that read its tables wait for
+The AppHost adds each with `AddMigrations(name, contextTypeName, migrationsProjectPath, database)` (`Migrations/` in
+`SpatialFocus.AppHost.Hosting`), which holds what every migrations resource needs: the tool's environment, both
+database references, the update on start and the bundle. It takes the context's full name and the project's path as
+strings, so the AppHost compiles no data project and carries no EF Core. `MigrationResourceTests` checks the names
+against the types. A feature's call adds `.WaitForCompletion(migrations)`, and the APIs that read its tables wait for
 it in turn.
 
 Adding one, with the AppHost stopped:
-`dotnet dotnet-ef migrations add <Name> --project src/SpatialFocus.Data --startup-project src/SpatialFocus.Data --context AppDbContext`,
+`dotnet dotnet-ef migrations add <Name> --project src/FocusTemplate.Data --startup-project src/admin/FocusTemplate.Admin.Api --context AppDbContext`,
 for the weather feature `--project` and `--startup-project` `src/features/weather/SpatialFocus.Weather.Data` with
-`--context WeatherDbContext`. `--context` is required because each assembly holds two contexts and only the writable one
-has migrations. The design-time factories need no live database. The migration resources' dashboard commands (Add
-Migration, Update/Reset/Drop Database, Status) do the same.
+`--context WeatherDbContext`. `--context` is
+required because each assembly holds two contexts and only the writable one has migrations. EF looks for a design-time
+factory in the startup project and in the context's own project. The spine's `AppDbContextFactory` sits in the Admin
+API, the startup project the AppHost's migrations resource runs with too, and a feature's in its data project. The
+design-time factories need no live database. The migration resources' dashboard commands (Add Migration,
+Update/Reset/Drop Database, Status) do the same.
 
-A design-time factory reads its connection and the seed flag through `DesignTime` in `Data.Foundation`.
+A design-time factory reads its connection and the seed flag through `DesignTime` in `Data.Foundation`, under the
+names in `DesignTimeNames` of `SpatialFocus.Names`, a project without dependencies that the AppHost's side shares.
 `AddMigrations` references the database on each migrations resource twice: under its own name, which the published bundle's
-Dockerfile reads (`efbundle --connection "$ConnectionStrings__focusdb"`), and under `DesignTime.ConnectionName`
+Dockerfile reads (`efbundle --connection "$ConnectionStrings__focusdb"`), and under `DesignTimeNames.ConnectionName`
 (`migrationdb`), which the factories read. So a feature's factory never names the host's database. Without either, as
 for `migrations add`, a factory falls back to a placeholder that builds the model without connecting.
 
@@ -187,7 +199,7 @@ own stations, forecasts and observations through `UseWeatherSeeding`, in the `we
 spine's seed has created the developer who owns the stations.
 
 It runs through EF's `UseSeeding`/`UseAsyncSeeding` when the migration tool applies migrations, in run mode only: the
-AppHost's `AddMigrations` sets `DesignTime.SeedTestDataVariable` on the tool resource, and the published
+AppHost's `AddMigrations` sets `DesignTimeNames.SeedTestDataVariable` on the tool resource, and the published
 bundle never seeds. Each part checks for its own rows before inserting, so running it again inserts nothing. Both
 delegates are implemented, since the EF CLI calls the synchronous one.
 
@@ -205,3 +217,5 @@ step with `__EFMigrationsHistory` until `aspire stop --force --volumes` drops co
 the API, user management and feature assemblies for the read/write split, `ModelSentinelTests` walks every EF model for
 the sentinels, `UserReferenceTests` keeps `UserReference` in step with `User`, and `FeatureTests` keeps the features on
 their own projects and the foundations, and the pooled contexts' constructors down to their options.
+`ProjectReferenceTests` reads the project files: a `SpatialFocus.*` project references no `FocusTemplate.*` project,
+and one without a vertical in its name (`Admin`, `Public`) references no project of a vertical.

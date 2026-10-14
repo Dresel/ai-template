@@ -2,7 +2,6 @@
 
 #nullable enable
 
-using System.Collections.Generic;
 using Vogen;
 
 namespace SpatialFocus.Primitives;
@@ -10,15 +9,4 @@ namespace SpatialFocus.Primitives;
 /// <summary>A permission, named after its feature slice and action, such as UserManagement.ManageGroups. Admins grant permissions to groups.</summary>
 [ValueObject<string>]
 [Instance("Unspecified", "")]
-public readonly partial struct Permission
-{
-	/// <summary>Every permission of this release, for seeding and for the admin UI.</summary>
-	public static IReadOnlyList<Permission> All { get; } =
-	[
-		From("UserManagement.ViewUsers"),
-		From("UserManagement.ManageUsers"),
-		From("UserManagement.ViewGroups"),
-		From("UserManagement.ManageGroups"),
-		From("Weather.ManageStations"),
-	];
-}
+public readonly partial struct Permission;

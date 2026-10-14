@@ -2,7 +2,9 @@
 
 #nullable enable
 
-namespace SpatialFocus.Primitives;
+using SpatialFocus.Primitives;
+
+namespace SpatialFocus.Weather.Primitives;
 
 /// <summary>What a user may do with the weather stations.</summary>
 public static class WeatherPermissions

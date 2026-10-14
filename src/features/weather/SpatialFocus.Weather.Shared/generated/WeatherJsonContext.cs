@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using SpatialFocus.Http;
 using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Primitives;
 
 namespace SpatialFocus.Weather.Shared;
 

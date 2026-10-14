@@ -26,19 +26,24 @@ Shared spine:
   see [database](docs/database.md).
 - **SpatialFocus.Api.Foundation** - what every API builds on: event streams with the Redis backplane, the access
   token's claims, see [spec-first](docs/spec-first.md).
-- **SpatialFocus.Data** - the spine's entities (identity and permissions), their EF Core mapping, the migrations and
-  the dev seed, see [database](docs/database.md).
+- **SpatialFocus.Data** - the spine's entities (identity and permissions), their EF Core mapping and the dev seed, see
+  [database](docs/database.md).
+- **FocusTemplate.Data** - the product's migrations of the spine's `AppDbContext`, with the seed of its permission rows
+  and the administrators' grants, see [database](docs/database.md).
+- **SpatialFocus.Names** - the names the shared parts of an AppHost and the services agree on: `DesignTimeNames`,
+  which a migrations resource sets and a design-time factory reads, see [database](docs/database.md).
 - **SpatialFocus.Localization** - the localization machinery every API and client share: the localizer factory for
   ResXGenerator's classes, FluentValidation's texts, the contracts' field names, see
   [localization](docs/localization.md).
 - **SpatialFocus.AppHost.Hosting** - what every product's AppHost runs: the local or external Keycloak realm, the
-  TLS-offloading ingress, `AddMigrations<TContext>`, Umami analytics, `AddLocalSettings()`, see
+  TLS-offloading ingress, `AddMigrations(…)`, Umami analytics, `AddLocalSettings()`, see
   [apphost](docs/apphost.md).
 - **SpatialFocus.Api.Hosting** - what an API host runs: `AddApiDefaults()`, `AddSignalBackplane(redis)`, the Keycloak
   bearer authentication with the current user, request localization over the product's cultures, the chaos filter,
   see [authentication](docs/authentication.md).
 - **SpatialFocus.Web.Bff.Hosting** - the BFF every product's BFF project runs: the session, OIDC with PAR, `/bff/*`,
-  the YARP transforms, `AddBff()` and `MapBffEndpoints()`, see [authentication](docs/authentication.md).
+  the YARP transforms, `AddBff()` and `MapBffEndpoints()`. The product registers the `IUserPermissionSource` that
+  `/bff/user` asks, see [authentication](docs/authentication.md).
 - **SpatialFocus.Web.Hosting** - what every product's WASM client runs: the BFF's session as authentication state,
   `AppRouter`, `Forbidden`, the account buttons, the loading screen's styles, see
   [web pages](docs/web-pages.md).
@@ -62,6 +67,8 @@ Admin vertical (`src/admin/`):
   `SpatialFocus.Web.Bff.Hosting`: its `Program.cs`, appsettings and `/debug/request`, see
   [authentication](docs/authentication.md).
 - **FocusTemplate.Admin.Shared** - the wire contract shared by server and client.
+- **FocusTemplate.Admin.Primitives** - `AdminPermissions`, the list of the permissions the Admin product includes,
+  generated from `src/admin/spec/primitives.tsp`, see [authorization](docs/authorization.md).
 - **SpatialFocus.Admin.UserManagement.*** (`src/admin/user-management/`) - users, groups and permissions, which every
   Admin host includes: `spec/`, `Shared`, `Client`, `Api` (with `/users/me`, the provisioning and the permission
   handler), `Web`, see [architecture](docs/architecture.md) and [authorization](docs/authorization.md).
@@ -74,11 +81,12 @@ Public vertical (`src/public/`):
   [mobile](docs/mobile.md).
 - **FocusTemplate.Public.Shared** - the mobile wire contract.
 
-Features (`src/features/<name>/`), packages a host adds with a few lines of composition, see
+Features (`src/features/<name>/`), self-contained packages a host adds with a few lines of composition. Weather is the
+template's example of one, and a slice of one product's own business goes into its vertical, see
 [architecture](docs/architecture.md):
 
-- **SpatialFocus.Weather.*** - forecasts and stations: `spec/`, `Shared`, `Client`, `Data` (schema `weather`), `Api`,
-  `Web`.
+- **SpatialFocus.Weather.*** - forecasts and stations: `spec/`, `Primitives` (its typed ids and permissions), `Shared`,
+  `Client`, `Data` (schema `weather`), `Api`, `Web`.
 
 ## Tech stack
 

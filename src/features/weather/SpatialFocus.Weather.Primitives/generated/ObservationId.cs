@@ -4,7 +4,7 @@
 
 using Vogen;
 
-namespace SpatialFocus.Primitives;
+namespace SpatialFocus.Weather.Primitives;
 
 /// <summary>Identifier of an observation, one measurement of a station.</summary>
 [ValueObject<long>]

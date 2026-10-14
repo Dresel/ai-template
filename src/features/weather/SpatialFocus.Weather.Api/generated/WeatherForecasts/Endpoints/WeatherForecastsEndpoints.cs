@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
-using SpatialFocus.Primitives;
+using SpatialFocus.Weather.Primitives;
 using SpatialFocus.Weather.Shared;
 
 namespace SpatialFocus.Weather.Api.WeatherForecasts;

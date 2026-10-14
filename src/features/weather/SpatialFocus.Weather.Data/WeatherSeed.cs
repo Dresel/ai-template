@@ -4,6 +4,7 @@ using Npgsql;
 using SpatialFocus.Data.Foundation.Auditing;
 using SpatialFocus.Primitives;
 using SpatialFocus.Weather.Data.Entities;
+using SpatialFocus.Weather.Primitives;
 
 namespace SpatialFocus.Weather.Data;
 
