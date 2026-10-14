@@ -1,4 +1,8 @@
-namespace FocusTemplate.Admin.Api.Chaos;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
+
+namespace FocusTemplate.Api.Hosting.Chaos;
 
 public static class RouteGroupBuilderExtensions
 {

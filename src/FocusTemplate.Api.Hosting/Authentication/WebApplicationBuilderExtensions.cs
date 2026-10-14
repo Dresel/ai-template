@@ -1,10 +1,12 @@
 using FocusTemplate.Api.Foundation.Authentication;
 using FocusTemplate.Data.Foundation.Auditing;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 
-namespace FocusTemplate.Admin.Api.Authentication;
+namespace FocusTemplate.Api.Hosting.Authentication;
 
 public static class WebApplicationBuilderExtensions
 {

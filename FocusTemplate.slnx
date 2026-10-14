@@ -57,6 +57,7 @@
     <Project Path="src/public/spec/FocusTemplate.Public.Spec.csproj" />
   </Folder>
   <Project Path="src/FocusTemplate.Api.Foundation/FocusTemplate.Api.Foundation.csproj" />
+  <Project Path="src/FocusTemplate.Api.Hosting/FocusTemplate.Api.Hosting.csproj" />
   <Project Path="src/FocusTemplate.AppHost/FocusTemplate.AppHost.csproj" Id="3dbf55d3-63b4-4f1b-a28b-c7313289b89f" />
   <Project Path="src/FocusTemplate.Data.Foundation/FocusTemplate.Data.Foundation.csproj" />
   <Project Path="src/FocusTemplate.Data/FocusTemplate.Data.csproj" />

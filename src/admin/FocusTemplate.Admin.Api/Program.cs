@@ -1,28 +1,28 @@
-using FocusTemplate.Admin.Api.Authentication;
-using FocusTemplate.Admin.Api.Chaos;
 using FocusTemplate.Admin.Api.Features;
 using FocusTemplate.Admin.Api.Features.DemoProfiles;
-using FocusTemplate.Admin.Api.Localization;
+using FocusTemplate.Admin.Shared.Localization;
 using FocusTemplate.Admin.UserManagement.Api;
 using FocusTemplate.Admin.UserManagement.Api.Authorization;
 using FocusTemplate.Api.Foundation.Realtime;
+using FocusTemplate.Api.Hosting;
+using FocusTemplate.Api.Hosting.Authentication;
+using FocusTemplate.Api.Hosting.Chaos;
+using FocusTemplate.Api.Hosting.Localization;
 using FocusTemplate.Names;
 using FocusTemplate.Primitives;
 using FocusTemplate.Weather.Api;
+using ResXGenerator.Registration;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.Services.AddSingleton(TimeProvider.System);
+builder.AddApiDefaults();
 
 builder.AddApiAuthentication();
 
-builder.AddApiLocalization();
-
-builder.Services.AddProblemDetails();
-
-builder.Services.ConfigureHttpJsonOptions(options => options.SerializerOptions.RespectRequiredConstructorParameters = true);
+builder.AddApiLocalization(Cultures.Supported);
+builder.Services.AddAdminSharedLocalization().UsingResXGenerator();
 
 builder.Services.AddMediator(options => options.ServiceLifetime = ServiceLifetime.Scoped);
 builder.Services.AddAdminEndpoints();
@@ -32,8 +32,7 @@ builder.AddUserManagement(ConnectionNames.Database, ConnectionNames.ReadOnlyData
 
 builder.AddWeather(ConnectionNames.Database, ConnectionNames.ReadOnlyDatabase);
 
-builder.AddRedisClient(ConnectionNames.Redis);
-builder.Services.AddSignalBackplane();
+builder.AddSignalBackplane(ConnectionNames.Redis);
 
 WebApplication app = builder.Build();
 

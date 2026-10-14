@@ -14,6 +14,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\FocusTemplate.ServiceDefaults\FocusTemplate.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\..\FocusTemplate.Api.Hosting\FocusTemplate.Api.Hosting.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.Names\FocusTemplate.Names.csproj" />
 		<ProjectReference Include="..\..\features\weather\FocusTemplate.Weather.Data\FocusTemplate.Weather.Data.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Public.Shared\FocusTemplate.Public.Shared.csproj" />

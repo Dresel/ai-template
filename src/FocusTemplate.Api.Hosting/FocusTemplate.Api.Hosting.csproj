@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.StackExchange.Redis" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="../FocusTemplate.Api.Foundation/FocusTemplate.Api.Foundation.csproj" />
+		<ProjectReference Include="../FocusTemplate.Data.Foundation/FocusTemplate.Data.Foundation.csproj" />
+		<ProjectReference Include="../FocusTemplate.Localization/FocusTemplate.Localization.csproj" />
+		<ProjectReference Include="../FocusTemplate.ServiceDefaults/FocusTemplate.ServiceDefaults.csproj" />
+	</ItemGroup>
+
+</Project>

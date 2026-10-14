@@ -7,20 +7,18 @@
 	<ItemGroup>
 		<PackageReference Include="Aigamo.ResXGenerator" PrivateAssets="all" />
 		<PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" />
-		<PackageReference Include="Aspire.StackExchange.Redis" />
 		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="Mediator.Abstractions" />
 		<PackageReference Include="Mediator.SourceGenerator" PrivateAssets="all" ExcludeAssets="runtime">
 			<IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\FocusTemplate.Api.Foundation\FocusTemplate.Api.Foundation.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.Data\FocusTemplate.Data.csproj" />
-		<ProjectReference Include="..\..\FocusTemplate.Localization\FocusTemplate.Localization.csproj" />
+		<ProjectReference Include="..\..\FocusTemplate.Api.Hosting\FocusTemplate.Api.Hosting.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.Names\FocusTemplate.Names.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.ServiceDefaults\FocusTemplate.ServiceDefaults.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Shared\FocusTemplate.Admin.Shared.csproj" />

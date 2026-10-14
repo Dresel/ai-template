@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FocusTemplate.Admin.Api.Authentication;
+namespace FocusTemplate.Api.Hosting.Authentication;
 
 public sealed class OidcOptions
 {

@@ -37,7 +37,7 @@ fixtures pin all of them as arguments. Authentication is always on and has no fl
 | `Features:LocalKeycloak` | on | a Keycloak container with the imported realm. Off takes an existing realm from parameters |
 | `Features:PersistentLocalKeycloak` | off | that container and its data survive between starts |
 | `Features:PersistentDatabase` | off | the dev Postgres and its data survive between starts, on `localhost:15432` |
-| `Features:Chaos` | off | run mode only: the Admin API gets the AppHost's `Chaos` section, and `ChaosFilter` on the route group every slice maps onto delays and fails a share of the requests through Polly's chaos strategies, never the health probes |
+| `Features:Chaos` | off | run mode only: the Admin API gets the AppHost's `Chaos` section, and `ChaosFilter` (`FocusTemplate.Api.Hosting`) on the route group every slice maps onto delays and fails a share of the requests through Polly's chaos strategies, never the health probes |
 
 ## Persistent containers
 

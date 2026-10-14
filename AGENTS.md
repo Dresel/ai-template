@@ -28,6 +28,9 @@ Shared spine:
 - **FocusTemplate.Localization** - the localization machinery every API and client share: the localizer factory for
   ResXGenerator's classes, FluentValidation's texts, the contracts' field names, see
   [localization](docs/localization.md).
+- **FocusTemplate.Api.Hosting** - what an API host runs: `AddApiDefaults()`, `AddSignalBackplane(redis)`, the Keycloak
+  bearer authentication with the current user, request localization over the product's cultures, the chaos filter,
+  see [authentication](docs/authentication.md).
 - **FocusTemplate.Web.Bff.Hosting** - the BFF every product's BFF project runs: the session, OIDC with PAR, `/bff/*`,
   the YARP transforms, `AddBff()` and `MapBffEndpoints()`, see [authentication](docs/authentication.md).
 - **FocusTemplate.Web.Bff.Shared** - the BFF's contract with the WASM client: `/bff/user`'s answer, the claim types,

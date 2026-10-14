@@ -1,8 +1,10 @@
 using System.Globalization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Polly;
 using Polly.Simmy;
 
-namespace FocusTemplate.Admin.Api.Chaos;
+namespace FocusTemplate.Api.Hosting.Chaos;
 
 internal sealed class ChaosFilter(ResiliencePipeline<object?> pipeline) : IEndpointFilter
 {

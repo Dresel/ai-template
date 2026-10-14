@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 
-namespace FocusTemplate.Admin.Api.Authentication;
+namespace FocusTemplate.Api.Hosting.Authentication;
 
 [OptionsValidator]
 public sealed partial class OidcOptionsValidator : IValidateOptions<OidcOptions>;

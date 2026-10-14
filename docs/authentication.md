@@ -87,7 +87,8 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
 
 ## API
 
-JwtBearer with `Oidc:Authority` and `Oidc:Audience`, and `MapInboundClaims = false`, so claims keep Keycloak's names.
+`AddApiAuthentication()` of `FocusTemplate.Api.Hosting`, which any API that signs users in calls: JwtBearer with
+`Oidc:Authority` and `Oidc:Audience`, and `MapInboundClaims = false`, so claims keep Keycloak's names.
 Every generated endpoint requires authorization because `api.tsp` declares `@useAuth(BearerAuth)`. A fallback policy
 would also lock the health probes. `AuthenticationTests.EveryApiEndpointRequiresAuthorization` catches a spec that lost
 it.

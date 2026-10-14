@@ -24,7 +24,8 @@ FluentValidation and Radzen ship their own German texts.
   which loads the satellite assemblies of the culture set by then. The header's `LanguageSwitch` is one button that
   names the current language (`EN`, labelled "Language: English") and steps to the next supported one. It stores the
   choice and reloads, since the culture is set once per load.
-- **API**: request localization from `Accept-Language` alone, with the cultures of `Cultures`. Proxied clients send the
+- **API**: request localization from `Accept-Language` alone, with the cultures of `Cultures`, which the host hands to
+  `AddApiLocalization(Cultures.Supported)` of `FocusTemplate.Api.Hosting`. Proxied clients send the
   app's culture through `AcceptLanguageHandler` (`AddProxiedHttpClient`), since the browser's own header does not know
   the user's choice. YARP forwards it unchanged.
 - **Keycloak**: `NavigateToLogin()` (`ClientServiceDefaults`) passes the culture to `/bff/login?culture=`. The BFF keeps
@@ -47,11 +48,12 @@ FluentValidation and Radzen ship their own German texts.
   the culture of the moment. A translation may leave a value out, and an index the neutral text lacks throws a
   `FormatException` when the text is read.
 - **Registration**: each host calls `AddResxLocalization()` of `FocusTemplate.Localization`, which registers the
-  localization services with that factory, then `AddAdminSharedLocalization()` for the texts of `Admin.Shared` and its
-  own `UsingResXGenerator()`. `FocusTemplate.Localization` holds the machinery every API and client share, with no
-  vertical in its name, and `Admin.Shared` keeps `Cultures`. ResXGenerator gives every assembly a
-  registration class of the same name, and two visible ones make `UsingResXGenerator()` ambiguous, so `Admin.Shared`
-  generates its own `internal` (`ResXGenerator_InternalRegistration`, from the local package of
+  localization services with that factory (the API through `AddApiLocalization()`), then
+  `AddAdminSharedLocalization()` for the texts of `Admin.Shared` and its own `UsingResXGenerator()`.
+  `FocusTemplate.Localization` holds the machinery every API and client share, with no vertical in its name, and
+  `Admin.Shared` keeps `Cultures`. ResXGenerator gives every assembly a registration class of the same name, and two
+  visible ones make `UsingResXGenerator()` ambiguous, so `Admin.Shared` generates its own `internal`
+  (`ResXGenerator_InternalRegistration`, from the local package of
   [ycanardeau/ResXGenerator#15](https://github.com/ycanardeau/ResXGenerator/pull/15)).
 - **Who reads how**: a component injects `@inject IMainLayoutLocalizations L`, a service or view model takes its texts
   in its constructor (`ApiFailureMessages`). In the API one resx per interface folder, named after it

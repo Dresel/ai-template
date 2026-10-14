@@ -2,7 +2,7 @@
 paths:
   - "src/admin/*.Admin.Web.Bff/**"
   - "src/*.Web.Bff.Hosting/**"
-  - "src/admin/*.Admin.Api/Authentication/**"
+  - "src/*.Api.Hosting/Authentication/**"
   - "src/admin/*.Admin.Web/{App.razor,_Imports.razor}"
   - "src/admin/*.Admin.Web/Infrastructure/Authentication/**"
   - "src/admin/*.Admin.Web/Shell/MainLayout.razor"

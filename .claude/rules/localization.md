@@ -2,6 +2,8 @@
 paths:
   - "**/*.resx"
   - "src/admin/**/Localization/**"
+  - "src/*.Localization/**"
+  - "src/*.Api.Hosting/Localization/**"
   - "src/FocusTemplate.AppHost/keycloak/**"
 ---
 # Localization

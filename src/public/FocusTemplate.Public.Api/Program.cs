@@ -1,3 +1,4 @@
+using FocusTemplate.Api.Hosting;
 using FocusTemplate.Names;
 using FocusTemplate.Public.Api.Features.WeatherForecasts;
 using FocusTemplate.Public.Shared;
@@ -7,13 +8,11 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.Services.AddSingleton(TimeProvider.System);
+builder.AddApiDefaults();
 
 // At the moment only read-only access is required for the public API
 builder.Services.AddReadOnlyWeatherDbContextPool(ConnectionNames.ReadOnlyDatabase);
 builder.EnrichNpgsqlDbContext<ReadOnlyWeatherDbContext>();
-
-builder.Services.AddProblemDetails();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 	options.SerializerOptions.TypeInfoResolverChain.Insert(0, PublicJsonContext.Default));

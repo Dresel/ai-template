@@ -684,18 +684,16 @@
         "type": "Project",
         "dependencies": {
           "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": "[13.6.1, )",
-          "Aspire.StackExchange.Redis": "[13.6.1, )",
           "FluentValidation": "[12.1.1, )",
           "FocusTemplate.Admin.Shared": "[1.0.0, )",
           "FocusTemplate.Admin.UserManagement.Api": "[1.0.0, )",
           "FocusTemplate.Api.Foundation": "[1.0.0, )",
+          "FocusTemplate.Api.Hosting": "[1.0.0, )",
           "FocusTemplate.Data": "[1.0.0, )",
-          "FocusTemplate.Localization": "[1.0.0, )",
           "FocusTemplate.Names": "[1.0.0, )",
           "FocusTemplate.ServiceDefaults": "[1.0.0, )",
           "FocusTemplate.Weather.Api": "[1.0.0, )",
-          "Mediator.Abstractions": "[3.1.0-rc.1, )",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[11.0.0-rc.2.26504.105, )"
+          "Mediator.Abstractions": "[3.1.0-rc.1, )"
         }
       },
       "focustemplate.admin.shared": {
@@ -758,6 +756,17 @@
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[11.0.0-rc.2.26504.105, )"
         }
       },
+      "focustemplate.api.hosting": {
+        "type": "Project",
+        "dependencies": {
+          "Aspire.StackExchange.Redis": "[13.6.1, )",
+          "FocusTemplate.Api.Foundation": "[1.0.0, )",
+          "FocusTemplate.Data.Foundation": "[1.0.0, )",
+          "FocusTemplate.Localization": "[1.0.0, )",
+          "FocusTemplate.ServiceDefaults": "[1.0.0, )",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[11.0.0-rc.2.26504.105, )"
+        }
+      },
       "focustemplate.data": {
         "type": "Project",
         "dependencies": {
@@ -806,6 +815,7 @@
         "type": "Project",
         "dependencies": {
           "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL": "[13.6.1, )",
+          "FocusTemplate.Api.Hosting": "[1.0.0, )",
           "FocusTemplate.Names": "[1.0.0, )",
           "FocusTemplate.Public.Shared": "[1.0.0, )",
           "FocusTemplate.ServiceDefaults": "[1.0.0, )",
