@@ -158,7 +158,8 @@ production code changes.
 - **Convention** (a rule every handler or type must follow) → `FocusTemplate.ArchitectureTests`, see
   [database](docs/database.md).
 - **Unit** (no browser, no server: Foundation helpers, forms, view models, components rendered with `HtmlRenderer`) →
-  `FocusTemplate.Admin.Web.UnitTests`, see [web forms](docs/web-forms.md).
+  `FocusTemplate.Web.UnitTests` for Foundation, user management and the features, `FocusTemplate.Admin.Web.UnitTests`
+  for the host's own slices, see [web forms](docs/web-forms.md).
 
 Watch the test fail for the reported reason, make the smallest fix, re-run the test and its area's tests, and format
 new files. The summary names root cause, test, fix, commands run and remaining risks. Commit only when asked.

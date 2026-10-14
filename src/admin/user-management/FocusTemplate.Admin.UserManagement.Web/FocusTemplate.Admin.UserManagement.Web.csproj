@@ -41,7 +41,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="FocusTemplate.Admin.Web.UnitTests" />
+		<InternalsVisibleTo Include="FocusTemplate.Web.UnitTests" />
 	</ItemGroup>
 
 </Project>

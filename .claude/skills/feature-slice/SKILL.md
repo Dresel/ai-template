@@ -95,7 +95,9 @@ New permissions appear in the group editor by themselves, labelled from their na
 
 - **Integration** (`tests/FocusTemplate.Admin.Api.IntegrationTests`, through the generated client): per operation the
   answer, the 404, each 409, the 400, and the 403 without the permission.
-- **Unit**: a view model against a fake HTTP handler (`ListPageViewModelTests`), the form's validator.
+- **Unit** (`tests/FocusTemplate.Admin.Web.UnitTests` for a slice of the host, `tests/FocusTemplate.Web.UnitTests` for
+  one of user management or a feature): a view model against a fake HTTP handler (`ListPageViewModelTests`), the
+  form's validator.
 - **E2E**: one flow through the BFF on `BffPageTest`, selected by `data-testid`, including the menu entry.
 - `AuthenticationTests.EveryApiEndpointRequiresAuthorization` covers the new endpoints by itself.
 - **A watch** (`GroupsWatchTests`): a change reaches an open stream, the 403 without the permission, and a stream that

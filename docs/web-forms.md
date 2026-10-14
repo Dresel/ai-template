@@ -84,8 +84,10 @@ files inside it.
 
 ## Unit tests
 
-`FocusTemplate.Admin.Web.UnitTests` runs without a browser and without a server: the forms store and validation
-(`FormMessages`, `FormValidation`), the demo form's validator and mapping, the Foundation helpers (`AsyncCommand`,
-`BusyState`, `Debouncer`), view models against a fake HTTP handler (`ListPageViewModelTests`), and components rendered
-with `HtmlRenderer` over a small service provider (`PermissionViewTests`, `RequiresPermissionTests`). The emitter's own
-tests live in its repository.
+Unit tests run without a browser and without a server, in two projects. `FocusTemplate.Web.UnitTests` tests the shared
+projects, which it references directly: the forms store and validation (`FormMessages`, `FormValidation`), the
+Foundation helpers (`AsyncCommand`, `BusyState`, `Debouncer`), components rendered with `HtmlRenderer` over a small
+service provider (`PermissionViewTests`, `RequiresPermissionTests`), and user management's and the features' view
+models against a fake HTTP handler (`ListPageViewModelTests`) and texts. `FocusTemplate.Admin.Web.UnitTests`
+references the host and tests its own slices, today the demo form's validator and mapping. The emitter's own tests
+live in its repository.
