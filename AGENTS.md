@@ -51,7 +51,8 @@ Admin vertical (`src/admin/`):
 - **FocusTemplate.Admin.Web.Foundation** - the Razor class library its pages and a feature's build on: view model pages,
   forms, feedback, client permissions, see [web pages](docs/web-pages.md).
 - **FocusTemplate.Admin.Web.Bff** - the BFF host that serves the client and holds the session, on
-  `FocusTemplate.Web.Bff.Hosting`: its `Program.cs` and appsettings, see [authentication](docs/authentication.md).
+  `FocusTemplate.Web.Bff.Hosting`: its `Program.cs`, appsettings and `/debug/request`, see
+  [authentication](docs/authentication.md).
 - **FocusTemplate.Admin.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
 - **FocusTemplate.Admin.Shared** - the wire contract shared by server and client.
 - **FocusTemplate.Admin.UserManagement.*** (`src/admin/user-management/`) - users, groups and permissions, which every

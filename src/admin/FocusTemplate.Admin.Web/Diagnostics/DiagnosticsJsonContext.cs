@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using FocusTemplate.Web.Bff.Shared;
+using FocusTemplate.Admin.Shared.Diagnostics;
 
 namespace FocusTemplate.Admin.Web.Diagnostics;
 

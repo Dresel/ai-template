@@ -39,7 +39,6 @@
 		<ProjectReference Include="..\FocusTemplate.Admin.Web.Foundation\FocusTemplate.Admin.Web.Foundation.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.Localization\FocusTemplate.Localization.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.Names\FocusTemplate.Names.csproj" />
-		<ProjectReference Include="..\..\FocusTemplate.Web.Bff.Shared\FocusTemplate.Web.Bff.Shared.csproj" />
 		<ProjectReference Include="..\..\FocusTemplate.Web.Hosting\FocusTemplate.Web.Hosting.csproj" />
 		<ProjectReference Include="..\user-management\FocusTemplate.Admin.UserManagement.Web\FocusTemplate.Admin.UserManagement.Web.csproj" />
 		<ProjectReference Include="..\..\features\weather\FocusTemplate.Weather.Web\FocusTemplate.Weather.Web.csproj" />

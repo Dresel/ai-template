@@ -545,7 +545,6 @@
           "FocusTemplate.Localization": "[1.0.0, )",
           "FocusTemplate.Names": "[1.0.0, )",
           "FocusTemplate.Weather.Web": "[1.0.0, )",
-          "FocusTemplate.Web.Bff.Shared": "[1.0.0, )",
           "FocusTemplate.Web.Hosting": "[1.0.0, )",
           "Microsoft.AspNetCore.Components.Authorization": "[11.0.0-rc.2.26504.105, )",
           "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",

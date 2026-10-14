@@ -48,7 +48,8 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
 
 - **Code**: `FocusTemplate.Web.Bff.Hosting` holds the BFF, `AddBff(Cultures.Supported)` and `MapBffEndpoints()`, so a
   product's BFF project keeps its `Program.cs`, its appsettings and the reference to the client it serves. The
-  section `Bff` names the session cookie and the API that answers `/users/me` (`https+http://admin-api/`). Cookies on
+  template's BFF also maps `/debug/request` in Development, the scheme, host and forwarded headers it received, which
+  the client's Diagnostics page shows. The section `Bff` names the session cookie and the API that answers `/users/me` (`https+http://admin-api/`). Cookies on
   `localhost` do not depend on the port, so two products running side by side need a cookie name each, and the start
   fails on a name without the `__Host-` prefix.
 - **Session**: cookie `__Host-focus.session` (HttpOnly, Secure, SameSite=Lax) plus the OIDC code flow with the

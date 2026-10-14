@@ -1,8 +1,6 @@
-using FocusTemplate.Web.Bff.Shared;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+using FocusTemplate.Admin.Shared.Diagnostics;
 
-namespace FocusTemplate.Web.Bff.Hosting;
+namespace FocusTemplate.Admin.Web.Bff.Diagnostics;
 
 internal static class DebugEndpoint
 {

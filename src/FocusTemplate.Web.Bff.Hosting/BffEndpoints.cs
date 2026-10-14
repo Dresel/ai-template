@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace FocusTemplate.Web.Bff.Hosting;
@@ -21,11 +20,6 @@ public static class BffEndpoints
 		app.MapGet("/client-configuration", (IOptions<ClientConfiguration> config) => config.Value);
 
 		app.MapAuthenticationEndpoints();
-
-		if (app.Environment.IsDevelopment())
-		{
-			app.MapDebugEndpoint();
-		}
 
 		app.MapReverseProxy();
 

@@ -1,4 +1,4 @@
-namespace FocusTemplate.Web.Bff.Shared;
+namespace FocusTemplate.Admin.Shared.Diagnostics;
 
 public sealed record RequestDiagnostics(
 	string Scheme,

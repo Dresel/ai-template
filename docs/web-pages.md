@@ -56,7 +56,7 @@ which stays the product's because it names that layout.
     view model disposes only the commands it creates. They run on the renderer's dispatcher and take no locks.
     `Users/ListPageViewModel` uses all of them.
 - **`Shell/`**: `MainLayout` (the title, the menu, the header's switches and `AccountButtons`), `Home`, `NotFound`.
-  **`Diagnostics/`**: the request diagnostics page.
+  **`Diagnostics/`**: the request diagnostics page, over the BFF's `/debug/request` in Development.
 - **`Infrastructure/`**: `Localization/` (`AddWebLocalization()`, which registers the texts and the cultures, see
   [localization](localization.md)).
 - **Texts** a page shows come from its resx pair through `@inject I{Page}Localizations L`, as do a confirmation's
