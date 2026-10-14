@@ -1,6 +1,4 @@
-using System.Globalization;
 using System.Security.Claims;
-using FocusTemplate.Admin.Shared.Localization;
 using FocusTemplate.Admin.UserManagement.Client.Users;
 using FocusTemplate.Admin.UserManagement.Shared;
 using FocusTemplate.Primitives;
@@ -8,10 +6,12 @@ using FocusTemplate.Web.Bff.Shared;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.IdentityModel.JsonWebTokens;
 
-namespace FocusTemplate.Admin.Web.Bff;
+namespace FocusTemplate.Web.Bff.Hosting;
 
 internal static class AuthenticationEndpoints
 {
@@ -23,10 +23,10 @@ internal static class AuthenticationEndpoints
 		// The WASM client sends the browser here, Keycloak sends it back to the page it came from.
 		app.MapGet(
 			"/bff/login",
-			(string? returnUrl, string? culture) =>
+			(string? returnUrl, string? culture, LoginLanguages languages) =>
 			{
 				AuthenticationProperties properties = new() { RedirectUri = LocalPathOrRoot(returnUrl), };
-				if (LanguageOf(culture) is { } language)
+				if (languages.Of(culture) is { } language)
 				{
 					properties.Items[UiLocales] = language;
 				}
@@ -81,21 +81,6 @@ internal static class AuthenticationEndpoints
 			});
 
 		return app;
-	}
-
-	// Only a language the app speaks reaches Keycloak, as its two-letter tag
-	private static string? LanguageOf(string? culture)
-	{
-		try
-		{
-			return culture is null || CultureInfo.GetCultureInfo(culture) is not { } parsed || !Cultures.IsSupported(parsed)
-				? null
-				: parsed.TwoLetterISOLanguageName;
-		}
-		catch (CultureNotFoundException)
-		{
-			return null;
-		}
 	}
 
 	// Prevent open redirect attacks. IsLocalUrl alone also passes "~/" paths, which the OIDC handlers redirect to verbatim.

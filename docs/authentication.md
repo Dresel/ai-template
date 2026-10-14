@@ -46,6 +46,11 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
 
 ## BFF
 
+- **Code**: `FocusTemplate.Web.Bff.Hosting` holds the BFF, `AddBff(Cultures.Supported)` and `MapBffEndpoints()`, so a
+  product's BFF project keeps its `Program.cs`, its appsettings and the reference to the client it serves. The
+  section `Bff` names the session cookie and the API that answers `/users/me` (`https+http://admin-api/`). Cookies on
+  `localhost` do not depend on the port, so two products running side by side need a cookie name each, and the start
+  fails on a name without the `__Host-` prefix.
 - **Session**: cookie `__Host-focus.session` (HttpOnly, Secure, SameSite=Lax) plus the OIDC code flow with the
   authorization request pushed (PAR, the handler's default against Keycloak's advertised endpoint) and the code posted
   back (form_post, also the default), which keeps the code out of URLs. The E2E login test asserts both. Tokens live in

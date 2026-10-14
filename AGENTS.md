@@ -28,6 +28,8 @@ Shared spine:
 - **FocusTemplate.Localization** - the localization machinery every API and client share: the localizer factory for
   ResXGenerator's classes, FluentValidation's texts, the contracts' field names, see
   [localization](docs/localization.md).
+- **FocusTemplate.Web.Bff.Hosting** - the BFF every product's BFF project runs: the session, OIDC with PAR, `/bff/*`,
+  the YARP transforms, `AddBff()` and `MapBffEndpoints()`, see [authentication](docs/authentication.md).
 - **FocusTemplate.Web.Bff.Shared** - the BFF's contract with the WASM client: `/bff/user`'s answer, the claim types,
   the client configuration, see [authentication](docs/authentication.md).
 - **`@spatialfocus/typespec-http-csharp-slim`** - the TypeSpec emitter, consumed as the tgz under `.npm/`, see
@@ -42,8 +44,8 @@ Admin vertical (`src/admin/`):
 - **FocusTemplate.Admin.Web** - the Blazor WASM client on Radzen, see [web pages](docs/web-pages.md).
 - **FocusTemplate.Admin.Web.Foundation** - the Razor class library its pages and a feature's build on: view model pages,
   forms, feedback, client permissions, see [web pages](docs/web-pages.md).
-- **FocusTemplate.Admin.Web.Bff** - the YARP BFF that serves the client and holds the session, see
-  [authentication](docs/authentication.md).
+- **FocusTemplate.Admin.Web.Bff** - the BFF host that serves the client and holds the session, on
+  `FocusTemplate.Web.Bff.Hosting`: its `Program.cs` and appsettings, see [authentication](docs/authentication.md).
 - **FocusTemplate.Admin.Web.ClientServiceDefaults** - client-side OTel and shared WASM extensions.
 - **FocusTemplate.Admin.Shared** - the wire contract shared by server and client.
 - **FocusTemplate.Admin.UserManagement.*** (`src/admin/user-management/`) - users, groups and permissions, which every

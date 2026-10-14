@@ -1,4 +1,4 @@
-namespace FocusTemplate.Admin.Web.Bff;
+namespace FocusTemplate.Web.Bff.Hosting;
 
 // The contract between the WASM client's proxied HttpClients (AddProxiedHttpClient, CsrfHeaderHandler) and the BFF's YARP routes for them.
 internal static class ProxiedApiDefaults

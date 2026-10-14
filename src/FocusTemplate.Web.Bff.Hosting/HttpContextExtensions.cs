@@ -2,8 +2,9 @@ using Duende.AccessTokenManagement;
 using Duende.AccessTokenManagement.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 
-namespace FocusTemplate.Admin.Web.Bff;
+namespace FocusTemplate.Web.Bff.Hosting;
 
 internal static class HttpContextExtensions
 {

@@ -1,19 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<ItemGroup>
-		<PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
-		<PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" />
-		<PackageReference Include="Yarp.ReverseProxy" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\FocusTemplate.ServiceDefaults\FocusTemplate.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\..\FocusTemplate.Web.Bff.Hosting\FocusTemplate.Web.Bff.Hosting.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Shared\FocusTemplate.Admin.Shared.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Web\FocusTemplate.Admin.Web.csproj" />
-		<ProjectReference Include="..\user-management\FocusTemplate.Admin.UserManagement.Client\FocusTemplate.Admin.UserManagement.Client.csproj" />
-		<ProjectReference Include="..\..\FocusTemplate.Web.Bff.Shared\FocusTemplate.Web.Bff.Shared.csproj" />
 	</ItemGroup>
 
 </Project>

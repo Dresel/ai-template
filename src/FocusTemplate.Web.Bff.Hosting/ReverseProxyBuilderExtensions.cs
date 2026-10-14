@@ -1,9 +1,11 @@
 using System.Net;
 using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
 using Yarp.ReverseProxy.Transforms;
 
-namespace FocusTemplate.Admin.Web.Bff;
+namespace FocusTemplate.Web.Bff.Hosting;
 
 internal static class ReverseProxyBuilderExtensions
 {

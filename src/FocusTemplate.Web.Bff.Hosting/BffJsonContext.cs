@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using FocusTemplate.Web.Bff.Shared;
 
-namespace FocusTemplate.Admin.Web.Bff;
+namespace FocusTemplate.Web.Bff.Hosting;
 
 [JsonSerializable(typeof(ClientConfiguration))]
 [JsonSerializable(typeof(RequestDiagnostics))]

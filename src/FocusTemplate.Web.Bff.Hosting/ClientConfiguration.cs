@@ -1,6 +1,6 @@
 using FocusTemplate.Web.Bff.Shared;
 
-namespace FocusTemplate.Admin.Web.Bff;
+namespace FocusTemplate.Web.Bff.Hosting;
 
 public sealed class ClientConfiguration
 {

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FocusTemplate.Admin.Web.Bff;
+namespace FocusTemplate.Web.Bff.Hosting;
 
 public sealed class OidcOptions
 {

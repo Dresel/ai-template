@@ -1,16 +1,45 @@
+using System.Globalization;
 using Duende.AccessTokenManagement.OpenIdConnect;
 using FocusTemplate.Admin.UserManagement.Client.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Instrumentation.Http;
 
-namespace FocusTemplate.Admin.Web.Bff;
+namespace FocusTemplate.Web.Bff.Hosting;
 
 public static class WebApplicationBuilderExtensions
 {
-	public static WebApplicationBuilder AddBffAuthentication(this WebApplicationBuilder builder)
+	public static WebApplicationBuilder AddBff(this WebApplicationBuilder builder, IReadOnlyList<CultureInfo> cultures)
+	{
+		builder.Services.AddOptions<BffOptions>().BindConfiguration(BffOptions.SectionName).ValidateOnStart();
+		builder.Services.AddSingleton<IValidateOptions<BffOptions>, BffOptionsValidator>();
+		builder.Services.AddSingleton(new LoginLanguages(cultures));
+
+		builder.Services.Configure<ClientConfiguration>(builder.Configuration.GetSection("Client"));
+
+		builder.Services.ConfigureHttpJsonOptions(options =>
+			options.SerializerOptions.TypeInfoResolverChain.Insert(0, BffJsonContext.Default));
+
+		AddAuthentication(builder);
+		FilterOtlpProxyFromTraces(builder);
+
+		builder.Services.AddReverseProxy()
+			.LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+			.AddServiceDiscoveryDestinationResolver()
+			.AddCookieIsolationTransform()
+			.AddAccessTokenTransform();
+
+		return builder;
+	}
+
+	private static void AddAuthentication(WebApplicationBuilder builder)
 	{
 		builder.Services.AddOptions<OidcOptions>().BindConfiguration(OidcOptions.SectionName).ValidateOnStart();
 		builder.Services.AddSingleton<IValidateOptions<OidcOptions>, OidcOptionsValidator>();
@@ -22,8 +51,7 @@ public static class WebApplicationBuilderExtensions
 			})
 			.AddCookie(options =>
 			{
-				// __Host-: browsers require Secure, Path=/ and no Domain, so no subdomain can overwrite the session.
-				options.Cookie.Name = "__Host-focus.session";
+				// What the __Host- prefix of the session cookie's name requires (BffOptions.SessionCookie)
 				options.Cookie.Path = "/";
 				options.Cookie.SameSite = SameSiteMode.Lax;
 
@@ -43,6 +71,9 @@ public static class WebApplicationBuilderExtensions
 				};
 			})
 			.AddOpenIdConnect();
+
+		builder.Services.AddOptions<CookieAuthenticationOptions>(CookieAuthenticationDefaults.AuthenticationScheme)
+			.Configure<IOptions<BffOptions>>((cookie, bff) => cookie.Cookie.Name = bff.Value.SessionCookie);
 
 		builder.Services.AddOptions<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme)
 			.Configure<IOptions<OidcOptions>>((oidc, settings) =>
@@ -88,9 +119,30 @@ public static class WebApplicationBuilderExtensions
 		builder.Services.AddOpenIdConnectAccessTokenManagement();
 
 		// /bff/user asks the API for the user's permissions, with the session's access token
-		builder.Services.AddHttpClient<UsersClient>(client => client.BaseAddress = new Uri("https+http://admin-api/"))
+		builder.Services.AddHttpClient<UsersClient>((provider, client) =>
+				client.BaseAddress = new Uri(provider.GetRequiredService<IOptions<BffOptions>>().Value.Api))
 			.AddUserAccessTokenHandler();
+	}
 
-		return builder;
+	// YARP forwards /_otlp/* to the dashboard, and tracing those forwarding requests would export them again, in a loop
+	private static void FilterOtlpProxyFromTraces(WebApplicationBuilder builder)
+	{
+		builder.Services.PostConfigure<AspNetCoreTraceInstrumentationOptions>(options =>
+		{
+			Func<HttpContext, bool>? previous = options.Filter;
+			options.Filter = context =>
+			{
+				string? path = context.Request.Path.Value;
+				return (previous is null || previous(context)) && (path is null || !path.Contains("/_otlp/", StringComparison.Ordinal));
+			};
+		});
+
+		builder.Services.PostConfigure<HttpClientTraceInstrumentationOptions>(options =>
+		{
+			Func<HttpRequestMessage, bool>? previous = options.FilterHttpRequestMessage;
+			options.FilterHttpRequestMessage = request =>
+				(previous is null || previous(request)) &&
+				(request.RequestUri is null || !request.RequestUri.AbsolutePath.StartsWith("/v1/", StringComparison.Ordinal));
+		});
 	}
 }
