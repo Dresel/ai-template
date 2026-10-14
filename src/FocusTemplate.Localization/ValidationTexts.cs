@@ -4,7 +4,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 
-namespace FocusTemplate.Admin.Shared.Localization;
+namespace FocusTemplate.Localization;
 
 // The generated rules and FluentValidation keep their texts in process-wide settings, which outlive a host. So they get a
 // localizer factory of their own, which no host disposes with its container.

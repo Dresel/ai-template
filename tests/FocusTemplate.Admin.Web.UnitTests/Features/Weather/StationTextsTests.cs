@@ -1,5 +1,5 @@
-using FocusTemplate.Admin.Shared.Localization;
 using FocusTemplate.Http;
+using FocusTemplate.Localization;
 using FocusTemplate.Weather.Shared;
 
 namespace FocusTemplate.Admin.Web.UnitTests.Features.Weather;

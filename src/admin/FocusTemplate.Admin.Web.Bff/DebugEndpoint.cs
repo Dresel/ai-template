@@ -1,4 +1,4 @@
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Web.Bff.Shared;
 
 namespace FocusTemplate.Admin.Web.Bff;
 

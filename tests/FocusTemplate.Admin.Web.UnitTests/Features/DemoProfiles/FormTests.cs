@@ -3,8 +3,8 @@ using FluentValidation.Internal;
 using FluentValidation.Results;
 using FocusTemplate.Admin.Client.DemoProfiles;
 using FocusTemplate.Admin.Shared;
-using FocusTemplate.Admin.Shared.Localization;
 using FocusTemplate.Admin.Web.Features.DemoProfiles;
+using FocusTemplate.Localization;
 
 namespace FocusTemplate.Admin.Web.UnitTests.Features.DemoProfiles;
 

@@ -25,6 +25,11 @@ Shared spine:
   token's claims, see [spec-first](docs/spec-first.md).
 - **FocusTemplate.Data** - the spine's entities (identity and permissions), their EF Core mapping, the migrations and
   the dev seed, see [database](docs/database.md).
+- **FocusTemplate.Localization** - the localization machinery every API and client share: the localizer factory for
+  ResXGenerator's classes, FluentValidation's texts, the contracts' field names, see
+  [localization](docs/localization.md).
+- **FocusTemplate.Web.Bff.Shared** - the BFF's contract with the WASM client: `/bff/user`'s answer, the claim types,
+  the client configuration, see [authentication](docs/authentication.md).
 - **`@spatialfocus/typespec-http-csharp-slim`** - the TypeSpec emitter, consumed as the tgz under `.npm/`, see
   [spec-first](docs/spec-first.md).
 - **FocusTemplate.Spec** and one **FocusTemplate.\<Name>.Spec** per vertical and feature - the spec folders as

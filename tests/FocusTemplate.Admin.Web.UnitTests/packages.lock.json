@@ -542,8 +542,10 @@
           "FocusTemplate.Admin.UserManagement.Web": "[1.0.0, )",
           "FocusTemplate.Admin.Web.ClientServiceDefaults": "[1.0.0, )",
           "FocusTemplate.Admin.Web.Foundation": "[1.0.0, )",
+          "FocusTemplate.Localization": "[1.0.0, )",
           "FocusTemplate.Names": "[1.0.0, )",
           "FocusTemplate.Weather.Web": "[1.0.0, )",
+          "FocusTemplate.Web.Bff.Shared": "[1.0.0, )",
           "Microsoft.AspNetCore.Components.Authorization": "[11.0.0-rc.2.26504.105, )",
           "Microsoft.AspNetCore.Components.WebAssembly": "[11.0.0-rc.2.26504.105, )",
           "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )",
@@ -582,6 +584,14 @@
           "Microsoft.AspNetCore.Authorization": "[11.0.0-rc.2.26504.105, )"
         }
       },
+      "focustemplate.localization": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "FocusTemplate.Http": "[1.0.0, )",
+          "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )"
+        }
+      },
       "focustemplate.names": {
         "type": "Project"
       },
@@ -615,6 +625,9 @@
           "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )",
           "Radzen.Blazor": "[12.1.2, )"
         }
+      },
+      "focustemplate.web.bff.shared": {
+        "type": "Project"
       },
       "FluentValidation": {
         "type": "CentralTransitive",

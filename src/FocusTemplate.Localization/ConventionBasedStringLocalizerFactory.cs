@@ -3,7 +3,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FocusTemplate.Admin.Shared.Localization;
+namespace FocusTemplate.Localization;
 
 // ResXGenerator names its classes with a suffix the resx files lack: MainLayoutLocalizations reads MainLayout.resx
 public sealed class ConventionBasedStringLocalizerFactory(IOptions<LocalizationOptions> localizationOptions, ILoggerFactory loggerFactory)

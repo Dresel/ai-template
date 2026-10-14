@@ -838,6 +838,7 @@
           "FocusTemplate.Admin.UserManagement.Api": "[1.0.0, )",
           "FocusTemplate.Api.Foundation": "[1.0.0, )",
           "FocusTemplate.Data": "[1.0.0, )",
+          "FocusTemplate.Localization": "[1.0.0, )",
           "FocusTemplate.Names": "[1.0.0, )",
           "FocusTemplate.ServiceDefaults": "[1.0.0, )",
           "FocusTemplate.Weather.Api": "[1.0.0, )",
@@ -920,6 +921,14 @@
         "dependencies": {
           "FocusTemplate.Primitives": "[1.0.0, )",
           "Microsoft.AspNetCore.Authorization": "[11.0.0-rc.2.26504.105, )"
+        }
+      },
+      "focustemplate.localization": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "FocusTemplate.Http": "[1.0.0, )",
+          "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )"
         }
       },
       "focustemplate.names": {

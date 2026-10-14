@@ -6,7 +6,7 @@ paths:
   - "src/admin/*.Admin.Web/Infrastructure/Authentication/**"
   - "src/admin/*.Admin.Web/Shell/MainLayout.razor"
   - "src/admin/*.Admin.Web.ClientServiceDefaults/{CsrfHeaderHandler,RedirectToLoginHandler,ServiceCollectionExtensions}.cs"
-  - "src/admin/*.Admin.Shared/{BffClaimTypes,UserClaim,UserInfoResponse}.cs"
+  - "src/*.Web.Bff.Shared/**"
   - "src/*.AppHost/{AuthenticationExtensions.cs,keycloak/**}"
   - "tests/*.Admin.Web.E2E/{AuthenticationTests,BlazorAppFixture,KeycloakAdmin}.cs"
   - "tests/*.IntegrationTests/{AuthenticationTests,TestAuthenticationHandler}.cs"

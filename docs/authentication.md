@@ -52,8 +52,9 @@ API. The token management is Apache-2.0, unlike Duende's BFF and IdentityServer.
   the cookie and are refreshed by the token management, a minute before expiry.
 - **Endpoints**: `/bff/login?returnUrl=` and `/bff/logout?sid=&returnUrl=` (a GET, so the browser can carry on to
   Keycloak's end-session page, with the session id as its CSRF token) accept local return paths only. `/bff/user` answers
-  401 when anonymous, otherwise `UserInfoResponse`: the user's claims, the BFF's own `bff:logout_url` (`BffClaimTypes`
-  in `Admin.Shared`) and the permissions it asks the API for (`GET /users/me`), with `Cache-Control: no-store`.
+  401 when anonymous, otherwise `UserInfoResponse`: the user's claims, the BFF's own `bff:logout_url` (`BffClaimTypes`,
+  both in `FocusTemplate.Web.Bff.Shared`, the BFF's contract with the client) and the permissions it asks the API for
+  (`GET /users/me`), with `Cache-Control: no-store`.
   `/bff/login` also takes the app's `culture`, which reaches Keycloak as `ui_locales` when the app speaks it.
 - **Proxied routes**: the `/_api` route is declared in full in the BFF's `appsettings.json` under its Aspire-generated
   name (`route-admin-api`), carrying the `ProxiedApi` policy, while the AppHost's environment adds the destination and

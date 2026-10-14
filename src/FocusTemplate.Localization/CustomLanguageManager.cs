@@ -2,7 +2,7 @@ using System.Globalization;
 using FluentValidation.Resources;
 using Microsoft.Extensions.Localization;
 
-namespace FocusTemplate.Admin.Shared.Localization;
+namespace FocusTemplate.Localization;
 
 // Looked up on every message in the UI culture of the moment, which on the server is each request's. A culture asked
 // for explicitly goes to FluentValidation's own texts.

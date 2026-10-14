@@ -1,4 +1,5 @@
 using FocusTemplate.Admin.Shared.Localization;
+using FocusTemplate.Localization;
 using Microsoft.AspNetCore.Localization;
 using ResXGenerator.Registration;
 
@@ -8,7 +9,7 @@ public static class WebApplicationBuilderExtensions
 {
 	public static WebApplicationBuilder AddApiLocalization(this WebApplicationBuilder builder)
 	{
-		builder.Services.AddAdminSharedLocalization().UsingResXGenerator();
+		builder.Services.AddResxLocalization().AddAdminSharedLocalization().UsingResXGenerator();
 
 		builder.Services.Configure<RequestLocalizationOptions>(options =>
 		{

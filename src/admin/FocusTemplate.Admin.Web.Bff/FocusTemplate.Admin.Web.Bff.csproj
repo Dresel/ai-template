@@ -13,6 +13,7 @@
 		<ProjectReference Include="..\FocusTemplate.Admin.Shared\FocusTemplate.Admin.Shared.csproj" />
 		<ProjectReference Include="..\FocusTemplate.Admin.Web\FocusTemplate.Admin.Web.csproj" />
 		<ProjectReference Include="..\user-management\FocusTemplate.Admin.UserManagement.Client\FocusTemplate.Admin.UserManagement.Client.csproj" />
+		<ProjectReference Include="..\..\FocusTemplate.Web.Bff.Shared\FocusTemplate.Web.Bff.Shared.csproj" />
 	</ItemGroup>
 
 </Project>

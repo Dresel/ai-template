@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Security.Claims;
-using FocusTemplate.Admin.Shared;
 using FocusTemplate.Admin.Shared.Localization;
 using FocusTemplate.Admin.UserManagement.Client.Users;
 using FocusTemplate.Admin.UserManagement.Shared;
 using FocusTemplate.Primitives;
+using FocusTemplate.Web.Bff.Shared;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;

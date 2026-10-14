@@ -64,8 +64,12 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 - **FocusTemplate.Admin.Client**, **FocusTemplate.Public.Client**: the generated typed HTTP clients of each vertical,
   referenced by every consumer, so the client an app ships is the one the tests drive.
 - **FocusTemplate.Admin.Shared**, **FocusTemplate.Public.Shared**: each vertical's wire contract, generated records plus
-  hand-written partials for computed members. They never reference each other. `Admin.Shared` also holds what both
-  Admin ends need to speak a language (`Localization/`, see [localization](localization.md)).
+  hand-written partials for computed members. They never reference each other. `Admin.Shared` also holds the
+  languages the app speaks (`Localization/Cultures`, see [localization](localization.md)).
+- **FocusTemplate.Localization**: the localization machinery the API and the WASM client both run, a plain library
+  with no vertical in its name (see [localization](localization.md)).
+- **FocusTemplate.Web.Bff.Shared**: the BFF's contract with the WASM client, `/bff/user`'s answer, the claim types, the
+  client configuration and the request diagnostics (see [authentication](authentication.md)).
 - **FocusTemplate.Public.Mobile**: native MAUI with XAML, `net11.0-android;net11.0-ios` only (no Windows or
   MacCatalyst targets by decision, and iOS builds only on macOS), see [mobile](mobile.md).
 

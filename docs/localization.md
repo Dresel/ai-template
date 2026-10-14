@@ -40,13 +40,16 @@ FluentValidation and Radzen ship their own German texts.
   class behind it from the neutral resx at build time, one property per key, registered as singletons. The generated
   code is not in the repository, `-p:EmitCompilerGeneratedFiles=true` writes it under `obj/` to look at. Each reads
   its resx through `IStringLocalizer` in the culture of the moment, the request's on the server.
-  `ConventionBasedStringLocalizerFactory` (`Admin.Shared`) maps `MainLayoutLocalizations` to `MainLayout.resx`.
+  `ConventionBasedStringLocalizerFactory` (`FocusTemplate.Localization`) maps `MainLayoutLocalizations` to
+  `MainLayout.resx`.
 - **Texts with values** become methods (`GenerateFormatMethods` in the project files), one `object` parameter per
   index of the neutral text: `localizations.NoGroup(command.Id)`, `L.Seen(first, last)`. The localizer formats them in
   the culture of the moment. A translation may leave a value out, and an index the neutral text lacks throws a
   `FormatException` when the text is read.
-- **Registration**: each host calls its own `UsingResXGenerator()` and `AddAdminSharedLocalization()`, which registers
-  the localization services, that factory and the texts of `Admin.Shared`. ResXGenerator gives every assembly a
+- **Registration**: each host calls `AddResxLocalization()` of `FocusTemplate.Localization`, which registers the
+  localization services with that factory, then `AddAdminSharedLocalization()` for the texts of `Admin.Shared` and its
+  own `UsingResXGenerator()`. `FocusTemplate.Localization` holds the machinery every API and client share, with no
+  vertical in its name, and `Admin.Shared` keeps `Cultures`. ResXGenerator gives every assembly a
   registration class of the same name, and two visible ones make `UsingResXGenerator()` ambiguous, so `Admin.Shared`
   generates its own `internal` (`ResXGenerator_InternalRegistration`, from the local package of
   [ycanardeau/ResXGenerator#15](https://github.com/ycanardeau/ResXGenerator/pull/15)).
@@ -72,13 +75,13 @@ FluentValidation and Radzen ship their own German texts.
 A message has a sentence and a field name in it, `'Kürzel' darf nicht leer sein.`
 
 - **Sentences** of FluentValidation's built-in validators come in the UI culture. `CustomLanguageManager`
-  (`Admin.Shared/Localization/`) adds what FluentValidation lacks from its resx through
+  (`FocusTemplate.Localization`) adds what FluentValidation lacks from its resx through
   `IStringLocalizer<CustomLanguageManager>`, the item counts the generated rules ask
   for (`MinItemsValidator`, `MaxItemsValidator`), and can reword a built-in one. It looks up on every message, in the
   culture of the moment.
 - **Field names and pattern messages** of the generated rules come from the emitter's `ContractTexts` hook in
   `FocusTemplate.Http`, one for the Admin contracts and every feature's. `ValidationTexts.UseResources()`
-  (`Admin.Shared/Localization/`), which both hosts call at startup, answers from the resx named after the contract type
+  (`FocusTemplate.Localization`), which both hosts call at startup, answers from the resx named after the contract type
   in its namespace's folder of the contract's own project: `DemoProfileRequest.de.resx` in `Admin.Shared`, keys `Code`
   and `Code.pattern`, user management's and a feature's beside its contracts in its `Shared` project
   (`GroupRequest.de.resx` in `Admin.UserManagement.Shared`). The neutral file keeps

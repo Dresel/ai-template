@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using FocusTemplate.Admin.Shared;
+using FocusTemplate.Web.Bff.Shared;
 using Microsoft.AspNetCore.Components.Authorization;
 
 namespace FocusTemplate.Admin.Web.Infrastructure.Authentication;

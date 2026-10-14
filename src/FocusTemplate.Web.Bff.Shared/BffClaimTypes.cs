@@ -1,4 +1,4 @@
-namespace FocusTemplate.Admin.Shared;
+namespace FocusTemplate.Web.Bff.Shared;
 
 public static class BffClaimTypes
 {

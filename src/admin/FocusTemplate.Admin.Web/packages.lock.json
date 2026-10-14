@@ -499,6 +499,14 @@
           "Microsoft.AspNetCore.Authorization": "[11.0.0-rc.2.26504.105, )"
         }
       },
+      "focustemplate.localization": {
+        "type": "Project",
+        "dependencies": {
+          "FluentValidation": "[12.1.1, )",
+          "FocusTemplate.Http": "[1.0.0, )",
+          "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )"
+        }
+      },
       "focustemplate.names": {
         "type": "Project"
       },
@@ -532,6 +540,9 @@
           "Microsoft.Extensions.Localization": "[11.0.0-rc.2.26504.105, )",
           "Radzen.Blazor": "[12.1.2, )"
         }
+      },
+      "focustemplate.web.bff.shared": {
+        "type": "Project"
       },
       "FluentValidation": {
         "type": "CentralTransitive",
