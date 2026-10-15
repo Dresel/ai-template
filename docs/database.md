@@ -12,8 +12,9 @@ and it stays free of Aspire. Its tables sit in `public`.
 `FocusTemplate.Data` is the product's: the migrations of the spine's `AppDbContext`, and `PermissionSeed`, a model
 customizer that seeds the permission rows and the administrators' grants from `AdminPermissions.All`.
 `UseProductMigrations()` puts both into a context's options (`MigrationsAssembly`, `ReplaceService<IModelCustomizer>`).
-The design-time factory and the integration tests' `ApiFixture` call it. The API's context pools go without, since
-nothing there migrates and the seeded rows change no query. Shared models ship their migrations, and a shared model
+The design-time factory and the product's integration tests' `ApiFixture` call it. The API's context pools go without,
+since nothing there migrates and the seeded rows change no query. The shared test host has no product, so it creates
+the spine's tables from the model and adds the permission rows by hand (see [integration tests](integration-tests.md)). Shared models ship their migrations, and a shared model
 whose data differs per product leaves them to the product, as the spine's does for its permission rows.
 
 `SpatialFocus.Data.Foundation` holds what any context builds on and no entity of its own: `FoundationDbContext<TModel>`
@@ -104,7 +105,9 @@ migration.
   features meet through ids and a lookup, never a shared entity.
 - **Pooling**: a pooled context's only constructor parameter is its `DbContextOptions<T>`, and the singleton
   `AuditingInterceptor` reads `ICurrentUser` on every save, so a reused instance never carries an earlier request's user
-  (`FeatureTests.APooledContextTakesItsOptionsAlone`, `AuditingTests.APooledContextAuditsEachRequestWithItsOwnUser`).
+  (`FeatureTests.APooledContextTakesItsOptionsAlone`, `AuditingTests.APooledContextAuditsEachRequestWithItsOwnUser` in
+  `SpatialFocus.Foundation.IntegrationTests` for the spine's pool and in `SpatialFocus.Weather.IntegrationTests` for the
+  feature's).
 
 ## Queries
 
@@ -213,9 +216,13 @@ step with `__EFMigrationsHistory` until `aspire stop --force --volumes` drops co
 
 ## Architecture tests
 
-`FocusTemplate.ArchitectureTests` checks rules every handler or type must follow: `HandlerDbContextTests` reflects over
-the API, user management and feature assemblies for the read/write split, `ModelSentinelTests` walks every EF model for
-the sentinels, `UserReferenceTests` keeps `UserReference` in step with `User`, and `FeatureTests` keeps the features on
-their own projects and the foundations, and the pooled contexts' constructors down to their options.
-`ProjectReferenceTests` reads the project files: a `SpatialFocus.*` project references no `FocusTemplate.*` project,
-and one without a vertical in its name (`Admin`, `Public`) references no project of a vertical.
+The rules every handler or type must follow live in `SpatialFocus.Testing.Architecture` (`HandlerRules`,
+`DbContextRules`, `FeatureRules`, `ProjectReferenceRules`, `ProjectFile`), and `FocusTemplate.ArchitectureTests`
+applies them to the product's assemblies and the shared ones, so another product's suite applies the same rules to its
+own. `HandlerDbContextTests` reflects over the API, user management and feature assemblies for the read/write split,
+`ModelSentinelTests` walks every EF model for the sentinels, `UserReferenceTests` keeps `UserReference` in step with
+`User`, and `FeatureTests` keeps the features' assemblies and project files on their own projects and the foundations
+(their test projects also on the test libraries), and the pooled contexts' constructors down to their options.
+`ProjectReferenceTests` reads the project files under `src/` and `tests/`: a `SpatialFocus.*` project references no
+`FocusTemplate.*` project, and a production one without a vertical in its name (`Admin`, `Public`) references no project
+of a vertical.

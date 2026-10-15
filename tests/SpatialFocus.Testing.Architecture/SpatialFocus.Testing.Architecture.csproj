@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Mediator.Abstractions" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\SpatialFocus.Data\SpatialFocus.Data.csproj" />
+	</ItemGroup>
+
+</Project>

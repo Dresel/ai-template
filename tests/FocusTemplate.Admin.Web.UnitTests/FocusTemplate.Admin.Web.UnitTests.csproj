@@ -16,10 +16,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\admin\FocusTemplate.Admin.Web\FocusTemplate.Admin.Web.csproj" />
+		<ProjectReference Include="..\SpatialFocus.Testing\SpatialFocus.Testing.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Using Include="Xunit" />
+		<Using Include="SpatialFocus.Testing" />
 	</ItemGroup>
 
 </Project>

@@ -5,7 +5,7 @@ namespace FocusTemplate.Admin.Web.E2E;
 // As the developer, whom the dev seed makes an administrator. Groups get names of their own, since the whole collection
 // shares one database.
 [Collection(AspireCollection.Name)]
-public sealed class UserManagementTests(BlazorAppFixture app) : BffPageTest(app)
+public sealed class UserManagementTests(AdminAppFixture app) : BffPageTest(app)
 {
 	[Fact]
 	public async Task AGroupIsCreatedFilledRenamedAndDeleted()

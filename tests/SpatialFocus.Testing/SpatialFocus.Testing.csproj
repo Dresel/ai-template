@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.Keycloak" />
+		<PackageReference Include="Aspire.Hosting.Testing" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+		<PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
+		<!-- The browser driver's copy stays with the E2E suites, which reference the package themselves -->
+		<PackageReference Include="Microsoft.Playwright.Xunit.v3" PrivateAssets="build;buildTransitive;analyzers;contentFiles" />
+		<PackageReference Include="Respawn" />
+		<PackageReference Include="Testcontainers.PostgreSql" />
+		<PackageReference Include="Testcontainers.Redis" />
+		<PackageReference Include="xunit.v3.assert" />
+		<PackageReference Include="xunit.v3.extensibility.core" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\SpatialFocus.Data\SpatialFocus.Data.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+		<Using Include="Aspire.Hosting" />
+		<Using Include="Aspire.Hosting.ApplicationModel" />
+		<Using Include="Aspire.Hosting.Testing" />
+	</ItemGroup>
+
+</Project>

@@ -27,6 +27,16 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
+	<!--
+		`dotnet test` on the solution asks every project with the workloads' ComputeAvailableDevices target for a device, test
+		project or not, and stops at the choice (.NET 11 SDK). Its own evaluation of the app, outside the solution's restore
+		and build (which carry SolutionPath), sees no platform TFM, so it finds no device targets and no tests.
+	-->
+	<PropertyGroup
+		Condition="'$(SolutionPath)' == '' And $([System.Text.RegularExpressions.Regex]::IsMatch($([System.Environment]::CommandLine), 'dotnet\.dll&quot;?\s+test\s'))">
+		<TargetFrameworks>net11.0</TargetFrameworks>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />

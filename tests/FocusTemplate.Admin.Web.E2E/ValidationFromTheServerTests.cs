@@ -4,7 +4,7 @@ namespace FocusTemplate.Admin.Web.E2E;
 
 // The 400 mapped onto the inputs: the server's own rules, and with the browser's checks off everything the server finds
 [Collection(AspireCollection.Name)]
-public sealed class ValidationFromTheServerTests(BlazorAppFixture app) : ValidationDemoTest(app)
+public sealed class ValidationFromTheServerTests(AdminAppFixture app) : ValidationDemoTest(app)
 {
 	[Fact]
 	public async Task AHandlersOwnProblemLandsAtTheInputOfTheRenamedMember()

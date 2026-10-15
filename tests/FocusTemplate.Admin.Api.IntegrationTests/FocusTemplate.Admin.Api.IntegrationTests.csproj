@@ -8,13 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
-		<PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" />
-		<PackageReference Include="Respawn" />
-		<PackageReference Include="Testcontainers.PostgreSql" />
-		<PackageReference Include="Testcontainers.Redis" />
 		<PackageReference Include="xunit.v3" />
 		<PackageReference Include="xunit.runner.visualstudio">
 			<PrivateAssets>all</PrivateAssets>
@@ -25,14 +19,12 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\admin\FocusTemplate.Admin.Api\FocusTemplate.Admin.Api.csproj" />
 		<ProjectReference Include="..\..\src\admin\FocusTemplate.Admin.Client\FocusTemplate.Admin.Client.csproj" />
-		<ProjectReference Include="..\..\src\admin\user-management\SpatialFocus.Admin.UserManagement.Client\SpatialFocus.Admin.UserManagement.Client.csproj" />
-		<ProjectReference Include="..\..\src\SpatialFocus.Data\SpatialFocus.Data.csproj" />
-		<ProjectReference Include="..\..\src\features\weather\SpatialFocus.Weather.Client\SpatialFocus.Weather.Client.csproj" />
-		<ProjectReference Include="..\..\src\features\weather\SpatialFocus.Weather.Data\SpatialFocus.Weather.Data.csproj" />
+		<ProjectReference Include="..\SpatialFocus.Testing\SpatialFocus.Testing.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Using Include="Xunit" />
+		<Using Include="SpatialFocus.Testing.Api" />
 	</ItemGroup>
 
 </Project>

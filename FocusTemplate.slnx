@@ -27,8 +27,10 @@
   <Folder Name="/admin/user-management/">
     <Project Path="src/admin/user-management/SpatialFocus.Admin.UserManagement.Api/SpatialFocus.Admin.UserManagement.Api.csproj" />
     <Project Path="src/admin/user-management/SpatialFocus.Admin.UserManagement.Client/SpatialFocus.Admin.UserManagement.Client.csproj" />
+    <Project Path="src/admin/user-management/SpatialFocus.Admin.UserManagement.IntegrationTests/SpatialFocus.Admin.UserManagement.IntegrationTests.csproj" />
     <Project Path="src/admin/user-management/SpatialFocus.Admin.UserManagement.Shared/SpatialFocus.Admin.UserManagement.Shared.csproj" />
     <Project Path="src/admin/user-management/spec/SpatialFocus.Admin.UserManagement.Spec.csproj" />
+    <Project Path="src/admin/user-management/SpatialFocus.Admin.UserManagement.Tests/SpatialFocus.Admin.UserManagement.Tests.csproj" />
     <Project Path="src/admin/user-management/SpatialFocus.Admin.UserManagement.Web/SpatialFocus.Admin.UserManagement.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
@@ -37,16 +39,25 @@
     <Project Path="tests/FocusTemplate.Admin.Web.UnitTests/FocusTemplate.Admin.Web.UnitTests.csproj" />
     <Project Path="tests/FocusTemplate.ArchitectureTests/FocusTemplate.ArchitectureTests.csproj" />
     <Project Path="tests/FocusTemplate.Public.Mobile.E2E/FocusTemplate.Public.Mobile.E2E.csproj" />
-    <Project Path="tests/SpatialFocus.Web.UnitTests/SpatialFocus.Web.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/shared/">
+    <Project Path="tests/SpatialFocus.Foundation.IntegrationTests/SpatialFocus.Foundation.IntegrationTests.csproj" />
+    <Project Path="tests/SpatialFocus.Foundation.Tests/SpatialFocus.Foundation.Tests.csproj" />
+    <Project Path="tests/SpatialFocus.Testing.Architecture/SpatialFocus.Testing.Architecture.csproj" />
+    <Project Path="tests/SpatialFocus.Testing.Host/SpatialFocus.Testing.Host.csproj" />
+    <Project Path="tests/SpatialFocus.Testing/SpatialFocus.Testing.csproj" />
   </Folder>
   <Folder Name="/features/" />
   <Folder Name="/features/weather/">
     <Project Path="src/features/weather/SpatialFocus.Weather.Api/SpatialFocus.Weather.Api.csproj" />
     <Project Path="src/features/weather/SpatialFocus.Weather.Client/SpatialFocus.Weather.Client.csproj" />
     <Project Path="src/features/weather/SpatialFocus.Weather.Data/SpatialFocus.Weather.Data.csproj" />
+    <Project Path="src/features/weather/SpatialFocus.Weather.E2E/SpatialFocus.Weather.E2E.csproj" />
+    <Project Path="src/features/weather/SpatialFocus.Weather.IntegrationTests/SpatialFocus.Weather.IntegrationTests.csproj" />
     <Project Path="src/features/weather/SpatialFocus.Weather.Primitives/SpatialFocus.Weather.Primitives.csproj" />
     <Project Path="src/features/weather/SpatialFocus.Weather.Shared/SpatialFocus.Weather.Shared.csproj" />
     <Project Path="src/features/weather/spec/SpatialFocus.Weather.Spec.csproj" />
+    <Project Path="src/features/weather/SpatialFocus.Weather.Tests/SpatialFocus.Weather.Tests.csproj" />
     <Project Path="src/features/weather/SpatialFocus.Weather.Web/SpatialFocus.Weather.Web.csproj" />
   </Folder>
   <Folder Name="/public/">

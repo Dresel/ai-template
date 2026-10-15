@@ -28,14 +28,15 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 - **References** run from the product down to what it shares: a `SpatialFocus.*` project references no
   `FocusTemplate.*` one, and a shared project without a vertical in its name references none of a vertical's. A
   product's BFF hands `Web.Bff.Hosting` its permission source, the one piece of user management the BFF needs.
-  `ProjectReferenceTests` checks both rules from the project files.
+  `ProjectReferenceTests` checks both rules from the project files under `src/` and `tests/`, the second for production
+  projects alone, since a test project composes what it tests.
 - **A vertical** is an audience with its own API, contract and client: Admin, Public. Its slices live inside its
   projects (`Features/<Slice>/`).
 - **User management** (`src/admin/user-management/`) is the Admin vertical's part of the spine: every Admin host
   includes it, since the BFF asks its `/users/me` on each page load and every `@requiresPermission` goes to its
   permission handler. Its projects are laid out as a feature's below (`spec/` with a `@service` of its own,
-  `SpatialFocus.Admin.UserManagement.Shared`, `.Client`, `.Api`, `.Web`), without a data project: it works on the
-  identity tables of `Data`. `AddUserManagement(connectionName, readOnlyConnectionName)` registers the spine's two
+  `SpatialFocus.Admin.UserManagement.Shared`, `.Client`, `.Api`, `.Web` and the tests `.Tests`, `.IntegrationTests`),
+  without a data project: it works on the identity tables of `Data`. `AddUserManagement(connectionName, readOnlyConnectionName)` registers the spine's two
   context pools, its endpoints' JSON context and validators, `UserPermissions` with the permission handler, the memory
   cache of the provisioning and the `GroupChanged` signal. `app.UseUserProvisioning()` adds the provisioning, which the
   host runs between authentication and authorization. `MapUserManagementEndpoints()` maps its endpoints,
@@ -57,11 +58,16 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   | `SpatialFocus.Weather.Data` | entities, `WeatherDbContext` and its read-only twin in schema `weather`, migrations, the dev seed | `Data.Foundation`, `Primitives`, `Weather.Primitives` |
   | `SpatialFocus.Weather.Api` | handlers, the generated endpoints with `MapWeatherEndpoints()`, `AddWeather()` | `Api.Foundation`, `Weather.Data`, `Weather.Shared` |
   | `SpatialFocus.Weather.Web` | the pages, a Razor class library, `AddWeatherPages()` | `Web.Foundation`, `Web.ClientServiceDefaults`, `Weather.Client` |
+  | `SpatialFocus.Weather.Tests` | unit tests of the pages' registration and the contract texts | `Weather.Web`, `Localization`, `SpatialFocus.Testing` |
+  | `SpatialFocus.Weather.IntegrationTests` | the endpoints, contexts and arrangements (`WeatherArrangements`) on the shared test host | `SpatialFocus.Testing.Host`, `Weather.Client` |
+  | `SpatialFocus.Weather.E2E` | abstract UI tests a product's E2E suite runs, a library without a runner | `SpatialFocus.Testing` |
 
   A feature references its own projects and the spine's foundations alone (`Primitives`, `Http`, `Data.Foundation`,
   `Api.Foundation`, `Web.Foundation`, `Web.ClientServiceDefaults`). `FeatureTests` checks it against that
-  list, which keeps `Data`, user management, the hosting libraries and the host's projects out of a feature's reach,
-  and a new shared project too until it is added there. What it needs of identity comes from the spine: `ICurrentUser`,
+  list, in the feature's assemblies and in every project file of its folder, which keeps `Data`, user management, the
+  hosting libraries and the host's projects out of a feature's reach, and a new shared project too until it is added
+  there. A test project of the folder stands in for a host and may also reference the test libraries
+  (`SpatialFocus.Testing`, `SpatialFocus.Testing.Host`) and `Localization`. What it needs of identity comes from the spine: `ICurrentUser`,
   `UserReference` for a foreign key to the users, `PermissionRequirement` answered by user management's handler.
 
 - **Composition** in the host, one line each:
@@ -73,6 +79,9 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
   imported by the product's `src/admin/spec/primitives.tsp`, and the menu entry in `MainLayout`. A feature with permissions changes `AdminPermissions.All`, so adding or removing
   it is also a migration in `FocusTemplate.Data`. A host without the feature leaves out these lines and the project
   references. The feature takes the host's names as arguments, so it never references `FocusTemplate.Names`.
+- **A package defines, the host executes**, wherever the package cannot run alone: a feature ships its migrations and
+  the AppHost applies them, it ships abstract E2E tests and the product's suite runs them on its AppHost, and its
+  integration tests run on a host that composes the packages as a product does (**Tests** below).
 
 ## Projects not covered by an area doc
 
@@ -91,13 +100,32 @@ How the projects connect. Each area has its own doc, listed in the index in [AGE
 
 ## Tests
 
-| Project | What it runs on |
+A package keeps its tests beside its projects, so it moves into another repository with them: user management's in
+`src/admin/user-management/`, a feature's in `src/features/<name>/`. The foundations' tests and the libraries every
+suite builds on sit under `tests/` with the product's own. Where a package cannot run alone, it defines and the host
+executes (above): its integration tests run on the shared test host, and its E2E tests are abstract classes a
+product's suite runs through one-line subclasses. What only a product composes, its endpoint list, its documents, its
+permission seed, its AppHost's resources, stays in the product's projects.
+
+| Project | What it holds |
 |---|---|
-| `FocusTemplate.Admin.Api.IntegrationTests` | `Microsoft.AspNetCore.Mvc.Testing`, Testcontainers Postgres and Redis, Respawn, `FakeTimeProvider`, see [integration tests](integration-tests.md) |
-| `FocusTemplate.Admin.Web.E2E` | `Aspire.Hosting.Testing` booting the AppHost, Playwright, see [web E2E](web-e2e.md) |
-| `SpatialFocus.Web.UnitTests` | plain xUnit over Foundation, user management and the features, components rendered with `HtmlRenderer`, see [web forms](web-forms.md) |
-| `FocusTemplate.Admin.Web.UnitTests` | plain xUnit over the host's own slices, see [web forms](web-forms.md) |
-| `FocusTemplate.ArchitectureTests` | reflection over the API assemblies and the EF model, see [database](database.md) |
+| `SpatialFocus.Testing` | the fixtures and base classes once, the host handed in: `PostgresFixture`, `RedisFixture`, `ApiFixture<TProgram>` and `ApiTestBase<TFixture>`, `TestAuthenticationHandler`, `UserManagementArrangements`, the E2E bases `BlazorAppFixture`, `IngressAppFixture`, `BffPageTest`, `KeycloakAdmin`, and `UiCulture`, `TestHostEnvironment` |
+| `SpatialFocus.Testing.Host` | the shared test host: the spine, `Api.Hosting`, user management and the shared features in a product's order, without a product, schema by `EnsureCreated` |
+| `SpatialFocus.Testing.Architecture` | the convention rules as a library, which each product's architecture tests apply |
+| `SpatialFocus.Foundation.Tests` | unit tests of the foundations: `Web.Foundation` today, `Web.Hosting`, `Localization` and `Primitives` as they get tests |
+| `SpatialFocus.Foundation.IntegrationTests` | the spine and the hosting libraries on the shared test host: auditing and the read-only context on the spine's tables, event streams, the bearer and the current user, the API reference's switch |
+| `SpatialFocus.Admin.UserManagement.Tests`, `.IntegrationTests` | user management's view models and texts, its endpoints on the shared test host |
+| `SpatialFocus.Weather.Tests`, `.IntegrationTests`, `.E2E` | the feature's, see the table above |
+| `FocusTemplate.Admin.Api.IntegrationTests` | the product's composition: its slices, every endpoint behind authorization, its documents, its permission seed |
+| `FocusTemplate.Admin.Web.E2E` | the product's flows and the features' through subclasses, on its AppHost |
+| `FocusTemplate.Admin.Web.UnitTests` | the host's own slices |
+| `FocusTemplate.ArchitectureTests` | the rules applied to the product's assemblies and the shared ones |
 | `FocusTemplate.Public.Mobile.E2E` | Appium with UiAutomator2 on the Android emulator, see [mobile](mobile.md) |
 
-All use xUnit v3 on Microsoft.Testing.Platform.
+The integration tests run on `Microsoft.AspNetCore.Mvc.Testing`, Testcontainers Postgres and Redis, Respawn and
+`FakeTimeProvider` (see [integration tests](integration-tests.md)), the E2E suite on `Aspire.Hosting.Testing` and
+Playwright (see [web E2E](web-e2e.md)), the unit tests on plain xUnit with components rendered by `HtmlRenderer` (see
+[web forms](web-forms.md)), the architecture tests on reflection over the assemblies and the EF models (see
+[database](database.md)). All use xUnit v3 on Microsoft.Testing.Platform. A library without tests of its own
+(`SpatialFocus.Testing`, `SpatialFocus.Weather.E2E`) references `xunit.v3.extensibility.core` and `xunit.v3.assert`
+alone, since `xunit.v3` makes a project a test executable.

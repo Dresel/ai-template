@@ -84,10 +84,12 @@ files inside it.
 
 ## Unit tests
 
-Unit tests run without a browser and without a server, in two projects. `SpatialFocus.Web.UnitTests` tests the shared
-projects, which it references directly: the forms store and validation (`FormMessages`, `FormValidation`), the
-Foundation helpers (`AsyncCommand`, `BusyState`, `Debouncer`), components rendered with `HtmlRenderer` over a small
-service provider (`PermissionViewTests`, `RequiresPermissionTests`), and user management's and the features' view
-models against a fake HTTP handler (`ListPageViewModelTests`) and texts. `FocusTemplate.Admin.Web.UnitTests`
-references the host and tests its own slices, today the demo form's validator and mapping. The emitter's own tests
+Unit tests run without a browser and without a server, each beside what it tests ([architecture](architecture.md#tests)).
+`SpatialFocus.Foundation.Tests` tests the foundations, which it references directly: the forms store and validation
+(`FormMessages`, `FormValidation`), the Foundation helpers (`AsyncCommand`, `BusyState`, `Debouncer`), and components
+rendered with `HtmlRenderer` over a small service provider (`PermissionViewTests`, `RequiresPermissionTests`).
+`SpatialFocus.Admin.UserManagement.Tests` and a feature's `.Tests` test their view models against a fake HTTP handler
+(`ListPageViewModelTests`) and their texts. `FocusTemplate.Admin.Web.UnitTests` references the host and tests its own
+slices, today the demo form's validator and mapping. `UiCulture` and `TestHostEnvironment` come from
+`SpatialFocus.Testing`, and each project's `Localizations` registers the texts of what it tests. The emitter's own tests
 live in its repository.

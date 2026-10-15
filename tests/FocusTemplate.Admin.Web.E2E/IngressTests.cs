@@ -4,7 +4,7 @@ using Microsoft.Playwright.Xunit.v3;
 namespace FocusTemplate.Admin.Web.E2E;
 
 [Collection(IngressCollection.Name)]
-public sealed class IngressTests(IngressAppFixture app) : PageTest
+public sealed class IngressTests(AdminIngressAppFixture app) : PageTest
 {
 	public override BrowserNewContextOptions ContextOptions() => new() { IgnoreHTTPSErrors = true, };
 

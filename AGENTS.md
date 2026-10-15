@@ -71,7 +71,8 @@ Admin vertical (`src/admin/`):
   generated from `src/admin/spec/primitives.tsp`, see [authorization](docs/authorization.md).
 - **SpatialFocus.Admin.UserManagement.*** (`src/admin/user-management/`) - users, groups and permissions, which every
   Admin host includes: `spec/`, `Shared`, `Client`, `Api` (with `/users/me`, the provisioning and the permission
-  handler), `Web`, see [architecture](docs/architecture.md) and [authorization](docs/authorization.md).
+  handler), `Web`, and its tests `Tests`, `IntegrationTests`, see [architecture](docs/architecture.md) and
+  [authorization](docs/authorization.md).
 
 Public vertical (`src/public/`):
 
@@ -86,7 +87,17 @@ template's example of one, and a slice of one product's own business goes into i
 [architecture](docs/architecture.md):
 
 - **SpatialFocus.Weather.*** - forecasts and stations: `spec/`, `Primitives` (its typed ids and permissions), `Shared`,
-  `Client`, `Data` (schema `weather`), `Api`, `Web`.
+  `Client`, `Data` (schema `weather`), `Api`, `Web`, and its tests `Tests`, `IntegrationTests`, `E2E` (abstract, run
+  by the product's E2E suite).
+
+Tests (`tests/`), beside the packages' own, see [architecture](docs/architecture.md#tests):
+
+- **SpatialFocus.Testing** - the fixtures and base classes every suite builds on, the host handed in.
+- **SpatialFocus.Testing.Host** - the shared test host of the package integration tests: the spine, `Api.Hosting`,
+  user management and the shared features, without a product.
+- **SpatialFocus.Testing.Architecture** - the convention rules, which `FocusTemplate.ArchitectureTests` applies.
+- **SpatialFocus.Foundation.Tests**, **SpatialFocus.Foundation.IntegrationTests** - the foundations' and the hosting
+  libraries' tests.
 
 ## Tech stack
 
@@ -161,18 +172,21 @@ The skills in `.claude/skills/` and `.agents/skills/` are written by `aspire age
 Test-first: a bug is reproduced, a feature specified, by a failing test at the smallest level that fits, before any
 production code changes.
 
-- **Integration** (one service: DI, middleware, serialization, auth, EF Core and SQL) →
-  `FocusTemplate.Admin.Api.IntegrationTests`, see [integration tests](docs/integration-tests.md).
+- **Integration** (one service: DI, middleware, serialization, auth, EF Core and SQL) → the package's
+  `.IntegrationTests` for user management or a feature, `SpatialFocus.Foundation.IntegrationTests` for the spine and
+  the hosting libraries, both on the shared test host, `FocusTemplate.Admin.Api.IntegrationTests` for the product's
+  slices and composition, see [integration tests](docs/integration-tests.md).
 - **Aspire system** (across resources: BFF and API, ingress, service discovery, startup order, telemetry) and **UI**
-  (DOM, input, caret, focus, keyboard, routing, client validation, user flows) → `FocusTemplate.Admin.Web.E2E`, see
+  (DOM, input, caret, focus, keyboard, routing, client validation, user flows) → `FocusTemplate.Admin.Web.E2E`, a
+  feature's flows as abstract classes in its `.E2E` library, which the product's suite runs, see
   [web E2E](docs/web-e2e.md).
 - **UI (mobile)** (native MAUI flows on the Android emulator) → `FocusTemplate.Public.Mobile.E2E`, see
   [mobile](docs/mobile.md).
-- **Convention** (a rule every handler or type must follow) → `FocusTemplate.ArchitectureTests`, see
-  [database](docs/database.md).
+- **Convention** (a rule every handler or type must follow) → the rule in `SpatialFocus.Testing.Architecture`,
+  applied in `FocusTemplate.ArchitectureTests`, see [database](docs/database.md).
 - **Unit** (no browser, no server: Foundation helpers, forms, view models, components rendered with `HtmlRenderer`) →
-  `SpatialFocus.Web.UnitTests` for Foundation, user management and the features, `FocusTemplate.Admin.Web.UnitTests`
-  for the host's own slices, see [web forms](docs/web-forms.md).
+  `SpatialFocus.Foundation.Tests` for the foundations, the package's `.Tests` for user management or a feature,
+  `FocusTemplate.Admin.Web.UnitTests` for the host's own slices, see [web forms](docs/web-forms.md).
 
 Watch the test fail for the reported reason, make the smallest fix, re-run the test and its area's tests, and format
 new files. The summary names root cause, test, fix, commands run and remaining risks. Commit only when asked.

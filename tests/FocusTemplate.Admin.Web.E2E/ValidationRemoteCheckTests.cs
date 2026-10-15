@@ -2,7 +2,7 @@ namespace FocusTemplate.Admin.Web.E2E;
 
 // The code asked about on the server while the user types, before any submit
 [Collection(AspireCollection.Name)]
-public sealed class ValidationRemoteCheckTests(BlazorAppFixture app) : ValidationDemoTest(app)
+public sealed class ValidationRemoteCheckTests(AdminAppFixture app) : ValidationDemoTest(app)
 {
 	[Fact]
 	public async Task ATakenCodeShowsWhileTypingWithoutASubmit()

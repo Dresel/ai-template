@@ -103,12 +103,14 @@ New permissions appear in the group editor by themselves, labelled from their na
 
 ## 6. Tests
 
-- **Integration** (`tests/FocusTemplate.Admin.Api.IntegrationTests`, through the generated client): per operation the
-  answer, the 404, each 409, the 400, and the 403 without the permission.
-- **Unit** (`tests/FocusTemplate.Admin.Web.UnitTests` for a slice of the host, `tests/SpatialFocus.Web.UnitTests` for
-  one of user management or a feature): a view model against a fake HTTP handler (`ListPageViewModelTests`), the
-  form's validator.
-- **E2E**: one flow through the BFF on `BffPageTest`, selected by `data-testid`, including the menu entry.
+- **Integration** (through the generated client; `tests/FocusTemplate.Admin.Api.IntegrationTests` for a slice of the
+  host, the package's `.IntegrationTests` on the shared test host for one of user management or a feature): per
+  operation the answer, the 404, each 409, the 400, and the 403 without the permission. A feature's new permission
+  goes into `TestHostPermissions` too.
+- **Unit** (`tests/FocusTemplate.Admin.Web.UnitTests` for a slice of the host, the package's `.Tests` for one of user
+  management or a feature): a view model against a fake HTTP handler (`ListPageViewModelTests`), the form's validator.
+- **E2E**: one flow through the BFF on `BffPageTest`, selected by `data-testid`, including the menu entry. A feature's
+  flow is an abstract class in its `.E2E` library, run by a one-line subclass in `FocusTemplate.Admin.Web.E2E`.
 - `AuthenticationTests.EveryApiEndpointRequiresAuthorization` covers the new endpoints by itself.
 - **A watch** (`GroupsWatchTests`): a change reaches an open stream, the 403 without the permission, and a stream that
   closes when its subscriber loses the permission.

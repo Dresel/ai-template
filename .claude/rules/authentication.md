@@ -13,8 +13,10 @@ paths:
   - "src/*.Web.Bff.Shared/**"
   - "src/*.AppHost/keycloak/**"
   - "src/*.AppHost.Hosting/Authentication/**"
-  - "tests/*.Admin.Web.E2E/{AuthenticationTests,BlazorAppFixture,KeycloakAdmin}.cs"
-  - "tests/*.IntegrationTests/{AuthenticationTests,TestAuthenticationHandler}.cs"
+  - "tests/*.Admin.Web.E2E/{AuthenticationTests,AdminAppFixture}.cs"
+  - "tests/*.Testing/E2E/{BlazorAppFixture,KeycloakAdmin}.cs"
+  - "tests/*.IntegrationTests/AuthenticationTests.cs"
+  - "tests/*.Testing/Api/TestAuthenticationHandler.cs"
 ---
 # Authentication
 

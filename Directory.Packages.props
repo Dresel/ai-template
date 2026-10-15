@@ -72,6 +72,9 @@
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.15.0" />
     <PackageVersion Include="Testcontainers.Redis" Version="4.15.0" />
     <PackageVersion Include="xunit.v3" Version="4.0.1" />
+    <!-- For the test libraries: base classes and rules a test project runs, without the runner that makes a project one -->
+    <PackageVersion Include="xunit.v3.assert" Version="4.0.1" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="4.0.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
   </ItemGroup>
 </Project>

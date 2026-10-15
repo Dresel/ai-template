@@ -5,20 +5,6 @@ namespace FocusTemplate.Admin.Api.IntegrationTests;
 // The API serves one document per service it hosts, its own and each feature's, under the name its project ships
 public sealed class OpenApiDocumentTests(ApiFixture factory) : ApiTestBase(factory)
 {
-	// Only the shipped names resolve, so no request reaches the file system with a path of its own
-	[Theory]
-	[InlineData("v1")]
-	[InlineData("public")]
-	[InlineData("..%2Fappsettings")]
-	public async Task ANameNoHostedServiceShipsIsNotFound(string name)
-	{
-		using HttpClient client = Factory.CreateClient();
-
-		using HttpResponseMessage response = await client.GetAsync($"/openapi/{name}.yaml", TestContext.Current.CancellationToken);
-
-		Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-	}
-
 	[Theory]
 	[InlineData("admin", "title: FocusTemplate Admin API")]
 	[InlineData("user-management", "title: FocusTemplate User Management API")]

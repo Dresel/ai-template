@@ -1,7 +1,7 @@
 namespace FocusTemplate.Admin.Web.E2E;
 
 [Collection(AspireCollection.Name)]
-public sealed class ValidationAccessibilityTests(BlazorAppFixture app) : ValidationDemoTest(app)
+public sealed class ValidationAccessibilityTests(AdminAppFixture app) : ValidationDemoTest(app)
 {
 	[Fact]
 	public async Task AServerErrorMarksItsInputAndTakesTheFocusThere()

@@ -41,7 +41,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="SpatialFocus.Web.UnitTests" />
+		<InternalsVisibleTo Include="SpatialFocus.Admin.UserManagement.Tests" />
 	</ItemGroup>
 
 </Project>

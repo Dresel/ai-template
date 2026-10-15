@@ -3,7 +3,7 @@ using Microsoft.Playwright;
 namespace FocusTemplate.Admin.Web.E2E;
 
 [Collection(AspireCollection.Name)]
-public sealed class AppearanceTests(BlazorAppFixture app) : BffPageTest(app)
+public sealed class AppearanceTests(AdminAppFixture app) : BffPageTest(app)
 {
 	// The page background of Radzen's software theme and of software-dark, which the loading screen shares
 	private const string Dark = "rgb(40, 54, 60)";

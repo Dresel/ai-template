@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "SpatialFocus.Testing.Host": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:59775;http://localhost:59776"
+    }
+  }
+}

@@ -1,6 +1,8 @@
 ---
 paths:
   - "tests/*.Admin.Web.E2E/**"
+  - "tests/*.Testing/E2E/**"
+  - "src/features/*/*.E2E/**"
   - "src/admin/*.Admin.Web/**/*.razor"
   - "src/admin/user-management/*.Web/**/*.razor"
   - "src/*.Web.Hosting/**/*.razor"
@@ -17,6 +19,9 @@ paths:
   context.
 - The fixtures pin the feature flags as arguments, and a new flag gets pinned there too.
 - Realm changes go through `KeycloakAdmin`, which puts the realm back when disposed.
+- A feature's UI tests are abstract classes on `BffPageTest` in its `.E2E` library, which references
+  `SpatialFocus.Testing` alone. The product's suite runs each through a one-line subclass with
+  `[Collection(AspireCollection.Name)]`.
 - The E2E suite boots an AppHost of its own, so the developer's AppHost must be stopped.
 
 Background: [docs/web-e2e.md](../../docs/web-e2e.md).

@@ -2,7 +2,7 @@ namespace FocusTemplate.Admin.Web.E2E;
 
 // The generated rules and the shared ones, run by the form's validator while the user types
 [Collection(AspireCollection.Name)]
-public sealed class ValidationInTheBrowserTests(BlazorAppFixture app) : ValidationDemoTest(app)
+public sealed class ValidationInTheBrowserTests(AdminAppFixture app) : ValidationDemoTest(app)
 {
 	[Fact]
 	public async Task AFieldShowsNothingUntilTouchedThenItsErrorAtTheInput()

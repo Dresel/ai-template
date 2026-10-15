@@ -2,7 +2,7 @@ namespace FocusTemplate.Admin.Web.E2E;
 
 // Only errors block: warnings and infos show without stopping the submit
 [Collection(AspireCollection.Name)]
-public sealed class ValidationSeverityTests(BlazorAppFixture app) : ValidationDemoTest(app)
+public sealed class ValidationSeverityTests(AdminAppFixture app) : ValidationDemoTest(app)
 {
 	[Fact]
 	public async Task AFieldShowsItsMostSevereMessageAndCountsTheRest()

@@ -4,7 +4,7 @@ using Microsoft.Playwright;
 namespace FocusTemplate.Admin.Web.E2E;
 
 [Collection(AspireCollection.Name)]
-public sealed class AuthenticationTests(BlazorAppFixture app) : BffPageTest(app)
+public sealed class AuthenticationTests(AdminAppFixture app) : BffPageTest(app)
 {
 	private const string SessionCookie = "__Host-focus.session";
 

@@ -6,7 +6,7 @@ paths:
   - "src/admin/user-management/*.Web/**/{Form,FormValidator,Mapper}*.cs"
   - "src/features/*/*.Web/**/{Form,FormValidator,Mapper}*.cs"
   - "src/admin/*.Admin.Shared/*Rules.cs"
-  - "tests/*.Web.UnitTests/Foundation/**"
+  - "tests/*.Foundation.Tests/Web/**"
 ---
 # Web forms
 

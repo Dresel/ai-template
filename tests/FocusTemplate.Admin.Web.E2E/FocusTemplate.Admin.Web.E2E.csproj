@@ -21,6 +21,8 @@
 		<ProjectReference Include="..\..\src\FocusTemplate.Names\FocusTemplate.Names.csproj" />
 		<ProjectReference Include="..\..\src\SpatialFocus.Data\SpatialFocus.Data.csproj" />
 		<ProjectReference Include="..\..\src\features\weather\SpatialFocus.Weather.Data\SpatialFocus.Weather.Data.csproj" />
+		<ProjectReference Include="..\..\src\features\weather\SpatialFocus.Weather.E2E\SpatialFocus.Weather.E2E.csproj" />
+		<ProjectReference Include="..\SpatialFocus.Testing\SpatialFocus.Testing.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -28,6 +30,7 @@
 		<Using Include="Aspire.Hosting" />
 		<Using Include="Aspire.Hosting.ApplicationModel" />
 		<Using Include="Aspire.Hosting.Testing" />
+		<Using Include="SpatialFocus.Testing.E2E" />
 	</ItemGroup>
 
 </Project>

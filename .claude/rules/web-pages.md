@@ -9,7 +9,8 @@ paths:
   - "src/*.Web.Hosting/**"
   - "src/*.Web.Foundation/*.cs"
   - "tests/*.Admin.Web.UnitTests/Features/**"
-  - "tests/*.Web.UnitTests/{UserManagement,Weather}/**"
+  - "src/admin/user-management/*.Tests/**"
+  - "src/features/*/*.Tests/**"
 ---
 # Web pages
 

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+
+		<JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Mediator.Abstractions" />
+		<PackageReference Include="Mediator.SourceGenerator" PrivateAssets="all" ExcludeAssets="runtime">
+			<IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\SpatialFocus.Testing\SpatialFocus.Testing.csproj" />
+		<ProjectReference Include="..\..\src\SpatialFocus.Api.Hosting\SpatialFocus.Api.Hosting.csproj" />
+		<ProjectReference Include="..\..\src\SpatialFocus.ServiceDefaults\SpatialFocus.ServiceDefaults.csproj" />
+		<ProjectReference Include="..\..\src\admin\user-management\SpatialFocus.Admin.UserManagement.Api\SpatialFocus.Admin.UserManagement.Api.csproj" />
+		<ProjectReference Include="..\..\src\features\weather\SpatialFocus.Weather.Api\SpatialFocus.Weather.Api.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+</Project>

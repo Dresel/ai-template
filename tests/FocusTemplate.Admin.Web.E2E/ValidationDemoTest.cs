@@ -4,7 +4,7 @@ namespace FocusTemplate.Admin.Web.E2E;
 
 // The validation demo: one profile form, each input and message found by its data-testid. Messages the server phrases
 // through FluentValidation's built-in texts follow its culture, so tests compare those only where the browser phrased them
-public abstract class ValidationDemoTest(BlazorAppFixture app) : BffPageTest(app)
+public abstract class ValidationDemoTest(AdminAppFixture app) : BffPageTest(app)
 {
 	protected static readonly string TooLongName = new('n', 51);
 

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!-- Abstract tests a product's E2E suite runs through subclasses on its own AppHost, so no runner and no test project -->
+	<PropertyGroup>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="xunit.v3.assert" />
+		<PackageReference Include="xunit.v3.extensibility.core" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\tests\SpatialFocus.Testing\SpatialFocus.Testing.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+		<Using Include="SpatialFocus.Testing.E2E" />
+	</ItemGroup>
+
+</Project>

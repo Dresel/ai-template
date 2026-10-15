@@ -4,7 +4,7 @@ namespace FocusTemplate.Admin.Web.E2E;
 
 // The test browser speaks English, so whatever arrives in German follows the choice in the app
 [Collection(AspireCollection.Name)]
-public sealed class LanguageSwitchTests(BlazorAppFixture app) : ValidationDemoTest(app)
+public sealed class LanguageSwitchTests(AdminAppFixture app) : ValidationDemoTest(app)
 {
 	private ILocator Switch => Page.GetByTestId("language-switch");
 

@@ -2,7 +2,7 @@
 namespace FocusTemplate.Admin.Web.E2E;
 
 [CollectionDefinition(Name)]
-public sealed class AspireCollection : ICollectionFixture<BlazorAppFixture>
+public sealed class AspireCollection : ICollectionFixture<AdminAppFixture>
 {
 	public const string Name = "aspire";
 }

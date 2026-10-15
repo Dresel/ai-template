@@ -4,7 +4,7 @@ namespace FocusTemplate.Admin.Web.E2E;
 
 // A browser whose language is German gets the app in German on its first visit, its messages and the server's too
 [Collection(AspireCollection.Name)]
-public sealed class GermanBrowserTests(BlazorAppFixture app) : ValidationDemoTest(app)
+public sealed class GermanBrowserTests(AdminAppFixture app) : ValidationDemoTest(app)
 {
 	public override BrowserNewContextOptions ContextOptions()
 	{

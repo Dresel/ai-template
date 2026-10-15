@@ -3,7 +3,7 @@ using Microsoft.Playwright;
 namespace FocusTemplate.Admin.Web.E2E;
 
 [Collection(AspireCollection.Name)]
-public sealed class TelemetryTests(BlazorAppFixture app) : BffPageTest(app)
+public sealed class TelemetryTests(AdminAppFixture app) : BffPageTest(app)
 {
 	// The test AppHost runs no dashboard, so the BFF answers an export with a 502. The test checks the browser's half:
 	// the page keeps working while its exporters send OTLP over the BFF's origin.
